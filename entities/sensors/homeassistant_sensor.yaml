@@ -1,0 +1,18 @@
+### sensor.yaml
+### Home Assistant Pi
+platform: systemmonitor
+resources:
+    - type: disk_use_percent
+      arg: /
+    - type: disk_use
+      arg: "/"
+    - type: disk_free
+      arg: "/"
+    - type: memory_use_percent
+    - type: memory_use
+    - type: memory_free
+    - type: processor_use
+    - type: processor_temperature
+    - type: last_boot
+    - type: ipv4_address
+      arg: end0

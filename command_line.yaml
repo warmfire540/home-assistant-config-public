@@ -1,0 +1,39 @@
+### command_line.yaml
+### Home Assistant Pi
+- sensor:
+    name: CPU Temp
+    unique_id: bf16d595-f867-4334-958d-8b7e81ea3907
+    command: "cat /sys/class/thermal/thermal_zone0/temp"
+    unit_of_measurement: "°F"
+    value_template: '{{ ((value | multiply(0.0018)) + 32) | round(1)  }}'
+  
+### Backup dates
+- sensor:
+    name: Home Assistant Last Backup
+    unique_id: a04f4c5f-d599-4b4d-885f-b691ca6b0087
+    command: 'date -d "@$(find /media/pi_backups/homeassistant-backup -type f -print0 | xargs -0 stat -c %Y | sort | tail -n 1)" "+%Y-%m-%dT%H:%M:%S%z"'
+    value_template: "{{ as_timestamp(value) | timestamp_custom('%b %d %H:%M')  }}"
+  
+- sensor:
+    name: Deluge Last Backup
+    unique_id: cccb7a9a-399c-48af-a9b3-bdfd291f4c1b
+    command: 'date -d "@$(find /media/pi_backups/deluge-backup -type f -print0 | xargs -0 stat -c %Y | sort | tail -n 1)" "+%Y-%m-%dT%H:%M:%S%z"'
+    value_template: "{{ as_timestamp(value) | timestamp_custom('%b %d %H:%M')  }}"
+  
+- sensor:
+    name: Plex DB Last Backup
+    unique_id: 61d708f4-f4bf-43ac-acff-ef0ce1eeab73
+    command: 'date -d "@$(find /media/pi_backups/plex-backup/Databases -type f -print0 | xargs -0 stat -c %Y | sort | tail -n 1)" "+%Y-%m-%dT%H:%M:%S%z"'
+    value_template: "{{ as_timestamp(value) | timestamp_custom('%b %d %H:%M')  }}"
+  
+- sensor:
+    name: Plex Server Last Backup
+    unique_id: 1c005df5-6265-43cb-90f3-3c6ec76c66cf
+    command: 'date -d "@$(find /media/pi_backups/plex-backup/MediaServer -type f -print0 | xargs -0 stat -c %Y | sort | tail -n 1)" "+%Y-%m-%dT%H:%M:%S%z"'
+    value_template: "{{ as_timestamp(value) | timestamp_custom('%b %d %H:%M')  }}"
+    
+- sensor:
+    name: Pi-Hole Server Last Backup
+    unique_id: 0bb2bb96-bcdf-4bd4-9311-c9693c3f5040
+    command: 'date -d "@$(find /media/pi_backups/pihole-backup -type f -print0 | xargs -0 stat -c %Y | sort | tail -n 1)" "+%Y-%m-%dT%H:%M:%S%z"'
+    value_template: "{{ as_timestamp(value) | timestamp_custom('%b %d %H:%M')  }}"
