@@ -1,13 +1,8 @@
-### command_line.yaml
-### Home Assistant Pi
-- sensor:
-    name: CPU Temp
-    unique_id: bf16d595-f867-4334-958d-8b7e81ea3907
-    command: "cat /sys/class/thermal/thermal_zone0/temp"
-    unit_of_measurement: "°F"
-    value_template: '{{ ((value | multiply(0.0018)) + 32) | round(1)  }}'
-  
-### Backup dates
+#####
+# Checks the latest backup on the share for pi
+# 
+#####
+
 - sensor:
     name: Home Assistant Last Backup
     unique_id: a04f4c5f-d599-4b4d-885f-b691ca6b0087

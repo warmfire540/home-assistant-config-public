@@ -1,0 +1,10 @@
+####
+# Count lights that are on
+#
+#####
+
+- sensor:
+  - name: Lights on
+    unique_id: 9c60dbc2-3264-4513-a78b-afe268735ea8
+    icon: 'mdi:lightbulb'
+    state: "{{ states.light | selectattr('state','eq','on') | list | length }}"

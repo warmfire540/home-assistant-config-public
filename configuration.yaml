@@ -18,17 +18,8 @@ automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
 
-# custom yaml
-command_line: !include command_line.yaml
-binary_sensor: !include binary_sensor.yaml
-template: !include template.yaml
-
 ecovacs:
   username: !secret default_email
   password: !secret ecovacs_password
   country: us
   continent: na
-  
-switch:
-  - platform: wake_on_lan
-    mac: 04:7C:16:44:E3:80

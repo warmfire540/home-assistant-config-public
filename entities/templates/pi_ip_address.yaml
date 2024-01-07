@@ -1,5 +1,8 @@
-### template.yaml
-### Home Assistant Pitemplate:
+#####
+# Gets IP addresses of pi devices
+#
+#####
+
 - sensor:
   - name: Plex IP
     unique_id: 0a3e75a3-dac6-4027-8f9c-6a93894d4ddf
