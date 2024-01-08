@@ -1,0 +1,177 @@
+title: "Home"
+path: "home"
+cards:
+  - type: custom:button-card
+    template: card_esh_welcome
+    triggers_update: "input_boolean.welcome_toggle"
+    variables:
+      ulm_card_esh_welcome_collapse: input_boolean.welcome_toggle
+      ulm_weather: weather.forecast_home
+      entity_1:
+        nav: "house"
+        icon: "mdi:home"
+        name: "House"
+        color: "blue"
+      entity_2:
+        nav: "lights"
+        icon: "mdi:lightbulb"
+        name: "Lights"
+        color: "yellow"
+      entity_3:
+        nav: "cats"
+        icon: "mdi:cat"
+        name: Cats
+        color: "green"
+      entity_4:
+        nav: "lab"
+        icon: "mdi:flask"
+        name: Lab
+        color: "purple"
+      entity_5:
+        nav: "network"
+        icon: "mdi:network"
+        name: Net
+        color: "red"
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: card_person
+        variables:
+          ulm_card_person_entity: person.poat
+          ulm_card_person_use_entity_picture: true
+          ulm_address: sensor.poat_s_iphone_14_pro_max_geocoded_location
+          ulm_card_person_battery: sensor.poat_s_iphone_14_pro_max_battery_level
+      - type: "custom:button-card"
+        template: card_person
+        variables:
+          ulm_card_person_entity: person.gina
+          ulm_card_person_use_entity_picture: true
+          ulm_address: sensor.poat_s_iphone_14_pro_max_geocoded_location
+          ulm_card_person_battery: sensor.gina_s_iphone_13_mini_battery
+
+  - type: "custom:button-card"
+    template: card_title
+    name: Rooms
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template:
+          - card_esh_room
+          - yellow_on
+        name: Living Room
+        entity: light.living_room_light
+        icon: mdi:sofa
+        tap_action:
+          action: navigate
+          navigation_path: "living-room"
+        variables:
+          ulm_custom_card_esh_room_light_entity: light.living_room_light
+          ulm_custom_card_esh_room_climate_entity: climate.living_room
+          ulm_card_thermostat_enable_popup: true
+        label: '[[[ return states["sensor.living_room_temperature"].state + "°F" ]]]'
+      - type: "custom:button-card"
+        template:
+          - card_esh_room
+          - yellow_on
+        name: Dining Room
+        entity: light.dining_room_light
+        icon: mdi:glass-cocktail
+        tap_action:
+          action: navigate
+          navigation_path: "dining-room"
+        variables:
+          ulm_custom_card_esh_room_light_entity: light.dining_room_light
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template:
+          - card_esh_room
+          - yellow_on
+        name: Office
+        entity: light.office_light
+        icon: mdi:controller
+        tap_action:
+          action: navigate
+          navigation_path: "office"
+        variables:
+          ulm_custom_card_esh_room_light_entity: light.office_light
+      - type: "custom:button-card"
+        template:
+          - card_esh_room
+          - yellow_on
+        name: Garage
+        entity: switch.garage_opener_socket_1
+        icon: mdi:garage
+        tap_action:
+          action: navigate
+          navigation_path: "garage"
+        variables:
+          ulm_custom_card_esh_room_light_entity: switch.garage_opener_socket_1
+        label: '[[[ return states["switch.garage_opener_socket_1"].state == "on" ? "On" : "Off" ]]]'
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template:
+          - card_esh_room
+          - yellow_on
+        name: Master Bedroom
+        entity: light.bedroom_light
+        icon: mdi:bed
+        tap_action:
+          action: navigate
+          navigation_path: "master-bedroom"
+        variables:
+          ulm_custom_card_esh_room_light_entity: light.bedroom_light
+      - type: "custom:button-card"
+        template:
+          - card_esh_room
+          - yellow_on
+        name: Master Bathroom
+        entity: light.dining_room_light
+        icon: mdi:shower-head
+        tap_action:
+          action: navigate
+          navigation_path: "master-bathroom"
+        label: '[[[ return states["sensor.master_bath_gfi_8_1min"].state + "W" ]]]'
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template:
+          - card_esh_room
+          - yellow_on
+        name: Guest Room
+        entity: light.bedroom_light
+        icon: mdi:desk
+        tap_action:
+          action: navigate
+          navigation_path: "guest-room"
+        label: '[[[ return states["switch.gina_computer_socket_1"].state == "on" ? "On" : "Off" ]]]'
+      - type: "custom:button-card"
+        template:
+          - card_esh_room
+          - yellow_on
+        name: Guest Bathroom
+        entity: light.dining_room_light
+        icon: mdi:shower
+        tap_action:
+          action: navigate
+          navigation_path: "guest-bathroom"
+        label: '[[[ return states["sensor.guest_bedroom_16_1min"].state + "W" ]]]'
+
+  - type: "custom:button-card"
+    template:
+      - card_esh_room
+      - yellow_on
+    name: Kitchen
+    entity: switch.kitchen_lights_switch_1
+    icon: mdi:countertop-outline
+    tap_action:
+      action: navigate
+      navigation_path: "kitchen"
+    variables:
+      ulm_custom_card_esh_room_light_entity: switch.kitchen_lights_switch_1
