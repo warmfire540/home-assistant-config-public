@@ -1,0 +1,22 @@
+####
+# Count devices that have a low battery
+#
+#####
+
+- sensor:
+  - name: Low Batteries
+    unique_id: 78dd3601-03d4-4884-bf39-2e61a3b618cc
+    icon: 'mdi:battery-30'
+    state: "{% set low = states.sensor
+| selectattr('entity_id','contains', 'battery')
+| selectattr('state', 'is_number') 
+| map(attribute='state') 
+| map('int') 
+| select('<', 35) 
+| map('string') 
+| list %}
+{{ states.sensor
+| selectattr('state', 'in', low) 
+| map(attribute='entity_id') 
+| list 
+| count }}"

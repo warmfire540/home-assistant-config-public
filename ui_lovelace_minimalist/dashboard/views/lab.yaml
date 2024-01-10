@@ -1,0 +1,159 @@
+title: "Lab"
+path: "lab"
+cards:
+  - type: "custom:button-card"
+    template: chip_back
+    variables:
+      ulm_chip_back_path: home
+
+  - type: "custom:button-card"
+    template: card_title
+    name: Lab
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: chip_icon_label
+        label: poat-hole
+        icon: mdi:pi-hole
+        styles:
+          icon:
+            - color: >
+                [[[ if (states["binary_sensor.poat_hole_local"].state == "on")
+                  return "var(--green-color)" ;
+                  else return "var(--red-color)"; ]]]
+      - type: "custom:button-card"
+        template: chip_icon_label
+        label: poat-share
+        icon: mdi:folder-network-outline
+        styles:
+          icon:
+            - color: >
+                [[[ if (states["binary_sensor.poat_share_local"].state == "on")
+                  return "var(--green-color)" ;
+                  else return "var(--red-color)"; ]]]
+      - type: "custom:button-card"
+        template: chip_icon_label
+        label: poat-seedbox
+        icon: mdi:seed
+        styles:
+          icon:
+            - color: >
+                [[[ if (states["binary_sensor.192_168_68_131"].state == "on")
+                  return "var(--green-color)" ;
+                  else return "var(--red-color)"; ]]]
+      - type: "custom:button-card"
+        template: chip_icon_label
+        label: poat-plex
+        icon: mdi:plex
+        styles:
+          icon:
+            - color: >
+                [[[ if (states["binary_sensor.poat_plex_local"].state == "on")
+                  return "var(--green-color)" ;
+                  else return "var(--red-color)"; ]]]
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Raspberries - Control
+
+  - type: entities
+    entities:
+      - entity: device_tracker.poat_hole
+        type: custom:multiple-entity-row
+        name: poat-hole
+        icon: mdi:pi-hole
+        show_state: false
+        secondary_info:
+            attribute: ip
+        entities:
+          - entity: sensor.pi_hole_server_last_backup
+            name: last backup
+          - entity: button.rpi_poat_hole_rpi_reboot_poat_hole_command
+            icon: mdi:restart
+            name: restart
+            tap_action:
+              action: toggle
+          - entity: button.rpi_poat_hole_rpi_shutdown_poat_hole_command
+            icon: mdi:power
+            name: shutdown
+          - entity: button.rpi_poat_hole_rpi_restart_service_poat_hole_command
+            icon: mdi:restore-alert
+            name: shutdown
+      - entity: device_tracker.poat_share
+        type: custom:multiple-entity-row
+        name: poat-share
+        icon: mdi:folder-network-outline
+        show_state: false
+        secondary_info:
+            attribute: ip
+        entities:
+          - entity: button.rpi_poat_share_rpi_reboot_poat_share_command
+            icon: mdi:restart
+            name: restart
+          - entity: button.rpi_poat_share_rpi_shutdown_poat_share_command
+            icon: mdi:power
+            name: shutdown
+          - entity: button.rpi_poat_share_rpi_restart_service_poat_share_command
+            icon: mdi:restore-alert
+            name: shutdown
+      - entity: device_tracker.pi_seedbox
+        type: custom:multiple-entity-row
+        name: poat-seedbox
+        icon: mdi:seed
+        show_state: false
+        secondary_info:
+            attribute: ip
+        entities:
+          - entity: sensor.deluge_last_backup
+            name: last backup
+          - entity: button.poat_seedbox_rpi_reboot_poat_seedbox_command
+            icon: mdi:restart
+            name: restart
+          - entity: button.poat_seedbox_rpi_shutdown_poat_seedbox_command
+            icon: mdi:power
+            name: shutdown
+          - entity: button.poat_seedbox_rpi_restart_service_poat_seedbox_command
+            icon: mdi:restore-alert
+            name: shutdown
+      - entity: device_tracker.pi_plex
+        type: custom:multiple-entity-row
+        name: poat-plex
+        icon: mdi:plex
+        show_state: false
+        secondary_info:
+            attribute: ip
+        entities:
+          - entity: sensor.plex_server_last_backup
+            name: last backup
+          - entity: button.rpi_poat_plex_rpi_reboot_poat_plex_command
+            icon: mdi:restart
+            name: restart
+          - entity: button.rpi_poat_plex_rpi_shutdown_poat_plex_command
+            icon: mdi:power
+            name: shutdown
+          - entity: button.rpi_poat_plex_rpi_restart_service_poat_plex_command
+            icon: mdi:restore-alert
+            name: shutdown
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Raspberries - Sensors
+    
+  - type: 'custom:rpi-monitor-card'
+    entity: sensor.rpi_poat_hole_rpi_monitor_poat_hole
+    card_style: full
+    name_prefix: ''
+  - type: 'custom:rpi-monitor-card'
+    entity: sensor.rpi_poat_share_rpi_monitor_poat_share
+    card_style: full
+    name_prefix: ''
+  - type: 'custom:rpi-monitor-card'
+    entity: sensor.rpi_poat_seedbox_rpi_monitor_poat_seedbox
+    card_style: full
+    name_prefix: ''
+  - type: 'custom:rpi-monitor-card'
+    entity: sensor.rpi_poat_plex_rpi_monitor_poat_plex
+    card_style: full
+    name_prefix: ''
+  

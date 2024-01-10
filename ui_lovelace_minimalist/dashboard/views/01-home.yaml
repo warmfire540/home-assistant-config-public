@@ -50,6 +50,45 @@ cards:
           ulm_address: sensor.poat_s_iphone_14_pro_max_geocoded_location
           ulm_card_person_battery: sensor.gina_s_iphone_13_mini_battery
 
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: chip_mdi_icon_state
+        variables:
+          ulm_chip_mdi_icon_state_entity: sensor.living_room_temperature
+          ulm_chip_mdi_icon_state_icon: mdi:thermometer
+        tap_action:
+          action: navigate
+          navigation_path: "/the-matrix/house"
+      - type: "custom:button-card"
+        template: chip_power_consumption
+        variables:
+          ulm_chip_electric_consumption: sensor.masters_vue_123_1min
+          ulm_chip_electric_price: false
+        tap_action:
+          action: navigate
+          navigation_path: "/energy"
+      - type: "custom:button-card"
+        template: chip_mdi_icon_state
+        styles:
+          icon:
+            - color: "var(--red-color)"
+        variables:
+          ulm_chip_mdi_icon_state_entity: sensor.devices_offline
+        tap_action:
+          action: navigate
+          navigation_path: "/the-matrix/network?anchor=disconnected"
+      - type: "custom:button-card"
+        template: chip_mdi_icon_state
+        styles:
+          icon:
+            - color: "var(--red-color)"
+        variables:
+          ulm_chip_mdi_icon_state_entity: sensor.low_batteries
+        tap_action:
+          action: navigate
+          navigation_path: "/the-matrix/network?anchor=low-battery"
+
   - type: "custom:button-card"
     template: card_title
     name: Rooms
@@ -131,7 +170,6 @@ cards:
           - card_esh_room
           - yellow_on
         name: Master Bathroom
-        entity: light.dining_room_light
         icon: mdi:shower-head
         tap_action:
           action: navigate
@@ -156,7 +194,6 @@ cards:
           - card_esh_room
           - yellow_on
         name: Guest Bathroom
-        entity: light.dining_room_light
         icon: mdi:shower
         tap_action:
           action: navigate

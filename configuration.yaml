@@ -7,26 +7,6 @@
 homeassistant:
   packages: !include_dir_named integrations # package setup/config split
 
-# Loads default set of integrations. Do not remove.
-default_config:
-
 automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
-
-ecovacs:
-  username: !secret default_email
-  password: !secret ecovacs_password
-  country: us
-  continent: na
-
-lovelace:
-  mode: storage
-  # Add yaml dashboards
-  dashboards:
-    the-matrix:
-      mode: yaml
-      title: Matrix
-      icon: mdi:home
-      show_in_sidebar: true
-      filename: ui_lovelace_minimalist/dashboard/home-dashboard.yaml

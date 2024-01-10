@@ -1,0 +1,120 @@
+title: "Lights"
+path: "lights"
+cards:
+  - type: "custom:button-card"
+    template: chip_back
+    variables:
+      ulm_chip_back_path: home
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: card_title
+        name: Lights
+
+      - type: custom:mushroom-chips-card
+        chips:
+          - type: entity
+            entity: sensor.lights_on
+            name: Lights On
+            icon_color: amber
+          - type: entity
+            entity: sensor.switches_on
+            icon_color: amber
+        alignment: center
+
+      - type: "custom:button-card"
+        template: chip_icon_label
+        label: Kill lights
+        icon: "mdi:power-plug-off"
+        tap_action:
+          action: call-service
+          service: script.turn_off_house
+        styles:
+          icon:
+            - color: >
+                [[[ if (states['sensor.lights_on'].state >= 1) 
+                      return "var(--green-color)" ;
+                    else return "var(--red-color)"; ]]]
+
+  - type: custom:auto-entities
+    card:
+      type: glance
+      title: Lights on
+    else:
+      type: markdown
+      content: >-
+        <ha-alert alert-type="info">No lights on!</ha-alert>
+    filter:
+      include:
+        - domain: switch
+          state: "on"
+          entity_id: "/^(?!.*cat)^(?!.*pet).*light/"
+          options:
+            tap_action:
+              action: toggle
+        - domain: light
+          state: "on" # Remember that "on" and "off" are magic in yaml, and must always be quoted
+          options:
+            tap_action:
+              action: toggle
+      exclude:
+        - attributes:
+            type: browser_mod
+
+  - type: custom:auto-entities
+    card:
+      type: glance
+      title: Lights off
+    else:
+      type: markdown
+      content: >-
+        <ha-alert alert-type="info">No lights off!</ha-alert>
+    filter:
+      include:
+        - domain: switch
+          state: "off"
+          entity_id: "/^(?!.*cat)^(?!.*pet).*light/"
+          options:
+            tap_action:
+              action: toggle
+        - domain: light
+          state: "off" # Remember that "on" and "off" are magic in yaml, and must always be quoted
+          options:
+            tap_action:
+              action: toggle
+      exclude:
+        - attributes:
+            type: browser_mod
+
+  - type: custom:auto-entities
+    card:
+      type: glance
+      title: Switches on
+    else:
+      type: markdown
+      content: >-
+        <ha-alert alert-type="info">No switches on!</ha-alert>
+    filter:
+      include:
+        - domain: switch
+          state: "on" # Remember that "on" and "off" are magic in yaml, and must always be quoted
+          options:
+            tap_action:
+              action: toggle
+
+  - type: custom:auto-entities
+    card:
+      type: glance
+      title: Switches off
+    else:
+      type: markdown
+      content: >-
+        <ha-alert alert-type="info">No switches off!</ha-alert>
+    filter:
+      include:
+        - domain: switch
+          state: "off" # Remember that "on" and "off" are magic in yaml, and must always be quoted
+          options:
+            tap_action:
+              action: toggle

@@ -1,0 +1,10 @@
+#####
+# Configures the ecovacs integration
+#
+#####
+
+ecovacs:
+  username: !secret default_email
+  password: !secret ecovacs_password
+  country: us
+  continent: na

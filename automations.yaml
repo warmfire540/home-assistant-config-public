@@ -1,16 +1,3 @@
-- id: '1697214175948'
-  alias: Daily backup Samba
-  description: Backs up to the samba share
-  trigger:
-  - platform: time
-    at: 03:00:00
-  condition: []
-  action:
-  - service: hassio.backup_full
-    data:
-      compressed: true
-      location: Samba_Share
-  mode: single
 - id: '1703910468139'
   alias: Dim lights when TV LED on
   description: ''
@@ -22,8 +9,25 @@
     domain: light
   condition: []
   action:
-  - type: turn_off
-    device_id: 638ff6dbd16db764b99b0b1bc72a8a31
-    entity_id: a37b21ddc27f77fa2c928543f0a7664a
+  - device_id: 638ff6dbd16db764b99b0b1bc72a8a31
     domain: light
+    entity_id: a37b21ddc27f77fa2c928543f0a7664a
+    type: brightness_decrease
+  mode: single
+- id: '1704853898234'
+  alias: Cat water fountain low
+  description: ''
+  trigger:
+  - type: value
+    platform: device
+    device_id: 249f4195abe2c4e17b946d59cda4a8c0
+    entity_id: 5309c742c4d5a7d09930feb84d4bd64b
+    domain: sensor
+    below: 30
+  condition: []
+  action:
+  - service: shopping_list.add_item
+    metadata: {}
+    data:
+      name: cat water filter
   mode: single

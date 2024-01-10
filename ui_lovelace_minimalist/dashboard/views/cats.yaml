@@ -1,0 +1,154 @@
+title: "Cats"
+path: "cats"
+cards:
+  - type: "custom:button-card"
+    template: chip_back
+    variables:
+      ulm_chip_back_path: home
+
+  - type: "custom:button-card"
+    template: card_title
+    name: Cats
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Chonk
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        name: Lags
+        entity: number.lagertha_set_weight
+        entity_picture: "[[[ return states['number.lagertha_set_weight'].attributes.entity_picture; ]]]"
+        layout: name_state
+        show_entity_picture: true
+        show_state: true
+      - type: "custom:button-card"
+        name: Ellie
+        entity: number.ellie_set_weight
+        entity_picture: "[[[ return states['number.ellie_set_weight'].attributes.entity_picture; ]]]"
+        layout: name_state
+        show_entity_picture: true
+        show_state: true
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        name: TP
+        entity: number.the_punisher_set_weight
+        entity_picture: "[[[ return states['number.the_punisher_set_weight'].attributes.entity_picture; ]]]"
+        layout: name_state
+        show_entity_picture: true
+        show_state: true
+      - type: "custom:button-card"
+        name: Marbles
+        entity: number.marbles_set_weight
+        entity_picture: "[[[ return states['number.marbles_set_weight'].attributes.entity_picture; ]]]"
+        layout: name_state
+        show_entity_picture: true
+        show_state: true
+
+  - type: horizontal-stack
+    cards:
+      - type: custom:mini-graph-card
+        name: Thiccness
+        unit: "lb"
+        hours_to_show: 730
+        show_points: false
+        icon: mdi:weight-kilogram
+        entities:
+          - number.lagertha_set_weight
+          - number.ellie_set_weight
+          - number.the_punisher_set_weight
+          - number.marbles_set_weight
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Feeders
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: chip_mdi_icon_state
+        entity: sensor.pet_thirst_filter
+        label: "[[[ return 'Filter ' + entity.state + '%'; ]]]"
+        styles:
+          icon:
+            - color: >
+                [[[ if (entity.state > 30) 
+                      return "var(--green-color)" ;
+                    else if (entity.state > 10) 
+                      return "var(--amber-color)" ;
+                    else return "var(--red-color)"; ]]]
+        variables:
+          ulm_chip_mdi_icon_state_entity: sensor.pet_thirst_filter
+          ulm_chip_mdi_icon_state_icon: mdi:thermometer
+
+  - type: horizontal-stack
+    cards:
+      - type: entities
+        title: Water Fountain
+        entities:
+          - entity: switch.pet_thirst_power
+            name: Power
+          - type: section
+            label: Sensors
+          - entity: binary_sensor.pet_thirst_water_level
+            name: Water Level
+          - entity: sensor.pet_thirst_filter
+            name: Filter %
+
+          - type: section
+            label: Configuration
+          - entity: switch.pet_thirst_light
+            name: Light
+          - entity: switch.pet_thirst_do_not_disturb
+            name: Do not disturb
+          - entity: button.pet_thirst_reset_filter
+            name: Reset Filter
+          - entity: select.pet_thirst_mode
+            name: Mode
+          - entity: select.pet_thirst_light_brightness
+            name: Light brightness
+
+          - type: section
+            label: Diagnostic
+          - entity: sensor.pet_thirst_energy_usage
+            name: Energy usage
+          - entity: sensor.pet_thirst_last_data_update
+            name: Last updated
+          - entity: sensor.pet_thirst_purified_water_today
+            name: Purified today
+
+      - type: entities
+        title: Cat Noms
+        entities:
+          - entity: select.cat_noms_manual_feed
+            name: Manual feed
+
+          - type: section
+            label: Sensors
+          - entity: sensor.cat_noms_desiccant_days_remaining
+            name: Desicant remaining
+          - entity: binary_sensor.cat_noms_food_level
+            name: Food Level
+
+          - type: section
+            label: Configuration
+          - entity: switch.cat_noms_indicator_light
+            name: Light
+          - entity: switch.cat_noms_child_lock
+            name: Child Lock
+          - entity: button.cat_noms_reset_desiccant
+            name: Reset Desiccant
+
+          - type: section
+            label: Diagnostic
+          - entity: sensor.cat_noms_battery_status
+            name: Battery
+          - entity: sensor.cat_noms_error
+            name: Error
+          - entity: sensor.cat_noms_rssi
+            name: RSII
+          - entity: sensor.cat_noms_status
+            name: Status

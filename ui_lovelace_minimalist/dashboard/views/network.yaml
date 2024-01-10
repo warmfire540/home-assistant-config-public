@@ -1,0 +1,99 @@
+title: "Net"
+path: "network"
+cards:
+  - type: "custom:button-card"
+    template: chip_back
+    variables:
+      ulm_chip_back_path: home
+
+  - type: "custom:button-card"
+    template: card_title
+    name: Net
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Status
+
+  - type: custom:auto-entities
+    card:
+      type: entities
+    filter:
+      include:
+        - entity_id: 'sensor.pi_hole_*'
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Connected Devices
+
+  - type: custom:auto-entities
+    card:
+      type: entities
+    filter:
+      include:
+        - domain: device_tracker
+          attributes:
+            source_type: router
+          options:
+            secondary: >-
+              {{ (as_timestamp(states[config.entity].last_changed) | timestamp_custom('%b %d %H:%M - ')) +
+              states(config.entity) +
+              ' ' + state_attr(config.entity, "connection_type")}}
+            state: '{{ state_attr(config.entity, "ip") }}'
+            type: "custom:template-entity-row"
+
+  - type: "custom:anchor-card"
+    anchor_id: disconnected
+    offset: -60
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Disconnected Devices
+
+  - type: custom:auto-entities
+    card:
+      type: glance
+    filter:
+      include:
+        - state: "unavailable"
+          options:
+            show_state: false
+        - state: "unknown"
+          options:
+            show_state: false
+        - state: "offline"
+          options:
+            show_state: false
+      exclude:
+        - entity_id: '*poat_rgb*'
+
+  - type: "custom:anchor-card"
+    anchor_id: low-battery
+    offset: -60
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Low Battery
+
+  - type: custom:auto-entities
+    card:
+      type: glance
+    else:
+      type: markdown
+      content: >-
+        <ha-alert alert-type="info">No battery devices are at their low battery
+        threshold!</ha-alert>
+    filter:
+      include:
+        - domain: sensor
+          entity_id: '*battery*'
+          state: "< 35"
+
+
+  # - type: custom:auto-entities
+  #   card:
+  #     type: entities
+  #     title: Phones
+  #     show_header_toggle: false
+  #   filter:
+  #     include:
+  #       - device: /iPhone/
