@@ -47,20 +47,11 @@ cards:
         <ha-alert alert-type="info">No lights on!</ha-alert>
     filter:
       include:
-        - domain: switch
+        - group: group.all_lights
           state: "on"
-          entity_id: "/^(?!.*cat)^(?!.*pet).*light/"
           options:
             tap_action:
               action: toggle
-        - domain: light
-          state: "on" # Remember that "on" and "off" are magic in yaml, and must always be quoted
-          options:
-            tap_action:
-              action: toggle
-      exclude:
-        - attributes:
-            type: browser_mod
 
   - type: custom:auto-entities
     card:
@@ -72,20 +63,11 @@ cards:
         <ha-alert alert-type="info">No lights off!</ha-alert>
     filter:
       include:
-        - domain: switch
+        - group: group.all_lights
           state: "off"
-          entity_id: "/^(?!.*cat)^(?!.*pet).*light/"
           options:
             tap_action:
               action: toggle
-        - domain: light
-          state: "off" # Remember that "on" and "off" are magic in yaml, and must always be quoted
-          options:
-            tap_action:
-              action: toggle
-      exclude:
-        - attributes:
-            type: browser_mod
 
   - type: custom:auto-entities
     card:
@@ -97,8 +79,8 @@ cards:
         <ha-alert alert-type="info">No switches on!</ha-alert>
     filter:
       include:
-        - domain: switch
-          state: "on" # Remember that "on" and "off" are magic in yaml, and must always be quoted
+        - group: group.all_light_switches
+          state: "on"
           options:
             tap_action:
               action: toggle
@@ -113,8 +95,8 @@ cards:
         <ha-alert alert-type="info">No switches off!</ha-alert>
     filter:
       include:
-        - domain: switch
-          state: "off" # Remember that "on" and "off" are magic in yaml, and must always be quoted
+        - group: group.all_light_switches
+          state: "off"
           options:
             tap_action:
               action: toggle

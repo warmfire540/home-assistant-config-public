@@ -87,3 +87,6 @@ cards:
         entities:
           - sensor.aristodemos
           - sensor.odysseus_used
+
+  - type: shopping-list
+    title: Shopping List

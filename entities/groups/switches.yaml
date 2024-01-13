@@ -1,0 +1,13 @@
+####
+# Groups related to switches
+#
+#####
+
+all_light_switches:
+  name: All Light Switches
+  entities:
+    - switch.office_switch_switch_1
+    - switch.garage_opener_socket_1
+    - switch.gina_computer_socket_1
+    - switch.living_room_switch_switch_1
+    - switch.bedroom_switch_switch_1

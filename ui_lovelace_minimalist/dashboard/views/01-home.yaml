@@ -82,12 +82,28 @@ cards:
         template: chip_mdi_icon_state
         styles:
           icon:
-            - color: "var(--red-color)"
+            - color: >
+                [[[ if (entity.state > 0) 
+                      return "var(--red-color)" ;
+                    else return "var(--green-color)"; ]]]
         variables:
           ulm_chip_mdi_icon_state_entity: sensor.low_batteries
         tap_action:
           action: navigate
           navigation_path: "/the-matrix/network?anchor=low-battery"
+      - type: "custom:button-card"
+        template: chip_mdi_icon_state
+        entity: binary_sensor.pet_thirst_water_level
+        label: "Cat H2O"
+        styles:
+          icon:
+            - color: >
+                [[[ if (entity.state == 'on') 
+                      return "var(--red-color)" ;
+                    else return "var(--green-color)"; ]]]
+        variables:
+          ulm_chip_mdi_icon_state_entity: binary_sensor.pet_thirst_water_level
+
 
   - type: "custom:button-card"
     template: card_title
@@ -212,3 +228,14 @@ cards:
       navigation_path: "kitchen"
     variables:
       ulm_custom_card_esh_room_light_entity: switch.kitchen_lights_switch_1
+    styles:
+      card:
+        - border-radius: "20px"
+        - box-shadow: "var(--box-shadow)"
+        - padding: "12px"
+        - background-color: >-
+            [[[
+              if (states['binary_sensor.pet_thirst_water_level'].state == "on") {
+                return 'rgba(var(--color-background-red), 0.2)';
+              }
+            ]]]

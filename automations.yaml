@@ -14,8 +14,55 @@
     entity_id: a37b21ddc27f77fa2c928543f0a7664a
     type: brightness_decrease
   mode: single
-- id: '1704853898234'
-  alias: Cat water fountain low
+- id: '1704999401076'
+  alias: Flash lights
+  description: ''
+  trigger: []
+  condition: []
+  action:
+  - service: scene.create
+    metadata: {}
+    data:
+      scene_id: lights_current
+      snapshot_entities:
+      - light.tv_led
+      - light.le_rgbcwbr30
+      - light.le_rgbcwbr30_2
+      - light.kitchen_bulb_3
+      - light.le_rgbcwbr30_3
+      - light.office_light
+      - light.bedroom_light
+      - light.living_room_light
+      - light.dining_room_light
+      - switch.kitchen_lights_switch_1
+      - switch.under_cabinet_lights_switch_1
+      - switch.dinette_light_switch_1
+  - repeat:
+      count: 3
+      sequence:
+      - service: script.turn_on_house
+        metadata: {}
+        data: {}
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 1
+          milliseconds: 0
+      - service: script.turn_off_house
+        metadata: {}
+        data: {}
+  - service: scene.turn_on
+    metadata: {}
+    target:
+      entity_id: scene.lights_current
+  - service: scene.delete
+    metadata: {}
+    data: {}
+    target:
+      entity_id: scene.lights_current
+  mode: single
+- id: '1705119000216'
+  alias: Cat water filter low
   description: ''
   trigger:
   - type: value
@@ -30,4 +77,30 @@
     metadata: {}
     data:
       name: cat water filter
+  - service: notify.persistent_notification
+    metadata: {}
+    data:
+      message: The cat filter is low!
+      title: Clean me..
+  mode: single
+- id: '1705119040659'
+  alias: Cat water is low
+  description: ''
+  trigger:
+  - type: problem
+    platform: device
+    device_id: 249f4195abe2c4e17b946d59cda4a8c0
+    entity_id: af9f996438fb812d4cf832219053d343
+    domain: binary_sensor
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 5
+  condition: []
+  action:
+  - service: notify.persistent_notification
+    metadata: {}
+    data:
+      message: The cat water is out!
+      title: I'm thirsty..
   mode: single

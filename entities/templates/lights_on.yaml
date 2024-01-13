@@ -7,12 +7,4 @@
   - name: Lights on
     unique_id: 9c60dbc2-3264-4513-a78b-afe268735ea8
     icon: 'mdi:lightbulb'
-    state: "{{ states 
-| selectattr('domain','in',['light', 'switch'])
-| selectattr('entity_id', 'contains', 'light')
-| rejectattr('entity_id', 'contains', 'pet')
-| rejectattr('entity_id', 'contains', 'cat')
-| selectattr('state','eq','on') 
-| map(attribute='entity_id')
-| list 
-| count }}"
+    state: "{{ expand('group.all_lights') | selectattr('state','eq','on') | list | count }}"

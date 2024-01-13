@@ -1,0 +1,19 @@
+title: "Guest Room"
+path: "guest-room"
+cards:
+  - type: "custom:button-card"
+    template: chip_back
+    variables:
+      ulm_chip_back_path: home
+
+  - type: "custom:button-card"
+    template: card_title
+    name: Guest Room
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Devices
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Sensors

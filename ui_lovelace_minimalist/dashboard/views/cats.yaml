@@ -83,11 +83,31 @@ cards:
         variables:
           ulm_chip_mdi_icon_state_entity: sensor.pet_thirst_filter
           ulm_chip_mdi_icon_state_icon: mdi:thermometer
+      - type: "custom:button-card"
+        template: chip_mdi_icon_state
+        entity: binary_sensor.pet_thirst_water_level
+        label: "Water"
+        styles:
+          icon:
+            - color: >
+                [[[ if (entity.state == 'on') 
+                      return "var(--red-color)" ;
+                    else return "var(--green-color)"; ]]]
+        variables:
+          ulm_chip_mdi_icon_state_entity: binary_sensor.pet_thirst_water_level
 
   - type: horizontal-stack
     cards:
       - type: entities
         title: Water Fountain
+        card_mod:
+          style: |
+            ha-card {
+              background: 
+                {% if states('binary_sensor.pet_thirst_water_level') == 'on' %}
+                  rgba(var(--color-background-red), 0.2)
+                {% endif %}
+            }
         entities:
           - entity: switch.pet_thirst_power
             name: Power

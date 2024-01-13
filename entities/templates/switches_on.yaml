@@ -4,7 +4,7 @@
 #####
 
 - sensor:
-  - name: Switches on
+  - name: Light Switches on
     unique_id: 1cb31e88-8b62-434d-93f1-d3235d7fab99
     icon: 'mdi:light-switch'
-    state: "{{ states.switch | selectattr('state','eq','on') | list | length }}"
+    state: "{{ expand('group.all_light_switches') | selectattr('state','eq','on') | list | count }}"
