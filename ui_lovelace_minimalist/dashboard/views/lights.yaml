@@ -56,22 +56,6 @@ cards:
   - type: custom:auto-entities
     card:
       type: glance
-      title: Lights off
-    else:
-      type: markdown
-      content: >-
-        <ha-alert alert-type="info">No lights off!</ha-alert>
-    filter:
-      include:
-        - group: group.all_lights
-          state: "off"
-          options:
-            tap_action:
-              action: toggle
-
-  - type: custom:auto-entities
-    card:
-      type: glance
       title: Switches on
     else:
       type: markdown
@@ -81,6 +65,22 @@ cards:
       include:
         - group: group.all_light_switches
           state: "on"
+          options:
+            tap_action:
+              action: toggle
+
+  - type: custom:auto-entities
+    card:
+      type: glance
+      title: Lights off
+    else:
+      type: markdown
+      content: >-
+        <ha-alert alert-type="info">No lights off!</ha-alert>
+    filter:
+      include:
+        - group: group.all_lights
+          state: "off"
           options:
             tap_action:
               action: toggle

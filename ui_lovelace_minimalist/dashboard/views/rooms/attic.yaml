@@ -1,5 +1,5 @@
-title: "Garage"
-path: "garage"
+title: "Attic"
+path: "attic"
 cards:
   - type: "custom:button-card"
     template: chip_back
@@ -8,19 +8,11 @@ cards:
 
   - type: "custom:button-card"
     template: card_title
-    name: Garage
+    name: Attic
 
   - type: "custom:button-card"
     template: card_title
     label: Devices
-
-  - type: "custom:button-card"
-    template: card_light
-    entity: switch.garage_opener_socket_1
-
-  - type: "custom:button-card"
-    template: "card_vacuum"
-    entity: vacuum.e0000693817603917196    
 
   - type: "custom:button-card"
     template: card_title
@@ -30,34 +22,23 @@ cards:
     cards:
       - type: "custom:button-card"
         template: card_graph
-        entity: sensor.clothes_washer_13_1min
+        entity: sensor.ac_heater_4_1min
         variables:
           ulm_card_graph_color: "var(--google-yellow)"
-          ulm_card_graph_entity: sensor.clothes_washer_13_1min
+          ulm_card_graph_entity: sensor.ac_heater_4_1min
           ulm_card_graph_type: fill
           ulm_card_graph_hours: 24
           ulm_card_graph_group_by: interval
           ulm_card_graph_line_width: 5
-          ulm_card_graph_name: Washer
+          ulm_card_graph_name: AC Heater
       - type: "custom:button-card"
         template: card_graph
-        entity: sensor.dryer_1_1min
+        entity: sensor.air_conditioner_2_1min
         variables:
           ulm_card_graph_color: "var(--google-yellow)"
-          ulm_card_graph_entity: sensor.dryer_1_1min
+          ulm_card_graph_entity: sensor.air_conditioner_2_1min
           ulm_card_graph_type: fill
           ulm_card_graph_hours: 24
           ulm_card_graph_group_by: interval
           ulm_card_graph_line_width: 5
-          ulm_card_graph_name: Dryer
-  - type: "custom:button-card"
-    template: card_graph
-    entity: sensor.water_heater_5_1min
-    variables:
-      ulm_card_graph_color: "var(--google-yellow)"
-      ulm_card_graph_entity: sensor.water_heater_5_1min
-      ulm_card_graph_type: fill
-      ulm_card_graph_hours: 24
-      ulm_card_graph_group_by: interval
-      ulm_card_graph_line_width: 5
-      ulm_card_graph_name: Water Heater
+          ulm_card_graph_name: Air Conditioner

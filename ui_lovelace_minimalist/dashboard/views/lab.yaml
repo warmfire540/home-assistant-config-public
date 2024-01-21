@@ -14,7 +14,7 @@ cards:
     cards:
       - type: "custom:button-card"
         template: chip_icon_label
-        label: poat-hole
+        label: pi-hole
         icon: mdi:pi-hole
         styles:
           icon:
@@ -24,7 +24,7 @@ cards:
                   else return "var(--red-color)"; ]]]
       - type: "custom:button-card"
         template: chip_icon_label
-        label: poat-share
+        label: share
         icon: mdi:folder-network-outline
         styles:
           icon:
@@ -34,7 +34,7 @@ cards:
                   else return "var(--red-color)"; ]]]
       - type: "custom:button-card"
         template: chip_icon_label
-        label: poat-seedbox
+        label: seedbox
         icon: mdi:seed
         styles:
           icon:
@@ -44,7 +44,7 @@ cards:
                   else return "var(--red-color)"; ]]]
       - type: "custom:button-card"
         template: chip_icon_label
-        label: poat-plex
+        label: plex
         icon: mdi:plex
         styles:
           icon:
@@ -68,7 +68,7 @@ cards:
             attribute: ip
         entities:
           - entity: sensor.pi_hole_server_last_backup
-            name: last backup
+            name: backup
           - entity: button.rpi_poat_hole_rpi_reboot_poat_hole_command
             icon: mdi:restart
             name: restart
@@ -96,7 +96,7 @@ cards:
             name: shutdown
           - entity: button.rpi_poat_share_rpi_restart_service_poat_share_command
             icon: mdi:restore-alert
-            name: shutdown
+            name: restore
       - entity: device_tracker.pi_seedbox
         type: custom:multiple-entity-row
         name: poat-seedbox
@@ -106,7 +106,7 @@ cards:
             attribute: ip
         entities:
           - entity: sensor.deluge_last_backup
-            name: last backup
+            name: backup
           - entity: button.poat_seedbox_rpi_reboot_poat_seedbox_command
             icon: mdi:restart
             name: restart
@@ -115,7 +115,7 @@ cards:
             name: shutdown
           - entity: button.poat_seedbox_rpi_restart_service_poat_seedbox_command
             icon: mdi:restore-alert
-            name: shutdown
+            name: restore
       - entity: device_tracker.pi_plex
         type: custom:multiple-entity-row
         name: poat-plex
@@ -125,7 +125,7 @@ cards:
             attribute: ip
         entities:
           - entity: sensor.plex_server_last_backup
-            name: last backup
+            name: backup
           - entity: button.rpi_poat_plex_rpi_reboot_poat_plex_command
             icon: mdi:restart
             name: restart
@@ -134,7 +134,53 @@ cards:
             name: shutdown
           - entity: button.rpi_poat_plex_rpi_restart_service_poat_plex_command
             icon: mdi:restore-alert
+            name: restore
+      - entity: device_tracker.homeassistant
+        type: custom:multiple-entity-row
+        name: homeassistant
+        icon: mdi:home-assistant
+        show_state: false
+        secondary_info:
+            attribute: ip
+        entities:
+          - entity: sensor.home_assistant_last_backup
+            name: backup
+          - entity: script.reboot_home_assistant
+            icon: mdi:restart
+            name: restart
+          - entity: script.shutdown_home_assistant
+            icon: mdi:power
             name: shutdown
+          - entity: script.reboot_home_assistant
+            icon: mdi:restore-alert
+            name: restore
+
+  - type: entities
+    icon: mdi:printer
+    title: Brother Printer
+    entities:
+      - entity: sensor.mfc_7860dw_status
+        type: custom:multiple-entity-row
+        name: Status
+        icon: mdi:printer-3d-nozzle
+        show_state: false
+        entities:
+          - entity: sensor.mfc_7860dw_page_counter
+            name: Page count
+          - entity: sensor.mfc_7860dw_black_toner_remaining
+            name: Toner
+      - entity: sensor.mfc_7860dw_status
+        type: custom:multiple-entity-row
+        name: Drum
+        icon: mdi:chart-donut
+        show_state: false
+        entities:
+          - entity: sensor.mfc_7860dw_drum_remaining_lifetime
+            name: Life
+          - entity: sensor.mfc_7860dw_drum_remaining_pages
+            name: Remaining
+          - entity: sensor.mfc_7860dw_drum_page_counter
+            name: Page count
 
   - type: "custom:button-card"
     template: card_title

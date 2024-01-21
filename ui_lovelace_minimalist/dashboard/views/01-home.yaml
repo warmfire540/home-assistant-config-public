@@ -63,7 +63,7 @@ cards:
       - type: "custom:button-card"
         template: chip_power_consumption
         variables:
-          ulm_chip_electric_consumption: sensor.masters_vue_123_1min
+          ulm_chip_electric_consumption: sensor.power_in_kw
           ulm_chip_electric_price: false
         tap_action:
           action: navigate
@@ -92,9 +92,9 @@ cards:
           action: navigate
           navigation_path: "/the-matrix/network?anchor=low-battery"
       - type: "custom:button-card"
-        template: chip_mdi_icon_state
+        template: chip_mdi_icon_only
         entity: binary_sensor.pet_thirst_water_level
-        label: "Cat H2O"
+        icon: mdi:cat
         styles:
           icon:
             - color: >
@@ -103,7 +103,9 @@ cards:
                     else return "var(--green-color)"; ]]]
         variables:
           ulm_chip_mdi_icon_state_entity: binary_sensor.pet_thirst_water_level
-
+        tap_action:
+          action: navigate
+          navigation_path: "/the-matrix/cats?anchor=status"
 
   - type: "custom:button-card"
     template: card_title
@@ -157,15 +159,25 @@ cards:
         template:
           - card_esh_room
           - yellow_on
-        name: Garage
-        entity: switch.garage_opener_socket_1
-        icon: mdi:garage
+        name: Kitchen
+        entity: switch.kitchen_lights_switch_1
+        icon: mdi:countertop-outline
         tap_action:
           action: navigate
-          navigation_path: "garage"
+          navigation_path: "kitchen"
         variables:
-          ulm_custom_card_esh_room_light_entity: switch.garage_opener_socket_1
-        label: '[[[ return states["switch.garage_opener_socket_1"].state == "on" ? "On" : "Off" ]]]'
+          ulm_custom_card_esh_room_light_entity: switch.kitchen_lights_switch_1
+        styles:
+          card:
+            - border-radius: "20px"
+            - box-shadow: "var(--box-shadow)"
+            - padding: "12px"
+            - background-color: >-
+                [[[
+                  if (states['binary_sensor.pet_thirst_water_level'].state == "on") {
+                    return 'rgba(var(--color-background-red),var(--opacity-bg))';
+                  }
+                ]]]
 
   - type: horizontal-stack
     cards:
@@ -216,26 +228,28 @@ cards:
           navigation_path: "guest-bathroom"
         label: '[[[ return states["sensor.guest_bedroom_16_1min"].state + "W" ]]]'
 
-  - type: "custom:button-card"
-    template:
-      - card_esh_room
-      - yellow_on
-    name: Kitchen
-    entity: switch.kitchen_lights_switch_1
-    icon: mdi:countertop-outline
-    tap_action:
-      action: navigate
-      navigation_path: "kitchen"
-    variables:
-      ulm_custom_card_esh_room_light_entity: switch.kitchen_lights_switch_1
-    styles:
-      card:
-        - border-radius: "20px"
-        - box-shadow: "var(--box-shadow)"
-        - padding: "12px"
-        - background-color: >-
-            [[[
-              if (states['binary_sensor.pet_thirst_water_level'].state == "on") {
-                return 'rgba(var(--color-background-red), 0.2)';
-              }
-            ]]]
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template:
+          - card_esh_room
+          - yellow_on
+        name: Garage
+        entity: switch.garage_opener_socket_1
+        icon: mdi:garage
+        tap_action:
+          action: navigate
+          navigation_path: "garage"
+        variables:
+          ulm_custom_card_esh_room_light_entity: switch.garage_opener_socket_1
+        label: '[[[ return states["switch.garage_opener_socket_1"].state == "on" ? "On" : "Off" ]]]'
+
+      - type: "custom:button-card"
+        template:
+          - card_esh_room
+          - yellow_on
+        name: Attic
+        icon: mdi:home-roof
+        tap_action:
+          action: navigate
+          navigation_path: "attic"

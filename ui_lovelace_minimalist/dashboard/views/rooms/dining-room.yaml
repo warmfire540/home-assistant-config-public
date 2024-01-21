@@ -15,5 +15,25 @@ cards:
     label: Devices
 
   - type: "custom:button-card"
+    template: card_cover
+    entity: cover.dining_room_blinds
+    variables:
+      ulm_card_cover_enable_controls: true
+      ulm_card_cover_enable_slider: true
+      ulm_card_cover_color: yellow
+
+  - type: "custom:button-card"
     template: card_title
     label: Sensors
+
+  - type: "custom:button-card"
+    template: card_graph
+    entity: sensor.dining_micro_12_1min
+    variables:
+      ulm_card_graph_color: "var(--google-yellow)"
+      ulm_card_graph_entity: sensor.dining_micro_12_1min
+      ulm_card_graph_type: fill
+      ulm_card_graph_hours: 24
+      ulm_card_graph_group_by: interval
+      ulm_card_graph_line_width: 5
+      ulm_card_graph_name: Washer

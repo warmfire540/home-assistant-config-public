@@ -66,6 +66,10 @@ cards:
     template: card_title
     label: Feeders
 
+  - type: "custom:anchor-card"
+    anchor_id: status
+    offset: -60
+
   - type: horizontal-stack
     cards:
       - type: "custom:button-card"
@@ -95,6 +99,18 @@ cards:
                     else return "var(--green-color)"; ]]]
         variables:
           ulm_chip_mdi_icon_state_entity: binary_sensor.pet_thirst_water_level
+      - type: "custom:button-card"
+        template: chip_mdi_icon_state
+        entity: sensor.cat_noms_battery_status
+        label: "Battery"
+        styles:
+          icon:
+            - color: >
+                [[[ if (entity.state == 'unavailable') 
+                      return "var(--red-color)" ;
+                    else return "var(--green-color)"; ]]]
+        variables:
+          ulm_chip_mdi_icon_state_entity: sensor.cat_noms_battery_status
 
   - type: horizontal-stack
     cards:
@@ -105,7 +121,7 @@ cards:
             ha-card {
               background: 
                 {% if states('binary_sensor.pet_thirst_water_level') == 'on' %}
-                  rgba(var(--color-background-red), 0.2)
+                  rgba(var(--color-background-red),var(--opacity-bg))
                 {% endif %}
             }
         entities:
@@ -142,6 +158,14 @@ cards:
 
       - type: entities
         title: Cat Noms
+        card_mod:
+          style: |
+            ha-card {
+              background: 
+                {% if states('sensor.cat_noms_battery_status') == 'unavailable' %}
+                  rgba(var(--color-background-red),var(--opacity-bg))
+                {% endif %}
+            }
         entities:
           - entity: select.cat_noms_manual_feed
             name: Manual feed

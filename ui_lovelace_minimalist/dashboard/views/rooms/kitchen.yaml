@@ -14,6 +14,113 @@ cards:
     template: card_title
     label: Devices
 
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: card_light
+        entity: switch.kitchen_lights_switch_1
+      - type: "custom:button-card"
+        template: card_light
+        entity: switch.kitchen_lights_2_switch_1
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: card_light
+        entity: switch.under_cabinet_lights_switch_1
+      - type: "custom:button-card"
+        template: card_light
+        entity: switch.dinette_light_switch_1
+
+  - type: "custom:button-card"
+    template: card_light
+    entity: light.le_rgbcwbr30_2
+    variables:
+      ulm_card_light_enable_slider: true
+      ulm_card_light_enable_collapse: true
+      ulm_card_light_enable_color: true
+      ulm_card_light_enable_horizontal: true
+  - type: "custom:button-card"
+    template: card_light
+    entity: light.le_rgbcwbr30_3
+    variables:
+      ulm_card_light_enable_slider: true
+      ulm_card_light_enable_collapse: true
+      ulm_card_light_enable_color: true
+      ulm_card_light_enable_horizontal: true
+  - type: "custom:button-card"
+    template: card_light
+    entity: light.kitchen_bulb_3
+    variables:
+      ulm_card_light_enable_slider: true
+      ulm_card_light_enable_collapse: true
+      ulm_card_light_enable_color: true
+      ulm_card_light_enable_horizontal: true
+  - type: "custom:button-card"
+    template: card_light
+    entity: light.le_rgbcwbr30
+    variables:
+      ulm_card_light_enable_slider: true
+      ulm_card_light_enable_collapse: true
+      ulm_card_light_enable_color: true
+      ulm_card_light_enable_horizontal: true
+
+  - type: "custom:button-card"
+    template: card_cover
+    entity: cover.kitchen_blinds
+    variables:
+      ulm_card_cover_enable_controls: true
+      ulm_card_cover_enable_slider: true
+      ulm_card_cover_color: yellow
+
   - type: "custom:button-card"
     template: card_title
     label: Sensors
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: card_graph
+        entity: sensor.kitchen_outlets_1_9_1min
+        variables:
+          ulm_card_graph_color: "var(--google-yellow)"
+          ulm_card_graph_entity: sensor.kitchen_outlets_1_9_1min
+          ulm_card_graph_type: fill
+          ulm_card_graph_hours: 24
+          ulm_card_graph_group_by: interval
+          ulm_card_graph_line_width: 5
+          ulm_card_graph_name: Outlets 1
+      - type: "custom:button-card"
+        template: card_graph
+        entity: sensor.kitchen_outlets_2_fridge_11_1min
+        variables:
+          ulm_card_graph_color: "var(--google-yellow)"
+          ulm_card_graph_entity: sensor.kitchen_outlets_2_fridge_11_1min
+          ulm_card_graph_type: fill
+          ulm_card_graph_hours: 24
+          ulm_card_graph_group_by: interval
+          ulm_card_graph_line_width: 5
+          ulm_card_graph_name: Outlets 2
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: card_graph
+        entity: sensor.kitchen_outlets_3_10_1min
+        variables:
+          ulm_card_graph_color: "var(--google-yellow)"
+          ulm_card_graph_entity: sensor.kitchen_outlets_3_10_1min
+          ulm_card_graph_type: fill
+          ulm_card_graph_hours: 24
+          ulm_card_graph_group_by: interval
+          ulm_card_graph_line_width: 5
+          ulm_card_graph_name: Outlets 3
+      - type: "custom:button-card"
+        template: card_graph
+        entity: sensor.range_6_1min
+        variables:
+          ulm_card_graph_color: "var(--google-yellow)"
+          ulm_card_graph_entity: sensor.range_6_1min
+          ulm_card_graph_type: fill
+          ulm_card_graph_hours: 24
+          ulm_card_graph_group_by: interval
+          ulm_card_graph_line_width: 5
+          ulm_card_graph_name: Range

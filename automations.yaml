@@ -104,3 +104,23 @@
       message: The cat water is out!
       title: I'm thirsty..
   mode: single
+- id: '1705556236317'
+  alias: Turn off TV LED
+  description: ''
+  trigger:
+  - platform: device
+    type: changed_states
+    device_id: 432719e49be7a5bcaa5b8c31996f40ea
+    entity_id: 72204f9fff5ba7b0863083ab68b162d4
+    domain: media_player
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 10
+  condition: []
+  action:
+  - type: turn_off
+    device_id: d15b188afbaf9ee89d930c8562b90e43
+    entity_id: 2b8e3356b2c40c937a32e0591a002acc
+    domain: light
+  mode: single

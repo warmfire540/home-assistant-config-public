@@ -50,6 +50,25 @@ cards:
       - type: "custom:button-card"
         template: card_light
         entity: switch.living_room_switch_switch_1
+
+  - type: "custom:button-card"
+    template: card_cover
+    entity: cover.living_room_blinds
+    variables:
+      ulm_card_cover_enable_controls: true
+      ulm_card_cover_enable_slider: true
+      ulm_card_cover_color: yellow
+
+  - type: "custom:button-card"
+    template: card_thermostat
+    entity: climate.living_room
+    variables:
+      ulm_card_thermostat_enable_collapse: true
+      ulm_card_thermostat_enable_controls: true
+      ulm_card_thermostat_enable_hvac_modes: true
+      ulm_card_thermostat_enable_popup: true
+      ulm_card_thermostat_enable_background_color: true
+  
   - type: "custom:button-card"
     template: card_light
     entity: light.tv_led
@@ -59,6 +78,73 @@ cards:
       ulm_card_light_force_background_color: true
       ulm_card_light_enable_collapse: true
 
+  - type: media-control
+    entity: media_player.fire_tv_192_168_68_107
+
+  - type: custom:xiaomi-vacuum-map-card
+    entity: vacuum.rolo
+    map_source:
+      camera: camera.rolo_cleaning_map
+    calibration_source:
+      platform: Neato
+    vacuum_platform: Neato
+    map_locked: true
+    append_tiles: true
+    append_icons: true
+    tiles:
+      - tile_id: state
+        entity: vacuum.rolo
+        label: State
+        icon: mdi:map-marker
+      - tile_id: schedule
+        entity: switch.rolo_schedule
+        label: Schedule
+        icon: mdi:book-variant
+    icons:
+      - icon_id: dismiss-alert
+        entity: button.rolo_dismiss_alert
+        icon: mdi:button-pointer
+        tooltip: Dismiss alert
+      - icon_id: dismiss-alert
+        entity: switch.rolo_schedule
+        icon: mdi:book-variant
+        tooltip: Rolo schedule
+
   - type: "custom:button-card"
     template: card_title
     label: Sensors
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: card_graph
+        entity: sensor.living_room_up
+        variables:
+          ulm_card_graph_color: "var(--google-green)"
+          ulm_card_graph_entity: sensor.living_room_up
+          ulm_card_graph_type: fill
+          ulm_card_graph_hours: 24
+          ulm_card_graph_group_by: interval
+          ulm_card_graph_line_width: 5
+      - type: "custom:button-card"
+        template: card_graph
+        entity: sensor.living_room_down
+        variables:
+          ulm_card_graph_color: "var(--google-green)"
+          ulm_card_graph_entity: sensor.living_room_down
+          ulm_card_graph_type: fill
+          ulm_card_graph_hours: 24
+          ulm_card_graph_group_by: interval
+          ulm_card_graph_line_width: 5
+
+  - type: "custom:button-card"
+    template: card_graph
+    entity: sensor.living_room_15_1min
+    variables:
+      ulm_card_graph_color: "var(--google-yellow)"
+      ulm_card_graph_entity: sensor.living_room_15_1min
+      ulm_card_graph_type: fill
+      ulm_card_graph_hours: 24
+      ulm_card_graph_group_by: interval
+      ulm_card_graph_line_width: 5
+      ulm_card_graph_name: Electricity 1 min

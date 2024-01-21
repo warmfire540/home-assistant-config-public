@@ -14,6 +14,64 @@ cards:
     template: card_title
     label: Devices
 
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: card_light
+        entity: light.office_light
+        variables:
+          ulm_card_light_enable_slider: true
+          ulm_card_light_enable_collapse: true
+      - type: "custom:button-card"
+        template: card_light
+        entity: switch.office_switch_switch_1
+
+  - type: "custom:button-card"
+    template: card_cover
+    entity: cover.office_blinds
+    variables:
+      ulm_card_cover_enable_controls: true
+      ulm_card_cover_enable_slider: true
+      ulm_card_cover_color: yellow
+
+  - type: media-control
+    entity: media_player.fire_tv_192_168_68_115
+
   - type: "custom:button-card"
     template: card_title
     label: Sensors
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: card_graph
+        entity: sensor.office_up
+        variables:
+          ulm_card_graph_color: "var(--google-green)"
+          ulm_card_graph_entity: sensor.office_up
+          ulm_card_graph_type: fill
+          ulm_card_graph_hours: 24
+          ulm_card_graph_group_by: interval
+          ulm_card_graph_line_width: 5
+      - type: "custom:button-card"
+        template: card_graph
+        entity: sensor.office_down
+        variables:
+          ulm_card_graph_color: "var(--google-green)"
+          ulm_card_graph_entity: sensor.office_down
+          ulm_card_graph_type: fill
+          ulm_card_graph_hours: 24
+          ulm_card_graph_group_by: interval
+          ulm_card_graph_line_width: 5
+
+  - type: "custom:button-card"
+    template: card_graph
+    entity: sensor.office_g_bath_garage_3_1min
+    variables:
+      ulm_card_graph_color: "var(--google-yellow)"
+      ulm_card_graph_entity: sensor.office_g_bath_garage_3_1min
+      ulm_card_graph_type: fill
+      ulm_card_graph_hours: 24
+      ulm_card_graph_group_by: interval
+      ulm_card_graph_line_width: 5
+      ulm_card_graph_name: Electricity 1 min
