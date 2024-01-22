@@ -87,13 +87,13 @@ cards:
                       return "var(--red-color)" ;
                     else return "var(--green-color)"; ]]]
         variables:
-          ulm_chip_mdi_icon_state_entity: sensor.low_batteries
+          ulm_chip_mdi_icon_state_entity: sensor.devices_with_low_battery
         tap_action:
           action: navigate
           navigation_path: "/the-matrix/network?anchor=low-battery"
       - type: "custom:button-card"
         template: chip_mdi_icon_only
-        entity: binary_sensor.pet_thirst_water_level
+        entity: group.cat_device_status
         icon: mdi:cat
         styles:
           icon:
@@ -102,11 +102,10 @@ cards:
                       return "var(--red-color)" ;
                     else return "var(--green-color)"; ]]]
         variables:
-          ulm_chip_mdi_icon_state_entity: binary_sensor.pet_thirst_water_level
+          ulm_chip_mdi_icon_state_entity: binary_sensor.cat_device_problem
         tap_action:
           action: navigate
           navigation_path: "/the-matrix/cats?anchor=status"
-
   - type: "custom:button-card"
     template: card_title
     name: Rooms

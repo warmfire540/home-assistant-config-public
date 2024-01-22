@@ -1,9 +1,0 @@
-#####
-# Counter that tracks total number of lines in YAML
-#
-#####
-
-- sensor:
-    name: "YAML LoC"
-    unique_id: f5717183-2f92-4a3b-b81d-244e1cc4e095
-    command: " find /config/ -name '*.yaml' | xargs cat | wc -l"

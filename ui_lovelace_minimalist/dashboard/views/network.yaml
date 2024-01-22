@@ -39,8 +39,9 @@ cards:
     filter:
       include:
         - domain: sensor
-          entity_id: "*battery*"
-          state: "< 35"
+          attributes:
+            device_class: battery
+          state: "< 20"
 
   - type: "custom:button-card"
     template: card_title

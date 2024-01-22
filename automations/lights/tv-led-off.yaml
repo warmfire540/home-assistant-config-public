@@ -1,0 +1,18 @@
+#####
+# TV turns off TV led
+#####
+
+alias: Turn off TV LED when TV turned off
+id: 16f855bf-9b9b-4028-93b8-17fd0c3dd6a2
+
+trigger:
+- platform: state
+  entity_id: media_player.fire_tv_192_168_68_107
+  to: "off"
+
+condition: []
+
+action:
+- service: light.turn_off
+  target:
+    entity_id: light.tv_led

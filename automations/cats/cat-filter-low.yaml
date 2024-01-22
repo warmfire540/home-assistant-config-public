@@ -1,0 +1,24 @@
+#####
+# Adds item to list and sends notification when low
+#####
+
+alias: Cat water filter low
+id: 2190bbfc-f496-4719-839a-c90fcd995fba
+
+trigger:
+- platform: numeric_state
+  entity_id: sensor.pet_thirst_filter
+  below: 30
+
+condition: []
+
+action:
+  - service: shopping_list.add_item
+    metadata: {}
+    data:
+      name: cat water filter
+  - service: notify.persistent_notification
+    metadata: {}
+    data:
+      message: The cat filter is low!
+      title: Clean me..

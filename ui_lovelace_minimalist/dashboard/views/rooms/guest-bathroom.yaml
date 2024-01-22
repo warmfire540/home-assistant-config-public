@@ -20,10 +20,10 @@ cards:
 
   - type: "custom:button-card"
     template: card_graph
-    entity: sensor.guest_bedroom_16_1min
+    entity: sensor.office_g_bath_garage_3_1min
     variables:
       ulm_card_graph_color: "var(--google-yellow)"
-      ulm_card_graph_entity: sensor.guest_bedroom_16_1min
+      ulm_card_graph_entity: sensor.office_g_bath_garage_3_1min
       ulm_card_graph_type: fill
       ulm_card_graph_hours: 24
       ulm_card_graph_group_by: interval

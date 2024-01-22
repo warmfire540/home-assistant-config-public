@@ -15,6 +15,10 @@ cards:
     label: Devices
 
   - type: "custom:button-card"
+    template: card_light
+    entity: light.dining_room_light
+
+  - type: "custom:button-card"
     template: card_cover
     entity: cover.dining_room_blinds
     variables:
@@ -36,4 +40,4 @@ cards:
       ulm_card_graph_hours: 24
       ulm_card_graph_group_by: interval
       ulm_card_graph_line_width: 5
-      ulm_card_graph_name: Washer
+      ulm_card_graph_name: Dining Micro

@@ -33,7 +33,7 @@ cards:
 
   - type: "custom:button-card"
     template: card_light
-    entity: light.le_rgbcwbr30_2
+    entity: light.kitchen_bulb_1
     variables:
       ulm_card_light_enable_slider: true
       ulm_card_light_enable_collapse: true

@@ -1,0 +1,18 @@
+#####
+# Xbox turns off the TV
+#####
+
+alias: Turn off TV when Xbox turned off
+id: b1dc2646-c98f-4a43-a0d4-53851df32d93
+
+trigger:
+- platform: state
+  entity_id: media_player.xbox_x
+  to: "off"
+
+condition: []
+
+action:
+- service: media_player.turn_off
+  target:
+    entity_id: media_player.fire_tv_192_168_68_115
