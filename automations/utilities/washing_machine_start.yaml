@@ -1,0 +1,22 @@
+#####
+# Notify when Dryer start
+#####
+
+alias: Dryer start
+id: 00375bc8-c223-4914-a3d1-981a92fb915c
+
+trigger:
+  platform: numeric_state
+  entity_id: sensor.clothes_washer_13_1min
+  above: 5
+  for: '00:00:10'
+
+condition:
+  condition: state
+  entity_id: input_boolean.washing_machine_on
+  state: 'off'
+
+action:
+- service: input_boolean.turn_on
+  data: {}
+  entity_id: input_boolean.washing_machine_on

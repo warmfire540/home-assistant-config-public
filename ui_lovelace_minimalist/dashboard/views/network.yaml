@@ -62,9 +62,6 @@ cards:
         - state: "unknown"
           options:
             show_state: false
-        - state: "offline"
-          options:
-            show_state: false
       exclude:
         - entity_id: "*poat_rgb*"
         - entity_id: "*poat_plex*"

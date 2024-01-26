@@ -1,0 +1,9 @@
+#####
+# Washing Machine is turned on
+# changed to ON after 3 minutes of activity
+# changed to off after automation triggers
+#####
+
+washing_machine_on:
+  name: Washing Machine
+  icon: mdi:washing-machine

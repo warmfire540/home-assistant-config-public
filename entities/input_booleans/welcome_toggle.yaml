@@ -1,0 +1,6 @@
+#####
+# Toggle for main lovelace dashboard
+#####
+
+welcome_toggle:
+  name: Welcome Toggle

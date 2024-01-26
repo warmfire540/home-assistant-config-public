@@ -9,7 +9,6 @@
     icon: 'mdi:cloud-off-outline'
     state: "{{ states
 | selectattr('domain','in',['binary_sensor','light','sensor','switch','media_player'])
-| selectattr('state','in', ['unknown', 'unavailable', 'offline'])
-| map(attribute='entity_id')
+| selectattr('state','in', ['unknown', 'unavailable'])
 | list
 | count }}"

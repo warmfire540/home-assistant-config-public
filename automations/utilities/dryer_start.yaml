@@ -1,0 +1,22 @@
+#####
+# Notify when Dryer start
+#####
+
+alias: Dryer start
+id: 88a93488-d1fb-476c-98e6-ab2063cf087e
+
+trigger:
+  platform: numeric_state
+  entity_id: sensor.dryer_1_1min
+  above: 5
+  for: '00:00:10'
+
+condition:
+  condition: state
+  entity_id: input_boolean.dryer_on
+  state: 'off'
+
+action:
+- service: input_boolean.turn_on
+  data: {}
+  entity_id: input_boolean.dryer_on
