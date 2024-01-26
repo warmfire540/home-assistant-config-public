@@ -10,8 +10,6 @@ trigger:
   entity_id: sensor.pet_thirst_filter
   below: 30
 
-condition: []
-
 action:
   - service: shopping_list.add_item
     metadata: {}

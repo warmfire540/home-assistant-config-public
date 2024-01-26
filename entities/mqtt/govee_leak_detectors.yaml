@@ -1,0 +1,31 @@
+####
+# Leak sensors picked up using Sonoff RF bridge
+#
+#####
+
+binary_sensor:
+  - name: "Water Heater leak sensor"
+    unique_id: ee0e98ef-a3d3-4d1c-97ea-090b395a4834
+    state_topic: "home/nodes/sensor/water-heater-leak/status"
+    device_class: moisture
+
+sensor:
+  - name: "Water Heater leak sensor battery"
+    unique_id: 8bbf600e-9f31-4fb5-babb-f541631bfde7
+    state_topic: "home/nodes/sensor/water-heater-leak/battery"
+    device_class: battery
+
+  - name: "Water Heater leak sensor last reset"
+    unique_id: 68fb139a-e391-40f1-b2d8-839d274bdbce
+    state_topic: "home/nodes/sensor/water-heater-leak/status/last-reset"
+    device_class: timestamp
+
+  - name: "Water Heater leak sensor last leak"
+    unique_id: 988750a7-9b7d-4edb-9ac4-1507e9370981
+    state_topic: "home/nodes/sensor/water-heater-leak/status/last-leak"
+    device_class: timestamp
+
+  - name: "Water Heater leak sensor last battery update"
+    unique_id: 717e9f65-61d0-407a-bff2-975e3f184844
+    state_topic: "home/nodes/sensor/water-heater-leak/battery/last-update"
+    device_class: timestamp

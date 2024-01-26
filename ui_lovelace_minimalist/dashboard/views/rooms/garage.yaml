@@ -18,9 +18,24 @@ cards:
     template: card_light
     entity: switch.garage_opener_socket_1
 
-  - type: "custom:button-card"
-    template: "card_vacuum"
-    entity: vacuum.e0000693817603917196    
+  - type: 'custom:vacuum-card'
+    entity: vacuum.e0000693817603917196
+    image: default
+    compact_view: false
+    show_name: true
+    show_toolbar: true
+    show_status: true
+    stats:
+      default:
+        - entity_id: sensor.strongboi_filter
+          unit: '%'
+          subtitle: Filter
+        - entity_id: sensor.strongboi_main_brush
+          unit: '%'
+          subtitle: Main Brush
+        - entity_id: sensor.strongboi_side_brush
+          unit: '%'
+          subtitle: Side Brush
 
   - type: "custom:button-card"
     template: card_title

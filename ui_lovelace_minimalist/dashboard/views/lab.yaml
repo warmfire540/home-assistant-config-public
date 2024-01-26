@@ -52,6 +52,17 @@ cards:
                 [[[ if (states["binary_sensor.poat_plex_local"].state == "on")
                   return "var(--green-color)" ;
                   else return "var(--red-color)"; ]]]
+      - type: "custom:button-card"
+        template: chip_mdi_icon_only
+        variables:
+          ulm_chip_mdi_icon_only_entity: sensor.mfc_7860dw_status
+          ulm_chip_mdi_icon_only_icon: mdi:printer
+        styles:
+          icon:
+            - color: >
+                [[[ if (states["sensor.mfc_7860dw_status"].state == "unavailable")
+                  return "var(--red-color)" ;
+                  else return "var(--green-color)"; ]]]
 
   - type: "custom:button-card"
     template: card_title
@@ -154,33 +165,44 @@ cards:
           - entity: script.reboot_home_assistant
             icon: mdi:restore-alert
             name: restore
-
-  - type: entities
-    icon: mdi:printer
-    title: Brother Printer
-    entities:
-      - entity: sensor.mfc_7860dw_status
-        type: custom:multiple-entity-row
-        name: Status
-        icon: mdi:printer-3d-nozzle
-        show_state: false
+  
+  - type: custom:state-switch
+    entity: sensor.mfc_7860dw_status
+    default: "available"
+    states:
+      "unavailable":
+        type: markdown
+        icon: mdi:printer-off
+        title: Brother Printer
+        content: >
+          <ha-alert alert-type="info">The printer is offline.</ha-alert>
+      "available":
+        type: entities
+        icon: mdi:printer
+        title: Brother Printer
         entities:
-          - entity: sensor.mfc_7860dw_page_counter
-            name: Page count
-          - entity: sensor.mfc_7860dw_black_toner_remaining
-            name: Toner
-      - entity: sensor.mfc_7860dw_status
-        type: custom:multiple-entity-row
-        name: Drum
-        icon: mdi:chart-donut
-        show_state: false
-        entities:
-          - entity: sensor.mfc_7860dw_drum_remaining_lifetime
-            name: Life
-          - entity: sensor.mfc_7860dw_drum_remaining_pages
-            name: Remaining
-          - entity: sensor.mfc_7860dw_drum_page_counter
-            name: Page count
+          - entity: sensor.mfc_7860dw_status
+            type: custom:multiple-entity-row
+            name: Status
+            icon: mdi:printer-3d-nozzle
+            show_state: false
+            entities:
+              - entity: sensor.mfc_7860dw_page_counter
+                name: Page count
+              - entity: sensor.mfc_7860dw_black_toner_remaining
+                name: Toner
+          - entity: sensor.mfc_7860dw_status
+            type: custom:multiple-entity-row
+            name: Drum
+            icon: mdi:chart-donut
+            show_state: false
+            entities:
+              - entity: sensor.mfc_7860dw_drum_remaining_lifetime
+                name: Life
+              - entity: sensor.mfc_7860dw_drum_remaining_pages
+                name: Remaining
+              - entity: sensor.mfc_7860dw_drum_page_counter
+                name: Page count
 
   - type: "custom:button-card"
     template: card_title

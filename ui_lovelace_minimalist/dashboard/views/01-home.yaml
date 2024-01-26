@@ -80,6 +80,7 @@ cards:
           navigation_path: "/the-matrix/network?anchor=disconnected"
       - type: "custom:button-card"
         template: chip_mdi_icon_state
+        entity: sensor.devices_with_low_battery
         styles:
           icon:
             - color: >
@@ -92,17 +93,17 @@ cards:
           action: navigate
           navigation_path: "/the-matrix/network?anchor=low-battery"
       - type: "custom:button-card"
-        template: chip_mdi_icon_only
-        entity: group.cat_device_status
+        template: chip_mdi_icon_state
         icon: mdi:cat
+        label: "[[[ return entity.state; ]]]"
         styles:
           icon:
             - color: >
-                [[[ if (entity.state == 'on') 
+                [[[ if (entity.state > 0) 
                       return "var(--red-color)" ;
                     else return "var(--green-color)"; ]]]
         variables:
-          ulm_chip_mdi_icon_state_entity: binary_sensor.cat_device_problem
+          ulm_chip_mdi_icon_state_entity: sensor.cat_device_failure_count
         tap_action:
           action: navigate
           navigation_path: "/the-matrix/cats?anchor=status"

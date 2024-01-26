@@ -10,8 +10,6 @@ trigger:
   entity_id: media_player.fire_tv_192_168_68_107
   to: "off"
 
-condition: []
-
 action:
 - service: light.turn_off
   target:

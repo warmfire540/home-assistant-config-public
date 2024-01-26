@@ -54,13 +54,18 @@ cards:
         name: Thiccness
         unit: "lb"
         hours_to_show: 730
+        points_per_hour: 0.05
         show_points: false
         icon: mdi:weight-kilogram
         entities:
-          - number.lagertha_set_weight
-          - number.ellie_set_weight
-          - number.the_punisher_set_weight
-          - number.marbles_set_weight
+          - entity: number.lagertha_set_weight
+            name: Lags
+          - entity: number.ellie_set_weight
+            name: Ellie
+          - entity: number.the_punisher_set_weight
+            name: TP
+          - entity: number.marbles_set_weight
+            name: Marbles
 
   - type: "custom:button-card"
     template: card_title
@@ -89,7 +94,6 @@ cards:
           ulm_chip_mdi_icon_state_icon: mdi:thermometer
       - type: "custom:button-card"
         template: chip_mdi_icon_state
-        entity: binary_sensor.cat_water_problem
         label: "Water"
         styles:
           icon:
@@ -98,7 +102,7 @@ cards:
                       return "var(--red-color)" ;
                     else return "var(--green-color)"; ]]]
         variables:
-          ulm_chip_mdi_icon_state_entity: binary_sensor.cat_water_problem
+          ulm_chip_mdi_icon_state_entity: binary_sensor.pet_thirst_water_level
       - type: "custom:button-card"
         template: chip_mdi_icon_state
         entity: binary_sensor.cat_battery_problem

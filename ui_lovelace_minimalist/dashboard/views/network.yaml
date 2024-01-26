@@ -43,6 +43,37 @@ cards:
             device_class: battery
           state: "< 20"
 
+  - type: "custom:anchor-card"
+    anchor_id: disconnected
+    offset: -60
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Disconnected Devices
+
+  - type: custom:auto-entities
+    card:
+      type: glance
+    filter:
+      include:
+        - state: "unavailable"
+          options:
+            show_state: false
+        - state: "unknown"
+          options:
+            show_state: false
+        - state: "offline"
+          options:
+            show_state: false
+      exclude:
+        - entity_id: "*poat_rgb*"
+        - entity_id: "*poat_plex*"
+        - entity_id: "*mfc_7860*"
+        - domain: button
+        - domain: tts
+        - domain: stt
+        - name: "Kitchen Bulb*"
+
   - type: "custom:button-card"
     template: card_title
     label: Pi Hole Overview
@@ -73,31 +104,3 @@ cards:
               ' ' + state_attr(config.entity, "connection_type")}}
             state: '{{ state_attr(config.entity, "ip") }}'
             type: "custom:template-entity-row"
-
-  - type: "custom:anchor-card"
-    anchor_id: disconnected
-    offset: -60
-
-  - type: "custom:button-card"
-    template: card_title
-    label: Disconnected Devices
-
-  - type: custom:auto-entities
-    card:
-      type: glance
-    filter:
-      include:
-        - state: "unavailable"
-          options:
-            show_state: false
-        - state: "unknown"
-          options:
-            show_state: false
-        - state: "offline"
-          options:
-            show_state: false
-      exclude:
-        - entity_id: "*poat_rgb*"
-        - domain: button
-        - domain: tts
-        - domain: stt
