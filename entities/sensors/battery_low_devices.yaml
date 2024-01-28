@@ -11,9 +11,8 @@ sensors:
     value_template: >-
       {{ states.sensor
         | selectattr('attributes.device_class', 'eq', 'battery')
-        | rejectattr('state', 'eq', '100')
-        | selectattr('state', '<', '20') 
-        | map(attribute='entity_id') 
+        | rejectattr('state', 'contains', '100')
+        | selectattr('state', '<', '20')
         | list
         | count
       }}

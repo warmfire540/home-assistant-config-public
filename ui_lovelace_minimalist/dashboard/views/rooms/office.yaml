@@ -19,10 +19,6 @@ cards:
           ulm_card_graph_color: "var(--google-red)"
           ulm_card_graph_name: Temperature
           ulm_card_graph_entity: sensor.office_climate_air_temperature
-          ulm_card_graph_type: fill
-          ulm_card_graph_hours: 24
-          ulm_card_graph_group_by: interval
-          ulm_card_graph_line_width: 5
       - type: "custom:button-card"
         template: card_graph
         entity: sensor.office_climate_humidity
@@ -30,10 +26,6 @@ cards:
           ulm_card_graph_color: "var(--google-blue)"
           ulm_card_graph_name: Humidity
           ulm_card_graph_entity: sensor.office_climate_humidity
-          ulm_card_graph_type: fill
-          ulm_card_graph_hours: 24
-          ulm_card_graph_group_by: interval
-          ulm_card_graph_line_width: 5
 
   - type: "custom:button-card"
     template: card_title
@@ -217,20 +209,12 @@ cards:
         variables:
           ulm_card_graph_color: "var(--google-green)"
           ulm_card_graph_entity: sensor.office_up
-          ulm_card_graph_type: fill
-          ulm_card_graph_hours: 24
-          ulm_card_graph_group_by: interval
-          ulm_card_graph_line_width: 5
       - type: "custom:button-card"
         template: card_graph
         entity: sensor.office_down
         variables:
           ulm_card_graph_color: "var(--google-green)"
           ulm_card_graph_entity: sensor.office_down
-          ulm_card_graph_type: fill
-          ulm_card_graph_hours: 24
-          ulm_card_graph_group_by: interval
-          ulm_card_graph_line_width: 5
 
   - type: "custom:button-card"
     template: card_graph
@@ -238,8 +222,3 @@ cards:
     variables:
       ulm_card_graph_color: "var(--google-yellow)"
       ulm_card_graph_entity: sensor.office_g_bath_garage_3_1min
-      ulm_card_graph_type: fill
-      ulm_card_graph_hours: 24
-      ulm_card_graph_group_by: interval
-      ulm_card_graph_line_width: 5
-      ulm_card_graph_name: Electricity 1 min

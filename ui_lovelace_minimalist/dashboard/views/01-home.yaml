@@ -81,6 +81,7 @@ cards:
       - type: "custom:button-card"
         template: chip_mdi_icon_state
         entity: sensor.devices_with_low_battery
+        label: "[[[ if (entity.state > 0) return entity.state; ]]]"
         styles:
           icon:
             - color: >
@@ -95,7 +96,7 @@ cards:
       - type: "custom:button-card"
         template: chip_mdi_icon_state
         icon: mdi:cat
-        label: "[[[ return entity.state; ]]]"
+        label: "[[[ if (entity.state > 0) return entity.state; ]]]"
         styles:
           icon:
             - color: >
@@ -127,7 +128,8 @@ cards:
           ulm_custom_card_esh_room_light_entity: light.living_room_light
           ulm_custom_card_esh_room_climate_entity: climate.living_room
           ulm_card_thermostat_enable_popup: true
-        label: '[[[ return states["sensor.living_room_temperature"].state + "°F" ]]]'
+          ulm_card_light_enable_popup: true
+        label: '[[[ return states["sensor.living_room_temperature"].state + "°F - " + states["sensor.living_room_humidity"].state + "%" ]]]'
       - type: "custom:button-card"
         template:
           - card_esh_room
@@ -155,6 +157,7 @@ cards:
           navigation_path: "office"
         variables:
           ulm_custom_card_esh_room_light_entity: light.office_light
+        label: '[[[ return states["sensor.office_climate_air_temperature"].state + "°F - " + states["sensor.office_climate_humidity"].state + "%" ]]]'
       - type: "custom:button-card"
         template:
           - card_esh_room
@@ -174,7 +177,7 @@ cards:
             - padding: "12px"
             - background-color: >-
                 [[[
-                  if (states['binary_sensor.pet_thirst_water_level'].state == "on") {
+                  if (states['group.cat_device_status'].state == "on") {
                     return 'rgba(var(--color-background-red),var(--opacity-bg))';
                   }
                 ]]]
@@ -202,7 +205,7 @@ cards:
         tap_action:
           action: navigate
           navigation_path: "master-bathroom"
-        label: '[[[ return states["sensor.master_bath_gfi_8_1min"].state + "W" ]]]'
+        label: '[[[ return states["sensor.master_bath_climate_air_temperature"].state + "°F - " + states["sensor.master_bath_climate_humidity"].state + "%"  ]]]'
 
   - type: horizontal-stack
     cards:

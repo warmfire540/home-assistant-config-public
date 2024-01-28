@@ -19,10 +19,6 @@ cards:
           ulm_card_graph_color: "var(--google-red)"
           ulm_card_graph_name: Temperature
           ulm_card_graph_entity: sensor.living_room_temperature
-          ulm_card_graph_type: fill
-          ulm_card_graph_hours: 24
-          ulm_card_graph_group_by: interval
-          ulm_card_graph_line_width: 5
       - type: "custom:button-card"
         template: card_graph
         entity: sensor.living_room_humidity
@@ -30,10 +26,6 @@ cards:
           ulm_card_graph_color: "var(--google-blue)"
           ulm_card_graph_name: Humidity
           ulm_card_graph_entity: sensor.living_room_humidity
-          ulm_card_graph_type: fill
-          ulm_card_graph_hours: 24
-          ulm_card_graph_group_by: interval
-          ulm_card_graph_line_width: 5
       - type: "custom:button-card"
         template: card_graph
         entity: sensor.masters_vue_123_1min
@@ -41,10 +33,6 @@ cards:
           ulm_card_graph_color: "var(--google-yellow)"
           ulm_card_graph_name: Electricity
           ulm_card_graph_entity: sensor.masters_vue_123_1min
-          ulm_card_graph_type: fill
-          ulm_card_graph_hours: 24
-          ulm_card_graph_group_by: interval
-          ulm_card_graph_line_width: 5
 
   - type: thermostat
     entity: climate.living_room

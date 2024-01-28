@@ -84,10 +84,6 @@ cards:
         variables:
           ulm_card_graph_color: "var(--google-yellow)"
           ulm_card_graph_entity: sensor.kitchen_outlets_1_9_1min
-          ulm_card_graph_type: fill
-          ulm_card_graph_hours: 24
-          ulm_card_graph_group_by: interval
-          ulm_card_graph_line_width: 5
           ulm_card_graph_name: Outlets 1
       - type: "custom:button-card"
         template: card_graph
@@ -95,10 +91,6 @@ cards:
         variables:
           ulm_card_graph_color: "var(--google-yellow)"
           ulm_card_graph_entity: sensor.kitchen_outlets_2_fridge_11_1min
-          ulm_card_graph_type: fill
-          ulm_card_graph_hours: 24
-          ulm_card_graph_group_by: interval
-          ulm_card_graph_line_width: 5
           ulm_card_graph_name: Outlets 2
   - type: horizontal-stack
     cards:
@@ -108,10 +100,6 @@ cards:
         variables:
           ulm_card_graph_color: "var(--google-yellow)"
           ulm_card_graph_entity: sensor.kitchen_outlets_3_10_1min
-          ulm_card_graph_type: fill
-          ulm_card_graph_hours: 24
-          ulm_card_graph_group_by: interval
-          ulm_card_graph_line_width: 5
           ulm_card_graph_name: Outlets 3
       - type: "custom:button-card"
         template: card_graph
@@ -119,8 +107,4 @@ cards:
         variables:
           ulm_card_graph_color: "var(--google-yellow)"
           ulm_card_graph_entity: sensor.range_6_1min
-          ulm_card_graph_type: fill
-          ulm_card_graph_hours: 24
-          ulm_card_graph_group_by: interval
-          ulm_card_graph_line_width: 5
           ulm_card_graph_name: Range

@@ -26,10 +26,6 @@ cards:
         variables:
           ulm_card_graph_color: "var(--google-yellow)"
           ulm_card_graph_entity: sensor.ac_heater_4_1min
-          ulm_card_graph_type: fill
-          ulm_card_graph_hours: 24
-          ulm_card_graph_group_by: interval
-          ulm_card_graph_line_width: 5
           ulm_card_graph_name: AC Heater
       - type: "custom:button-card"
         template: card_graph
@@ -37,8 +33,4 @@ cards:
         variables:
           ulm_card_graph_color: "var(--google-yellow)"
           ulm_card_graph_entity: sensor.air_conditioner_2_1min
-          ulm_card_graph_type: fill
-          ulm_card_graph_hours: 24
-          ulm_card_graph_group_by: interval
-          ulm_card_graph_line_width: 5
           ulm_card_graph_name: Air Conditioner

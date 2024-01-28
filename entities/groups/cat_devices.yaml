@@ -4,23 +4,24 @@
 #####
 
 cat_food_status:
-    name: "Cat Food Status"
-    icon: mdi:food
-    entities:
-      - binary_sensor.cat_noms_food_level
-      - binary_sensor.cat_battery_problem
-      - binary_sensor.cat_desicant_problem
+  name: "Cat Food Status"
+  icon: mdi:food
+  entities:
+    - binary_sensor.cat_noms_food_level
+    - binary_sensor.cat_battery_problem
+    - binary_sensor.cat_desicant_problem
+    - binary_sensor.cat_noms_status_problem
 
 cat_water_status:
-    name: "Cat Water Status"
-    icon: mdi:water
-    entities:
-      - binary_sensor.pet_thirst_water_level
-      - binary_sensor.cat_filter_problem
+  name: "Cat Water Status"
+  icon: mdi:water
+  entities:
+    - binary_sensor.pet_thirst_water_level
+    - binary_sensor.cat_filter_problem
 
 cat_device_status:
-    name: "Cat Device Status"
-    icon: mdi:cat
-    entities:
-      - group.cat_water_status
-      - group.cat_food_status
+  name: "Cat Device Status"
+  icon: mdi:cat
+  entities:
+    - group.cat_water_status
+    - group.cat_food_status

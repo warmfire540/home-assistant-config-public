@@ -46,20 +46,12 @@ cards:
         variables:
           ulm_card_graph_color: "var(--google-green)"
           ulm_card_graph_entity: sensor.master_bedroom_up
-          ulm_card_graph_type: fill
-          ulm_card_graph_hours: 24
-          ulm_card_graph_group_by: interval
-          ulm_card_graph_line_width: 5
       - type: "custom:button-card"
         template: card_graph
         entity: sensor.master_bedroom_down
         variables:
           ulm_card_graph_color: "var(--google-green)"
           ulm_card_graph_entity: sensor.master_bedroom_down
-          ulm_card_graph_type: fill
-          ulm_card_graph_hours: 24
-          ulm_card_graph_group_by: interval
-          ulm_card_graph_line_width: 5
 
   - type: "custom:button-card"
     template: card_graph
@@ -67,8 +59,4 @@ cards:
     variables:
       ulm_card_graph_color: "var(--google-yellow)"
       ulm_card_graph_entity: sensor.master_bedroom_bath_14_1min
-      ulm_card_graph_type: fill
-      ulm_card_graph_hours: 24
-      ulm_card_graph_group_by: interval
-      ulm_card_graph_line_width: 5
       ulm_card_graph_name: Electricity 1 min

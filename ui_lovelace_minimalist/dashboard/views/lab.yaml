@@ -36,6 +36,7 @@ cards:
         template: chip_icon_label
         label: seedbox
         icon: mdi:seed
+        entity: sensor.rpi_poat_seedbox_rpi_monitor_poat_seedbox
         styles:
           icon:
             - color: >
@@ -46,6 +47,7 @@ cards:
         template: chip_icon_label
         label: plex
         icon: mdi:plex
+        entity: sensor.rpi_poat_plex_rpi_monitor_poat_plex
         styles:
           icon:
             - color: >
@@ -76,7 +78,7 @@ cards:
         icon: mdi:pi-hole
         show_state: false
         secondary_info:
-            attribute: ip
+          attribute: ip
         entities:
           - entity: sensor.pi_hole_server_last_backup
             name: backup
@@ -97,7 +99,7 @@ cards:
         icon: mdi:folder-network-outline
         show_state: false
         secondary_info:
-            attribute: ip
+          attribute: ip
         entities:
           - entity: button.rpi_poat_share_rpi_reboot_poat_share_command
             icon: mdi:restart
@@ -114,7 +116,7 @@ cards:
         icon: mdi:seed
         show_state: false
         secondary_info:
-            attribute: ip
+          attribute: ip
         entities:
           - entity: sensor.deluge_last_backup
             name: backup
@@ -133,7 +135,7 @@ cards:
         icon: mdi:plex
         show_state: false
         secondary_info:
-            attribute: ip
+          attribute: ip
         entities:
           - entity: sensor.plex_server_last_backup
             name: backup
@@ -152,7 +154,7 @@ cards:
         icon: mdi:home-assistant
         show_state: false
         secondary_info:
-            attribute: ip
+          attribute: ip
         entities:
           - entity: sensor.home_assistant_last_backup
             name: backup
@@ -165,63 +167,73 @@ cards:
           - entity: script.reboot_home_assistant
             icon: mdi:restore-alert
             name: restore
-  
-  - type: custom:state-switch
-    entity: sensor.mfc_7860dw_status
-    default: "available"
-    states:
-      "unavailable":
-        type: markdown
-        icon: mdi:printer-off
-        title: Brother Printer
-        content: >
-          <ha-alert alert-type="info">The printer is offline.</ha-alert>
-      "available":
-        type: entities
-        icon: mdi:printer
-        title: Brother Printer
-        entities:
-          - entity: sensor.mfc_7860dw_status
-            type: custom:multiple-entity-row
-            name: Status
-            icon: mdi:printer-3d-nozzle
-            show_state: false
-            entities:
-              - entity: sensor.mfc_7860dw_page_counter
-                name: Page count
-              - entity: sensor.mfc_7860dw_black_toner_remaining
-                name: Toner
-          - entity: sensor.mfc_7860dw_status
-            type: custom:multiple-entity-row
-            name: Drum
-            icon: mdi:chart-donut
-            show_state: false
-            entities:
-              - entity: sensor.mfc_7860dw_drum_remaining_lifetime
-                name: Life
-              - entity: sensor.mfc_7860dw_drum_remaining_pages
-                name: Remaining
-              - entity: sensor.mfc_7860dw_drum_page_counter
-                name: Page count
+
+  - type: conditional
+    conditions:
+      - condition: state
+        entity: sensor.mfc_7860dw_status
+        state: "available"
+    card:
+      type: entities
+      icon: mdi:printer
+      title: Brother Printer
+      entities:
+        - entity: sensor.mfc_7860dw_status
+          type: custom:multiple-entity-row
+          name: Status
+          icon: mdi:printer-3d-nozzle
+          show_state: false
+          entities:
+            - entity: sensor.mfc_7860dw_page_counter
+              name: Page count
+            - entity: sensor.mfc_7860dw_black_toner_remaining
+              name: Toner
+        - entity: sensor.mfc_7860dw_status
+          type: custom:multiple-entity-row
+          name: Drum
+          icon: mdi:chart-donut
+          show_state: false
+          entities:
+            - entity: sensor.mfc_7860dw_drum_remaining_lifetime
+              name: Life
+            - entity: sensor.mfc_7860dw_drum_remaining_pages
+              name: Remaining
+            - entity: sensor.mfc_7860dw_drum_page_counter
+              name: Page count
 
   - type: "custom:button-card"
     template: card_title
     label: Raspberries - Sensors
-    
-  - type: 'custom:rpi-monitor-card'
-    entity: sensor.rpi_poat_hole_rpi_monitor_poat_hole
-    card_style: full
-    name_prefix: ''
-  - type: 'custom:rpi-monitor-card'
-    entity: sensor.rpi_poat_share_rpi_monitor_poat_share
-    card_style: full
-    name_prefix: ''
-  - type: 'custom:rpi-monitor-card'
-    entity: sensor.rpi_poat_seedbox_rpi_monitor_poat_seedbox
-    card_style: full
-    name_prefix: ''
-  - type: 'custom:rpi-monitor-card'
-    entity: sensor.rpi_poat_plex_rpi_monitor_poat_plex
-    card_style: full
-    name_prefix: ''
-  
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:rpi-monitor-card"
+        entity: sensor.rpi_poat_hole_rpi_monitor_poat_hole
+        card_style: full
+        name_prefix: ""
+      - type: "custom:rpi-monitor-card"
+        entity: sensor.rpi_poat_share_rpi_monitor_poat_share
+        card_style: full
+        name_prefix: ""
+  - type: horizontal-stack
+    cards:
+      - type: conditional
+        conditions:
+          - condition: state
+            entity: sensor.rpi_poat_seedbox_rpi_monitor_poat_seedbox
+            state_not: "unavailable"
+        card:
+          type: "custom:rpi-monitor-card"
+          entity: sensor.rpi_poat_seedbox_rpi_monitor_poat_seedbox
+          card_style: full
+          name_prefix: ""
+      - type: conditional
+        conditions:
+          - condition: state
+            entity: sensor.rpi_poat_plex_rpi_monitor_poat_plex
+            state_not: "unavailable"
+        card:
+          type: "custom:rpi-monitor-card"
+          entity: sensor.rpi_poat_plex_rpi_monitor_poat_plex
+          card_style: full
+          name_prefix: ""
