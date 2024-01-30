@@ -1,0 +1,6 @@
+#####
+# Toggle for showing kitchen bulbs
+#####
+
+kitchen_bulbs:
+  name: Show Kitchen Bulbs

@@ -8,24 +8,42 @@ binary_sensor:
     unique_id: ee0e98ef-a3d3-4d1c-97ea-090b395a4834
     state_topic: "home/nodes/sensor/water-heater-leak/status"
     device_class: moisture
+  - name: "Dishwasher leak sensor"
+    unique_id: 7c2fa7e5-7d37-4ec9-a3b0-1af19e4d1f8f
+    state_topic: "home/nodes/sensor/dishwasher-leak/status"
+    device_class: moisture
 
 sensor:
   - name: "Water Heater leak sensor battery"
     unique_id: 8bbf600e-9f31-4fb5-babb-f541631bfde7
     state_topic: "home/nodes/sensor/water-heater-leak/battery"
     device_class: battery
-
   - name: "Water Heater leak sensor last reset"
     unique_id: 68fb139a-e391-40f1-b2d8-839d274bdbce
     state_topic: "home/nodes/sensor/water-heater-leak/status/last-reset"
     device_class: timestamp
-
   - name: "Water Heater leak sensor last leak"
     unique_id: 988750a7-9b7d-4edb-9ac4-1507e9370981
     state_topic: "home/nodes/sensor/water-heater-leak/status/last-leak"
     device_class: timestamp
-
   - name: "Water Heater leak sensor last battery update"
     unique_id: 717e9f65-61d0-407a-bff2-975e3f184844
     state_topic: "home/nodes/sensor/water-heater-leak/battery/last-update"
+    device_class: timestamp
+
+  - name: "Dishwasher leak sensor battery"
+    unique_id: 30bf0ee9-4ff6-4be8-88b1-3256a7d74bef
+    state_topic: "home/nodes/sensor/dishwasher-leak/battery"
+    device_class: battery
+  - name: "Dishwasher leak sensor last reset"
+    unique_id: ef6c01e3-6ec4-49f8-bb13-e11fb9a3929d
+    state_topic: "home/nodes/sensor/dishwasher-leak/status/last-reset"
+    device_class: timestamp
+  - name: "Dishwasher leak sensor last leak"
+    unique_id: 424dfa45-82e7-401a-ac37-880ece4684ab
+    state_topic: "home/nodes/sensor/dishwasher-leak/status/last-leak"
+    device_class: timestamp
+  - name: "Dishwasher leak sensor last battery update"
+    unique_id: 390be447-ffe3-4b78-9009-a16a7aeb2ab2
+    state_topic: "home/nodes/sensor/dishwasher-leak/battery/last-update"
     device_class: timestamp

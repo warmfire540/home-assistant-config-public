@@ -31,38 +31,78 @@ cards:
         template: card_light
         entity: switch.dinette_light_switch_1
 
-  - type: "custom:button-card"
-    template: card_light
-    entity: light.kitchen_bulb_1
-    variables:
-      ulm_card_light_enable_slider: true
-      ulm_card_light_enable_collapse: true
-      ulm_card_light_enable_color: true
-      ulm_card_light_enable_horizontal: true
-  - type: "custom:button-card"
-    template: card_light
-    entity: light.le_rgbcwbr30_3
-    variables:
-      ulm_card_light_enable_slider: true
-      ulm_card_light_enable_collapse: true
-      ulm_card_light_enable_color: true
-      ulm_card_light_enable_horizontal: true
-  - type: "custom:button-card"
-    template: card_light
-    entity: light.kitchen_bulb_3
-    variables:
-      ulm_card_light_enable_slider: true
-      ulm_card_light_enable_collapse: true
-      ulm_card_light_enable_color: true
-      ulm_card_light_enable_horizontal: true
-  - type: "custom:button-card"
-    template: card_light
-    entity: light.le_rgbcwbr30
-    variables:
-      ulm_card_light_enable_slider: true
-      ulm_card_light_enable_collapse: true
-      ulm_card_light_enable_color: true
-      ulm_card_light_enable_horizontal: true
+  - type: conditional
+    conditions:
+      - condition: state
+        entity: switch.kitchen_lights_switch_1
+        state: "on"
+    card:
+      type: custom:layout-card
+      layout_type: grid
+      layout_options:
+        grid-template-columns: auto 13%
+        grid-template-areas: |
+          "main sidebar"
+        margin: 0
+        padding: 0
+        card_margin: 0
+      margin: 0px
+      cards:
+        - type: "custom:button-card"
+          template: card_light
+          entity: light.kitchen_bulbs
+          variables:
+            ulm_card_light_enable_slider: true
+            ulm_card_light_enable_collapse: true
+            ulm_card_light_enable_color: true
+            ulm_card_light_enable_horizontal: true
+          view_layout:
+            grid-area: main
+        - type: 'custom:button-card'
+          template: card_input_boolean
+          entity: input_boolean.kitchen_bulbs
+          variables:
+            ulm_card_input_boolean_name: ''
+            ulm_card_input_boolean_force_background_color: true
+            ulm_card_input_boolean_icon: mdi:arrow-down-bold
+          view_layout:
+            grid-area: sidebar
+
+  - type: conditional
+    conditions:
+      - condition: state
+        entity: input_boolean.kitchen_bulbs
+        state: "on"
+      - condition: state
+        entity: switch.kitchen_lights_switch_1
+        state: "on"
+    card:
+      type: horizontal-stack
+      cards:
+        - type: "custom:button-card"
+          template: card_light
+          entity: light.kitchen_bulb_1
+          variables:
+            ulm_card_light_enable_color: true
+            ulm_card_light_name: Bulb 1
+        - type: "custom:button-card"
+          template: card_light
+          entity: light.le_rgbcwbr30_3
+          variables:
+            ulm_card_light_enable_color: true
+            ulm_card_light_name: Bulb 2
+        - type: "custom:button-card"
+          template: card_light
+          entity: light.kitchen_bulb_3
+          variables:
+            ulm_card_light_enable_color: true
+            ulm_card_light_name: Bulb 3
+        - type: "custom:button-card"
+          template: card_light
+          entity: light.le_rgbcwbr30
+          variables:
+            ulm_card_light_enable_color: true
+            ulm_card_light_name: Bulb 4
 
   - type: "custom:button-card"
     template: card_cover
@@ -75,6 +115,15 @@ cards:
   - type: "custom:button-card"
     template: card_title
     label: Sensors
+
+  - type: custom:decluttering-card
+    template: leak_sensors
+    variables:
+      - leak_sensor: binary_sensor.dishwasher_leak_sensor
+      - battery_sensor: sensor.dishwasher_leak_sensor_battery
+      - battery_update_sensor: sensor.dishwasher_leak_sensor_last_battery_update
+      - reset_sensor: sensor.dishwasher_leak_sensor_last_reset
+      - last_leak_sensor: sensor.dishwasher_leak_sensor_last_leak
 
   - type: horizontal-stack
     cards:

@@ -108,6 +108,18 @@ cards:
         tap_action:
           action: navigate
           navigation_path: "/the-matrix/cats?anchor=status"
+      - type: "custom:button-card"
+        template: chip_mdi_icon_state
+        icon: mdi:water
+        label: ""
+        styles:
+          icon:
+            - color: >
+                [[[ if (entity.state == 'on') 
+                      return "var(--red-color)" ;
+                    else return "var(--green-color)"; ]]]
+        variables:
+          ulm_chip_mdi_icon_state_entity: group.leak_sensors
   - type: "custom:button-card"
     template: card_title
     name: Rooms
@@ -246,7 +258,14 @@ cards:
         variables:
           ulm_custom_card_esh_room_light_entity: switch.garage_opener_socket_1
         label: '[[[ return states["switch.garage_opener_socket_1"].state == "on" ? "On" : "Off" ]]]'
-
+        styles:
+          card:
+            - background-color: >-
+                [[[
+                  if (states['group.leak_sensors'].state == "on") {
+                    return 'rgba(var(--color-background-red),var(--opacity-bg))';
+                  }
+                ]]]
       - type: "custom:button-card"
         template:
           - card_esh_room

@@ -1,0 +1,12 @@
+#####
+# List of lights in specific area
+#####
+
+platform: group
+name: Kitchen Bulbs
+unique_id: c43d67fa-af28-4ee6-b2c4-bfe29351b0f9
+entities:
+  - light.kitchen_bulb_1
+  - light.le_rgbcwbr30_3
+  - light.kitchen_bulb_3
+  - light.le_rgbcwbr30

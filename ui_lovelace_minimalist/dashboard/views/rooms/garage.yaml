@@ -18,7 +18,7 @@ cards:
     template: card_light
     entity: switch.garage_opener_socket_1
 
-  - type: 'custom:vacuum-card'
+  - type: "custom:vacuum-card"
     entity: vacuum.e0000693817603917196
     image: default
     compact_view: false
@@ -28,18 +28,40 @@ cards:
     stats:
       default:
         - entity_id: sensor.strongboi_filter
-          unit: '%'
+          unit: "%"
           subtitle: Filter
         - entity_id: sensor.strongboi_main_brush
-          unit: '%'
+          unit: "%"
           subtitle: Main Brush
         - entity_id: sensor.strongboi_side_brush
-          unit: '%'
+          unit: "%"
           subtitle: Side Brush
 
   - type: "custom:button-card"
     template: card_title
     label: Sensors
+
+  - type: custom:decluttering-card
+    template: leak_sensors
+    variables:
+      - leak_sensor: binary_sensor.water_heater_leak_sensor
+      - battery_sensor: sensor.water_heater_leak_sensor_battery
+      - battery_update_sensor: sensor.water_heater_leak_sensor_last_battery_update
+      - reset_sensor: sensor.water_heater_leak_sensor_last_reset
+      - last_leak_sensor: sensor.water_heater_leak_sensor_last_leak
+
+  - type: horizontal-stack
+    cards:
+      - type: 'custom:button-card'
+        template: card_input_boolean
+        entity: input_boolean.dryer_on
+        variables:
+          ulm_card_input_boolean_force_background_color: true
+      - type: 'custom:button-card'
+        template: card_input_boolean
+        entity: input_boolean.washing_machine_on
+        variables:
+          ulm_card_input_boolean_force_background_color: true
 
   - type: horizontal-stack
     cards:

@@ -12,11 +12,9 @@ trigger:
 
 action:
   - service: shopping_list.add_item
-    metadata: {}
     data:
       name: cat water filter
   - service: notify.persistent_notification
-    metadata: {}
     data:
       message: The cat filter is low!
       title: Clean me..

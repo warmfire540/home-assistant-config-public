@@ -4,3 +4,5 @@ button_card_templates: !include_dir_merge_named "../../custom_components/ui_love
 title: "The Matrix"
 background: "var(--background-image)"
 views: !include_dir_list views
+
+decluttering_templates: !include_dir_merge_named templates

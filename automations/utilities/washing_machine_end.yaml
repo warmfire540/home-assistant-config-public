@@ -18,11 +18,9 @@ condition:
 
 action:
 - service: input_boolean.turn_off
-  data: {}
   entity_id: input_boolean.washing_machine_on
 
 - service: notify.persistent_notification
-  metadata: {}
   data:
     message: Time to load the dryer...
     title: Washer done!
