@@ -42,7 +42,7 @@ cards:
       layout_options:
         grid-template-columns: auto 13%
         grid-template-areas: |
-          "main sidebar"
+          "main arrow"
         margin: 0
         padding: 0
         card_margin: 0
@@ -58,15 +58,15 @@ cards:
             ulm_card_light_enable_horizontal: true
           view_layout:
             grid-area: main
-        - type: 'custom:button-card'
-          template: card_input_boolean
+        - type: custom:mushroom-entity-card
           entity: input_boolean.kitchen_bulbs
-          variables:
-            ulm_card_input_boolean_name: ''
-            ulm_card_input_boolean_force_background_color: true
-            ulm_card_input_boolean_icon: mdi:arrow-down-bold
+          icon: mdi:arrow-down-bold
+          primary_info: none
+          secondary_info: none
           view_layout:
-            grid-area: sidebar
+            grid-area: arrow
+          tap_action:
+            action: toggle
 
   - type: conditional
     conditions:

@@ -12,6 +12,10 @@ binary_sensor:
     unique_id: 7c2fa7e5-7d37-4ec9-a3b0-1af19e4d1f8f
     state_topic: "home/nodes/sensor/dishwasher-leak/status"
     device_class: moisture
+  - name: "AC Pan leak sensor"
+    unique_id: 058ff346-8ccc-42a0-b9e4-ff4a49ef5b20
+    state_topic: "home/nodes/sensor/ac-pan-leak/status"
+    device_class: moisture
 
 sensor:
   - name: "Water Heater leak sensor battery"
@@ -46,4 +50,21 @@ sensor:
   - name: "Dishwasher leak sensor last battery update"
     unique_id: 390be447-ffe3-4b78-9009-a16a7aeb2ab2
     state_topic: "home/nodes/sensor/dishwasher-leak/battery/last-update"
+    device_class: timestamp
+
+  - name: "AC Pan leak sensor battery"
+    unique_id: 61063fb8-0b43-4e8e-a719-f409bc7b258d
+    state_topic: "home/nodes/sensor/ac-pan-leak/battery"
+    device_class: battery
+  - name: "AC Pan leak sensor last reset"
+    unique_id: e595f32f-8b88-4e4d-98a2-85e4374d7b0c
+    state_topic: "home/nodes/sensor/ac-pan-leak/status/last-reset"
+    device_class: timestamp
+  - name: "AC Pan leak sensor last leak"
+    unique_id: f0647b91-5cf1-4854-be06-75ba28a14134
+    state_topic: "home/nodes/sensor/ac-pan-leak/status/last-leak"
+    device_class: timestamp
+  - name: "AC Pan leak sensor last battery update"
+    unique_id: 3c036034-e570-40da-adbb-044a7d67b30e
+    state_topic: "home/nodes/sensor/ac-pan-leak/battery/last-update"
     device_class: timestamp

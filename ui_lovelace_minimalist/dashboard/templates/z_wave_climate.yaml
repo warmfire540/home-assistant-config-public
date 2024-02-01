@@ -1,0 +1,105 @@
+z_wave_climate:
+  card:
+    type: custom:stack-in-card
+    cards:
+      - type: custom:layout-card
+        layout_type: grid
+        layout_options:
+          grid-template-columns: repeat(5, 1fr)
+          grid-template-rows: repeat(2, 1fr)
+          grid-template-areas: |
+            "firmware firmware firmware temp humid"
+            "moist overheat underheat batt status"
+          margin: 0
+          padding: 0
+          card_margin: 0
+        margin: 0px
+        cards:
+          - type: 'custom:button-card'
+            template:
+              - card_generic_swap
+              - battery_info
+            entity: '[[firmware_sensor]]'
+            variables:
+              ulm_card_generic_swap_name: Climate Sensor
+              ulm_card_generic_swap_icon: mdi:z-wave
+              ulm_battery_entity: '[[battery_sensor]]'
+            view_layout:
+              grid-area: firmware
+          - type: custom:mushroom-entity-card
+            entity: '[[temperature_sensor]]'
+            name: Temperature
+            icon_type: none
+            view_layout:
+              grid-area: temp
+            card_mod:
+              style: |
+                ha-card {
+                  text-align: center;
+                }
+          - type: custom:mushroom-entity-card
+            entity: '[[humidity_sensor]]'
+            name: Humidity
+            icon_type: none
+            view_layout:
+              grid-area: humid
+            card_mod:
+              style: |
+                ha-card {
+                  text-align: center;
+                }
+          - type: custom:mushroom-entity-card
+            entity: '[[overheat_sensor]]'
+            name: Overheat
+            icon_type: none
+            view_layout:
+              grid-area: overheat
+            card_mod:
+              style: |
+                ha-card {
+                  text-align: center;
+                }
+          - type: custom:mushroom-entity-card
+            entity: '[[underheat_sensor]]'
+            name: Underheat
+            icon_type: none
+            view_layout:
+              grid-area: underheat
+            card_mod:
+              style: |
+                ha-card {
+                  text-align: center;
+                }
+          - type: custom:mushroom-entity-card
+            entity: '[[moisture_sensor]]'
+            name: Moisture
+            icon_type: none
+            view_layout:
+              grid-area: moist
+            card_mod:
+              style: |
+                ha-card {
+                  text-align: center;
+                }
+          - type: custom:mushroom-entity-card
+            entity: '[[battery_level_sensor]]'
+            name: Battery
+            icon_type: none
+            view_layout:
+              grid-area: batt
+            card_mod:
+              style: |
+                ha-card {
+                  text-align: center;
+                }
+          - type: custom:mushroom-entity-card
+            entity: '[[status_sensor]]'
+            name: Status
+            icon_type: none
+            view_layout:
+              grid-area: status
+            card_mod:
+              style: |
+                ha-card {
+                  text-align: center;
+                }

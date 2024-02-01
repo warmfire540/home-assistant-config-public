@@ -6,7 +6,11 @@ d = {
 
       'ABBAFB':['dishwasher-leak/status','ON','true','true', 'last-leak'],
       'ABBAFA':['dishwasher-leak/status','OFF','true','true', 'last-reset'],
-      'ABBAFC':['dishwasher-leak/battery','100','true','true', 'last-update']
+      'ABBAFC':['dishwasher-leak/battery','100','true','true', 'last-update'],
+
+      'ABEEFB':['ac-pan-leak/status','ON','true','true', 'last-leak'],
+      'ABEEFA':['ac-pan-leak/status','OFF','true','true', 'last-reset'],
+      'ABEEFC':['ac-pan-leak/battery','100','true','true', 'last-update']
     }
 
 p = str(data.get('payload'))

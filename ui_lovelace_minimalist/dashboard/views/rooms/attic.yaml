@@ -18,6 +18,15 @@ cards:
     template: card_title
     label: Sensors
 
+  - type: custom:decluttering-card
+    template: leak_sensors
+    variables:
+      - leak_sensor: binary_sensor.ac_pan_leak_sensor
+      - battery_sensor: sensor.ac_pan_leak_sensor_battery
+      - battery_update_sensor: sensor.ac_pan_leak_sensor_last_battery_update
+      - reset_sensor: sensor.ac_pan_leak_sensor_last_reset
+      - last_leak_sensor: sensor.ac_pan_leak_sensor_last_leak
+
   - type: horizontal-stack
     cards:
       - type: "custom:button-card"
