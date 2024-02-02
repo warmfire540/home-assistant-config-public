@@ -49,7 +49,7 @@ cards:
     variables:
       ulm_card_cover_enable_controls: true
       ulm_card_cover_enable_slider: true
-      ulm_card_cover_color: yellow
+      ulm_card_cover_color: green
 
   - type: media-control
     entity: media_player.fire_tv_192_168_68_115

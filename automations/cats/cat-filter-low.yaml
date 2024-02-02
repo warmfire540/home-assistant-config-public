@@ -17,4 +17,4 @@ action:
   - service: notify.persistent_notification
     data:
       message: The cat filter is low!
-      title: Clean me..
+      title: Replace me..

@@ -120,6 +120,18 @@ cards:
                     else return "var(--green-color)"; ]]]
         variables:
           ulm_chip_mdi_icon_state_entity: group.leak_sensors
+      - type: "custom:button-card"
+        template: chip_mdi_icon_only
+        variables:
+          ulm_chip_mdi_icon_only_entity: sensor.seedbox_vpn_on
+          ulm_chip_mdi_icon_only_icon: mdi:vpn
+        styles:
+          icon:
+            - color: >
+                [[[ if (states["sensor.seedbox_vpn_on"].state == "False")
+                  return "var(--red-color)" ;
+                  else return "var(--green-color)"; ]]]
+
   - type: "custom:button-card"
     template: card_title
     name: Rooms

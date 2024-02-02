@@ -32,7 +32,7 @@ cards:
     variables:
       ulm_card_cover_enable_controls: true
       ulm_card_cover_enable_slider: true
-      ulm_card_cover_color: yellow
+      ulm_card_cover_color: green
 
   - type: "custom:button-card"
     template: card_title

@@ -15,7 +15,6 @@ action:
       message: 'Water leak detected - check sensors now!'
       title: '💧 Water Leak Alert!'
   - service: notify.mobile_app_poat_s_iphone_14_pro_max
-    metadata: {}
     data:
       message: 'Water leak detected - check sensors now!'
       title: '💧 Water Leak Alert!'

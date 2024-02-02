@@ -65,6 +65,17 @@ cards:
                 [[[ if (states["sensor.mfc_7860dw_status"].state == "unavailable")
                   return "var(--red-color)" ;
                   else return "var(--green-color)"; ]]]
+      - type: "custom:button-card"
+        template: chip_mdi_icon_only
+        variables:
+          ulm_chip_mdi_icon_only_entity: sensor.seedbox_vpn_on
+          ulm_chip_mdi_icon_only_icon: mdi:vpn
+        styles:
+          icon:
+            - color: >
+                [[[ if (states["sensor.seedbox_vpn_on"].state == "False")
+                  return "var(--red-color)" ;
+                  else return "var(--green-color)"; ]]]
 
   - type: "custom:button-card"
     template: card_title
@@ -227,6 +238,14 @@ cards:
           entity: sensor.rpi_poat_seedbox_rpi_monitor_poat_seedbox
           card_style: full
           name_prefix: ""
+          card_mod:
+            style: |
+              ha-card {
+                background: 
+                  {% if is_state('sensor.seedbox_vpn_on', 'False') %}
+                    rgba(var(--color-background-red),var(--opacity-bg))
+                  {% endif %}
+              }
       - type: conditional
         conditions:
           - condition: state
