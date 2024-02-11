@@ -7,7 +7,6 @@ platform: template
 sensors:
   cat_noms_status_problem:
     friendly_name: "Cat Noms Status Problem"
-    entity_id: sensor.cat_noms_status
     value_template: "{{ not is_state('sensor.cat_noms_status', 'normal') }}"
     unique_id: 136f0df9-aa84-4978-a293-56af9e85a667
     device_class: problem
@@ -16,7 +15,6 @@ sensors:
 
   cat_battery_problem:
     friendly_name: "Cat Battery Problem"
-    entity_id: sensor.cat_noms_battery_status
     value_template: "{{ states('sensor.cat_noms_battery_status') not in ['normal', 'unavailable'] }}"
     unique_id: d2734d50-f3a4-4aa6-84cc-87e8bb1ab28a
     device_class: problem
@@ -25,15 +23,13 @@ sensors:
 
   cat_desicant_problem:
     friendly_name: "Cat Desicant Problem"
-    entity_id: sensor.cat_noms_desiccant_days_remaining
-    value_template: "{{ is_state('sensor.cat_noms_battery_status', '0') }}"
+    value_template: "{{ is_state('sensor.cat_noms_desiccant_days_remaining', '0') }}"
     unique_id: ac8a5b14-08c3-4cd5-a754-403aa3f22b44
     device_class: problem
     icon_template: mdi:air-filter
 
   cat_filter_problem:
     friendly_name: "Cat Filter Problem"
-    entity_id: sensor.cat_noms_desiccant_days_remaining
     value_template: "{{ is_state('sensor.pet_thirst_filter', '0') }}"
     unique_id: 42fcc316-0ec8-472c-b8ad-979016188d6e
     device_class: problem

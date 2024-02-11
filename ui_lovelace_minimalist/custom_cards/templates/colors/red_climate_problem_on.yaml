@@ -1,0 +1,15 @@
+---
+red_climate_problem_on:
+  label: '[[[ return states[variables.temperature_entity].state + "°F - " + states[variables.humidity_entity].state + "%"  ]]]'
+  state:
+    - styles:
+        label:
+          - color: "rgba(var(--color-red-text),1)"
+      operator: template
+      value: >
+        [[[ return states[variables.temperature_entity].state > 80 ||  states[variables.humidity_entity].state > 80 ]]]
+      id: "on"
+      #id: "label"
+  triggers_update:
+    - "[[[ return variables.temperature_entity; ]]]"
+    - "[[[ return variables.humidity_entity; ]]]"

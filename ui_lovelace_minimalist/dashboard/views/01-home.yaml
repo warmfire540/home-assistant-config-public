@@ -223,19 +223,20 @@ cards:
             - type: "custom:button-card"
               template:
                 - card_room
+                - red_climate_problem_on
                 - yellow_on
               name: Office
               entity: light.office_light
               icon: mdi:controller
-              label: '[[[ return states["sensor.office_climate_air_temperature"].state + "°F - " + states["sensor.office_climate_humidity"].state + "%" ]]]'
               variables:
                 label_use_brightness: true
                 label_use_temperature: false
+                temperature_entity: sensor.office_climate_air_temperature
+                humidity_entity: sensor.office_climate_humidity
                 entity_1:
                   entity_id: light.office_light
                   templates:
                     - yellow_on
-                    - custom_icon
                   tap_action:
                     action: toggle
                 entity_2:
@@ -244,6 +245,12 @@ cards:
                     - yellow_on
                   tap_action:
                     action: toggle
+                entity_3:
+                  entity_id: binary_sensor.poat_rgb_connectivity
+                  icon: mdi:desktop-classic
+                  templates:
+                    - blue_on
+                    - custom_icon
               tap_action:
                 action: navigate
                 navigation_path: "office"
@@ -323,13 +330,14 @@ cards:
             - type: "custom:button-card"
               template:
                 - card_room
-                - yellow_on
+                - red_climate_problem_on
               name: Master Bathroom
               icon: mdi:shower-head
-              label: '[[[ return states["sensor.master_bath_climate_air_temperature"].state + "°F - " + states["sensor.master_bath_climate_humidity"].state + "%"  ]]]'
               variables:
                 label_use_brightness: true
                 label_use_temperature: false
+                temperature_entity: sensor.master_bath_climate_air_temperature
+                humidity_entity: sensor.master_bath_climate_humidity
               tap_action:
                 action: navigate
                 navigation_path: "master-bathroom"
@@ -342,7 +350,6 @@ cards:
             - type: "custom:button-card"
               template:
                 - card_room
-                - yellow_on
               name: Guest Room
               entity: switch.gina_computer_socket_1
               icon: mdi:desk
@@ -351,8 +358,10 @@ cards:
                 label_use_temperature: false
                 entity_1:
                   entity_id: switch.gina_computer_socket_1
+                  icon: mdi:laptop
                   templates:
-                    - yellow_on
+                    - blue_on
+                    - custom_icon
                   tap_action:
                     action: toggle
               tap_action:
@@ -435,6 +444,23 @@ cards:
               tap_action:
                 action: navigate
                 navigation_path: "attic"
+
+        - type: horizontal-stack
+          cards:
+            #################
+            # Shed
+            #################
+            - type: "custom:button-card"
+              template:
+                - card_room
+              name: Shed
+              icon: mdi:greenhouse
+              variables:
+                label_use_brightness: true
+                label_use_temperature: false
+              tap_action:
+                action: navigate
+                navigation_path: "shed"
 
   #################
   # ROOM CARDS SMALL
@@ -549,11 +575,13 @@ cards:
                 - card_esh_room
                 - yellow_on
               name: Guest Room
-              entity: light.bedroom_light
+              entity: switch.gina_computer_socket_1
               icon: mdi:desk
               tap_action:
                 action: navigate
                 navigation_path: "guest-room"
+              variables:
+                ulm_custom_card_esh_room_light_entity: switch.gina_computer_socket_1
               label: '[[[ return states["switch.gina_computer_socket_1"].state == "on" ? "On" : "Off" ]]]'
             - type: "custom:button-card"
               template:
@@ -598,3 +626,14 @@ cards:
               tap_action:
                 action: navigate
                 navigation_path: "attic"
+
+        - type: horizontal-stack
+          cards:
+            - type: "custom:button-card"
+              template:
+                - card_esh_room
+              name: Shed
+              icon: mdi:greenhouse
+              tap_action:
+                action: navigate
+                navigation_path: "shed"

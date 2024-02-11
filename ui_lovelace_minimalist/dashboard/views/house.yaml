@@ -12,20 +12,28 @@ cards:
 
   - type: horizontal-stack
     cards:
-      - type: "custom:button-card"
-        template: card_graph
-        entity: sensor.living_room_temperature
-        variables:
-          ulm_card_graph_color: "var(--google-red)"
-          ulm_card_graph_name: Temperature
-          ulm_card_graph_entity: sensor.living_room_temperature
-      - type: "custom:button-card"
-        template: card_graph
-        entity: sensor.living_room_humidity
-        variables:
-          ulm_card_graph_color: "var(--google-blue)"
-          ulm_card_graph_name: Humidity
-          ulm_card_graph_entity: sensor.living_room_humidity
+      - type: custom:mini-graph-card
+        name: Temperatures
+        icon: mdi:thermometer
+        unit: "°F"
+        entities:
+          - sensor.living_room_temperature
+          - sensor.master_bath_climate_air_temperature
+          - sensor.office_climate_air_temperature
+        show:
+          state: false
+          legend: false
+      - type: custom:mini-graph-card
+        name: Humidities
+        icon: mdi:water-percent
+        unit: "%"
+        entities:
+          - sensor.living_room_humidity
+          - sensor.master_bath_climate_humidity
+          - sensor.office_climate_humidity
+        show:
+          state: false
+          legend: false
       - type: "custom:button-card"
         template: card_graph
         entity: sensor.masters_vue_123_1min
@@ -66,15 +74,28 @@ cards:
             color: green
             icon: mdi:flower
 
+  - type: shopping-list
+    title: Shopping List
+
   - type: horizontal-stack
     cards:
       - type: custom:mini-graph-card
-        name: Share(s) %
-        icon: mdi:harddisk
+        name: Temperatures
+        icon: mdi:thermometer
+        unit: "°F"
+        entities:
+          - sensor.living_room_temperature
+          - sensor.master_bath_climate_air_temperature
+          - sensor.office_climate_air_temperature
+        show:
+          labels: true
+      - type: custom:mini-graph-card
+        name: Humidities
+        icon: mdi:water-percent
         unit: "%"
         entities:
-          - sensor.aristodemos
-          - sensor.odysseus_used
-
-  - type: shopping-list
-    title: Shopping List
+          - sensor.living_room_humidity
+          - sensor.master_bath_climate_humidity
+          - sensor.office_climate_humidity
+        show:
+          labels: true

@@ -13,8 +13,8 @@ red_problem_on:
       operator: template
       value: >
         [[[ return states[variables.problem_entity].state === 'on' ||
-          states[variables.problem_entity_2].state === 'on' ]]]
-      id: "on"
+          (variables.problem_entity_2 && states[variables.problem_entity_2].state === 'on') ]]]
+      id: "problem-on"
   triggers_update:
-    - '[[[ return variables.problem_entity; ]]]'
-    - '[[[ return variables.problem_entity_2; ]]]'
+    - "[[[ return variables.problem_entity; ]]]"
+    - "[[[ return variables.problem_entity_2; ]]]"
