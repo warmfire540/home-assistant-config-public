@@ -76,26 +76,3 @@ cards:
 
   - type: shopping-list
     title: Shopping List
-
-  - type: horizontal-stack
-    cards:
-      - type: custom:mini-graph-card
-        name: Temperatures
-        icon: mdi:thermometer
-        unit: "°F"
-        entities:
-          - sensor.living_room_temperature
-          - sensor.master_bath_climate_air_temperature
-          - sensor.office_climate_air_temperature
-        show:
-          labels: true
-      - type: custom:mini-graph-card
-        name: Humidities
-        icon: mdi:water-percent
-        unit: "%"
-        entities:
-          - sensor.living_room_humidity
-          - sensor.master_bath_climate_humidity
-          - sensor.office_climate_humidity
-        show:
-          labels: true

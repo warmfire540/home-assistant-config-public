@@ -50,87 +50,114 @@ cards:
           ulm_address: sensor.poat_s_iphone_14_pro_max_geocoded_location
           ulm_card_person_battery: sensor.gina_s_iphone_13_mini_battery
 
-  - type: horizontal-stack
-    cards:
-      - type: "custom:button-card"
-        template: chip_mdi_icon_state
-        variables:
-          ulm_chip_mdi_icon_state_entity: sensor.living_room_temperature
-          ulm_chip_mdi_icon_state_icon: mdi:thermometer
-        tap_action:
-          action: navigate
-          navigation_path: "/the-matrix/house"
-      - type: "custom:button-card"
-        template: chip_power_consumption
-        variables:
-          ulm_chip_electric_consumption: sensor.power_in_kw
-          ulm_chip_electric_price: false
-        tap_action:
-          action: navigate
-          navigation_path: "/energy"
-      - type: "custom:button-card"
-        template: chip_mdi_icon_state
-        styles:
-          icon:
-            - color: "var(--red-color)"
-        variables:
-          ulm_chip_mdi_icon_state_entity: sensor.devices_offline
-        tap_action:
-          action: navigate
-          navigation_path: "/the-matrix/network?anchor=disconnected"
-      - type: "custom:button-card"
-        template: chip_mdi_icon_state
-        entity: sensor.devices_with_low_battery
-        label: "[[[ if (entity.state > 0) return entity.state; ]]]"
-        styles:
-          icon:
-            - color: >
-                [[[ if (entity.state > 0) 
-                      return "var(--red-color)" ;
-                    else return "var(--green-color)"; ]]]
-        variables:
-          ulm_chip_mdi_icon_state_entity: sensor.devices_with_low_battery
-        tap_action:
-          action: navigate
-          navigation_path: "/the-matrix/network?anchor=low-battery"
-      - type: "custom:button-card"
-        template: chip_mdi_icon_state
-        icon: mdi:cat
-        label: "[[[ if (entity.state > 0) return entity.state; ]]]"
-        styles:
-          icon:
-            - color: >
-                [[[ if (entity.state > 0) 
-                      return "var(--red-color)" ;
-                    else return "var(--green-color)"; ]]]
-        variables:
-          ulm_chip_mdi_icon_state_entity: sensor.cat_device_failure_count
-        tap_action:
-          action: navigate
-          navigation_path: "/the-matrix/cats?anchor=status"
-      - type: "custom:button-card"
-        template: chip_mdi_icon_state
-        icon: mdi:water
-        label: ""
-        styles:
-          icon:
-            - color: >
-                [[[ if (entity.state == 'on') 
-                      return "var(--red-color)" ;
-                    else return "var(--green-color)"; ]]]
-        variables:
-          ulm_chip_mdi_icon_state_entity: group.leak_sensors
-      - type: "custom:button-card"
-        template: chip_mdi_icon_only
-        variables:
-          ulm_chip_mdi_icon_only_entity: sensor.seedbox_vpn_on
-          ulm_chip_mdi_icon_only_icon: mdi:vpn
-        styles:
-          icon:
-            - color: >
-                [[[ if (states["sensor.seedbox_vpn_on"].state == "False")
-                  return "var(--red-color)" ;
-                  else return "var(--green-color)"; ]]]
+          
+  #################
+  # INFO CHIPS
+  #################
+  - type: custom:mod-card
+    style: 
+      hui-horizontal-stack-card$: |
+        #root { 
+          justify-content: center;
+        }
+    card:
+      type: horizontal-stack
+      cards:
+        - type: "custom:button-card"
+          template: chip_mdi_icon_state
+          variables:
+            ulm_chip_mdi_icon_state_entity: sensor.living_room_temperature
+            ulm_chip_mdi_icon_state_icon: mdi:thermometer
+          tap_action:
+            action: navigate
+            navigation_path: "/the-matrix/house"
+        - type: "custom:button-card"
+          template: chip_power_consumption
+          variables:
+            ulm_chip_electric_consumption: sensor.power_in_kw
+            ulm_chip_electric_price: false
+          tap_action:
+            action: navigate
+            navigation_path: "/energy"
+        - type: "custom:button-card"
+          template: chip_mdi_icon_state
+          styles:
+            icon:
+              - color: "var(--red-color)"
+          variables:
+            ulm_chip_mdi_icon_state_entity: sensor.devices_offline
+          tap_action:
+            action: navigate
+            navigation_path: "/the-matrix/network?anchor=disconnected"
+  
+  #################
+  # STATUS CHIPS
+  #################
+  - type: custom:mod-card
+    style: 
+      hui-horizontal-stack-card$: |
+        #root { 
+          justify-content: center;
+        }
+    card:
+      type: horizontal-stack
+      cards:
+        - type: "custom:button-card"
+          template: chip_mdi_icon_state
+          entity: sensor.devices_with_low_battery
+          label: "[[[ if (entity.state > 0) return entity.state; ]]]"
+          styles:
+            icon:
+              - color: >
+                  [[[ if (entity.state > 0) 
+                        return "var(--red-color)" ;
+                      else return "var(--green-color)"; ]]]
+          variables:
+            ulm_chip_mdi_icon_state_entity: sensor.devices_with_low_battery
+          tap_action:
+            action: navigate
+            navigation_path: "/the-matrix/network?anchor=low-battery"
+        - type: "custom:button-card"
+          template: chip_mdi_icon_state
+          icon: mdi:cat
+          label: "[[[ if (entity.state > 0) return entity.state; ]]]"
+          styles:
+            icon:
+              - color: >
+                  [[[ if (entity.state > 0) 
+                        return "var(--red-color)" ;
+                      else return "var(--green-color)"; ]]]
+          variables:
+            ulm_chip_mdi_icon_state_entity: sensor.cat_device_failure_count
+          tap_action:
+            action: navigate
+            navigation_path: "/the-matrix/cats?anchor=status"
+        - type: "custom:button-card"
+          template: chip_mdi_icon_state
+          icon: mdi:water
+          label: ""
+          styles:
+            icon:
+              - color: >
+                  [[[ if (entity.state == 'on') 
+                        return "var(--red-color)" ;
+                      else return "var(--green-color)"; ]]]
+          variables:
+            ulm_chip_mdi_icon_state_entity: group.leak_sensors
+        - type: "custom:button-card"
+          template: chip_mdi_icon_only
+          variables:
+            ulm_chip_mdi_icon_only_entity: sensor.seedbox_vpn_on
+            ulm_chip_mdi_icon_only_icon: mdi:vpn
+          styles:
+            icon:
+              - color: >
+                  [[[ if (states["sensor.seedbox_vpn_on"].state == "False")
+                      return "var(--red-color)";
+                    else if (states["sensor.seedbox_vpn_on"].state == "Offline")
+                      return "var(--amber-color)";
+                    else
+                      return "var(--green-color)"; ]]]
 
   - type: "custom:button-card"
     template: card_title
@@ -223,8 +250,8 @@ cards:
             - type: "custom:button-card"
               template:
                 - card_room
-                - red_climate_problem_on
                 - yellow_on
+                - red_climate_problem_on
               name: Office
               entity: light.office_light
               icon: mdi:controller

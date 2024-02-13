@@ -7,3 +7,7 @@
 frontend:
   # We can define additional/custom themes for the frontend here.
   themes: !include_dir_merge_named ../themes
+
+  # @see https://github.com/thomasloven/lovelace-card-mod?tab=readme-ov-file#performance-improvements
+  extra_module_url:
+    - /hacsfiles/lovelace-card-mod/card-mod.js

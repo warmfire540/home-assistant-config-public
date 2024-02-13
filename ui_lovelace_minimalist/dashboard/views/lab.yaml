@@ -74,8 +74,11 @@ cards:
           icon:
             - color: >
                 [[[ if (states["sensor.seedbox_vpn_on"].state == "False")
-                  return "var(--red-color)" ;
-                  else return "var(--green-color)"; ]]]
+                      return "var(--red-color)";
+                    else if (states["sensor.seedbox_vpn_on"].state == "Offline")
+                      return "var(--amber-color)";
+                    else
+                      return "var(--green-color)"; ]]]
 
   - type: horizontal-stack
     cards:

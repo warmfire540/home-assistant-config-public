@@ -1,0 +1,16 @@
+#####
+# Run turn off house script when bedside tag scanned
+#####
+
+alias: Tag bedside sleep is scanned
+id: 1e7a8457-9e1c-4914-923a-e1591e0d553a
+mode: single
+
+trigger:
+  - platform: tag
+    tag_id: e50d2545-c7a8-4f89-acf2-e4e15f4e8086
+  - platform: tag
+    tag_id: a699a65f-9ca2-47fa-add4-e23bf88f45fc
+
+action:
+  - service: script.turn_off_house
