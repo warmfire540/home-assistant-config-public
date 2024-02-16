@@ -7,22 +7,22 @@
     - name: Plex IP
       unique_id: 0a3e75a3-dac6-4027-8f9c-6a93894d4ddf
       icon: "mdi:ip-network"
-      state: "state_attr('sensor.rpi_poat_plex_rpi_monitor_poat_plex', 'networking').eth0.IP if state_attr('sensor.rpi_poat_plex_rpi_monitor_poat_plex', 'networking')"
+      state: "{{ state_attr('sensor.rpi_poat_plex_rpi_monitor_poat_plex', 'networking').eth0.IP if state_attr('sensor.rpi_poat_plex_rpi_monitor_poat_plex', 'networking') }}"
 
 - sensor:
     - name: Share IP
       unique_id: 752682fa-b9a3-41cd-b0ff-121c9673e9e7
       icon: "mdi:ip-network"
-      state: "state_attr('sensor.rpi_poat_share_rpi_monitor_poat_share', 'networking').eth0.IP if state_attr('sensor.rpi_poat_share_rpi_monitor_poat_share', 'networking')"
+      state: "{{ state_attr('sensor.rpi_poat_share_rpi_monitor_poat_share', 'networking').eth0.IP if state_attr('sensor.rpi_poat_share_rpi_monitor_poat_share', 'networking') }}"
 
 - sensor:
     - name: Pi Hole IP
       unique_id: 73759c0c-9d7e-4490-9acf-6ae97b9669f3
       icon: "mdi:ip-network"
-      state: "state_attr('sensor.rpi_poat_hole_rpi_monitor_poat_hole', 'networking').eth0.IP if state_attr('sensor.rpi_poat_hole_rpi_monitor_poat_hole', 'networking')"
+      state: "{{ state_attr('sensor.rpi_poat_hole_rpi_monitor_poat_hole', 'networking').eth0.IP if state_attr('sensor.rpi_poat_hole_rpi_monitor_poat_hole', 'networking') }}"
 
 - sensor:
     - name: Seedbox IP
       unique_id: d6a539cf-e84c-494d-b840-329d38cafa63
       icon: "mdi:ip-network"
-      state: "state_attr('sensor.rpi_poat_seedbox_rpi_monitor_poat_seedbox', 'networking').eth0.IP if state_attr('sensor.rpi_poat_seedbox_rpi_monitor_poat_seedbox', 'networking')"
+      state: "{{ state_attr('sensor.rpi_poat_seedbox_rpi_monitor_poat_seedbox', 'networking').eth0.IP if state_attr('sensor.rpi_poat_seedbox_rpi_monitor_poat_seedbox', 'networking') }}"

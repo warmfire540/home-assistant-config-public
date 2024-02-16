@@ -347,3 +347,39 @@ cards:
                 ha-card {
                   text-align: center;
                 }
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Plex Controls
+
+  - type: entities
+    entities:
+      - entity: sensor.poat_pi
+        type: custom:multiple-entity-row
+        name: Pi Plex
+        icon: mdi:plex
+        show_state: true
+        card_mod:
+          style:
+            hui-generic-entity-row: |
+              .entities-row {
+                width: 100%;
+              }
+        entities:
+          - entity: update.plex_media_server_poat_pi
+            name: Version
+          - entity: button.poat_pi_scan_clients
+            icon: mdi:skull-scan-outline
+            name: scan
+
+      - type: custom:plex-meets-homeassistant
+        protocol: http
+        playTrailer: true
+        showExtras: true
+        showSearch: true
+        ip: poat-plex.local
+        token: !secret plex_token
+        port: '32400'
+        libraryName: Watch Next
+        entity:
+          - media_player.fire_tv_192_168_68_115

@@ -104,6 +104,14 @@ cards:
             ulm_card_light_enable_color: true
             ulm_card_light_name: Bulb 4
 
+        - type: "custom:button-card"
+          template: "card_scenes_welcome"
+          variables:
+            entity_1:
+              entity_id: scene.night_4
+            entity_2:
+              entity_id: scene.working
+
   - type: "custom:button-card"
     template: card_cover
     entity: cover.kitchen_blinds
