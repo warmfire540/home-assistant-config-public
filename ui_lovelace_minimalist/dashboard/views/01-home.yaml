@@ -183,11 +183,13 @@ cards:
               template:
                 - card_room
                 - yellow_on
+                - red_climate_problem_on
               name: Living Room
               entity: light.living_room_light
               icon: mdi:sofa
-              label: '[[[ return states["sensor.living_room_temperature"].state + "°F - " + states["sensor.living_room_humidity"].state + "%" ]]]'
               variables:
+                temperature_entity: sensor.living_room_climate_air_temperature
+                humidity_entity: sensor.living_room_climate_humidity
                 entity_1:
                   entity_id: light.living_room_light
                   templates:
@@ -231,7 +233,6 @@ cards:
               entity: light.dining_room_light
               icon: mdi:glass-cocktail
               variables:
-                label_use_brightness: true
                 label_use_temperature: false
                 temperature_entity: sensor.dining_room_climate_air_temperature
                 humidity_entity: sensor.dining_room_climate_humidity
@@ -259,7 +260,6 @@ cards:
               entity: light.office_light
               icon: mdi:controller
               variables:
-                label_use_brightness: true
                 label_use_temperature: false
                 temperature_entity: sensor.office_climate_air_temperature
                 humidity_entity: sensor.office_climate_humidity
@@ -298,7 +298,6 @@ cards:
               entity: switch.kitchen_lights_switch_1
               icon: mdi:countertop-outline
               variables:
-                label_use_brightness: true
                 label_use_temperature: false
                 problem_entity: group.cat_water_status
                 problem_entity_2: binary_sensor.dishwasher_leak_sensor
@@ -346,7 +345,6 @@ cards:
               entity: light.bedroom_light
               icon: mdi:bed
               variables:
-                label_use_brightness: true
                 label_use_temperature: false
                 temperature_entity: sensor.master_bedroom_climate_air_temperature
                 humidity_entity: sensor.master_bedroom_climate_humidity
@@ -370,7 +368,6 @@ cards:
               name: Master Bathroom
               icon: mdi:shower-head
               variables:
-                label_use_brightness: true
                 label_use_temperature: false
                 temperature_entity: sensor.master_bath_climate_air_temperature
                 humidity_entity: sensor.master_bath_climate_humidity
@@ -391,7 +388,6 @@ cards:
               entity: switch.gina_computer_socket_1
               icon: mdi:desk
               variables:
-                label_use_brightness: true
                 label_use_temperature: false
                 temperature_entity: sensor.guest_bedroom_climate_air_temperature
                 humidity_entity: sensor.guest_bedroom_climate_humidity
@@ -419,7 +415,6 @@ cards:
               name: Guest Bathroom
               icon: mdi:shower
               variables:
-                label_use_brightness: true
                 label_use_temperature: false
                 problem_entity: group.cat_food_status
                 temperature_entity: sensor.guest_bath_climate_air_temperature
@@ -443,7 +438,6 @@ cards:
               entity: switch.garage_opener_socket_1
               icon: mdi:garage
               variables:
-                label_use_brightness: true
                 label_use_temperature: false
                 problem_entity: binary_sensor.water_heater_leak_sensor
                 temperature_entity: sensor.garage_climate_air_temperature
@@ -478,13 +472,14 @@ cards:
                 - card_room
                 - yellow_on
                 - red_problem_on
+                - red_climate_problem_on
               name: Attic
               icon: mdi:home-roof
-              label: '[[[ return states["sensor.ac_heater_4_1d"].state + "W - " + states["sensor.air_conditioner_2_1d"].state + "W"  ]]]'
               variables:
-                label_use_brightness: true
                 label_use_temperature: false
                 problem_entity: binary_sensor.ac_pan_leak_sensor
+                temperature_entity: sensor.attic_climate_air_temperature
+                humidity_entity: sensor.attic_climate_humidity
               tap_action:
                 action: navigate
                 navigation_path: "attic"
@@ -497,11 +492,13 @@ cards:
             - type: "custom:button-card"
               template:
                 - card_room
+                - red_climate_problem_on
               name: Shed
               icon: mdi:greenhouse
               variables:
-                label_use_brightness: true
                 label_use_temperature: false
+                temperature_entity: sensor.shed_climate_air_temperature
+                humidity_entity: sensor.shed_climate_humidity
               tap_action:
                 action: navigate
                 navigation_path: "shed"
@@ -673,6 +670,7 @@ cards:
               tap_action:
                 action: navigate
                 navigation_path: "attic"
+              label: '[[[ return states["sensor.attic_climate_air_temperature"].state + "°F - " + states["sensor.attic_climate_humidity"].state + "%"  ]]]'
 
         - type: horizontal-stack
           cards:
@@ -684,3 +682,4 @@ cards:
               tap_action:
                 action: navigate
                 navigation_path: "shed"
+              label: '[[[ return states["sensor.shed_climate_air_temperature"].state + "°F - " + states["sensor.shed_climate_humidity"].state + "%"  ]]]'

@@ -7,13 +7,13 @@ leak_sensors:
         template:
           - card_binary_sensor_alert
           - battery_info
-        entity: '[[leak_sensor]]'
+        entity: binary_sensor.[[sensor_prefix]]_leak_sensor
         variables:
-          ulm_battery_entity: '[[battery_sensor]]'
+          ulm_battery_entity: sensor.[[sensor_prefix]]_leak_sensor_battery
       - type: horizontal-stack
         cards:
           - type: custom:mushroom-entity-card
-            entity: '[[battery_update_sensor]]'
+            entity: sensor.[[sensor_prefix]]_leak_sensor_last_battery_update
             name: Last battery update
             icon_type: none
             card_mod:
@@ -22,7 +22,7 @@ leak_sensors:
                   text-align: center;
                 }
           - type: custom:mushroom-entity-card
-            entity: '[[reset_sensor]]'
+            entity: sensor.[[sensor_prefix]]_leak_sensor_last_reset
             name: Last reset
             icon_type: none
             card_mod:
@@ -31,7 +31,7 @@ leak_sensors:
                   text-align: center;
                 }
           - type: custom:mushroom-entity-card
-            entity: '[[last_leak_sensor]]'
+            entity: sensor.[[sensor_prefix]]_leak_sensor_last_leak
             name: Last leak
             icon_type: none
             card_mod:

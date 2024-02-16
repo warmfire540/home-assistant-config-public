@@ -9,50 +9,35 @@ cards:
   - type: "custom:button-card"
     template: card_title
     name: House
+  
+  - type: custom:auto-entities
+    card:
+      type: "custom:mini-graph-card"
+      name: Temperatures
+      show:
+        legend: false
+    filter:
+      include:
+        - entity_id: "sensor.*_climate_air_temperature"
 
-  - type: horizontal-stack
-    cards:
-      - type: custom:mini-graph-card
-        name: Temperatures
-        icon: mdi:thermometer
-        unit: "°F"
-        entities:
-          - sensor.living_room_temperature
-          - sensor.master_bath_climate_air_temperature
-          - sensor.office_climate_air_temperature
-          - sensor.garage_climate_air_temperature
-          - sensor.kitchen_climate_air_temperature
-          - sensor.guest_bath_climate_air_temperature
-          - sensor.guest_bedroom_climate_air_temperature
-          - sensor.master_bedroom_climate_air_temperature
-          - sensor.dining_room_climate_air_temperature
-        show:
-          state: false
-          legend: false
-      - type: custom:mini-graph-card
-        name: Humidities
-        icon: mdi:water-percent
-        unit: "%"
-        entities:
-          - sensor.living_room_humidity
-          - sensor.master_bath_climate_humidity
-          - sensor.office_climate_humidity
-          - sensor.garage_climate_humidity
-          - sensor.kitchen_climate_humidity
-          - sensor.guest_bath_climate_humidity
-          - sensor.guest_bedroom_climate_humidity
-          - sensor.master_bedroom_climate_humidity
-          - sensor.dining_room_climate_humidity
-        show:
-          state: false
-          legend: false
-      - type: "custom:button-card"
-        template: card_graph
-        entity: sensor.masters_vue_123_1min
-        variables:
-          ulm_card_graph_color: "var(--google-yellow)"
-          ulm_card_graph_name: Electricity
-          ulm_card_graph_entity: sensor.masters_vue_123_1min
+  - type: custom:auto-entities
+    card:
+      type: "custom:mini-graph-card"
+      name: Humidities
+      show:
+        legend: false
+    filter:
+      include:
+        - entity_id: "sensor.*_climate_humidity"
+
+  - type: "custom:button-card"
+    template: card_graph
+    entity: sensor.masters_vue_123_1min
+    variables:
+      ulm_card_graph_color: "var(--google-yellow)"
+      ulm_card_graph_name: Electricity
+      ulm_card_graph_entity: sensor.masters_vue_123_1min
+      
 
   - type: thermostat
     entity: climate.living_room

@@ -1,18 +1,21 @@
 title: "Shed"
 path: "shed"
 cards:
-  - type: "custom:button-card"
-    template: chip_back
+  - type: custom:decluttering-card
+    template: room header
     variables:
-      ulm_chip_back_path: home
-
-  - type: "custom:button-card"
-    template: card_title
-    name: Shed
+      - sensor_prefix: shed
+      - room_name: Shed
 
   - type: "custom:button-card"
     template: card_title
     label: Devices
+
+  - type: custom:decluttering-card
+    template: z_wave_climate
+    variables:
+      - sensor_prefix: shed
+      - node_number: 13
 
   - type: "custom:button-card"
     template: card_title

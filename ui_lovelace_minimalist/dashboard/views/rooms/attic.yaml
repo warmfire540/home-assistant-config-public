@@ -1,18 +1,21 @@
 title: "Attic"
 path: "attic"
 cards:
-  - type: "custom:button-card"
-    template: chip_back
+  - type: custom:decluttering-card
+    template: room header
     variables:
-      ulm_chip_back_path: home
-
-  - type: "custom:button-card"
-    template: card_title
-    name: Attic
+      - sensor_prefix: attic
+      - room_name: Attic
 
   - type: "custom:button-card"
     template: card_title
     label: Devices
+
+  - type: custom:decluttering-card
+    template: z_wave_climate
+    variables:
+      - sensor_prefix: attic
+      - node_number: 14
 
   - type: "custom:button-card"
     template: card_title
@@ -21,11 +24,7 @@ cards:
   - type: custom:decluttering-card
     template: leak_sensors
     variables:
-      - leak_sensor: binary_sensor.ac_pan_leak_sensor
-      - battery_sensor: sensor.ac_pan_leak_sensor_battery
-      - battery_update_sensor: sensor.ac_pan_leak_sensor_last_battery_update
-      - reset_sensor: sensor.ac_pan_leak_sensor_last_reset
-      - last_leak_sensor: sensor.ac_pan_leak_sensor_last_leak
+      - sensor_prefix: ac_pan
 
   - type: horizontal-stack
     cards:

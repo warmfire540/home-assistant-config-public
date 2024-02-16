@@ -1,0 +1,29 @@
+room header:
+  card:
+    type: vertical-stack
+    cards:
+      - type: "custom:button-card"
+        template: chip_back
+        variables:
+          ulm_chip_back_path: home
+
+      - type: "custom:button-card"
+        template: card_title
+        name: '[[room_name]]'
+
+      - type: horizontal-stack
+        cards:
+          - type: "custom:button-card"
+            template: card_graph
+            entity: sensor.[[sensor_prefix]]_climate_air_temperature
+            variables:
+              ulm_card_graph_color: "var(--google-red)"
+              ulm_card_graph_name: Temperature
+              ulm_card_graph_entity: sensor.[[sensor_prefix]]_climate_air_temperature
+          - type: "custom:button-card"
+            template: card_graph
+            entity: sensor.[[sensor_prefix]]_climate_humidity
+            variables:
+              ulm_card_graph_color: "var(--google-blue)"
+              ulm_card_graph_name: Humidity
+              ulm_card_graph_entity: sensor.[[sensor_prefix]]_climate_humidity

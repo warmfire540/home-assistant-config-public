@@ -1,31 +1,11 @@
 title: "Living Room"
 path: "living-room"
 cards:
-  - type: "custom:button-card"
-    template: chip_back
+  - type: custom:decluttering-card
+    template: room header
     variables:
-      ulm_chip_back_path: home
-
-  - type: "custom:button-card"
-    template: card_title
-    name: Living Room
-
-  - type: horizontal-stack
-    cards:
-      - type: "custom:button-card"
-        template: card_graph
-        entity: sensor.living_room_temperature
-        variables:
-          ulm_card_graph_color: "var(--google-red)"
-          ulm_card_graph_name: Temperature
-          ulm_card_graph_entity: sensor.living_room_temperature
-      - type: "custom:button-card"
-        template: card_graph
-        entity: sensor.living_room_humidity
-        variables:
-          ulm_card_graph_color: "var(--google-blue)"
-          ulm_card_graph_name: Humidity
-          ulm_card_graph_entity: sensor.living_room_humidity
+      - sensor_prefix: living_room
+      - room_name: Living Room
 
   - type: "custom:button-card"
     template: card_title

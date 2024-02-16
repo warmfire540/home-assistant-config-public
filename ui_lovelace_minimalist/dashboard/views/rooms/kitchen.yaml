@@ -1,31 +1,11 @@
 title: "Kitchen"
 path: "kitchen"
 cards:
-  - type: "custom:button-card"
-    template: chip_back
+  - type: custom:decluttering-card
+    template: room header
     variables:
-      ulm_chip_back_path: home
-
-  - type: "custom:button-card"
-    template: card_title
-    name: Kitchen
-
-  - type: horizontal-stack
-    cards:
-      - type: "custom:button-card"
-        template: card_graph
-        entity: sensor.kitchen_climate_air_temperature
-        variables:
-          ulm_card_graph_color: "var(--google-red)"
-          ulm_card_graph_name: Temperature
-          ulm_card_graph_entity: sensor.kitchen_climate_air_temperature
-      - type: "custom:button-card"
-        template: card_graph
-        entity: sensor.kitchen_climate_humidity
-        variables:
-          ulm_card_graph_color: "var(--google-blue)"
-          ulm_card_graph_name: Humidity
-          ulm_card_graph_entity: sensor.kitchen_climate_humidity
+      - sensor_prefix: kitchen
+      - room_name: Kitchen
 
   - type: "custom:button-card"
     template: card_title
@@ -150,11 +130,7 @@ cards:
   - type: custom:decluttering-card
     template: leak_sensors
     variables:
-      - leak_sensor: binary_sensor.dishwasher_leak_sensor
-      - battery_sensor: sensor.dishwasher_leak_sensor_battery
-      - battery_update_sensor: sensor.dishwasher_leak_sensor_last_battery_update
-      - reset_sensor: sensor.dishwasher_leak_sensor_last_reset
-      - last_leak_sensor: sensor.dishwasher_leak_sensor_last_leak
+      - sensor_prefix: dishwasher
 
   - type: horizontal-stack
     cards:

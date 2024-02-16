@@ -1,31 +1,11 @@
 title: "Guest Bathroom"
 path: "guest-bathroom"
 cards:
-  - type: "custom:button-card"
-    template: chip_back
+  - type: custom:decluttering-card
+    template: room header
     variables:
-      ulm_chip_back_path: home
-
-  - type: "custom:button-card"
-    template: card_title
-    name: Guest Bathroom
-
-  - type: horizontal-stack
-    cards:
-      - type: "custom:button-card"
-        template: card_graph
-        entity: sensor.guest_bath_climate_air_temperature
-        variables:
-          ulm_card_graph_color: "var(--google-red)"
-          ulm_card_graph_name: Temperature
-          ulm_card_graph_entity: sensor.guest_bath_climate_air_temperature
-      - type: "custom:button-card"
-        template: card_graph
-        entity: sensor.guest_bath_climate_humidity
-        variables:
-          ulm_card_graph_color: "var(--google-blue)"
-          ulm_card_graph_name: Humidity
-          ulm_card_graph_entity: sensor.guest_bath_climate_humidity
+      - sensor_prefix: guest_bath
+      - room_name: Guest Bathroom
 
   - type: "custom:button-card"
     template: card_title
