@@ -226,12 +226,15 @@ cards:
               template:
                 - card_room
                 - yellow_on
+                - red_climate_problem_on
               name: Dining Room
               entity: light.dining_room_light
               icon: mdi:glass-cocktail
               variables:
                 label_use_brightness: true
                 label_use_temperature: false
+                temperature_entity: sensor.dining_room_climate_air_temperature
+                humidity_entity: sensor.dining_room_climate_humidity
                 entity_1:
                   entity_id: light.dining_room_light
                   templates:
@@ -290,6 +293,7 @@ cards:
                 - card_room
                 - yellow_on
                 - red_problem_on
+                - red_climate_problem_on
               name: Kitchen
               entity: switch.kitchen_lights_switch_1
               icon: mdi:countertop-outline
@@ -298,6 +302,8 @@ cards:
                 label_use_temperature: false
                 problem_entity: group.cat_water_status
                 problem_entity_2: binary_sensor.dishwasher_leak_sensor
+                temperature_entity: sensor.kitchen_climate_air_temperature
+                humidity_entity: sensor.kitchen_climate_humidity
                 entity_1:
                   entity_id: switch.kitchen_lights_switch_1
                   icon: mdi:lightbulb
@@ -335,12 +341,15 @@ cards:
               template:
                 - card_room
                 - yellow_on
+                - red_climate_problem_on
               name: Master Bedroom
               entity: light.bedroom_light
               icon: mdi:bed
               variables:
                 label_use_brightness: true
                 label_use_temperature: false
+                temperature_entity: sensor.master_bedroom_climate_air_temperature
+                humidity_entity: sensor.master_bedroom_climate_humidity
                 entity_1:
                   entity_id: light.bedroom_light
                   templates:
@@ -377,12 +386,15 @@ cards:
             - type: "custom:button-card"
               template:
                 - card_room
+                - red_climate_problem_on
               name: Guest Room
               entity: switch.gina_computer_socket_1
               icon: mdi:desk
               variables:
                 label_use_brightness: true
                 label_use_temperature: false
+                temperature_entity: sensor.guest_bedroom_climate_air_temperature
+                humidity_entity: sensor.guest_bedroom_climate_humidity
                 entity_1:
                   entity_id: switch.gina_computer_socket_1
                   icon: mdi:laptop
@@ -403,13 +415,15 @@ cards:
                 - card_room
                 - yellow_on
                 - red_problem_on
+                - red_climate_problem_on
               name: Guest Bathroom
               icon: mdi:shower
-              label: '[[[ return states["sensor.guest_bedroom_16_1min"].state + "W" ]]]'
               variables:
                 label_use_brightness: true
                 label_use_temperature: false
                 problem_entity: group.cat_food_status
+                temperature_entity: sensor.guest_bath_climate_air_temperature
+                humidity_entity: sensor.guest_bath_climate_humidity
               tap_action:
                 action: navigate
                 navigation_path: "guest-bathroom"
@@ -424,6 +438,7 @@ cards:
                 - card_room
                 - yellow_on
                 - red_problem_on
+                - red_climate_problem_on
               name: Garage
               entity: switch.garage_opener_socket_1
               icon: mdi:garage
@@ -431,6 +446,8 @@ cards:
                 label_use_brightness: true
                 label_use_temperature: false
                 problem_entity: binary_sensor.water_heater_leak_sensor
+                temperature_entity: sensor.garage_climate_air_temperature
+                humidity_entity: sensor.garage_climate_humidity
                 entity_1:
                   entity_id: switch.garage_opener_socket_1
                   templates:
@@ -530,6 +547,7 @@ cards:
                 navigation_path: "dining-room"
               variables:
                 ulm_custom_card_esh_room_light_entity: light.dining_room_light
+              label: '[[[ return states["sensor.dining_room_climate_air_temperature"].state + "°F - " + states["sensor.dining_room_climate_humidity"].state + "%"  ]]]'
 
         - type: horizontal-stack
           cards:
@@ -558,6 +576,7 @@ cards:
                 navigation_path: "kitchen"
               variables:
                 ulm_custom_card_esh_room_light_entity: switch.kitchen_lights_switch_1
+              label: '[[[ return states["sensor.kitchen_climate_air_temperature"].state + "°F - " + states["sensor.kitchen_climate_humidity"].state + "%"  ]]]'
               styles:
                 card:
                   - border-radius: "20px"
@@ -584,6 +603,7 @@ cards:
                 navigation_path: "master-bedroom"
               variables:
                 ulm_custom_card_esh_room_light_entity: light.bedroom_light
+              label: '[[[ return states["sensor.master_bedroom_climate_air_temperature"].state + "°F - " + states["sensor.master_bedroom_climate_humidity"].state + "%"  ]]]'
             - type: "custom:button-card"
               template:
                 - card_esh_room
@@ -609,7 +629,7 @@ cards:
                 navigation_path: "guest-room"
               variables:
                 ulm_custom_card_esh_room_light_entity: switch.gina_computer_socket_1
-              label: '[[[ return states["switch.gina_computer_socket_1"].state == "on" ? "On" : "Off" ]]]'
+              label: '[[[ return states["sensor.guest_bedroom_climate_air_temperature"].state + "°F - " + states["sensor.guest_bedroom_climate_humidity"].state + "%"  ]]]'
             - type: "custom:button-card"
               template:
                 - card_esh_room
@@ -619,7 +639,7 @@ cards:
               tap_action:
                 action: navigate
                 navigation_path: "guest-bathroom"
-              label: '[[[ return states["sensor.guest_bedroom_16_1min"].state + "W" ]]]'
+              label: '[[[ return states["sensor.guest_bath_climate_air_temperature"].state + "°F - " + states["sensor.guest_bath_climate_humidity"].state + "%"  ]]]'
 
         - type: horizontal-stack
           cards:
@@ -635,7 +655,7 @@ cards:
                 navigation_path: "garage"
               variables:
                 ulm_custom_card_esh_room_light_entity: switch.garage_opener_socket_1
-              label: '[[[ return states["switch.garage_opener_socket_1"].state == "on" ? "On" : "Off" ]]]'
+              label: '[[[ return states["sensor.garage_climate_air_temperature"].state + "°F - " + states["sensor.garage_climate_humidity"].state + "%"  ]]]'
               styles:
                 card:
                   - background-color: >-

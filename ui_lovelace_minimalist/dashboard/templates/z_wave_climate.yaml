@@ -19,15 +19,15 @@ z_wave_climate:
             template:
               - card_generic_swap
               - battery_info
-            entity: '[[firmware_sensor]]'
+            entity: 'update.[[sensor_prefix]]_climate_firmware'
             variables:
               ulm_card_generic_swap_name: Climate Sensor
               ulm_card_generic_swap_icon: mdi:z-wave
-              ulm_battery_entity: '[[battery_sensor]]'
+              ulm_battery_entity: 'sensor.[[sensor_prefix]]_climate_battery_level'
             view_layout:
               grid-area: firmware
           - type: custom:mushroom-entity-card
-            entity: '[[temperature_sensor]]'
+            entity: 'sensor.[[sensor_prefix]]_climate_air_temperature'
             name: Temperature
             icon_type: none
             view_layout:
@@ -38,7 +38,7 @@ z_wave_climate:
                   text-align: center;
                 }
           - type: custom:mushroom-entity-card
-            entity: '[[humidity_sensor]]'
+            entity: 'sensor.[[sensor_prefix]]_climate_humidity'
             name: Humidity
             icon_type: none
             view_layout:
@@ -49,7 +49,7 @@ z_wave_climate:
                   text-align: center;
                 }
           - type: custom:mushroom-entity-card
-            entity: '[[overheat_sensor]]'
+            entity: 'binary_sensor.[[sensor_prefix]]_climate_overheat_detected'
             name: Overheat
             icon_type: none
             view_layout:
@@ -60,7 +60,7 @@ z_wave_climate:
                   text-align: center;
                 }
           - type: custom:mushroom-entity-card
-            entity: '[[underheat_sensor]]'
+            entity: 'binary_sensor.[[sensor_prefix]]_climate_underheat_detected'
             name: Underheat
             icon_type: none
             view_layout:
@@ -71,7 +71,7 @@ z_wave_climate:
                   text-align: center;
                 }
           - type: custom:mushroom-entity-card
-            entity: '[[moisture_sensor]]'
+            entity: 'binary_sensor.[[sensor_prefix]]_climate_moisture_alarm'
             name: Moisture
             icon_type: none
             view_layout:
@@ -82,7 +82,7 @@ z_wave_climate:
                   text-align: center;
                 }
           - type: custom:mushroom-entity-card
-            entity: '[[battery_level_sensor]]'
+            entity: 'binary_sensor.[[sensor_prefix]]_climate_low_battery_level'
             name: Battery
             icon_type: none
             view_layout:
@@ -93,7 +93,7 @@ z_wave_climate:
                   text-align: center;
                 }
           - type: custom:mushroom-entity-card
-            entity: '[[status_sensor]]'
+            entity: 'sensor.node_[[node_number]]_node_status'
             name: Status
             icon_type: none
             view_layout:

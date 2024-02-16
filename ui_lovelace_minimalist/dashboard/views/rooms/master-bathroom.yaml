@@ -34,15 +34,8 @@ cards:
   - type: custom:decluttering-card
     template: z_wave_climate
     variables:
-      - firmware_sensor: update.master_bath_climate_firmware
-      - battery_sensor: sensor.master_bath_climate_battery_level
-      - temperature_sensor: sensor.master_bath_climate_air_temperature
-      - humidity_sensor: sensor.master_bath_climate_humidity
-      - overheat_sensor: binary_sensor.master_bath_climate_overheat_detected
-      - underheat_sensor: binary_sensor.master_bath_climate_underheat_detected
-      - moisture_sensor: binary_sensor.master_bath_climate_moisture_alarm
-      - battery_level_sensor: binary_sensor.master_bath_climate_low_battery_level
-      - status_sensor: sensor.node_4_node_status
+      - sensor_prefix: master_bath
+      - node_number: 4
 
   - type: "custom:button-card"
     template: card_title

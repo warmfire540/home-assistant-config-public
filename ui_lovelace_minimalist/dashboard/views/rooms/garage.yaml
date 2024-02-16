@@ -10,6 +10,23 @@ cards:
     template: card_title
     name: Garage
 
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: card_graph
+        entity: sensor.garage_climate_air_temperature
+        variables:
+          ulm_card_graph_color: "var(--google-red)"
+          ulm_card_graph_name: Temperature
+          ulm_card_graph_entity: sensor.garage_climate_air_temperature
+      - type: "custom:button-card"
+        template: card_graph
+        entity: sensor.garage_climate_humidity
+        variables:
+          ulm_card_graph_color: "var(--google-blue)"
+          ulm_card_graph_name: Humidity
+          ulm_card_graph_entity: sensor.garage_climate_humidity
+
   - type: "custom:button-card"
     template: card_title
     label: Devices
@@ -36,6 +53,12 @@ cards:
         - entity_id: sensor.strongboi_side_brush
           unit: "%"
           subtitle: Side Brush
+
+  - type: custom:decluttering-card
+    template: z_wave_climate
+    variables:
+      - sensor_prefix: garage
+      - node_number: 6
 
   - type: "custom:button-card"
     template: card_title

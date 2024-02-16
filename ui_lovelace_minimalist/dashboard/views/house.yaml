@@ -20,6 +20,12 @@ cards:
           - sensor.living_room_temperature
           - sensor.master_bath_climate_air_temperature
           - sensor.office_climate_air_temperature
+          - sensor.garage_climate_air_temperature
+          - sensor.kitchen_climate_air_temperature
+          - sensor.guest_bath_climate_air_temperature
+          - sensor.guest_bedroom_climate_air_temperature
+          - sensor.master_bedroom_climate_air_temperature
+          - sensor.dining_room_climate_air_temperature
         show:
           state: false
           legend: false
@@ -31,6 +37,12 @@ cards:
           - sensor.living_room_humidity
           - sensor.master_bath_climate_humidity
           - sensor.office_climate_humidity
+          - sensor.garage_climate_humidity
+          - sensor.kitchen_climate_humidity
+          - sensor.guest_bath_climate_humidity
+          - sensor.guest_bedroom_climate_humidity
+          - sensor.master_bedroom_climate_humidity
+          - sensor.dining_room_climate_humidity
         show:
           state: false
           legend: false

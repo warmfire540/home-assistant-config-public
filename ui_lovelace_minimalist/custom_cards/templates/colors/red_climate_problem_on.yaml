@@ -5,11 +5,12 @@ red_climate_problem_on:
     - styles:
         label:
           - color: "rgba(var(--color-red-text),1)"
+        card:
+          - border: "2px solid rgba(var(--color-red-text),1)"
       operator: template
       value: >
         [[[ return states[variables.temperature_entity].state > 80 ||  states[variables.humidity_entity].state > 80 ]]]
-      id: "on"
-      #id: "label"
+      id: "climate"
   triggers_update:
     - "[[[ return variables.temperature_entity; ]]]"
     - "[[[ return variables.humidity_entity; ]]]"
