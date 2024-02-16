@@ -74,32 +74,34 @@ cards:
         entity: switch.kitchen_lights_switch_1
         state: "on"
     card:
-      type: horizontal-stack
+      type: vertical-stack
       cards:
-        - type: "custom:button-card"
-          template: card_light
-          entity: light.kitchen_bulb_1
-          variables:
-            ulm_card_light_enable_color: true
-            ulm_card_light_name: Bulb 1
-        - type: "custom:button-card"
-          template: card_light
-          entity: light.le_rgbcwbr30_3
-          variables:
-            ulm_card_light_enable_color: true
-            ulm_card_light_name: Bulb 2
-        - type: "custom:button-card"
-          template: card_light
-          entity: light.kitchen_bulb_3
-          variables:
-            ulm_card_light_enable_color: true
-            ulm_card_light_name: Bulb 3
-        - type: "custom:button-card"
-          template: card_light
-          entity: light.le_rgbcwbr30
-          variables:
-            ulm_card_light_enable_color: true
-            ulm_card_light_name: Bulb 4
+        - type: horizontal-stack
+          cards:
+            - type: "custom:button-card"
+              template: card_light
+              entity: light.kitchen_bulb_1
+              variables:
+                ulm_card_light_enable_color: true
+                ulm_card_light_name: Bulb 1
+            - type: "custom:button-card"
+              template: card_light
+              entity: light.le_rgbcwbr30_3
+              variables:
+                ulm_card_light_enable_color: true
+                ulm_card_light_name: Bulb 2
+            - type: "custom:button-card"
+              template: card_light
+              entity: light.kitchen_bulb_3
+              variables:
+                ulm_card_light_enable_color: true
+                ulm_card_light_name: Bulb 3
+            - type: "custom:button-card"
+              template: card_light
+              entity: light.le_rgbcwbr30
+              variables:
+                ulm_card_light_enable_color: true
+                ulm_card_light_name: Bulb 4
 
         - type: "custom:button-card"
           template: "card_scenes_welcome"
