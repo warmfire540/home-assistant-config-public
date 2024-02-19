@@ -66,7 +66,7 @@ cards:
         - type: "custom:button-card"
           template: chip_mdi_icon_state
           variables:
-            ulm_chip_mdi_icon_state_entity: sensor.living_room_temperature
+            ulm_chip_mdi_icon_state_entity: sensor.living_room_climate_air_temperature
             ulm_chip_mdi_icon_state_icon: mdi:thermometer
           tap_action:
             action: navigate
@@ -158,6 +158,18 @@ cards:
                       return "var(--amber-color)";
                     else
                       return "var(--green-color)"; ]]]
+        - type: "custom:button-card"
+          template: chip_mdi_icon_state
+          entity: group.robot_vacuums_status
+          label: "[[[ if (entity.state > 0) return entity.state; ]]]"
+          styles:
+            icon:
+              - color: >
+                  [[[ if (entity.state == 'on')
+                        return "var(--red-color)" ;
+                      else return "var(--green-color)"; ]]]
+          variables:
+            ulm_chip_mdi_icon_state_entity: group.robot_vacuums_status
 
   - type: "custom:button-card"
     template: card_title
@@ -183,11 +195,13 @@ cards:
               template:
                 - card_room
                 - yellow_on
+                - red_problem_on
                 - red_climate_problem_on
               name: Living Room
               entity: light.living_room_light
               icon: mdi:sofa
               variables:
+                problem_entity: binary_sensor.rolo_error
                 temperature_entity: sensor.living_room_climate_air_temperature
                 humidity_entity: sensor.living_room_climate_humidity
                 entity_1:
@@ -440,6 +454,7 @@ cards:
               variables:
                 label_use_temperature: false
                 problem_entity: binary_sensor.water_heater_leak_sensor
+                problem_entity_2: binary_sensor.strong_boi_error
                 temperature_entity: sensor.garage_climate_air_temperature
                 humidity_entity: sensor.garage_climate_humidity
                 entity_1:
@@ -531,7 +546,7 @@ cards:
                 ulm_custom_card_esh_room_climate_entity: climate.living_room
                 ulm_card_thermostat_enable_popup: true
                 ulm_card_light_enable_popup: true
-              label: '[[[ return states["sensor.living_room_temperature"].state + "°F - " + states["sensor.living_room_humidity"].state + "%" ]]]'
+              label: '[[[ return states["sensor.living_room_climate_air_temperature"].state + "°F - " + states["sensor.living_room_climate_humidity"].state + "%" ]]]'
             - type: "custom:button-card"
               template:
                 - card_esh_room

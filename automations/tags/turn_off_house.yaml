@@ -14,3 +14,9 @@ trigger:
 
 action:
   - service: script.turn_off_house
+  - service: climate.set_temperature
+    data:
+      hvac_mode: cool
+      temperature: 71
+    target:
+      device_id: 694b98e61b1f75480c13050c4876a3b4

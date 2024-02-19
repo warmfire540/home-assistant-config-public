@@ -1,0 +1,11 @@
+####
+# Groups related to vacuums
+#
+#####
+
+robot_vacuums_status:
+  name: "Robot Vacuums Status"
+  icon: mdi:robot-vacuum
+  entities:
+    - binary_sensor.strong_boi_error
+    - binary_sensor.rolo_error

@@ -107,9 +107,17 @@ cards:
           template: "card_scenes_welcome"
           variables:
             entity_1:
-              entity_id: scene.night_4
+              entity_id: script.kitchen_bulbs_cool_bright
+              color: red
+              name: Cool Bright
             entity_2:
-              entity_id: scene.working
+              entity_id: script.kitchen_bulbs_rest
+              color: purple
+              name: Rest
+            entity_3:
+              entity_id: script.kitchen_bulbs_tokyo_dynamic
+              color: pink
+              name: Tokyo
 
   - type: "custom:button-card"
     template: card_cover

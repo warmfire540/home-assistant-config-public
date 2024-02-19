@@ -7,6 +7,30 @@ cards:
       - sensor_prefix: living_room
       - room_name: Living Room
 
+  #################
+  # STATUS CHIPS
+  #################
+  - type: custom:mod-card
+    style: 
+      hui-horizontal-stack-card$: |
+        #root { 
+          justify-content: center;
+        }
+    card:
+      type: horizontal-stack
+      cards:
+        - type: "custom:button-card"
+          template: chip_mdi_icon_state
+          entity: binary_sensor.rolo_error
+          styles:
+            icon:
+              - color: >
+                  [[[ if (entity.state == 'on')
+                        return "var(--red-color)" ;
+                      else return "var(--green-color)"; ]]]
+          variables:
+            ulm_chip_mdi_icon_state_entity: binary_sensor.rolo_error
+
   - type: "custom:button-card"
     template: card_title
     label: Devices

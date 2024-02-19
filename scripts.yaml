@@ -46,3 +46,42 @@ turn_off_house:
       domain: light
   mode: single
   icon: mdi:power-plug-off
+kitchen_bulbs_cool_bright:
+  alias: Kitchen Bulbs - Cool Bright
+  sequence:
+  - service: scene_presets.stop_all_dynamic_scenes
+    data: {}
+  - service: scene_presets.apply_preset
+    data:
+      preset_id: 6d10a807-7330-46d1-b093-c15520ba72c0
+      targets:
+        entity_id: light.kitchen_bulbs
+      brightness: 255
+  mode: single
+  icon: mdi:lightning-bolt
+kitchen_bulbs_rest:
+  alias: Kitchen Bulbs - Rest
+  sequence:
+  - service: scene_presets.stop_all_dynamic_scenes
+    data: {}
+  - service: scene_presets.apply_preset
+    data:
+      preset_id: e03267e7-9914-4f47-97fe-63c0bd317fe7
+      targets:
+        entity_id: light.kitchen_bulbs
+  mode: single
+  icon: mdi:moon-waning-crescent
+kitchen_bulbs_tokyo_dynamic:
+  alias: Kitchen Bulbs - Tokyo Dynamic
+  sequence:
+  - service: scene_presets.stop_all_dynamic_scenes
+    data: {}
+  - service: scene_presets.start_dynamic_scene
+    data:
+      preset_id: de7eda64-84bf-4ed6-a4fa-76e0ebdd1968
+      targets:
+        entity_id: light.kitchen_bulbs
+      transition: 20
+      interval: 30
+  mode: single
+  icon: mdi:ideogram-cjk-variant

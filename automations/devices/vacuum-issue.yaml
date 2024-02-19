@@ -1,0 +1,33 @@
+#####
+# Alerts if a vacuum has a problem
+#####
+
+alias: Vacuum issue
+id: 7b40e36c-852c-4d34-acb9-f55c9530f496
+
+trigger:
+- platform: state
+  entity_id: group.robot_vacuums_status
+  to: "on"
+
+action:
+  - service: notify.persistent_notification
+    data:
+      message: >
+        Vacuum has an issue!
+        
+
+        Rolo:       {{ state_attr("vacuum.rolo", "status") }}
+
+        Strong Boi: {{ state_attr("vacuum.e0000693817603917196", "error") }}
+      title: '🤖 Vacuum problem!'
+  - service: notify.mobile_app_poat_s_iphone_14_pro_max
+    data:
+      message: >
+        Vacuum has an issue!
+
+
+        Rolo:       {{ state_attr("vacuum.rolo", "status") }}
+        
+        Strong Boi: {{ state_attr("vacuum.e0000693817603917196", "error") }}
+      title: '🤖 Vacuum problem!'
