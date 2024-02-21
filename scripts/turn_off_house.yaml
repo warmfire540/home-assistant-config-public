@@ -1,0 +1,39 @@
+#####
+# Lights - script to turn off all lights .
+# 
+#####
+
+turn_off_house:
+  alias: Turn off House
+  sequence:
+  - parallel:
+    - type: turn_off
+      device_id: 372f18359255040c2be1bab51dfee88f
+      entity_id: 1ff22c449438e5a34cd28755e7612caf
+      domain: switch
+    - type: turn_off
+      device_id: 5c47f50af82fecdbb0a888ae067933d3
+      entity_id: 59153632335ad0706e19a66574fa0996
+      domain: switch
+    - type: turn_off
+      device_id: cb2b2ac3c127f8df071c01a766c85e7e
+      entity_id: 6f198d82006e374f6c75293f0e046c61
+      domain: switch
+    - type: turn_off
+      device_id: 8247e8dbd9b8722c278db133e081c470
+      entity_id: 93d5c96256c5cab2a3ff2686e4516fa5
+      domain: light
+    - type: turn_off
+      device_id: 638ff6dbd16db764b99b0b1bc72a8a31
+      entity_id: a37b21ddc27f77fa2c928543f0a7664a
+      domain: light
+    - type: turn_off
+      device_id: 8a97ebc676b4f2b05000d2cf4d677044
+      entity_id: a19780d4ea46fd9307fa966c4c0afc76
+      domain: light
+    - type: turn_off
+      device_id: 0aaa07ba40ab8ba2fd5937b94c3c036e
+      entity_id: 8478ac397dc1b56400f5be8ff8f2b9bf
+      domain: light
+  mode: single
+  icon: mdi:power-plug-off

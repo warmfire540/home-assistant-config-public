@@ -6,5 +6,3 @@
 
 homeassistant:
   packages: !include_dir_named integrations # package setup/config split
-
-script: !include scripts.yaml

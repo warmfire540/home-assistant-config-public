@@ -1,0 +1,20 @@
+#####
+# TV turns on sound bar
+#####
+
+alias: Turn on soundbar when TV turned on
+id: 9b349dfa-9719-4c2e-aeb7-e35de9e4618a
+
+trigger:
+- platform: state
+  entity_id: media_player.fire_tv_192_168_68_107
+  to: "idle"
+
+action:
+- service: script.sound_bar_power
+- service: remote.send_command
+  target:
+    device_id: 7c0228accadb951d83724a364de2d662
+  data:
+    device: Living Room TV
+    command: Mute

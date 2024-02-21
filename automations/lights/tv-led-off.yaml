@@ -1,5 +1,5 @@
 #####
-# TV turns off TV led
+# TV turns off TV led and sound bar
 #####
 
 alias: Turn off TV LED when TV turned off
@@ -11,6 +11,7 @@ trigger:
   to: "off"
 
 action:
+- service: script.sound_bar_power
 - service: light.turn_off
   target:
     entity_id: light.tv_led
