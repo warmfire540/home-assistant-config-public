@@ -1,5 +1,5 @@
 title: "Guest Room"
-path: "guest-room"
+path: "guest-bedroom"
 cards:
   - type: custom:decluttering-card
     template: room header

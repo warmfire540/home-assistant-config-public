@@ -6,12 +6,15 @@ alias: Turn off TV LED when TV turned off
 id: 16f855bf-9b9b-4028-93b8-17fd0c3dd6a2
 
 trigger:
-- platform: state
-  entity_id: media_player.fire_tv_192_168_68_107
-  to: "off"
+- platform: device
+  device_id: 432719e49be7a5bcaa5b8c31996f40ea
+  domain: media_player
+  entity_id: 72204f9fff5ba7b0863083ab68b162d4
+  type: turned_off
 
 action:
-- service: script.sound_bar_power
-- service: light.turn_off
-  target:
-    entity_id: light.tv_led
+- parallel:
+  - service: script.sound_bar_power
+  - service: light.turn_off
+    target:
+      entity_id: light.tv_led

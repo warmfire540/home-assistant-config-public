@@ -1,0 +1,11 @@
+title: "Test"
+path: "test"
+cards:
+  - type: "custom:button-card"
+    template: poat_card_room
+    icon: mdi:shower
+    variables:
+      affix: office
+      problem_entities:
+        - light.bedroom_light
+        - light.dining_room_light

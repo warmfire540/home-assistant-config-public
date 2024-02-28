@@ -1,0 +1,82 @@
+---
+poat_card_room:
+  template:
+    - card_room
+
+  name: '[[[ return variables.affix.split("_").map(x => x.charAt(0).toUpperCase() + x.slice(1)).join(" "); ]]]'
+
+  variables:
+    affix: ""
+    z_humidity_sensor: "[[[ return 'sensor.' + variables.affix + '_climate_humidity'; ]]]"
+    z_problem_exists: "[[[ return variables.problem_entities?.some(e => states[e].state == 'on'); ]]]"
+    z_temperature_sensor: "[[[ return 'sensor.' + variables.affix + '_climate_air_temperature'; ]]]"
+    entity_1:
+      entity_id: "[[[ return 'light.' + variables.affix + '_light'; ]]]"
+      templates:
+        - yellow_on
+
+  #################
+  # CLIMATE
+  #################
+  label: '[[[ return states[variables.z_temperature_sensor].state + "°F - " + states[variables.z_humidity_sensor].state + "%"  ]]]'
+  state:
+    - operator: template
+      value: >
+        [[[ return states[variables.z_temperature_sensor].state > 80 ||  states[variables.z_humidity_sensor].state > 60 ]]]
+      styles:
+        label:
+          - color: "rgba(var(--color-red-text),1)"
+        card:
+          - border: "2px solid rgba(var(--color-red-text),1)"
+
+  #################
+  # ROOM ENTITY
+  #################
+  entity: "[[[ return 'light.' + variables.affix + '_light'; ]]]"
+  styles:
+    icon:
+      - color: "[[[ if (entity?.state == 'on') return 'rgba(var(--color-yellow),1)'; else return 'rgba(var(--color-theme),0.2)'; ]]]"
+    label:
+      - color: "[[[ if (entity?.state == 'on') return 'rgba(var(--color-yellow-text),1)'; ]]]"
+    name:
+      - color: "[[[ if (entity?.state == 'on') return 'rgba(var(--color-yellow-text),1)'; ]]]"
+    img_cell:
+      - background-color: "[[[ if (entity?.state == 'on') return 'rgba(var(--color-yellow), 0.2)'; else return 'rgba(var(--color-theme),0.05)' ]]]"
+    card:
+      - background-color: "[[[ if (entity?.state == 'on') return 'rgba(var(--color-background-yellow),var(--opacity-bg))'; ]]]"
+
+    #################
+    # PROBLEM ENTITY
+    #################
+    custom_fields:
+      notification:
+        - border-radius: "50%"
+        - border: "2px solid var(--card-background-color)"
+        - width: "24.5px"
+        - height: "24.5px"
+        - position: "absolute"
+        - left: "50%"
+        - top: "50%"
+        - transform: "translate(-50%,-50%)"
+        - margin-top: "35%"
+        - margin-left: "-35%"
+        - line-height: 0
+        - display: "grid"
+        - background-color: "[[[ return 'rgba(var(--color-red),1)'; ]]]"
+
+  custom_fields:
+    notification: >
+      [[[
+        if (variables.z_problem_exists) {
+          return '<ha-icon icon="mdi:exclamation" style="width: 50%; height: 50%; color: var(--primary-background-color);"></ha-icon>';
+        }
+      ]]]
+
+  tap_action:
+    action: navigate
+    navigation_path: '[[[ return variables.affix.replace("_", "-"); ]]]'
+
+  triggers_update:
+    - "[[[ return variables.z_temperature_sensor; ]]]"
+    - "[[[ return variables.z_humidity_sensor; ]]]"
+    - "[[[ this._entities.push(...variables.problem_entities); return null; ]]]"

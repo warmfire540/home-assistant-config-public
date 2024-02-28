@@ -1,5 +1,5 @@
 title: "Master Bathroom"
-path: "master-bathroom"
+path: "master-bath"
 cards:
   - type: custom:decluttering-card
     template: room header

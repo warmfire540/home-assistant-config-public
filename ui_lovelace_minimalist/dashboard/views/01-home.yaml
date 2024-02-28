@@ -193,72 +193,37 @@ cards:
             #################
             - type: "custom:button-card"
               template:
-                - card_room
-                - yellow_on
-                - red_problem_on
-                - red_climate_problem_on
-              name: Living Room
-              entity: light.living_room_light
+                - poat_card_room
               icon: mdi:sofa
               variables:
-                problem_entity: binary_sensor.rolo_error
-                temperature_entity: sensor.living_room_climate_air_temperature
-                humidity_entity: sensor.living_room_climate_humidity
-                entity_1:
-                  entity_id: light.living_room_light
-                  templates:
-                    - yellow_on
-                  tap_action:
-                    action: toggle
+                affix: living_room
+                problem_entities:
+                  - binary_sensor.rolo_error
                 entity_2:
                   entity_id: switch.living_room_switch_switch_1
                   templates:
                     - yellow_on
-                  tap_action:
-                    action: toggle
                 entity_3:
                   entity_id: light.tv_led
                   icon: mdi:television
                   templates:
                     - blue_on
                     - custom_icon
-                  tap_action:
-                    action: toggle
                 entity_4:
                   entity_id: climate.living_room
                   templates:
                     - yellow_on
                     - climate_icon
-                  tap_action:
-                    action: toggle
-              tap_action:
-                action: navigate
-                navigation_path: "living-room"
 
             #################
             # DINING ROOM
             #################
             - type: "custom:button-card"
               template:
-                - card_room
-                - yellow_on
-                - red_climate_problem_on
-              name: Dining Room
-              entity: light.dining_room_light
+                - poat_card_room
               icon: mdi:glass-cocktail
               variables:
-                label_use_temperature: false
-                temperature_entity: sensor.dining_room_climate_air_temperature
-                humidity_entity: sensor.dining_room_climate_humidity
-                entity_1:
-                  entity_id: light.dining_room_light
-                  templates:
-                    - yellow_on
-                  tap_action:
-                    action: toggle
-              tap_action:
-                action: navigate
-                navigation_path: "dining-room"
+                affix: dining_room
 
         - type: horizontal-stack
           cards:
@@ -267,58 +232,36 @@ cards:
             #################
             - type: "custom:button-card"
               template:
-                - card_room
-                - yellow_on
-                - red_climate_problem_on
-              name: Office
-              entity: light.office_light
+                - poat_card_room
               icon: mdi:controller
               variables:
-                label_use_temperature: false
-                temperature_entity: sensor.office_climate_air_temperature
-                humidity_entity: sensor.office_climate_humidity
-                entity_1:
-                  entity_id: light.office_light
-                  templates:
-                    - yellow_on
-                  tap_action:
-                    action: toggle
+                affix: office
                 entity_2:
                   entity_id: switch.office_switch_switch_1
                   templates:
                     - yellow_on
-                  tap_action:
-                    action: toggle
                 entity_3:
                   entity_id: binary_sensor.poat_rgb_connectivity
                   icon: mdi:desktop-classic
                   templates:
                     - blue_on
                     - custom_icon
-              tap_action:
-                action: navigate
-                navigation_path: "office"
 
             #################
             # KITCHEN
             #################
             - type: "custom:button-card"
               template:
-                - card_room
-                - yellow_on
-                - red_problem_on
-                - red_climate_problem_on
-              name: Kitchen
-              entity: switch.kitchen_lights_switch_1
+                - poat_card_room
+              entity: switch.kitchen_lights_switch_1  # TODO - lights as switch?
               icon: mdi:countertop-outline
               variables:
-                label_use_temperature: false
-                problem_entity: group.cat_water_status
-                problem_entity_2: binary_sensor.dishwasher_leak_sensor
-                temperature_entity: sensor.kitchen_climate_air_temperature
-                humidity_entity: sensor.kitchen_climate_humidity
+                affix: kitchen
+                problem_entities:
+                  - group.cat_water_status
+                  - binary_sensor.dishwasher_leak_sensor
                 entity_1:
-                  entity_id: switch.kitchen_lights_switch_1
+                  entity_id: switch.kitchen_lights_switch_1 # TODO - lights as switch?
                   icon: mdi:lightbulb
                   templates:
                     - yellow_on
@@ -331,19 +274,12 @@ cards:
                   templates:
                     - yellow_on
                     - custom_icon
-                  tap_action:
-                    action: toggle
                 entity_3:
                   entity_id: switch.dinette_light_switch_1
                   icon: mdi:table-chair
                   templates:
                     - yellow_on
                     - custom_icon
-                  tap_action:
-                    action: toggle
-              tap_action:
-                action: navigate
-                navigation_path: "kitchen"
 
         - type: horizontal-stack
           cards:
@@ -352,42 +288,27 @@ cards:
             #################
             - type: "custom:button-card"
               template:
-                - card_room
-                - yellow_on
-                - red_climate_problem_on
-              name: Master Bedroom
+                - poat_card_room
               entity: light.bedroom_light
               icon: mdi:bed
               variables:
-                label_use_temperature: false
-                temperature_entity: sensor.master_bedroom_climate_air_temperature
-                humidity_entity: sensor.master_bedroom_climate_humidity
+                affix: master_bedroom #TODO - rename in TUYA???
                 entity_1:
                   entity_id: light.bedroom_light
                   templates:
                     - yellow_on
                   tap_action:
                     action: toggle
-              tap_action:
-                action: navigate
-                navigation_path: "master-bedroom"
 
             #################
             # MASTER BATHROOM
             #################
             - type: "custom:button-card"
               template:
-                - card_room
-                - red_climate_problem_on
-              name: Master Bathroom
+                - poat_card_room
               icon: mdi:shower-head
               variables:
-                label_use_temperature: false
-                temperature_entity: sensor.master_bath_climate_air_temperature
-                humidity_entity: sensor.master_bath_climate_humidity
-              tap_action:
-                action: navigate
-                navigation_path: "master-bathroom"
+                affix: master_bath
 
         - type: horizontal-stack
           cards:
@@ -396,46 +317,26 @@ cards:
             #################
             - type: "custom:button-card"
               template:
-                - card_room
-                - red_climate_problem_on
-              name: Guest Room
-              entity: switch.gina_computer_socket_1
+                - poat_card_room
               icon: mdi:desk
               variables:
-                label_use_temperature: false
-                temperature_entity: sensor.guest_bedroom_climate_air_temperature
-                humidity_entity: sensor.guest_bedroom_climate_humidity
+                affix: guest_bedroom
                 entity_1:
                   entity_id: switch.gina_computer_socket_1
                   icon: mdi:laptop
                   templates:
                     - blue_on
                     - custom_icon
-                  tap_action:
-                    action: toggle
-              tap_action:
-                action: navigate
-                navigation_path: "guest-room"
 
             #################
             # GUEST BATHROOM
             #################
             - type: "custom:button-card"
               template:
-                - card_room
-                - yellow_on
-                - red_problem_on
-                - red_climate_problem_on
-              name: Guest Bathroom
+                - poat_card_room
               icon: mdi:shower
               variables:
-                label_use_temperature: false
-                problem_entity: group.cat_food_status
-                temperature_entity: sensor.guest_bath_climate_air_temperature
-                humidity_entity: sensor.guest_bath_climate_humidity
-              tap_action:
-                action: navigate
-                navigation_path: "guest-bathroom"
+                affix: guest_bath
 
         - type: horizontal-stack
           cards:
@@ -444,60 +345,38 @@ cards:
             #################
             - type: "custom:button-card"
               template:
-                - card_room
-                - yellow_on
-                - red_problem_on
-                - red_climate_problem_on
-              name: Garage
+                - poat_card_room
               entity: switch.garage_opener_socket_1
               icon: mdi:garage
               variables:
-                label_use_temperature: false
-                problem_entity: binary_sensor.water_heater_leak_sensor
-                problem_entity_2: binary_sensor.strong_boi_error
-                temperature_entity: sensor.garage_climate_air_temperature
-                humidity_entity: sensor.garage_climate_humidity
+                affix: garage
+                problem_entities:
+                  - binary_sensor.water_heater_leak_sensor
+                  - binary_sensor.strong_boi_error
                 entity_1:
                   entity_id: switch.garage_opener_socket_1
                   templates:
-                    - yellow_on
-                  tap_action:
-                    action: toggle
+                    - blue_on
                 entity_2:
                   entity_id: input_boolean.washing_machine_on
                   templates:
                     - blue_on
-                  tap_action:
-                    action: toggle
                 entity_3:
                   entity_id: input_boolean.dryer_on
                   templates:
                     - blue_on
-                  tap_action:
-                    action: toggle
-              tap_action:
-                action: navigate
-                navigation_path: "garage"
 
             #################
             # ATTIC
             #################
             - type: "custom:button-card"
               template:
-                - card_room
-                - yellow_on
-                - red_problem_on
-                - red_climate_problem_on
-              name: Attic
+                - poat_card_room
               icon: mdi:home-roof
               variables:
-                label_use_temperature: false
-                problem_entity: binary_sensor.ac_pan_leak_sensor
-                temperature_entity: sensor.attic_climate_air_temperature
-                humidity_entity: sensor.attic_climate_humidity
-              tap_action:
-                action: navigate
-                navigation_path: "attic"
+                affix: attic
+                problem_entities:
+                  - binary_sensor.ac_pan_leak_sensor
 
         - type: horizontal-stack
           cards:
@@ -506,17 +385,10 @@ cards:
             #################
             - type: "custom:button-card"
               template:
-                - card_room
-                - red_climate_problem_on
-              name: Shed
+                - poat_card_room
               icon: mdi:greenhouse
               variables:
-                label_use_temperature: false
-                temperature_entity: sensor.shed_climate_air_temperature
-                humidity_entity: sensor.shed_climate_humidity
-              tap_action:
-                action: navigate
-                navigation_path: "shed"
+                affix: shed
 
   #################
   # ROOM CARDS SMALL
