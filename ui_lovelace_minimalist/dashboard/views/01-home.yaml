@@ -309,6 +309,14 @@ cards:
               icon: mdi:shower-head
               variables:
                 affix: master_bath
+                entity_1:
+                  entity_id: switch.master_bath_switches # TODO - lights as switch?
+                  templates:
+                    - yellow_on
+                entity_2:
+                  entity_id: switch.master_bath_switches_2
+                  templates:
+                    - blue_on
 
         - type: horizontal-stack
           cards:
@@ -493,10 +501,13 @@ cards:
                 - card_esh_room
                 - yellow_on
               name: Master Bathroom
+              entity: switch.master_bath_switches
               icon: mdi:shower-head
               tap_action:
                 action: navigate
                 navigation_path: "master-bathroom"
+              variables:
+                ulm_custom_card_esh_room_light_entity: switch.master_bath_switches
               label: '[[[ return states["sensor.master_bath_climate_air_temperature"].state + "°F - " + states["sensor.master_bath_climate_humidity"].state + "%"  ]]]'
 
         - type: horizontal-stack

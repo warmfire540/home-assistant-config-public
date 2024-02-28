@@ -11,11 +11,28 @@ cards:
     template: card_title
     label: Devices
 
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: card_light
+        entity: switch.master_bath_switches
+      - type: "custom:button-card"
+        template: card_light
+        entity: switch.master_bath_switches_2
+        variables:
+          ulm_card_light_color: blue
+
   - type: custom:decluttering-card
     template: z_wave_climate
     variables:
       - sensor_prefix: master_bath
       - node_number: 4
+
+  - type: custom:decluttering-card
+    template: z_wave_double_relay
+    variables:
+      - sensor_prefix: master_bath
+      - node_number: 15
 
   - type: "custom:button-card"
     template: card_title

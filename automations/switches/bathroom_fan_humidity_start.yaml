@@ -1,0 +1,30 @@
+#####
+# Simple automation to start fan if bathroom humidity is over 60%
+#
+#####
+
+alias: Bathroom fan humidity start
+id: 8e7778e0-eeaa-4040-86a3-a1cf34043359
+
+trigger:
+  platform: state
+  entity_id: sensor.master_bath_climate_humidity
+
+condition: 
+  condition: and
+  conditions:
+  - condition: numeric_state
+    entity_id: sensor.master_bath_climate_humidity
+    above: 60
+  - condition: state
+    entity_id: switch.master_bath_switches_2
+    state: 'off'
+  - condition: state
+    alias: "People home"
+    entity_id: binary_sensor.people_home
+    state: 'on'
+action:
+  - service: switch.turn_on
+    entity_id: switch.master_bath_switches_2
+
+mode: single
