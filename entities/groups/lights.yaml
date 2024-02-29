@@ -12,9 +12,10 @@ all_lights:
     - light.kitchen_bulb_3
     - light.le_rgbcwbr30_3
     - light.office_light
-    - light.bedroom_light
+    - light.master_bedroom_light
     - light.living_room_light
     - light.dining_room_light
-    - switch.kitchen_lights_switch_1
+    - light.kitchen_light
+    - light.master_bath_light
     - switch.under_cabinet_lights_switch_1
     - switch.dinette_light_switch_1

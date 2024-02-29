@@ -7,5 +7,5 @@ cards:
     variables:
       affix: office
       problem_entities:
-        - light.bedroom_light
+        - light.master_bedroom_light
         - light.dining_room_light

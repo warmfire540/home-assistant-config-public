@@ -64,9 +64,15 @@ cards:
             show_state: false
       exclude:
         - entity_id: "*poat_rgb*"
-        - entity_id: "*poat_plex*"
+        - entity_id: "*plex*"
+        - entity_id: "*seedbox*"
         - entity_id: "*mfc_7860*"
+        - entity_id: "*poat_pi*"
+        - entity_id: "media_player.xbox*"
+        - entity_id: select.cat_noms_manual_feed
+        - entity_id: sensor.cat_noms_battery_status
         - domain: button
+        - domain: number
         - domain: tts
         - domain: stt
         - name: "Kitchen Bulb*"

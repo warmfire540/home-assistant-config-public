@@ -253,21 +253,12 @@ cards:
             - type: "custom:button-card"
               template:
                 - poat_card_room
-              entity: switch.kitchen_lights_switch_1  # TODO - lights as switch?
               icon: mdi:countertop-outline
               variables:
                 affix: kitchen
                 problem_entities:
                   - group.cat_water_status
                   - binary_sensor.dishwasher_leak_sensor
-                entity_1:
-                  entity_id: switch.kitchen_lights_switch_1 # TODO - lights as switch?
-                  icon: mdi:lightbulb
-                  templates:
-                    - yellow_on
-                    - custom_icon
-                  tap_action:
-                    action: toggle
                 entity_2:
                   entity_id: switch.under_cabinet_lights_switch_1
                   icon: mdi:countertop
@@ -289,16 +280,9 @@ cards:
             - type: "custom:button-card"
               template:
                 - poat_card_room
-              entity: light.bedroom_light
               icon: mdi:bed
               variables:
-                affix: master_bedroom #TODO - rename in TUYA???
-                entity_1:
-                  entity_id: light.bedroom_light
-                  templates:
-                    - yellow_on
-                  tap_action:
-                    action: toggle
+                affix: master_bedroom
 
             #################
             # MASTER BATHROOM
@@ -309,10 +293,6 @@ cards:
               icon: mdi:shower-head
               variables:
                 affix: master_bath
-                entity_1:
-                  entity_id: switch.master_bath_switches # TODO - lights as switch?
-                  templates:
-                    - yellow_on
                 entity_2:
                   entity_id: switch.master_bath_switches_2
                   templates:
@@ -488,13 +468,13 @@ cards:
                 - card_esh_room
                 - yellow_on
               name: Master Bedroom
-              entity: light.bedroom_light
+              entity: light.master_bedroom_light
               icon: mdi:bed
               tap_action:
                 action: navigate
                 navigation_path: "master-bedroom"
               variables:
-                ulm_custom_card_esh_room_light_entity: light.bedroom_light
+                ulm_custom_card_esh_room_light_entity: light.master_bedroom_light
               label: '[[[ return states["sensor.master_bedroom_climate_air_temperature"].state + "°F - " + states["sensor.master_bedroom_climate_humidity"].state + "%"  ]]]'
             - type: "custom:button-card"
               template:
