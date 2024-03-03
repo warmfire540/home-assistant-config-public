@@ -1,5 +1,5 @@
 #####
-# Simple automation to start fan if bathroom humidity is over 60%
+# Simple automation to start fan if bathroom humidity is over 65%
 #
 #####
 
@@ -15,7 +15,7 @@ condition:
   conditions:
   - condition: numeric_state
     entity_id: sensor.master_bath_climate_humidity
-    above: 60
+    above: 64
   - condition: state
     entity_id: switch.master_bath_switches_2
     state: 'off'

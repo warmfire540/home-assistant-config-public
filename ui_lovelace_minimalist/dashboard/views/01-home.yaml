@@ -377,6 +377,10 @@ cards:
               icon: mdi:greenhouse
               variables:
                 affix: shed
+                entity_1:
+                  entity_id: binary_sensor.shed_door_sensor_window_door_is_open
+                  templates:
+                    - red_on
 
   #################
   # ROOM CARDS SMALL

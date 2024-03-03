@@ -15,7 +15,7 @@ condition:
   conditions:
   - condition: numeric_state
     entity_id: sensor.master_bath_climate_humidity
-    below: 60
+    below: 65
   - condition: state
     entity_id: switch.master_bath_switches_2
     state: 'on'

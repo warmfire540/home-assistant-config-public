@@ -5,7 +5,6 @@
 
 cat_food_status:
   name: "Cat Food Status"
-  unique_id: 8820cf6b-ca83-4f48-9ca4-5a003ed23d0f
   icon: mdi:food
   entities:
     - binary_sensor.cat_noms_food_level
@@ -15,7 +14,6 @@ cat_food_status:
 
 cat_water_status:
   name: "Cat Water Status"
-  unique_id: ee284a74-08c3-4017-9dee-ece27106eb00
   icon: mdi:water
   entities:
     - binary_sensor.pet_thirst_water_level
@@ -23,7 +21,6 @@ cat_water_status:
 
 cat_device_status:
   name: "Cat Device Status"
-  unique_id: cd7d0163-6d59-45ec-b237-5048df32cb2b
   icon: mdi:cat
   entities:
     - group.cat_water_status
