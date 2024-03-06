@@ -89,7 +89,15 @@ cards:
           tap_action:
             action: navigate
             navigation_path: "/the-matrix/network?anchor=disconnected"
-  
+        - type: 'custom:button-card'
+          template: poat_chip_double_state
+          variables:
+            ulm_chip_icon_double_state_icon: '❗'
+            ulm_chip_icon_double_state_icon_2: '⚠️'
+            ulm_chip_icon_double_state_entity_1: counter.homeassistant_errors
+            ulm_chip_icon_double_state_entity_2: counter.homeassistant_warnings
+            ulm_chip_navigate_path: /config/logs
+
   #################
   # STATUS CHIPS
   #################
