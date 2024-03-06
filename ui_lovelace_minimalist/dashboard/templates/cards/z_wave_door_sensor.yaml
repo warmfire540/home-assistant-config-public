@@ -1,0 +1,62 @@
+z_wave_door_sensor:
+  card:
+    type: custom:stack-in-card
+    cards:
+      - type: custom:layout-card
+        layout_type: grid
+        layout_options:
+          grid-template-columns: repeat(5, 1fr)
+          grid-template-rows: repeat(1, 1fr)
+          grid-template-areas: |
+            "firmware firmware batt status door"
+          margin: 0
+          padding: 0
+          card_margin: 0
+        margin: 0px
+        cards:
+          - type: 'custom:button-card'
+            template:
+              - card_generic_swap
+              - battery_info
+            entity: 'update.[[sensor_prefix]]_door_sensor_firmware'
+            variables:
+              ulm_card_generic_swap_name: Door Sensor
+              ulm_card_generic_swap_icon: mdi:z-wave
+              ulm_battery_entity: 'sensor.[[sensor_prefix]]_door_sensor_battery_level'
+            view_layout:
+              grid-area: firmware
+          - type: custom:mushroom-entity-card
+            entity: 'binary_sensor.[[sensor_prefix]]_door_sensor_window_door_is_open'
+            primary_info: none
+            secondary_info: none
+            view_layout:
+              grid-area: door
+            tap_action:
+              action: toggle
+            card_mod:
+              style: |
+                ha-card {
+                  align-items: center;
+                }
+          - type: custom:mushroom-entity-card
+            entity: 'binary_sensor.[[sensor_prefix]]_door_sensor_low_battery_level'
+            name: Battery
+            icon_type: none
+            view_layout:
+              grid-area: batt
+            card_mod:
+              style: |
+                ha-card {
+                  text-align: center;
+                }
+          - type: custom:mushroom-entity-card
+            entity: 'sensor.node_[[node_number]]_node_status'
+            name: Status
+            icon_type: none
+            view_layout:
+              grid-area: status
+            card_mod:
+              style: |
+                ha-card {
+                  text-align: center;
+                }

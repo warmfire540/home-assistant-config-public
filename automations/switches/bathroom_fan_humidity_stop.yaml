@@ -3,7 +3,7 @@
 #
 #####
 
-alias: Bathroom fan humidity start
+alias: Bathroom fan humidity stop
 id: 38b329ed-09f8-4271-aef6-c2f0bf5fcd86
 
 trigger:
@@ -23,6 +23,10 @@ condition:
     alias: "People home"
     entity_id: binary_sensor.people_home
     state: 'on'
+  - condition: state
+    entity_id: switch.master_bath_switches
+    state: 'off'
+    
 action:
   - service: switch.turn_off
     entity_id: switch.master_bath_switches_2

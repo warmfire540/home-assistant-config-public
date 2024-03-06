@@ -170,6 +170,17 @@ cards:
                       else return "var(--green-color)"; ]]]
           variables:
             ulm_chip_mdi_icon_state_entity: group.robot_vacuums_status
+        - type: "custom:button-card"
+          template: chip_mdi_icon_only
+          entity: group.smoke_sensors
+          styles:
+            icon:
+              - color: >
+                  [[[ if (entity.state == 'on')
+                        return "var(--red-color)" ;
+                      else return "var(--green-color)"; ]]]
+          variables:
+            ulm_chip_mdi_icon_only_entity: group.smoke_sensors
 
   - type: "custom:button-card"
     template: card_title
@@ -199,6 +210,8 @@ cards:
                 affix: living_room
                 problem_entities:
                   - binary_sensor.rolo_error
+                  - binary_sensor.living_room_smoke_sensor_smoke_detected
+                  - binary_sensor.living_room_smoke_sensor_carbon_monoxide_detected
                 entity_2:
                   entity_id: switch.living_room_switch_switch_1
                   templates:
@@ -236,6 +249,9 @@ cards:
               icon: mdi:controller
               variables:
                 affix: office
+                problem_entities:
+                  - binary_sensor.office_smoke_sensor_smoke_detected
+                  - binary_sensor.office_smoke_sensor_carbon_monoxide_detected
                 entity_2:
                   entity_id: switch.office_switch_switch_1
                   templates:

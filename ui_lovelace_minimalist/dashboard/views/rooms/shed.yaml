@@ -11,9 +11,19 @@ cards:
     template: card_title
     label: Devices
 
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Sensors
+
   - type: 'custom:button-card'
     template: card_generic_swap
     entity: binary_sensor.shed_door_sensor_window_door_is_open
+
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Device Health
 
   - type: custom:decluttering-card
     template: z_wave_climate
@@ -21,6 +31,8 @@ cards:
       - sensor_prefix: shed
       - node_number: 13
 
-  - type: "custom:button-card"
-    template: card_title
-    label: Sensors
+  - type: custom:decluttering-card
+    template: z_wave_door_sensor
+    variables:
+      - sensor_prefix: shed
+      - node_number: 18

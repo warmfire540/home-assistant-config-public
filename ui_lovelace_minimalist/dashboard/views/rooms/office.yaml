@@ -177,16 +177,25 @@ cards:
   - type: media-control
     entity: media_player.xbox_360
 
-  - type: custom:decluttering-card
-    template: z_wave_climate
-    variables:
-      - sensor_prefix: office
-      - node_number: 5
-
   - type: "custom:button-card"
     template: card_title
     label: Sensors
-
+  
+  - type: horizontal-stack
+    cards:
+      - type: 'custom:button-card'
+        template: card_binary_sensor
+        variables:
+          ulm_card_binary_sensor_alert: true
+          ulm_card_binary_sensor_name: Smoke
+        entity: binary_sensor.office_smoke_sensor_smoke_detected
+      - type: 'custom:button-card'
+        template: card_binary_sensor
+        variables:
+          ulm_card_binary_sensor_alert: true
+          ulm_card_binary_sensor_name: Carbon Monoxide
+        entity: binary_sensor.office_smoke_sensor_carbon_monoxide_detected
+      
   - type: horizontal-stack
     cards:
       - type: "custom:button-card"
@@ -208,3 +217,19 @@ cards:
     variables:
       ulm_card_graph_color: "var(--google-yellow)"
       ulm_card_graph_entity: sensor.office_g_bath_garage_3_1min
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Device Health
+
+  - type: custom:decluttering-card
+    template: z_wave_climate
+    variables:
+      - sensor_prefix: office
+      - node_number: 5
+
+  - type: custom:decluttering-card
+    template: z_wave_smoke_sensor
+    variables:
+      - sensor_prefix: office
+      - node_number: 20

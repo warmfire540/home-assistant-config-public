@@ -1,0 +1,73 @@
+z_wave_smoke_sensor:
+  card:
+    type: custom:stack-in-card
+    cards:
+      - type: custom:layout-card
+        layout_type: grid
+        layout_options:
+          grid-template-columns: repeat(5, 1fr)
+          grid-template-rows: repeat(1, 1fr)
+          grid-template-areas: |
+            "firmware firmware firmware seen seen status smoke co"
+          margin: 0
+          padding: 0
+          card_margin: 0
+        margin: 0px
+        cards:
+          - type: 'custom:button-card'
+            template:
+              - card_generic_swap
+            entity: 'update.[[sensor_prefix]]_smoke_sensor_firmware'
+            variables:
+              ulm_card_generic_swap_name: Smoke Sensor
+              ulm_card_generic_swap_icon: mdi:z-wave
+            view_layout:
+              grid-area: firmware
+          - type: custom:mushroom-entity-card
+            entity: 'binary_sensor.[[sensor_prefix]]_smoke_sensor_smoke_detected'
+            primary_info: none
+            secondary_info: none
+            view_layout:
+              grid-area: smoke
+            tap_action:
+              action: toggle
+            card_mod:
+              style: |
+                ha-card {
+                  align-items: center;
+                }
+          - type: custom:mushroom-entity-card
+            entity: 'binary_sensor.[[sensor_prefix]]_smoke_sensor_carbon_monoxide_detected'
+            primary_info: none
+            secondary_info: none
+            view_layout:
+              grid-area: co
+            tap_action:
+              action: toggle
+            card_mod:
+              style: |
+                ha-card {
+                  align-items: center;
+                }
+          - type: custom:mushroom-entity-card
+            entity: 'sensor.node_[[node_number]]_last_seen'
+            name: Last Seen
+            icon_type: none
+            view_layout:
+              grid-area: seen
+            card_mod:
+              style: |
+                ha-card {
+                  text-align: center;
+                }
+          - type: custom:mushroom-entity-card
+            entity: 'sensor.node_[[node_number]]_node_status'
+            name: Status
+            icon_type: none
+            view_layout:
+              grid-area: status
+            card_mod:
+              style: |
+                ha-card {
+                  text-align: center;
+                }

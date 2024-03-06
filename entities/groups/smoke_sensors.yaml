@@ -1,0 +1,13 @@
+####
+# Groups related to smoke sensors
+#
+#####
+
+smoke_sensors:
+  name: All Smoke Sensors
+  icon: mdi:fire
+  entities:
+    - binary_sensor.office_smoke_sensor_smoke_detected
+    - binary_sensor.office_smoke_sensor_carbon_monoxide_detected
+    - binary_sensor.living_room_smoke_sensor_smoke_detected
+    - binary_sensor.living_room_smoke_sensor_carbon_monoxide_detected

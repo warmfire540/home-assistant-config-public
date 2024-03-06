@@ -122,6 +122,21 @@ cards:
 
   - type: horizontal-stack
     cards:
+      - type: 'custom:button-card'
+        template: card_binary_sensor
+        variables:
+          ulm_card_binary_sensor_alert: true
+          ulm_card_binary_sensor_name: Smoke
+        entity: binary_sensor.living_room_smoke_sensor_smoke_detected
+      - type: 'custom:button-card'
+        template: card_binary_sensor
+        variables:
+          ulm_card_binary_sensor_alert: true
+          ulm_card_binary_sensor_name: Carbon Monoxide
+        entity: binary_sensor.living_room_smoke_sensor_carbon_monoxide_detected
+
+  - type: horizontal-stack
+    cards:
       - type: "custom:button-card"
         template: card_graph
         entity: sensor.living_room_up
@@ -142,3 +157,13 @@ cards:
       ulm_card_graph_color: "var(--google-yellow)"
       ulm_card_graph_entity: sensor.living_room_15_1min
       ulm_card_graph_name: Electricity 1 min
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Device Health
+
+  - type: custom:decluttering-card
+    template: z_wave_smoke_sensor
+    variables:
+      - sensor_prefix: living_room
+      - node_number: 19
