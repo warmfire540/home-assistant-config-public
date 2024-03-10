@@ -2,7 +2,7 @@ title: "Garage"
 path: "garage"
 cards:
   - type: custom:decluttering-card
-    template: room header
+    template: room_header
     variables:
       - sensor_prefix: garage
       - room_name: Garage
@@ -11,7 +11,7 @@ cards:
   # STATUS CHIPS
   #################
   - type: custom:mod-card
-    style: 
+    style:
       hui-horizontal-stack-card$: |
         #root { 
           justify-content: center;
@@ -75,12 +75,12 @@ cards:
 
   - type: horizontal-stack
     cards:
-      - type: 'custom:button-card'
+      - type: "custom:button-card"
         template: card_input_boolean
         entity: input_boolean.dryer_on
         variables:
           ulm_card_input_boolean_force_background_color: true
-      - type: 'custom:button-card'
+      - type: "custom:button-card"
         template: card_input_boolean
         entity: input_boolean.washing_machine_on
         variables:

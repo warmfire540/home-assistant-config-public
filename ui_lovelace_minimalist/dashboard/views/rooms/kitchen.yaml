@@ -2,7 +2,7 @@ title: "Kitchen"
 path: "kitchen"
 cards:
   - type: custom:decluttering-card
-    template: room header
+    template: room_header
     variables:
       - sensor_prefix: kitchen
       - room_name: Kitchen

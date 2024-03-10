@@ -2,7 +2,7 @@ title: "Master Bedroom"
 path: "master-bedroom"
 cards:
   - type: custom:decluttering-card
-    template: room header
+    template: room_header
     variables:
       - sensor_prefix: master_bedroom
       - room_name: Master Bedroom

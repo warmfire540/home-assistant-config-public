@@ -2,7 +2,7 @@ title: "Shed"
 path: "shed"
 cards:
   - type: custom:decluttering-card
-    template: room header
+    template: room_header
     variables:
       - sensor_prefix: shed
       - room_name: Shed
@@ -11,15 +11,13 @@ cards:
     template: card_title
     label: Devices
 
-
   - type: "custom:button-card"
     template: card_title
     label: Sensors
 
-  - type: 'custom:button-card'
+  - type: "custom:button-card"
     template: card_generic_swap
     entity: binary_sensor.shed_door_sensor_window_door_is_open
-
 
   - type: "custom:button-card"
     template: card_title

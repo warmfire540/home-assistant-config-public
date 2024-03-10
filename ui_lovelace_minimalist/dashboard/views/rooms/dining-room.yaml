@@ -2,7 +2,7 @@ title: "Dining Room"
 path: "dining-room"
 cards:
   - type: custom:decluttering-card
-    template: room header
+    template: room_header
     variables:
       - sensor_prefix: dining_room
       - room_name: Dining Room

@@ -2,7 +2,7 @@ title: "Living Room"
 path: "living-room"
 cards:
   - type: custom:decluttering-card
-    template: room header
+    template: room_header
     variables:
       - sensor_prefix: living_room
       - room_name: Living Room
@@ -11,7 +11,7 @@ cards:
   # STATUS CHIPS
   #################
   - type: custom:mod-card
-    style: 
+    style:
       hui-horizontal-stack-card$: |
         #root { 
           justify-content: center;
@@ -64,7 +64,7 @@ cards:
       ulm_card_thermostat_enable_hvac_modes: true
       ulm_card_thermostat_enable_popup: true
       ulm_card_thermostat_enable_background_color: true
-  
+
   - type: horizontal-stack
     cards:
       - type: "custom:button-card"
@@ -75,11 +75,11 @@ cards:
           ulm_card_light_enable_color: true
           ulm_card_light_force_background_color: true
           ulm_card_light_enable_collapse: true
-      - type: 'custom:button-card'
+      - type: "custom:button-card"
         template: card_script
         variables:
           ulm_card_script_title: Sound Bar
-          ulm_card_script_icon: 'mdi:soundbar'
+          ulm_card_script_icon: "mdi:soundbar"
         tap_action:
           action: call-service
           service: script.sound_bar_power
@@ -122,13 +122,13 @@ cards:
 
   - type: horizontal-stack
     cards:
-      - type: 'custom:button-card'
+      - type: "custom:button-card"
         template: card_binary_sensor
         variables:
           ulm_card_binary_sensor_alert: true
           ulm_card_binary_sensor_name: Smoke
         entity: binary_sensor.living_room_smoke_sensor_smoke_detected
-      - type: 'custom:button-card'
+      - type: "custom:button-card"
         template: card_binary_sensor
         variables:
           ulm_card_binary_sensor_alert: true

@@ -2,7 +2,7 @@ title: "Attic"
 path: "attic"
 cards:
   - type: custom:decluttering-card
-    template: room header
+    template: room_header
     variables:
       - sensor_prefix: attic
       - room_name: Attic

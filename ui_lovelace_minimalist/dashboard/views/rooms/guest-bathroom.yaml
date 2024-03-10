@@ -2,7 +2,7 @@ title: "Guest Bathroom"
 path: "guest-bath"
 cards:
   - type: custom:decluttering-card
-    template: room header
+    template: room_header
     variables:
       - sensor_prefix: guest_bath
       - room_name: Guest Bathroom
@@ -11,7 +11,7 @@ cards:
   # STATUS CHIPS
   #################
   - type: custom:mod-card
-    style: 
+    style:
       hui-horizontal-stack-card$: |
         #root { 
           justify-content: center;
@@ -23,7 +23,7 @@ cards:
           template: chip_mdi_icon_state
           entity: group.cat_food_status
           icon: mdi:cat
-          label: ''
+          label: ""
           styles:
             icon:
               - color: >

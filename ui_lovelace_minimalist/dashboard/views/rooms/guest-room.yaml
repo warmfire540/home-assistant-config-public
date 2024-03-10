@@ -2,7 +2,7 @@ title: "Guest Room"
 path: "guest-bedroom"
 cards:
   - type: custom:decluttering-card
-    template: room header
+    template: room_header
     variables:
       - sensor_prefix: guest_bedroom
       - room_name: Guest Room

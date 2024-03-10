@@ -2,7 +2,7 @@ title: "Office"
 path: "office"
 cards:
   - type: custom:decluttering-card
-    template: room header
+    template: room_header
     variables:
       - sensor_prefix: office
       - room_name: Office
@@ -180,22 +180,22 @@ cards:
   - type: "custom:button-card"
     template: card_title
     label: Sensors
-  
+
   - type: horizontal-stack
     cards:
-      - type: 'custom:button-card'
+      - type: "custom:button-card"
         template: card_binary_sensor
         variables:
           ulm_card_binary_sensor_alert: true
           ulm_card_binary_sensor_name: Smoke
         entity: binary_sensor.office_smoke_sensor_smoke_detected
-      - type: 'custom:button-card'
+      - type: "custom:button-card"
         template: card_binary_sensor
         variables:
           ulm_card_binary_sensor_alert: true
           ulm_card_binary_sensor_name: Carbon Monoxide
         entity: binary_sensor.office_smoke_sensor_carbon_monoxide_detected
-      
+
   - type: horizontal-stack
     cards:
       - type: "custom:button-card"

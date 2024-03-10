@@ -1,4 +1,4 @@
-room header:
+room_header:
   card:
     type: vertical-stack
     cards:
