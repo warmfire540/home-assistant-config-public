@@ -97,6 +97,14 @@ cards:
             ulm_chip_icon_double_state_entity_1: counter.homeassistant_errors
             ulm_chip_icon_double_state_entity_2: counter.homeassistant_warnings
             ulm_chip_navigate_path: /config/logs
+          state:
+            - operator: template
+              value: >
+                [[[ return states['counter.homeassistant_errors'].state === '0' 
+                  && states['counter.homeassistant_warnings'].state === '0' ]]]
+              styles:
+                card:
+                  - display: none
 
   #################
   # STATUS CHIPS

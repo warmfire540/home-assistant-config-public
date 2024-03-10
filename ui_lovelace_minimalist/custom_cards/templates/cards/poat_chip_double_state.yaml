@@ -8,21 +8,26 @@ poat_chip_double_state:
     - "[[[ return variables.ulm_chip_icon_double_state_entity_2 ]]]"
   label: |
     [[[
-      var icon1 = "❔";
-      if (variables.ulm_chip_icon_double_state_icon){
-        icon1 = variables.ulm_chip_icon_double_state_icon;
+      var label = '';
+      if (states[variables.ulm_chip_icon_double_state_entity_1].state > 0) {
+        if (variables.ulm_chip_icon_double_state_icon){
+          label = variables.ulm_chip_icon_double_state_icon;
+        }
+        var state1 = "";
+        if (states[variables.ulm_chip_icon_double_state_entity_1].state){
+          label += ' ' + helpers.localize(states[variables.ulm_chip_icon_double_state_entity_1])
+        }
       }
-      var icon2 = "❔";
-      if (variables.ulm_chip_icon_double_state_icon_2){
-        icon2 = variables.ulm_chip_icon_double_state_icon_2;
+
+      if (states[variables.ulm_chip_icon_double_state_entity_2].state > 0) {
+        if (variables.ulm_chip_icon_double_state_icon_2){
+          label += ' ' +  variables.ulm_chip_icon_double_state_icon_2;
+        }
+        
+        if (states[variables.ulm_chip_icon_double_state_entity_2].state){
+          label += ' ' +  helpers.localize(states[variables.ulm_chip_icon_double_state_entity_2])
+        }
       }
-      var state1 = "";
-      if (states[variables.ulm_chip_icon_double_state_entity_1].state){
-        var state1 = helpers.localize(states[variables.ulm_chip_icon_double_state_entity_1])
-      }
-      var state2 = "";
-      if (states[variables.ulm_chip_icon_double_state_entity_2].state){
-        var state2 = helpers.localize(states[variables.ulm_chip_icon_double_state_entity_2])
-      }
-      return icon1 + " " + state1 + " • " + icon2 + " " + state2;
+      
+      return label;
     ]]]
