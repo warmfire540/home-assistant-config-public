@@ -7,6 +7,8 @@ poat_card_room:
 
   variables:
     affix: ""
+    humidity_threshold: 60
+    temperature_threshold: 80
     z_humidity_sensor: "[[[ return 'sensor.' + variables.affix + '_climate_humidity'; ]]]"
     z_problem_exists: "[[[ return variables.problem_entities?.some(e => states[e].state == 'on'); ]]]"
     z_temperature_sensor: "[[[ return 'sensor.' + variables.affix + '_climate_air_temperature'; ]]]"
@@ -22,7 +24,7 @@ poat_card_room:
   state:
     - operator: template
       value: >
-        [[[ return states[variables.z_temperature_sensor].state > 80 ||  states[variables.z_humidity_sensor].state > 60 ]]]
+        [[[ return states[variables.z_temperature_sensor].state > variables.temperature_threshold ||  states[variables.z_humidity_sensor].state > variables.humidity_threshold ]]]
       styles:
         label:
           - color: "rgba(var(--color-red-text),1)"

@@ -47,8 +47,8 @@ cards:
         variables:
           ulm_card_person_entity: person.gina
           ulm_card_person_use_entity_picture: true
-          ulm_address: sensor.poat_s_iphone_14_pro_max_geocoded_location
-          ulm_card_person_battery: sensor.gina_s_iphone_13_mini_battery
+          ulm_address: sensor.gina_s_iphone_13_mini_geocoded_location
+          ulm_card_person_battery: sensor.gina_s_iphone_13_mini_battery_level
 
           
   #################
@@ -370,6 +370,7 @@ cards:
               icon: mdi:garage
               variables:
                 affix: garage
+                temperature_threshold: 90
                 problem_entities:
                   - binary_sensor.water_heater_leak_sensor
                   - binary_sensor.strong_boi_error
@@ -395,6 +396,7 @@ cards:
               icon: mdi:home-roof
               variables:
                 affix: attic
+                temperature_threshold: 90
                 problem_entities:
                   - binary_sensor.ac_pan_leak_sensor
 
@@ -409,6 +411,7 @@ cards:
               icon: mdi:greenhouse
               variables:
                 affix: shed
+                temperature_threshold: 90
                 entity_1:
                   entity_id: binary_sensor.shed_door_sensor_window_door_is_open
                   templates:

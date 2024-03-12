@@ -206,6 +206,8 @@ cards:
             name: Last updated
           - entity: sensor.pet_thirst_purified_water_today
             name: Purified today
+          - entity: counter.cat_filters
+            name: Spare filters
 
       - type: entities
         title: Cat Noms
