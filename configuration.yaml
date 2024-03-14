@@ -6,3 +6,7 @@
 
 homeassistant:
   packages: !include_dir_named integrations # package setup/config split
+
+#** Ref: https://www.home-assistant.io/integrations/system_log/
+system_log:
+  fire_event: true

@@ -11,15 +11,7 @@ trigger:
   to: "on"
 
 action:
-  - service: notify.persistent_notification
-    data:
-      message: 'Smoke/CO sensor triggered!'
-      title: '🔥 Smoke/CO sensor triggered!'
-  - service: notify.mobile_app_poat_s_iphone_14_pro_max
-    data:
-      message: 'Smoke/CO sensor triggered!'
-      title: '🔥 Smoke/CO sensor triggered!'
-  - service: notify.mobile_app_gina_s_iphone_13_mini
+  - service: notify.family
     data:
       message: 'Smoke/CO sensor triggered!'
       title: '🔥 Smoke/CO sensor triggered!'

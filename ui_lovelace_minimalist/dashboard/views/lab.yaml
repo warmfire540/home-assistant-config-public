@@ -10,6 +10,9 @@ cards:
     template: card_title
     name: Lab
 
+  #################
+  # INFO CHIPS
+  #################
   - type: horizontal-stack
     cards:
       - type: "custom:button-card"
@@ -92,9 +95,33 @@ cards:
         show:
           labels: true
 
+  #################
+  # RASPBERRY CONTROL
+  #################
   - type: "custom:button-card"
     template: card_title
     label: Raspberries - Control
+
+  - type: 'custom:button-card'
+    entity: binary_sensor.pi_hole_status
+    hold_action:
+      action: call-service
+      service: pi_hole.disable
+      data:
+        duration: "00:05:00"
+      target:
+        device_id: e03d2a8d6db4afd53059dc33a584b7e2
+    state:
+      - value: 'on'
+        color: green
+        icon: mdi:shield-check
+      - operator: default
+        color: red
+        icon: mdi:alert
+        styles:
+          card:
+            - animation: blink 2s ease infinite
+        
 
   - type: entities
     entities:
@@ -227,6 +254,9 @@ cards:
             - entity: sensor.mfc_7860dw_drum_page_counter
               name: Page count
 
+  #################
+  # RASPBERRIES
+  #################
   - type: "custom:button-card"
     template: card_title
     label: Raspberries - Sensors
@@ -272,9 +302,51 @@ cards:
           card_style: full
           name_prefix: ""
 
+  #################
+  # PLEX
+  #################
   - type: "custom:button-card"
     template: card_title
-    label: Z-Wave
+    label: Plex Controls
+
+  - type: entities
+    entities:
+      - entity: sensor.poat_pi
+        type: custom:multiple-entity-row
+        name: Pi Plex
+        icon: mdi:plex
+        show_state: true
+        card_mod:
+          style:
+            hui-generic-entity-row: |
+              .entities-row {
+                width: 100%;
+              }
+        entities:
+          - entity: update.plex_media_server_poat_pi
+            name: Version
+          - entity: button.poat_pi_scan_clients
+            icon: mdi:skull-scan-outline
+            name: scan
+
+      - type: custom:plex-meets-homeassistant
+        protocol: http
+        playTrailer: true
+        showExtras: true
+        showSearch: true
+        ip: poat-plex.local
+        token: !secret plex_token
+        port: '32400'
+        libraryName: Watch Next
+        entity:
+          - media_player.fire_tv_192_168_68_115
+
+  #################
+  # DEVICE HEALTH
+  #################
+  - type: "custom:button-card"
+    template: card_title
+    label: Device Health
 
   - type: entities
     title: 800 Series Z-Wave LR USB Hub
@@ -283,10 +355,9 @@ cards:
       - entity: sensor.800_series_long_range_usb_controller_status
         name: Status
 
-  - type: "custom:button-card"
-    template: card_title
-    label: Tasmota
-
+  #################
+  # TASMOTA
+  #################
   - type: custom:stack-in-card
     cards:
       - type: custom:layout-card
@@ -347,39 +418,3 @@ cards:
                 ha-card {
                   text-align: center;
                 }
-
-  - type: "custom:button-card"
-    template: card_title
-    label: Plex Controls
-
-  - type: entities
-    entities:
-      - entity: sensor.poat_pi
-        type: custom:multiple-entity-row
-        name: Pi Plex
-        icon: mdi:plex
-        show_state: true
-        card_mod:
-          style:
-            hui-generic-entity-row: |
-              .entities-row {
-                width: 100%;
-              }
-        entities:
-          - entity: update.plex_media_server_poat_pi
-            name: Version
-          - entity: button.poat_pi_scan_clients
-            icon: mdi:skull-scan-outline
-            name: scan
-
-      - type: custom:plex-meets-homeassistant
-        protocol: http
-        playTrailer: true
-        showExtras: true
-        showSearch: true
-        ip: poat-plex.local
-        token: !secret plex_token
-        port: '32400'
-        libraryName: Watch Next
-        entity:
-          - media_player.fire_tv_192_168_68_115

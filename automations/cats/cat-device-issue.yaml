@@ -11,11 +11,22 @@ trigger:
   to: "on"
 
 action:
-  - service: notify.persistent_notification
+  - service: notify.family
     data:
-      message: 'Cat device has an issue!'
-      title: '🐱 Cat device problem!'
-  - service: notify.mobile_app_poat_s_iphone_14_pro_max
-    data:
-      message: 'Cat device has an issue!'
+      message: >
+        Cat device has an issue!
+
+
+        Water Level:          {{ states("binary_sensor.pet_thirst_water_level") }}
+
+        Water Filter:         {{ states("binary_sensor.cat_filter_problem") }}
+
+
+        Marbles Food Level:   {{ states("binary_sensor.cat_noms_food_level") }}
+
+        Marbles Food Battery: {{ states("binary_sensor.cat_battery_problem") }}
+
+        Marbles Desicant:     {{ states("binary_sensor.cat_desicant_problem") }}
+
+        Marbles Food Status:  {{ states("binary_sensor.cat_noms_status_problem") }}
       title: '🐱 Cat device problem!'
