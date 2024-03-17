@@ -12,7 +12,7 @@
     unique_id: e9f2af25-7bab-4ad2-8cd0-47f2b3cae058
     icon: 'mdi:cloud-off-outline'
     state: "{{ states
-| selectattr('domain','in',['binary_sensor','light','sensor','switch','media_player', 'select'])
+| rejectattr('domain','in',['button', 'tts', 'stt', 'number'])
 | selectattr('state','in', ['unknown', 'unavailable'])
 | rejectattr('entity_id','search', 'poat_rgb|mfc_7860|plex|seedbox|poat_pi|media_player.xbox')
 | rejectattr('entity_id','in', ['select.cat_noms_manual_feed', 'sensor.cat_noms_battery_status'])

@@ -132,7 +132,7 @@ cards:
             ulm_chip_mdi_icon_state_entity: sensor.devices_with_low_battery
           tap_action:
             action: navigate
-            navigation_path: "/the-matrix/network?anchor=low-battery"
+            navigation_path: "/the-matrix/house?anchor=low-battery"
         - type: "custom:button-card"
           template: chip_mdi_icon_state
           icon: mdi:cat

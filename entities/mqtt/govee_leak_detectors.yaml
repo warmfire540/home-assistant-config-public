@@ -22,6 +22,7 @@ sensor:
     unique_id: 8bbf600e-9f31-4fb5-babb-f541631bfde7
     state_topic: "home/nodes/sensor/water-heater-leak/battery"
     device_class: battery
+    unit_of_measurement: '%'
   - name: "Water Heater leak sensor last reset"
     unique_id: 68fb139a-e391-40f1-b2d8-839d274bdbce
     state_topic: "home/nodes/sensor/water-heater-leak/status/last-reset"
@@ -39,6 +40,7 @@ sensor:
     unique_id: 30bf0ee9-4ff6-4be8-88b1-3256a7d74bef
     state_topic: "home/nodes/sensor/dishwasher-leak/battery"
     device_class: battery
+    unit_of_measurement: '%'
   - name: "Dishwasher leak sensor last reset"
     unique_id: ef6c01e3-6ec4-49f8-bb13-e11fb9a3929d
     state_topic: "home/nodes/sensor/dishwasher-leak/status/last-reset"
@@ -56,6 +58,7 @@ sensor:
     unique_id: 61063fb8-0b43-4e8e-a719-f409bc7b258d
     state_topic: "home/nodes/sensor/ac-pan-leak/battery"
     device_class: battery
+    unit_of_measurement: '%'
   - name: "AC Pan leak sensor last reset"
     unique_id: e595f32f-8b88-4e4d-98a2-85e4374d7b0c
     state_topic: "home/nodes/sensor/ac-pan-leak/status/last-reset"

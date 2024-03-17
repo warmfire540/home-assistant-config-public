@@ -42,12 +42,35 @@ cards:
   - type: thermostat
     entity: climate.living_room
 
+  - type: "custom:anchor-card"
+    anchor_id: low-battery
+    offset: -60
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Batteries
+
+  - type: custom:auto-entities
+    card:
+      type: entities
+    filter:
+      include:
+        - attributes:
+            device_class: battery
+          options:
+            state_color: true
+      exclude:
+        - domain: binary_sensor
+    sort:
+      method: state
+      numeric: true
+
   - type: horizontal-stack
     cards:
       - type: custom:trash-card
         entity: calendar.trash
         layout: vertical
-        next_days: 8
+        next_days: 4
         settings:
           others:
             color: grey

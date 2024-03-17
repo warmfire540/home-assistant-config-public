@@ -21,29 +21,6 @@ cards:
       ulm_custom_card_speedtest_round: true
 
   - type: "custom:anchor-card"
-    anchor_id: low-battery
-    offset: -60
-
-  - type: "custom:button-card"
-    template: card_title
-    label: Low Battery
-
-  - type: custom:auto-entities
-    card:
-      type: glance
-    else:
-      type: markdown
-      content: >-
-        <ha-alert alert-type="info">No battery devices are at their low battery
-        threshold!</ha-alert>
-    filter:
-      include:
-        - domain: sensor
-          attributes:
-            device_class: battery
-          state: "< 20"
-
-  - type: "custom:anchor-card"
     anchor_id: disconnected
     offset: -60
 
@@ -53,7 +30,7 @@ cards:
 
   - type: custom:auto-entities
     card:
-      type: glance
+      type: entities
     filter:
       include:
         - state: "unavailable"
