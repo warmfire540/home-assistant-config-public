@@ -17,7 +17,7 @@ condition:
     entity_id: sensor.master_bath_climate_humidity
     above: 64
   - condition: state
-    entity_id: switch.master_bath_switches_2
+    entity_id: switch.master_bath_fan_relay
     state: 'off'
   - condition: state
     alias: "People home"
@@ -26,6 +26,6 @@ condition:
     
 action:
   - service: switch.turn_on
-    entity_id: switch.master_bath_switches_2
+    entity_id: switch.master_bath_fan_relay
 
 mode: single

@@ -326,7 +326,11 @@ cards:
               variables:
                 affix: master_bath
                 entity_2:
-                  entity_id: switch.master_bath_switches_2
+                  entity_id: switch.master_bath_fan_relay_2
+                  templates:
+                    - yellow_on
+                entity_3:
+                  entity_id: switch.master_bath_fan_relay
                   templates:
                     - blue_on
 

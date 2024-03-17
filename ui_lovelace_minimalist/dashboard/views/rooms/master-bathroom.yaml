@@ -18,9 +18,14 @@ cards:
         entity: switch.master_bath_switches
       - type: "custom:button-card"
         template: card_light
-        entity: switch.master_bath_switches_2
+        entity: switch.master_bath_fan_relay_2
         variables:
           ulm_card_light_color: blue
+  - type: "custom:button-card"
+    template: card_light
+    entity: switch.master_bath_fan_relay
+    variables:
+      ulm_card_light_color: blue
 
   - type: "custom:button-card"
     template: card_title
