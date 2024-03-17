@@ -400,7 +400,7 @@ cards:
               icon: mdi:home-roof
               variables:
                 affix: attic
-                temperature_threshold: 90
+                temperature_threshold: 100
                 problem_entities:
                   - binary_sensor.ac_pan_leak_sensor
 

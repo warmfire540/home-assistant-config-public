@@ -30,14 +30,15 @@ cards:
       include:
         - entity_id: "sensor.*_climate_humidity"
 
-  - type: "custom:button-card"
-    template: card_graph
-    entity: sensor.masters_vue_123_1min
-    variables:
-      ulm_card_graph_color: "var(--google-yellow)"
-      ulm_card_graph_name: Electricity
-      ulm_card_graph_entity: sensor.masters_vue_123_1min
-      
+  - type: custom:auto-entities
+    card:
+      type: "custom:mini-graph-card"
+      name: Electricity
+      show:
+        legend: false
+    filter:
+      include:
+        - entity_id: "sensor.*_1min"
 
   - type: thermostat
     entity: climate.living_room
@@ -49,6 +50,18 @@ cards:
   - type: "custom:button-card"
     template: card_title
     label: Batteries
+
+  - type: custom:auto-entities
+    card:
+      type: "custom:mini-graph-card"
+      name: Batteries
+      show:
+        legend: false
+        fill: false
+    filter:
+      include:
+        - attributes:
+            device_class: battery
 
   - type: custom:auto-entities
     card:
@@ -70,7 +83,7 @@ cards:
       - type: custom:trash-card
         entity: calendar.trash
         layout: vertical
-        next_days: 4
+        next_days: 3
         settings:
           others:
             color: grey
@@ -79,7 +92,7 @@ cards:
       - type: custom:trash-card
         entity: calendar.recycling
         layout: vertical
-        next_days: 8
+        next_days: 7
         settings:
           others:
             color: amber
@@ -87,7 +100,7 @@ cards:
 
       - type: custom:trash-card
         entity: calendar.yard_waste
-        next_days: 8
+        next_days: 7
         layout: vertical
         settings:
           others:
