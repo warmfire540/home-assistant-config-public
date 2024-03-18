@@ -48,12 +48,15 @@ cards:
         entity: switch.living_room_switch_switch_1
 
   - type: "custom:button-card"
-    template: card_cover
+    template:
+      - card_cover
+      - battery_info
     entity: cover.living_room_blinds
     variables:
       ulm_card_cover_enable_controls: true
       ulm_card_cover_enable_slider: true
       ulm_card_cover_color: green
+      ulm_battery_entity: sensor.living_room_blinds_battery
 
   - type: "custom:button-card"
     template: card_thermostat

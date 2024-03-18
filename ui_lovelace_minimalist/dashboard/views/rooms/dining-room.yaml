@@ -16,12 +16,15 @@ cards:
     entity: light.dining_room_light
 
   - type: "custom:button-card"
-    template: card_cover
+    template:
+      - card_cover
+      - battery_info
     entity: cover.dining_room_blinds
     variables:
       ulm_card_cover_enable_controls: true
       ulm_card_cover_enable_slider: true
       ulm_card_cover_color: green
+      ulm_battery_entity: sensor.dining_room_blinds_battery
 
   - type: custom:decluttering-card
     template: z_wave_climate

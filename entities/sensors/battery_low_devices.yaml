@@ -11,7 +11,7 @@ sensors:
     value_template: >-
       {{ states.sensor
         | selectattr('attributes.device_class', 'eq', 'battery')
-        | rejectattr('state', 'contains', '100')
+        | rejectattr('state', '>=', '100')
         | selectattr('state', '<', '20')
         | list
         | count
