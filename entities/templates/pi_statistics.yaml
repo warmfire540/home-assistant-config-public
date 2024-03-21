@@ -1,0 +1,94 @@
+#####
+# Gets various attributes of pi devices
+#
+#####
+
+#################
+# IP ADDRESS
+#################
+- sensor:
+    - name: Plex IP
+      unique_id: 0a3e75a3-dac6-4027-8f9c-6a93894d4ddf
+      icon: "mdi:ip-network"
+      state: "{{ state_attr('sensor.rpi_poat_plex_rpi_monitor_poat_plex', 'networking').eth0.IP if state_attr('sensor.rpi_poat_plex_rpi_monitor_poat_plex', 'networking') }}"
+
+- sensor:
+    - name: Share IP
+      unique_id: 752682fa-b9a3-41cd-b0ff-121c9673e9e7
+      icon: "mdi:ip-network"
+      state: "{{ state_attr('sensor.rpi_poat_share_rpi_monitor_poat_share', 'networking').eth0.IP if state_attr('sensor.rpi_poat_share_rpi_monitor_poat_share', 'networking') }}"
+
+- sensor:
+    - name: Pi Hole IP
+      unique_id: 73759c0c-9d7e-4490-9acf-6ae97b9669f3
+      icon: "mdi:ip-network"
+      state: "{{ state_attr('sensor.rpi_poat_hole_rpi_monitor_poat_hole', 'networking').eth0.IP if state_attr('sensor.rpi_poat_hole_rpi_monitor_poat_hole', 'networking') }}"
+
+- sensor:
+    - name: Seedbox IP
+      unique_id: d6a539cf-e84c-494d-b840-329d38cafa63
+      icon: "mdi:ip-network"
+      state: "{{ state_attr('sensor.rpi_poat_seedbox_rpi_monitor_poat_seedbox', 'networking').eth0.IP if state_attr('sensor.rpi_poat_seedbox_rpi_monitor_poat_seedbox', 'networking') }}"
+
+#################
+# LOAD
+#################
+- sensor:
+    - name: Pi Hole CPU
+      unique_id: 376aa8ff-913b-4214-9f68-3e7e961e82ec
+      icon: "mdi:chip"
+      state: "{{ state_attr('sensor.rpi_poat_hole_rpi_monitor_poat_hole', 'cpu') == None }}"
+      attributes:
+        model: >
+          {{ 
+            state_attr('sensor.rpi_poat_hole_rpi_monitor_poat_hole', 'cpu').model
+            if state_attr('sensor.rpi_poat_hole_rpi_monitor_poat_hole', 'cpu') 
+          }}
+        load_1m: >
+          {{ 
+            (state_attr('sensor.rpi_poat_hole_rpi_monitor_poat_hole', 'cpu').load_1min_prcnt / 100)
+            | round(3)
+            if state_attr('sensor.rpi_poat_hole_rpi_monitor_poat_hole', 'cpu') 
+          }}
+        load_5m: >
+          {{ 
+            (state_attr('sensor.rpi_poat_hole_rpi_monitor_poat_hole', 'cpu').load_5min_prcnt / 100)
+            | round(3)
+            if state_attr('sensor.rpi_poat_hole_rpi_monitor_poat_hole', 'cpu') 
+          }}
+        load_15m: >
+          {{ 
+            (state_attr('sensor.rpi_poat_hole_rpi_monitor_poat_hole', 'cpu').load_15min_prcnt / 100)
+            | round(3)
+            if state_attr('sensor.rpi_poat_hole_rpi_monitor_poat_hole', 'cpu') 
+          }}
+
+- sensor:
+    - name: Pi Share CPU
+      unique_id: 72561c19-b001-42b0-a9f3-69959c045a8a
+      icon: "mdi:chip"
+      state: "{{ state_attr('sensor.rpi_poat_share_rpi_monitor_poat_share', 'cpu') == None }}"
+      attributes:
+        model: >
+          {{ 
+            state_attr('sensor.rpi_poat_share_rpi_monitor_poat_share', 'cpu').model
+            if state_attr('sensor.rpi_poat_share_rpi_monitor_poat_share', 'cpu') 
+          }}
+        load_1m: >
+          {{ 
+            (state_attr('sensor.rpi_poat_share_rpi_monitor_poat_share', 'cpu').load_1min_prcnt / 100)
+            | round(3)
+            if state_attr('sensor.rpi_poat_share_rpi_monitor_poat_share', 'cpu') 
+          }}
+        load_5m: >
+          {{ 
+            (state_attr('sensor.rpi_poat_share_rpi_monitor_poat_share', 'cpu').load_5min_prcnt / 100)
+            | round(3)
+            if state_attr('sensor.rpi_poat_share_rpi_monitor_poat_share', 'cpu') 
+          }}
+        load_15m: >
+          {{ 
+            (state_attr('sensor.rpi_poat_share_rpi_monitor_poat_share', 'cpu').load_15min_prcnt / 100)
+            | round(3)
+            if state_attr('sensor.rpi_poat_share_rpi_monitor_poat_share', 'cpu') 
+          }}

@@ -1,0 +1,316 @@
+pi_details:
+  card:
+    type: custom:stack-in-card
+    keep:
+      border_radius: true
+      margin: true
+    cards:
+      # title
+      - type: custom:button-card
+        name: '[[name]]'
+        icon: '[[icon]]'
+        show_name: true
+        show_entity_picture: true
+        styles:
+          card:
+            - padding: 5px
+            - border: 0px
+          grid:
+            - grid-template-areas: '"n i"'
+            - grid-template-columns: 3fr 1fr
+          name:
+            - justify-self: start
+            - padding-left: 20px
+            - font-size: 30px
+            - font-weight: 300
+      # cpu and temp
+      - type: horizontal-stack
+        cards:
+          - type: custom:mini-graph-card
+            entities:
+              - sensor.rpi_poat_[[pi_name]]_rpi_cpu_use_poat_[[pi_name]]
+            hours_to_show: 24
+            points_per_hour: 2
+            hour24: true
+            animate: true
+            height: 150
+            name: CPU Usage
+            show:
+              extrema: true
+            color_thresholds:
+              - value: 100
+                color: '#d32f2f'
+              - value: 90
+                color: '#ffa000'
+              - value: 75
+                color: '#388e3c'
+            card_mod:
+              style: |
+                ha-card .states.flex{
+                  padding-bottom: 0px;
+                  }
+                ha-card .graph{
+                  margin-top: 0px !important;
+                }
+                ha-card .graph .graph__legend{
+                  padding-bottom: 0px !important;
+                }
+                ha-card .info.flex{
+                  padding-bottom: 0px !important;
+                }
+          - type: custom:mini-graph-card
+            entities:
+              - sensor.rpi_poat_[[pi_name]]_rpi_temp_poat_[[pi_name]]
+            hours_to_show: 24
+            points_per_hour: 2
+            hour24: true
+            animate: true
+            height: 150
+            name: Temp
+            show:
+              extrema: true
+            color_thresholds:
+              - value: 170
+                color: '#d32f2f'
+              - value: 150
+                color: '#ffa000'
+              - value: 140
+                color: '#388e3c'
+            card_mod:
+              style: |
+                ha-card .states.flex{
+                  padding-bottom: 0px;
+                  }
+                ha-card .graph{
+                  margin-top: 0px !important;
+                }
+                ha-card .graph .graph__legend{
+                  padding-bottom: 0px !important;
+                }
+                ha-card .info.flex{
+                  padding-bottom: 0px !important;
+                }
+      # mem and temp
+      - type: horizontal-stack
+        cards:
+          - type: custom:mini-graph-card
+            entities:
+              - sensor.rpi_poat_[[pi_name]]_rpi_mem_used_poat_[[pi_name]]
+            hours_to_show: 24
+            points_per_hour: 2
+            hour24: true
+            animate: true
+            height: 150
+            name: Memory
+            show:
+              extrema: true
+            color_thresholds:
+              - value: 100
+                color: '#d32f2f'
+              - value: 90
+                color: '#ffa000'
+              - value: 75
+                color: '#388e3c'
+            card_mod:
+              style: |
+                ha-card .states.flex{
+                  padding-bottom: 0px;
+                  }
+                ha-card .graph{
+                  margin-top: 0px !important;
+                }
+                ha-card .graph .graph__legend{
+                  padding-bottom: 0px !important;
+                }
+                ha-card .info.flex{
+                  padding-bottom: 0px !important;
+                }
+          - type: custom:mini-graph-card
+            entities:
+              - sensor.rpi_poat_[[pi_name]]_rpi_disk_used_poat_[[pi_name]]
+            hours_to_show: 24
+            points_per_hour: 2
+            hour24: true
+            animate: true
+            height: 150
+            name: Disk used
+            show:
+              extrema: true
+            color_thresholds:
+              - value: 100
+                color: '#d32f2f'
+              - value: 90
+                color: '#ffa000'
+              - value: 75
+                color: '#388e3c'
+            card_mod:
+              style: |
+                ha-card .states.flex{
+                  padding-bottom: 0px;
+                  }
+                ha-card .graph{
+                  margin-top: 0px !important;
+                }
+                ha-card .graph .graph__legend{
+                  padding-bottom: 0px !important;
+                }
+                ha-card .info.flex{
+                  padding-bottom: 0px !important;
+                }
+      # loads
+      - type: horizontal-stack
+        cards:
+          - type: custom:bar-card
+            entities:
+              - entity: sensor.pi_[[pi_name]]_cpu
+                name: Load 1m
+                attribute: load_1m
+              - entity: sensor.pi_[[pi_name]]_cpu
+                name: Load 5m
+                attribute: load_5m
+              - entity: sensor.pi_[[pi_name]]_cpu
+                name: Load 15m
+                attribute: load_15m
+            stack: horizontal
+            max: 4
+            severity:
+              - color: '#d32f2f'
+                from: 2
+                to: 4
+              - color: '#ffa000'
+                from: 1
+                to: 2
+              - color: '#388e3c'
+                from: 0
+                to: 1
+            positions:
+              icon: 'off'
+              name: inside
+              value: inside
+              indicator: inside
+            card_mod:
+              style: |
+                bar-card-card{
+                  margin-right: 20px
+                }
+                bar-card-backgroundbar {
+                  border-radius: 8px;
+                }
+                bar-card-currentbar {
+                  border-radius: 8px;
+                }
+      # up / down
+      - type: custom:mini-graph-card
+        entities:
+          - entity: device_tracker.poat_[[pi_name]]
+            color: '#91C0F8'
+            name: Download
+            attribute: down_kilobytes_per_s
+          - entity: device_tracker.poat_[[pi_name]]
+            color: '#ffa000'
+            name: Upload
+            attribute: up_kilobytes_per_s
+            show_state: true
+        hours_to_show: 24
+        points_per_hour: 2
+        height: 75
+        animate: true
+        line_width: 2.5
+        show:
+          name: false
+          icon: false
+        card_mod:
+          style: |
+            ha-card .graph{
+              margin-top: -15px !important;
+            }
+            ha-card .graph .graph__legend{
+              padding-bottom: 0px !important;
+            }
+      # other and fold
+      - type: entities
+        entities:
+          - type: attribute
+            entity: sensor.rpi_poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
+            name: Uptime
+            attribute: up_time
+            icon: mdi:clock-outline
+          - type: attribute
+            entity: sensor.rpi_poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
+            name: Packages
+            attribute: ux_updates
+            icon: mdi:package-up
+          - type: conditional
+            conditions:
+              - entity: sensor.pi_[[pi_name]]_server_last_backup
+                state_not: "unavailable"
+            row:
+              entity: sensor.pi_[[pi_name]]_server_last_backup
+              name: backup
+          - type: custom:fold-entity-row
+            head:
+              type: section
+              label: Server Details
+            card_mod:
+              style:
+                hui-sensor-entity-row:
+                  $ hui-generic-entity-row $: |
+                    .pointer{
+                      color: #91C0F8;
+                    }
+                    .text-content{
+                      color: #e1e1e1;
+                    }
+                hui-simple-entity-row:
+                  $ hui-generic-entity-row $: |
+                    .pointer{
+                      color: #91C0F8;
+                    }
+                    .text-content{
+                      color: #e1e1e1;
+                    }
+            entities:
+              - type: attribute
+                entity: sensor.rpi_poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
+                name: Hostname
+                attribute: fqdn
+              - type: attribute
+                entity: device_tracker.[[tracker]]
+                name: IP Address
+                attribute: ip
+              - type: attribute
+                entity: sensor.rpi_poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
+                name: Storage
+                attribute: fs_total_gb
+              - type: attribute
+                entity: sensor.rpi_poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
+                name: OS
+                attribute: ux_release
+              - type: attribute
+                entity: sensor.rpi_poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
+                name: OS Version
+                attribute: ux_version
+              - type: attribute
+                entity: sensor.rpi_poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
+                name: Model
+                attribute: rpi_model
+              - type: attribute
+                entity: sensor.pi_[[pi_name]]_cpu
+                name: Arch
+                attribute: model
+              - type: attribute
+                entity: sensor.rpi_poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
+                name: Last Updated
+                attribute: last_update
+              - entity: sensor.rpi_poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
+                name: Last Refresh
+        card_mod:
+          style:
+            hui-sensor-entity-row:
+              $ hui-generic-entity-row $: |
+                .pointer{
+                  color: #91C0F8;
+                }
+                .text-content{
+                  color: #e1e1e1;
+                }
