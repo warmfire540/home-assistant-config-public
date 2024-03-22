@@ -289,12 +289,7 @@ cards:
     label: Raspberries - Sensors
 
   - type: custom:decluttering-card
-    template: pi_details
-    variables:
-      - pi_name: homeassistant
-      - icon: mdi:home-assistant
-      - name: Home Assistant
-      - tracker: homeassistant
+    template: home_assistant_details
 
   - type: custom:decluttering-card
     template: pi_details

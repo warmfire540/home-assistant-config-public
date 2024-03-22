@@ -92,3 +92,63 @@
             | round(3)
             if state_attr('sensor.rpi_poat_share_rpi_monitor_poat_share', 'cpu') 
           }}
+
+- sensor:
+    - name: Pi Seedbox CPU
+      unique_id: e06002db-d115-429b-82d4-e04b5fc57789
+      icon: "mdi:seed"
+      state: "{{ state_attr('sensor.rpi_poat_seedbox_rpi_monitor_poat_seedbox', 'cpu') == None }}"
+      attributes:
+        model: >
+          {{ 
+            state_attr('sensor.rpi_poat_seedbox_rpi_monitor_poat_seedbox', 'cpu').model
+            if state_attr('sensor.rpi_poat_seedbox_rpi_monitor_poat_seedbox', 'cpu') 
+          }}
+        load_1m: >
+          {{ 
+            (state_attr('sensor.rpi_poat_seedbox_rpi_monitor_poat_seedbox', 'cpu').load_1min_prcnt / 100)
+            | round(3)
+            if state_attr('sensor.rpi_poat_seedbox_rpi_monitor_poat_seedbox', 'cpu') 
+          }}
+        load_5m: >
+          {{ 
+            (state_attr('sensor.rpi_poat_seedbox_rpi_monitor_poat_seedbox', 'cpu').load_5min_prcnt / 100)
+            | round(3)
+            if state_attr('sensor.rpi_poat_seedbox_rpi_monitor_poat_seedbox', 'cpu') 
+          }}
+        load_15m: >
+          {{ 
+            (state_attr('sensor.rpi_poat_seedbox_rpi_monitor_poat_seedbox', 'cpu').load_15min_prcnt / 100)
+            | round(3)
+            if state_attr('sensor.rpi_poat_seedbox_rpi_monitor_poat_seedbox', 'cpu') 
+          }}
+
+- sensor:
+    - name: Pi Plex CPU
+      unique_id: 3210c06d-7094-4b87-b218-4b18502f52c1
+      icon: "mdi:plex"
+      state: "{{ state_attr('sensor.rpi_poat_plex_rpi_monitor_poat_plex', 'cpu') == None }}"
+      attributes:
+        model: >
+          {{ 
+            state_attr('sensor.rpi_poat_plex_rpi_monitor_poat_plex', 'cpu').model
+            if state_attr('sensor.rpi_poat_plex_rpi_monitor_poat_plex', 'cpu') 
+          }}
+        load_1m: >
+          {{ 
+            (state_attr('sensor.rpi_poat_plex_rpi_monitor_poat_plex', 'cpu').load_1min_prcnt / 100)
+            | round(3)
+            if state_attr('sensor.rpi_poat_plex_rpi_monitor_poat_plex', 'cpu') 
+          }}
+        load_5m: >
+          {{ 
+            (state_attr('sensor.rpi_poat_plex_rpi_monitor_poat_plex', 'cpu').load_5min_prcnt / 100)
+            | round(3)
+            if state_attr('sensor.rpi_poat_plex_rpi_monitor_poat_plex', 'cpu') 
+          }}
+        load_15m: >
+          {{ 
+            (state_attr('sensor.rpi_poat_plex_rpi_monitor_poat_plex', 'cpu').load_15min_prcnt / 100)
+            | round(3)
+            if state_attr('sensor.rpi_poat_plex_rpi_monitor_poat_plex', 'cpu') 
+          }}

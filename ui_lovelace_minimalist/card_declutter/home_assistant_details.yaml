@@ -1,4 +1,4 @@
-pi_details:
+home_assistant_details:
   card:
     type: custom:stack-in-card
     keep:
@@ -7,8 +7,8 @@ pi_details:
     cards:
       # title
       - type: custom:button-card
-        name: '[[name]]'
-        icon: '[[icon]]'
+        name: Home Assistant
+        icon: mdi:home-assistant
         show_name: true
         show_entity_picture: true
         styles:
@@ -28,7 +28,7 @@ pi_details:
         cards:
           - type: custom:mini-graph-card
             entities:
-              - sensor.rpi_poat_[[pi_name]]_rpi_cpu_use_poat_[[pi_name]]
+              - sensor.processor_use
             hours_to_show: 24
             points_per_hour: 2
             hour24: true
@@ -60,7 +60,7 @@ pi_details:
                 }
           - type: custom:mini-graph-card
             entities:
-              - sensor.rpi_poat_[[pi_name]]_rpi_temp_poat_[[pi_name]]
+              - sensor.processor_temperature
             hours_to_show: 24
             points_per_hour: 2
             hour24: true
@@ -95,7 +95,7 @@ pi_details:
         cards:
           - type: custom:mini-graph-card
             entities:
-              - sensor.rpi_poat_[[pi_name]]_rpi_mem_used_poat_[[pi_name]]
+              - sensor.memory_use_percent
             hours_to_show: 24
             points_per_hour: 2
             hour24: true
@@ -127,7 +127,7 @@ pi_details:
                 }
           - type: custom:mini-graph-card
             entities:
-              - sensor.rpi_poat_[[pi_name]]_rpi_disk_used_poat_[[pi_name]]
+              - sensor.disk_use_percent
             hours_to_show: 24
             points_per_hour: 2
             hour24: true
@@ -162,13 +162,13 @@ pi_details:
         cards:
           - type: custom:bar-card
             entities:
-              - entity: sensor.pi_[[pi_name]]_cpu
+              - entity: sensor.system_monitor_load_1m
                 name: Load 1m
                 attribute: load_1m
-              - entity: sensor.pi_[[pi_name]]_cpu
+              - entity: sensor.system_monitor_load_5m
                 name: Load 5m
                 attribute: load_5m
-              - entity: sensor.pi_[[pi_name]]_cpu
+              - entity: sensor.system_monitor_load_15m
                 name: Load 15m
                 attribute: load_15m
             stack: horizontal
@@ -202,14 +202,12 @@ pi_details:
       # up / down
       - type: custom:mini-graph-card
         entities:
-          - entity: device_tracker.[[tracker]]
+          - entity: sensor.system_monitor_network_throughput_in_end0
             color: '#91C0F8'
             name: Download
-            attribute: down_kilobytes_per_s
-          - entity: device_tracker.[[tracker]]
+          - entity: sensor.system_monitor_network_throughput_out_end0
             color: '#ffa000'
             name: Upload
-            attribute: up_kilobytes_per_s
             show_state: true
         hours_to_show: 24
         points_per_hour: 2
@@ -230,23 +228,17 @@ pi_details:
       # other and fold
       - type: entities
         entities:
-          - type: attribute
-            entity: sensor.rpi_poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
+          - entity: sensor.last_boot
             name: Uptime
-            attribute: up_time
             icon: mdi:clock-outline
-          - type: attribute
-            entity: sensor.rpi_poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
-            name: Packages
-            attribute: ux_updates
-            icon: mdi:package-up
-          - type: conditional
-            conditions:
-              - entity: sensor.pi_[[pi_name]]_server_last_backup
-                state_not: "unavailable"
-            row:
-              entity: sensor.pi_[[pi_name]]_server_last_backup
-              name: backup
+          - entity: sensor.home_assistant_last_backup
+            name: Last backup
+          - entity: update.home_assistant_core_update
+            name: Core Update
+          - entity: update.home_assistant_supervisor_update
+            name: Supervisor Update
+          - entity: update.home_assistant_operating_system_update
+            name: OS Update
           - type: custom:fold-entity-row
             head:
               type: section
@@ -271,39 +263,29 @@ pi_details:
                     }
             entities:
               - type: attribute
-                entity: sensor.rpi_poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
+                entity: device_tracker.homeassistant
                 name: Hostname
-                attribute: fqdn
-              - type: attribute
-                entity: device_tracker.[[tracker]]
+                attribute: friendly_name
+              - entity: sensor.ipv4_address_end0
                 name: IP Address
-                attribute: ip
-              - type: attribute
-                entity: sensor.rpi_poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
+              - entity: sensor.disk_use_percent
                 name: Storage
-                attribute: fs_total_gb
               - type: attribute
-                entity: sensor.rpi_poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
+                entity: update.home_assistant_operating_system_update
                 name: OS
-                attribute: ux_release
+                attribute: title
               - type: attribute
-                entity: sensor.rpi_poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
+                entity: update.home_assistant_operating_system_update
                 name: OS Version
-                attribute: ux_version
+                attribute: installed_version
               - type: attribute
-                entity: sensor.rpi_poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
+                entity: sensor.rpi_poat_plex_rpi_monitor_poat_plex
                 name: Model
                 attribute: rpi_model
               - type: attribute
-                entity: sensor.pi_[[pi_name]]_cpu
+                entity: sensor.pi_plex_cpu
                 name: Arch
                 attribute: model
-              - type: attribute
-                entity: sensor.rpi_poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
-                name: Last Updated
-                attribute: last_update
-              - entity: sensor.rpi_poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
-                name: Last Refresh
         card_mod:
           style:
             hui-sensor-entity-row:
