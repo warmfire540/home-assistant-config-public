@@ -1,0 +1,22 @@
+#####
+# Lists update entities that are on
+# 
+#####
+
+platform: template
+sensors:
+  updates_available:
+    friendly_name: "Updates available"
+    unique_id: 076698d0-59cb-4142-b14f-e927399cc282
+    value_template: >-
+      {{ states.update
+      | selectattr('state','eq', 'on')
+      | list
+      | count
+      }}
+    icon_template: >-
+      {% if is_state('sensor.updates_available', '0') %}
+        mdi:package-check
+      {% else %}
+        mdi:package-up
+      {% endif %}

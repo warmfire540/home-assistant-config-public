@@ -10,6 +10,12 @@ cards:
     template: card_title
     name: Net
 
+  - type: "custom:mini-graph-card"
+    name: Network
+    entities:
+      - sensor.m5_download_speed
+      - sensor.m5_upload_speed
+
   - type: custom:button-card
     template: custom_card_speedtest_shogun160
     variables:

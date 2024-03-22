@@ -79,16 +79,6 @@ cards:
           tap_action:
             action: navigate
             navigation_path: "/energy"
-        - type: "custom:button-card"
-          template: chip_mdi_icon_state
-          styles:
-            icon:
-              - color: "var(--red-color)"
-          variables:
-            ulm_chip_mdi_icon_state_entity: sensor.devices_offline
-          tap_action:
-            action: navigate
-            navigation_path: "/the-matrix/network?anchor=disconnected"
         - type: 'custom:button-card'
           template: poat_chip_double_state
           variables:
@@ -150,6 +140,20 @@ cards:
             navigation_path: "/the-matrix/cats?anchor=status"
         - type: "custom:button-card"
           template: chip_mdi_icon_state
+          label: "[[[ if (entity.state > 0) return entity.state; ]]]"
+          styles:
+            icon:
+              - color: >
+                  [[[ if (entity.state > 0) 
+                        return "var(--red-color)" ;
+                      else return "var(--green-color)"; ]]]
+          variables:
+            ulm_chip_mdi_icon_state_entity: sensor.devices_offline
+          tap_action:
+            action: navigate
+            navigation_path: "/the-matrix/network?anchor=disconnected"
+        - type: "custom:button-card"
+          template: chip_mdi_icon_state
           icon: mdi:water
           label: ""
           styles:
@@ -160,6 +164,17 @@ cards:
                       else return "var(--green-color)"; ]]]
           variables:
             ulm_chip_mdi_icon_state_entity: group.leak_sensors
+        - type: "custom:button-card"
+          template: chip_mdi_icon_state
+          label: "[[[ if (entity.state > 0) return entity.state; ]]]"
+          styles:
+            icon:
+              - color: >
+                  [[[ if (entity.state > 0) 
+                        return "var(--red-color)" ;
+                      else return "var(--green-color)"; ]]]
+          variables:
+            ulm_chip_mdi_icon_state_entity: sensor.updates_available
         - type: "custom:button-card"
           template: chip_mdi_icon_only
           variables:
