@@ -23,16 +23,10 @@ cards:
         template: card_light
         entity: switch.office_switch_switch_1
 
-  - type: "custom:button-card"
-    template:
-      - card_cover
-      - battery_info
-    entity: cover.office_blinds
+  - type: custom:decluttering-card
+    template: cover
     variables:
-      ulm_card_cover_enable_controls: true
-      ulm_card_cover_enable_slider: true
-      ulm_card_cover_color: green
-      ulm_battery_entity: sensor.office_blinds_battery
+      - sensor_prefix: office
 
   - type: media-control
     entity: media_player.fire_tv_192_168_68_115

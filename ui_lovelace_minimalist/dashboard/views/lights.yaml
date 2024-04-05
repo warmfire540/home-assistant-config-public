@@ -37,6 +37,15 @@ cards:
                       return "var(--green-color)" ;
                     else return "var(--red-color)"; ]]]
 
+  - type: "custom:button-card"
+    template:
+      - card_cover
+    entity: cover.all_covers
+    variables:
+      ulm_card_cover_enable_controls: true
+      ulm_card_cover_enable_slider: true
+      ulm_card_cover_color: green
+
   - type: custom:auto-entities
     card:
       type: glance

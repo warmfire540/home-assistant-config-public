@@ -9,6 +9,7 @@ trigger:
 - platform: state
   entity_id: group.cat_device_status
   to: "on"
+  for: '00:05:00'
 
 action:
   - service: notify.family

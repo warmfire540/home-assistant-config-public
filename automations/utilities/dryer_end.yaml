@@ -9,7 +9,7 @@ trigger:
   platform: numeric_state
   entity_id: sensor.dryer_1_1min
   below: 2
-  for: '00:01:30'
+  for: '00:05:00'
 
 condition:
   condition: state
