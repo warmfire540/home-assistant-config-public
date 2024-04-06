@@ -49,6 +49,10 @@ cards:
   - type: custom:auto-entities
     card:
       type: entities
+    else:
+      type: markdown
+      content: >-
+        <ha-alert alert-type="info">Nothing disconnected!</ha-alert>
     filter:
       include:
         - state: "unavailable"
@@ -71,6 +75,22 @@ cards:
         - domain: tts
         - domain: stt
         - name: "Kitchen Bulb*"
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Updates needed
+
+  - type: custom:auto-entities
+    card:
+      type: entities
+    else:
+      type: markdown
+      content: >-
+        <ha-alert alert-type="info">No updates!</ha-alert>
+    filter:
+      include:
+        - domain: update
+          state: "on"
 
   - type: "custom:button-card"
     template: card_title
