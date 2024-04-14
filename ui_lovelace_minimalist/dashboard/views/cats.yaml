@@ -249,3 +249,12 @@ cards:
             name: RSII
           - entity: sensor.cat_noms_status
             name: Status
+
+  - type: entities
+    title: Dumb Water Fountain
+    icon: mdi:fountain
+    entities:
+      - entity: sensor.cat_dumb_water_filter
+        name: Filter Changed
+      - entity: script.reset_dumb_water_filter
+        name: Reset Filter
