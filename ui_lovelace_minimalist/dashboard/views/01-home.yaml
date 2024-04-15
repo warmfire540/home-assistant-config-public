@@ -109,72 +109,36 @@ cards:
       type: horizontal-stack
       cards:
         - type: "custom:button-card"
-          template: chip_mdi_icon_state
-          entity: sensor.devices_with_low_battery
-          label: "[[[ if (entity.state > 0) return entity.state; ]]]"
-          styles:
-            icon:
-              - color: >
-                  [[[ if (entity.state > 0) 
-                        return "var(--red-color)" ;
-                      else return "var(--green-color)"; ]]]
+          template: chip_icon_state_if_value
           variables:
-            ulm_chip_mdi_icon_state_entity: sensor.devices_with_low_battery
-          tap_action:
-            action: navigate
+            entity: sensor.devices_with_low_battery
             navigation_path: "/the-matrix/house?anchor=low-battery"
         - type: "custom:button-card"
-          template: chip_mdi_icon_state
-          icon: mdi:cat
-          label: "[[[ if (entity.state > 0) return entity.state; ]]]"
-          styles:
-            icon:
-              - color: >
-                  [[[ if (entity.state > 0) 
-                        return "var(--red-color)" ;
-                      else return "var(--green-color)"; ]]]
+          template: chip_icon_state_if_value
           variables:
-            ulm_chip_mdi_icon_state_entity: sensor.cat_device_failure_count
-          tap_action:
-            action: navigate
+            entity: sensor.cat_device_failure_count
             navigation_path: "/the-matrix/cats?anchor=status"
         - type: "custom:button-card"
-          template: chip_mdi_icon_state
-          label: "[[[ if (entity.state > 0) return entity.state; ]]]"
-          styles:
-            icon:
-              - color: >
-                  [[[ if (entity.state > 0) 
-                        return "var(--red-color)" ;
-                      else return "var(--green-color)"; ]]]
+          template: chip_icon_state_if_value
           variables:
-            ulm_chip_mdi_icon_state_entity: sensor.devices_offline
-          tap_action:
-            action: navigate
+            entity: sensor.devices_offline
             navigation_path: "/the-matrix/network?anchor=disconnected"
         - type: "custom:button-card"
-          template: chip_mdi_icon_state
-          icon: mdi:water
-          label: ""
-          styles:
-            icon:
-              - color: >
-                  [[[ if (entity.state == 'on') 
-                        return "var(--red-color)" ;
-                      else return "var(--green-color)"; ]]]
+          template: chip_icon_state_if_value
           variables:
-            ulm_chip_mdi_icon_state_entity: group.leak_sensors
+            entity: group.leak_sensors
         - type: "custom:button-card"
-          template: chip_mdi_icon_state
-          label: "[[[ if (entity.state > 0) return entity.state; ]]]"
-          styles:
-            icon:
-              - color: >
-                  [[[ if (entity.state > 0) 
-                        return "var(--red-color)" ;
-                      else return "var(--green-color)"; ]]]
+          template: chip_icon_state_if_value
           variables:
-            ulm_chip_mdi_icon_state_entity: sensor.updates_available
+            entity: sensor.updates_available
+        - type: "custom:button-card"
+          template: chip_icon_state_if_value
+          variables:
+            entity: group.robot_vacuums_status
+        - type: "custom:button-card"
+          template: chip_icon_state_if_value
+          variables:
+            entity: group.smoke_sensors
         - type: "custom:button-card"
           template: chip_mdi_icon_only
           variables:
@@ -189,29 +153,6 @@ cards:
                       return "var(--amber-color)";
                     else
                       return "var(--green-color)"; ]]]
-        - type: "custom:button-card"
-          template: chip_mdi_icon_state
-          entity: group.robot_vacuums_status
-          label: "[[[ if (entity.state > 0) return entity.state; ]]]"
-          styles:
-            icon:
-              - color: >
-                  [[[ if (entity.state == 'on')
-                        return "var(--red-color)" ;
-                      else return "var(--green-color)"; ]]]
-          variables:
-            ulm_chip_mdi_icon_state_entity: group.robot_vacuums_status
-        - type: "custom:button-card"
-          template: chip_mdi_icon_only
-          entity: group.smoke_sensors
-          styles:
-            icon:
-              - color: >
-                  [[[ if (entity.state == 'on')
-                        return "var(--red-color)" ;
-                      else return "var(--green-color)"; ]]]
-          variables:
-            ulm_chip_mdi_icon_only_entity: group.smoke_sensors
 
   - type: "custom:button-card"
     template: card_title

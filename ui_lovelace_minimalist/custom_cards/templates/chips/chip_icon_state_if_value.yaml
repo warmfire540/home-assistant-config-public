@@ -1,0 +1,16 @@
+---
+chip_icon_state_if_value:
+  type: "custom:button-card"
+  template: chip_mdi_icon_state
+  label: "[[[ if (entity.state > 0) return entity.state; ]]]"
+  styles:
+    icon:
+      - color: >
+          [[[ if (entity.state > 0 || entity.state == 'on') 
+                return "var(--red-color)" ;
+              else return "var(--green-color)"; ]]]
+  variables:
+    ulm_chip_mdi_icon_state_entity: "[[[ return variables.entity; ]]]"
+  tap_action:
+    action: "[[[ if (variables.navigation_path) return 'navigate'; else return 'more-info'; ]]]"
+    navigation_path: "[[[ return variables.navigation_path; ]]]"

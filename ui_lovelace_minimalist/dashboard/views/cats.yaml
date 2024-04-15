@@ -116,52 +116,21 @@ cards:
           variables:
             ulm_chip_mdi_icon_state_entity: sensor.cat_noms_desiccant_days_remaining
         - type: "custom:button-card"
-          template: chip_mdi_icon_state
-          label: ''
-          styles:
-            icon:
-              - color: >
-                  [[[ if (entity.state == 'on')
-                        return "var(--red-color)" ;
-                      else return "var(--green-color)"; ]]]
+          template: chip_icon_state_if_value
           variables:
-            ulm_chip_mdi_icon_state_entity: binary_sensor.pet_thirst_water_level
+            entity: binary_sensor.pet_thirst_water_level
         - type: "custom:button-card"
-          template: chip_mdi_icon_state
-          entity: binary_sensor.cat_noms_status_problem
-          label: ''
-          styles:
-            icon:
-              - color: >
-                  [[[ if (entity.state == 'on') 
-                        return "var(--red-color)" ;
-                      else return "var(--green-color)"; ]]]
+          template: chip_icon_state_if_value
           variables:
-            ulm_chip_mdi_icon_state_entity: binary_sensor.cat_noms_status_problem
+            entity: binary_sensor.cat_noms_status_problem
         - type: "custom:button-card"
-          template: chip_mdi_icon_state
-          entity: binary_sensor.cat_battery_problem
-          label: ''
-          styles:
-            icon:
-              - color: >
-                  [[[ if (entity.state == 'on') 
-                        return "var(--red-color)" ;
-                      else return "var(--green-color)"; ]]]
+          template: chip_icon_state_if_value
           variables:
-            ulm_chip_mdi_icon_state_entity: binary_sensor.cat_battery_problem
+            entity: binary_sensor.cat_battery_problem
         - type: "custom:button-card"
-          template: chip_mdi_icon_state
-          entity: binary_sensor.cat_noms_food_level
-          label: ''
-          styles:
-            icon:
-              - color: >
-                  [[[ if (entity.state == 'on') 
-                        return "var(--red-color)" ;
-                      else return "var(--green-color)"; ]]]
+          template: chip_icon_state_if_value
           variables:
-            ulm_chip_mdi_icon_state_entity: binary_sensor.cat_noms_food_level
+            entity: binary_sensor.cat_noms_food_level
 
   - type: horizontal-stack
     cards:
