@@ -9,7 +9,7 @@ trigger:
   platform: numeric_state
   entity_id: sensor.clothes_washer_13_1min
   below: 2
-  for: '00:05:00'
+  for: '00:20:00' # handle pause in soak
 
 condition:
   condition: state
