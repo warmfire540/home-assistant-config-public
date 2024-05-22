@@ -12,19 +12,37 @@ cards:
 
   - type: "custom:mini-graph-card"
     name: Network
+    show:
+      extrema: true
     entities:
       - sensor.m5_download_speed
       - sensor.m5_upload_speed
 
-  - type: custom:button-card
-    template: custom_card_speedtest_shogun160
-    variables:
-      ulm_custom_card_speedtest_download_speed_entity: sensor.speedtest_download
-      ulm_custom_card_router_download_speed_entity: sensor.m5_download_speed
-      ulm_custom_card_speedtest_upload_speed_entity: sensor.speedtest_upload
-      ulm_custom_card_router_upload_speed_entity: sensor.m5_upload_speed
-      ulm_custom_card_speedtest_ping_entity: sensor.speedtest_ping
-      ulm_custom_card_speedtest_round: true
+  - type: custom:mini-graph-card
+    name: Speedtest
+    align_state: center
+    icon: mdi:speedometer
+    show:
+      extrema: true
+      labels: true
+    entities:
+      - entity: sensor.speedtest_download
+        name: Download
+        color: green
+      - entity: sensor.speedtest_upload
+        name: Upload
+        color: red
+      - entity: sensor.speedtest_ping
+        name: Ping
+        color: yellow
+    tap_action:
+      action: "call-service"
+      service: "homeassistant.update_entity"
+      service_data:
+        entity_id:
+          - sensor.speedtest_download
+          - sensor.speedtest_upload
+          - sensor.speedtest_ping
 
   - type: "custom:button-card"
     template: card_title
