@@ -1,5 +1,5 @@
 #####
-# Simple automation to stop fan if bathroom humidity is under 60%
+# Simple automation to stop fan if bathroom humidity is under 65%
 #
 #####
 
@@ -24,7 +24,7 @@ condition:
     entity_id: binary_sensor.people_home
     state: 'on'
   - condition: state
-    entity_id: switch.master_bath_switches
+    entity_id: switch.master_bath_switches_2
     state: 'off'
     
 action:

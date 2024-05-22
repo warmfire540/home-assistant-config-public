@@ -116,7 +116,7 @@ card_esh_welcome:
             } else {
               welcome = variables.ulm_hello;
             }
-            return welcome + ', ' + '   <br>' + user.name + '!';
+            return welcome + ', ' + ' ' + user.name + '!';
           ]]]
         styles:
           name:
