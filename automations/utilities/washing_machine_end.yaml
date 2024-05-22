@@ -24,3 +24,9 @@ action:
   data:
     message: Time to load the dryer...
     title: Washer done!
+
+- service: persistent_notification.create
+  data:
+    message: Time to load the dryer...
+    title: Washer done!
+    notification_id: washer_done

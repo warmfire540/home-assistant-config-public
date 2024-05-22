@@ -8,7 +8,7 @@ id: 7cc7b31e-f474-4db1-8765-052a9cccaf93
 trigger:
   platform: numeric_state
   entity_id: sensor.dryer_1_1min
-  below: 2
+  below: 500
   for: '00:05:00'
 
 condition:

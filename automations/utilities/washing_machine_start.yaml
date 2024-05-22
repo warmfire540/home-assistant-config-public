@@ -1,15 +1,15 @@
 #####
-# Notify when Dryer start
+# Notify when Washing Machine start
 #####
 
-alias: Dryer start
+alias: Washing Machine start
 id: 00375bc8-c223-4914-a3d1-981a92fb915c
 
 trigger:
   platform: numeric_state
   entity_id: sensor.clothes_washer_13_1min
-  above: 5
-  for: '00:02:00'
+  above: 20
+  for: '00:00:10'
 
 condition:
   condition: state

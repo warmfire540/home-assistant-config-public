@@ -8,8 +8,8 @@ id: 88a93488-d1fb-476c-98e6-ab2063cf087e
 trigger:
   platform: numeric_state
   entity_id: sensor.dryer_1_1min
-  above: 5
-  for: '00:02:00'
+  above: 500
+  for: '00:00:10'
 
 condition:
   condition: state
@@ -19,3 +19,6 @@ condition:
 action:
 - service: input_boolean.turn_on
   entity_id: input_boolean.dryer_on
+- service: persistent_notification.dismiss
+  data:
+    notification_id: washer_done
