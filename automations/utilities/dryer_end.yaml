@@ -17,10 +17,18 @@ condition:
   state: 'on'
 
 action:
-- service: input_boolean.turn_off
-  entity_id: input_boolean.dryer_on
+  - service: input_boolean.turn_off
+    entity_id: input_boolean.dryer_on
 
-- service: notify.family
-  data:
-    message: Empty me and the lint thingy!
-    title: Dryer done!
+  - service: notify.family
+    data:
+      message: Empty me and the lint thingy!
+      title: Dryer done!
+      data:
+        tag: dryer_done
+
+  - service: persistent_notification.create
+    data:
+      message: Empty me and the lint thingy!
+      title: Dryer done!
+      notification_id: dryer_done

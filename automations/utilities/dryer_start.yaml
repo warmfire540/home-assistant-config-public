@@ -9,16 +9,23 @@ trigger:
   platform: numeric_state
   entity_id: sensor.dryer_1_1min
   above: 500
-  for: '00:00:10'
+  for: "00:00:10"
 
 condition:
   condition: state
   entity_id: input_boolean.dryer_on
-  state: 'off'
+  state: "off"
 
 action:
-- service: input_boolean.turn_on
-  entity_id: input_boolean.dryer_on
-- service: persistent_notification.dismiss
-  data:
-    notification_id: washer_done
+  - service: input_boolean.turn_on
+    entity_id: input_boolean.dryer_on
+
+  - service: notify.family
+    data:
+      message: clear_notification
+      data:
+        tag: washer_done
+
+  - service: persistent_notification.dismiss
+    data:
+      notification_id: washer_done
