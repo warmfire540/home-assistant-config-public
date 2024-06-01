@@ -10,7 +10,6 @@
 !.gitignore
 !*.md
 !python_scripts/*
-!.shopping_list.json
 
 # Ignore folders.
 .storage
