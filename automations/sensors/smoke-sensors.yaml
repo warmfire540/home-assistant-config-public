@@ -11,7 +11,8 @@ trigger:
   to: "on"
 
 action:
-  - service: notify.family
+  - service: script.notify_family
     data:
       message: 'Smoke/CO sensor triggered!'
       title: '🔥 Smoke/CO sensor triggered!'
+      tag: smoke_sensor

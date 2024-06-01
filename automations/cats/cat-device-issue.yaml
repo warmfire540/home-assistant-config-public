@@ -6,13 +6,13 @@ alias: Cat device issue
 id: 715a4f55-7a66-478a-b8ca-93cb1be8ff29
 
 trigger:
-- platform: state
-  entity_id: group.cat_device_status
-  to: "on"
-  for: '00:05:00'
+  - platform: state
+    entity_id: group.cat_device_status
+    to: "on"
+    for: "00:05:00"
 
 action:
-  - service: notify.family
+  - service: script.notify_family
     data:
       message: >
         Cat device has an issue!
@@ -30,4 +30,5 @@ action:
         Marbles Desicant:     {{ states("binary_sensor.cat_desicant_problem") }}
 
         Marbles Food Status:  {{ states("binary_sensor.cat_noms_status_problem") }}
-      title: '🐱 Cat device problem!'
+      title: "🐱 Cat device problem!"
+      tag: cat_issue

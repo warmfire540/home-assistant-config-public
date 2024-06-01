@@ -6,19 +6,13 @@ alias: Dyer door opened
 id: fd287669-a7ef-42f4-993f-34b1d9b07992
 
 trigger:
-- type: opened
-  platform: device
-  device_id: 357bc954ebb6225a55ae7d8b81f1fca7
-  entity_id: 4986450410536f6afbeaefa26a3fd5ce
-  domain: binary_sensor
+  - type: opened
+    platform: device
+    device_id: 357bc954ebb6225a55ae7d8b81f1fca7
+    entity_id: 4986450410536f6afbeaefa26a3fd5ce
+    domain: binary_sensor
 
 action:
-  - service: notify.family
+  - service: script.clear_notification
     data:
-      message: clear_notification
-      data:
-        tag: dryer_done
-
-  - service: persistent_notification.dismiss
-    data:
-      notification_id: dryer_done
+      tag: dryer_done

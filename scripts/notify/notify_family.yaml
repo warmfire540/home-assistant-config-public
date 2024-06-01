@@ -1,0 +1,22 @@
+#####
+# Script to create persistent notification on HA and iOS
+# 
+#####
+
+notify_family:
+  alias: Notify Family
+  sequence:
+    - service: notify.family
+      data:
+        message: "{{ message }}"
+        title: "{{ title }}"
+        data:
+          tag: "{{ tag }}"
+
+    - service: persistent_notification.create
+      data:
+        message: "{{ message }}"
+        title: "{{ title }}"
+        notification_id: "{{ tag }}"
+  mode: single
+  icon: mdi:bell

@@ -20,12 +20,6 @@ action:
   - service: input_boolean.turn_on
     entity_id: input_boolean.dryer_on
 
-  - service: notify.family
+  - service: script.clear_notification
     data:
-      message: clear_notification
-      data:
-        tag: washer_done
-
-  - service: persistent_notification.dismiss
-    data:
-      notification_id: washer_done
+      tag: washer_done

@@ -15,7 +15,7 @@ condition:
     value_template: '{{ not is_state_attr("vacuum.rolo", "status", "Dust bin missing")  }}'
 
 action:
-  - service: notify.family
+  - service: script.notify_family
     data:
       message: >
         Vacuum has an issue!
@@ -25,3 +25,4 @@ action:
         
         Strong Boi: {{ state_attr("vacuum.e0000693817603917196", "error") }}
       title: '🤖 Vacuum problem!'
+      tag: vacuum_issue

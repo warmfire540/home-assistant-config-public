@@ -20,7 +20,8 @@ action:
   - service: input_boolean.turn_off
     entity_id: input_boolean.dishwasher_on
 
-  - service: notify.family
+  - service: script.notify_family
     data:
       message: Empty me my overlord
       title: Dishwasher done!
+      tag: dishwasher_done
