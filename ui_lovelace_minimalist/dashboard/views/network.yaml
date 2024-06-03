@@ -90,6 +90,7 @@ cards:
         - entity_id: sensor.cat_noms_battery_status
         - domain: button
         - domain: number
+        - domain: conversation
         - domain: tts
         - domain: stt
         - name: "Kitchen Bulb*"
