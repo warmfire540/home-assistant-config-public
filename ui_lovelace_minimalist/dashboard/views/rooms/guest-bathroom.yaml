@@ -54,3 +54,16 @@ cards:
       ulm_card_graph_color: "var(--google-yellow)"
       ulm_card_graph_entity: sensor.office_g_bath_garage_3_1min
       ulm_card_graph_name: Electricity 1 min
+
+  - type: "custom:button-card"
+    template: card_input_boolean
+    entity: binary_sensor.air_filter_door_sensor_window_door_is_open
+    variables:
+      ulm_card_input_boolean_force_background_color: true
+      ulm_card_input_boolean_name: Air Filter Door
+
+  - type: custom:decluttering-card
+    template: z_wave_door_sensor
+    variables:
+      - sensor_prefix: air_filter
+      - node_number: 22

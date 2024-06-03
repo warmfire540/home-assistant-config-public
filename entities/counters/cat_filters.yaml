@@ -1,9 +1,0 @@
-#####
-# Counting number of cat filters left
-#
-#####
-
-cat_filters:
-  name: Cat Filters
-  icon: mdi:air-filter
-  restore: true

@@ -1,0 +1,23 @@
+#####
+# Counting number of cat/air filters left
+#
+#####
+
+cat_filters:
+  name: Cat Filters
+  icon: mdi:air-filter
+  restore: true
+  minimum: 0
+
+large_air_filters:
+  name: Large Air Filters
+  icon: mdi:air-filter
+  restore: true
+  minimum: 0
+
+small_air_filters:
+  name: Small Air Filters
+  icon: mdi:air-filter
+  restore: true
+  step: 2
+  minimum: 0
