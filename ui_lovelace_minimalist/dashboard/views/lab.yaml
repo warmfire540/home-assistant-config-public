@@ -15,7 +15,7 @@ cards:
       - type: "custom:button-card"
         color_type: blank-card
 
-      - type: 'custom:button-card'
+      - type: "custom:button-card"
         entity: binary_sensor.pi_hole_status
         hold_action:
           action: call-service
@@ -25,7 +25,7 @@ cards:
           target:
             device_id: e03d2a8d6db4afd53059dc33a584b7e2
         state:
-          - value: 'on'
+          - value: "on"
             color: green
             icon: mdi:shield-check
           - operator: default
@@ -39,7 +39,7 @@ cards:
   # INFO CHIPS
   #################
   - type: custom:mod-card
-    style: 
+    style:
       hui-horizontal-stack-card$: |
         #root { 
           justify-content: center;
@@ -298,7 +298,7 @@ cards:
       - icon: mdi:pi-hole
       - name: Pi Hole
       - tracker: poat_hole
-  
+
   - type: custom:decluttering-card
     template: pi_details
     variables:
@@ -320,7 +320,7 @@ cards:
         - icon: mdi:seed
         - name: Pi Seedbox
         - tracker: pi_seedbox
-    
+
   - type: conditional
     conditions:
       - condition: state
@@ -376,10 +376,10 @@ cards:
               showSearch: true
               ip: poat-plex.local
               token: !secret plex_token
-              port: '32400'
+              port: "32400"
               libraryName: Watch Next
               entity:
-                - media_player.fire_tv_192_168_68_115
+                - media_player.fire_tv_192_168_68_129
 
   #################
   # DEVICE HEALTH
@@ -413,13 +413,13 @@ cards:
           card_margin: 0
         margin: 0px
         cards:
-          - type: 'custom:button-card'
+          - type: "custom:button-card"
             template:
               - card_generic_swap
             entity: sensor.tasmota_firmware_version
             variables:
               ulm_card_generic_swap_name: Sonoff RF Bridge (Tasmota)
-              ulm_card_generic_swap_icon: 'mdi:broadcast'
+              ulm_card_generic_swap_icon: "mdi:broadcast"
             view_layout:
               grid-area: firmware
           - type: "custom:button-card"

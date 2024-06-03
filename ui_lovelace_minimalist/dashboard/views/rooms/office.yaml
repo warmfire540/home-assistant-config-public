@@ -29,7 +29,7 @@ cards:
       - sensor_prefix: office
 
   - type: media-control
-    entity: media_player.fire_tv_192_168_68_115
+    entity: media_player.fire_tv_192_168_68_129
 
   - type: media-control
     entity: media_player.xbox_x
