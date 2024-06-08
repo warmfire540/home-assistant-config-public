@@ -1,0 +1,46 @@
+#####
+# Handles peristent alerts when alert entity is triggered
+# https://community.home-assistant.io/t/in-alert-call-script-via-notify/678275/8
+#####
+
+alias: Create persistent notification from alert
+id: 72676c87-8c72-4c0e-98e2-a5562a65dec9
+
+trigger:
+  - platform: event
+    id: create 
+    event_type: call_service
+    event_data:
+      domain: notify
+      service: family
+    variables:
+      data: "{{ trigger.event.data.service_data.data | to_json }}"
+  - platform: event
+    id: dismiss 
+    event_type: call_service
+    event_data:
+      domain: notify
+      service: family
+      service_data:
+        message: clear_notification
+    variables:
+      data: "{{ trigger.event.data.service_data.data | to_json }}"
+
+action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: create
+      sequence:
+        - service: persistent_notification.create
+          data:
+            message: "{{ trigger.event.data.service_data.message }}"
+            title: "{{ trigger.event.data.service_data.title }}"
+            notification_id: "{{ trigger.event.data.service_data.tag }}"
+    - conditions:
+      - condition: trigger
+        id: dismiss
+      sequence:
+        - service: persistent_notification.dismiss
+          data:
+            notification_id: "{{ trigger.event.data.service_data.tag }}"
