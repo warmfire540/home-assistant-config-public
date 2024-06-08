@@ -161,410 +161,220 @@ cards:
   #################
   # ROOM CARDS LARGE
   #################
-  - type: conditional
-    conditions:
-      - condition: state
-        entity: input_boolean.welcome_toggle
-        state: "off"
-    card:
-      type: vertical-stack
-      cards:
-        - type: horizontal-stack
-          cards:
-            #################
-            # LIVING ROOM
-            #################
-            - type: "custom:button-card"
-              template:
-                - poat_card_room
-              icon: mdi:sofa
-              variables:
-                affix: living_room
-                problem_entities:
-                  - binary_sensor.rolo_error
-                  - binary_sensor.living_room_smoke_sensor_smoke_detected
-                  - binary_sensor.living_room_smoke_sensor_carbon_monoxide_detected
-                entity_2:
-                  entity_id: switch.living_room_switch_switch_1
-                  templates:
-                    - yellow_on
-                entity_3:
-                  entity_id: light.tv_led
-                  icon: mdi:television
-                  templates:
-                    - blue_on
-                    - custom_icon
-                entity_4:
-                  entity_id: climate.living_room
-                  templates:
-                    - yellow_on
-                    - climate_icon
+  - type: vertical-stack
+    cards:
+      - type: horizontal-stack
+        cards:
+          #################
+          # LIVING ROOM
+          #################
+          - type: "custom:button-card"
+            template:
+              - poat_card_room
+            icon: mdi:sofa
+            variables:
+              affix: living_room
+              problem_entities:
+                - binary_sensor.rolo_error
+                - binary_sensor.living_room_smoke_sensor_smoke_detected
+                - binary_sensor.living_room_smoke_sensor_carbon_monoxide_detected
+              entity_2:
+                entity_id: switch.living_room_switch_switch_1
+                templates:
+                  - yellow_on
+              entity_3:
+                entity_id: light.tv_led
+                icon: mdi:television
+                templates:
+                  - blue_on
+                  - custom_icon
+              entity_4:
+                entity_id: climate.living_room
+                templates:
+                  - yellow_on
+                  - climate_icon
 
-            #################
-            # DINING ROOM
-            #################
-            - type: "custom:button-card"
-              template:
-                - poat_card_room
-              icon: mdi:glass-cocktail
-              variables:
-                affix: dining_room
+          #################
+          # DINING ROOM
+          #################
+          - type: "custom:button-card"
+            template:
+              - poat_card_room
+            icon: mdi:glass-cocktail
+            variables:
+              affix: dining_room
 
-        - type: horizontal-stack
-          cards:
-            #################
-            # OFFICE
-            #################
-            - type: "custom:button-card"
-              template:
-                - poat_card_room
-              icon: mdi:controller
-              variables:
-                affix: office
-                problem_entities:
-                  - binary_sensor.office_smoke_sensor_smoke_detected
-                  - binary_sensor.office_smoke_sensor_carbon_monoxide_detected
-                entity_2:
-                  entity_id: switch.office_switch_switch_1
-                  templates:
-                    - yellow_on
-                entity_3:
-                  entity_id: binary_sensor.poat_rgb_connectivity
-                  icon: mdi:desktop-classic
-                  templates:
-                    - blue_on
-                    - custom_icon
+      - type: horizontal-stack
+        cards:
+          #################
+          # OFFICE
+          #################
+          - type: "custom:button-card"
+            template:
+              - poat_card_room
+            icon: mdi:controller
+            variables:
+              affix: office
+              problem_entities:
+                - binary_sensor.office_smoke_sensor_smoke_detected
+                - binary_sensor.office_smoke_sensor_carbon_monoxide_detected
+              entity_2:
+                entity_id: switch.office_switch_switch_1
+                templates:
+                  - yellow_on
+              entity_3:
+                entity_id: binary_sensor.poat_rgb_connectivity
+                icon: mdi:desktop-classic
+                templates:
+                  - blue_on
+                  - custom_icon
 
-            #################
-            # KITCHEN
-            #################
-            - type: "custom:button-card"
-              template:
-                - poat_card_room
-              icon: mdi:countertop-outline
-              variables:
-                affix: kitchen
-                problem_entities:
-                  - group.cat_water_status
-                  - binary_sensor.dishwasher_leak_sensor
-                entity_2:
-                  entity_id: switch.under_cabinet_lights_switch_1
-                  icon: mdi:countertop
-                  templates:
-                    - yellow_on
-                    - custom_icon
-                entity_3:
-                  entity_id: switch.dinette_light_switch_1
-                  icon: mdi:table-chair
-                  templates:
-                    - yellow_on
-                    - custom_icon
+          #################
+          # KITCHEN
+          #################
+          - type: "custom:button-card"
+            template:
+              - poat_card_room
+            icon: mdi:countertop-outline
+            variables:
+              affix: kitchen
+              problem_entities:
+                - group.cat_water_status
+                - binary_sensor.dishwasher_leak_sensor
+              entity_2:
+                entity_id: switch.under_cabinet_lights_switch_1
+                icon: mdi:countertop
+                templates:
+                  - yellow_on
+                  - custom_icon
+              entity_3:
+                entity_id: switch.dinette_light_switch_1
+                icon: mdi:table-chair
+                templates:
+                  - yellow_on
+                  - custom_icon
 
-        - type: horizontal-stack
-          cards:
-            #################
-            # MASTER BEDROOM
-            #################
-            - type: "custom:button-card"
-              template:
-                - poat_card_room
-              icon: mdi:bed
-              variables:
-                affix: master_bedroom
+      - type: horizontal-stack
+        cards:
+          #################
+          # MASTER BEDROOM
+          #################
+          - type: "custom:button-card"
+            template:
+              - poat_card_room
+            icon: mdi:bed
+            variables:
+              affix: master_bedroom
 
-            #################
-            # MASTER BATHROOM
-            #################
-            - type: "custom:button-card"
-              template:
-                - poat_card_room
-              icon: mdi:shower-head
-              variables:
-                affix: master_bath
-                entity_2:
-                  entity_id: switch.master_bath_fan_relay_2
-                  templates:
-                    - yellow_on
-                entity_3:
-                  entity_id: switch.master_bath_fan_relay
-                  templates:
-                    - blue_on
+          #################
+          # MASTER BATHROOM
+          #################
+          - type: "custom:button-card"
+            template:
+              - poat_card_room
+            icon: mdi:shower-head
+            variables:
+              affix: master_bath
+              entity_2:
+                entity_id: switch.master_bath_fan_relay_2
+                templates:
+                  - yellow_on
+              entity_3:
+                entity_id: switch.master_bath_fan_relay
+                templates:
+                  - blue_on
 
-        - type: horizontal-stack
-          cards:
-            #################
-            # GUEST ROOM
-            #################
-            - type: "custom:button-card"
-              template:
-                - poat_card_room
-              icon: mdi:desk
-              variables:
-                affix: guest_bedroom
-                entity_1:
-                  entity_id: switch.gina_computer_socket_1
-                  icon: mdi:laptop
-                  templates:
-                    - blue_on
-                    - custom_icon
+      - type: horizontal-stack
+        cards:
+          #################
+          # GUEST ROOM
+          #################
+          - type: "custom:button-card"
+            template:
+              - poat_card_room
+            icon: mdi:desk
+            variables:
+              affix: guest_bedroom
+              entity_1:
+                entity_id: switch.gina_computer_socket_1
+                icon: mdi:laptop
+                templates:
+                  - blue_on
+                  - custom_icon
 
-            #################
-            # GUEST BATHROOM
-            #################
-            - type: "custom:button-card"
-              template:
-                - poat_card_room
-              icon: mdi:shower
-              variables:
-                affix: guest_bath
-                entity_1:
-                  entity_id: binary_sensor.dryer_door_sensor_window_door_is_open
-                  templates:
-                    - blue_on
+          #################
+          # GUEST BATHROOM
+          #################
+          - type: "custom:button-card"
+            template:
+              - poat_card_room
+            icon: mdi:shower
+            variables:
+              affix: guest_bath
+              entity_1:
+                entity_id: binary_sensor.dryer_door_sensor_window_door_is_open
+                templates:
+                  - blue_on
 
-        - type: horizontal-stack
-          cards:
-            #################
-            # GARAGE
-            #################
-            - type: "custom:button-card"
-              template:
-                - poat_card_room
-              entity: switch.garage_opener_socket_1
-              icon: mdi:garage
-              variables:
-                affix: garage
-                temperature_threshold: 90
-                problem_entities:
-                  - binary_sensor.water_heater_leak_sensor
-                  - binary_sensor.strong_boi_error
-                entity_1:
-                  entity_id: switch.garage_opener_socket_1
-                  templates:
-                    - blue_on
-                entity_2:
-                  entity_id: input_boolean.washing_machine_on
-                  templates:
-                    - blue_on
-                entity_3:
-                  entity_id: input_boolean.dryer_on
-                  templates:
-                    - blue_on
-                entity_4:
-                  entity_id: binary_sensor.dryer_door_sensor_window_door_is_open
-                  templates:
-                    - blue_on
+      - type: horizontal-stack
+        cards:
+          #################
+          # GARAGE
+          #################
+          - type: "custom:button-card"
+            template:
+              - poat_card_room
+            entity: switch.garage_opener_socket_1
+            icon: mdi:garage
+            variables:
+              affix: garage
+              temperature_threshold: 90
+              problem_entities:
+                - binary_sensor.water_heater_leak_sensor
+                - binary_sensor.strong_boi_error
+              entity_1:
+                entity_id: switch.garage_opener_socket_1
+                templates:
+                  - blue_on
+              entity_2:
+                entity_id: input_boolean.washing_machine_on
+                templates:
+                  - blue_on
+              entity_3:
+                entity_id: input_boolean.dryer_on
+                templates:
+                  - blue_on
+              entity_4:
+                entity_id: binary_sensor.dryer_door_sensor_window_door_is_open
+                templates:
+                  - blue_on
 
-            #################
-            # ATTIC
-            #################
-            - type: "custom:button-card"
-              template:
-                - poat_card_room
-              icon: mdi:home-roof
-              variables:
-                affix: attic
-                temperature_threshold: 100
-                problem_entities:
-                  - binary_sensor.ac_pan_leak_sensor
+          #################
+          # ATTIC
+          #################
+          - type: "custom:button-card"
+            template:
+              - poat_card_room
+            icon: mdi:home-roof
+            variables:
+              affix: attic
+              temperature_threshold: 100
+              problem_entities:
+                - binary_sensor.ac_pan_leak_sensor
 
-        - type: horizontal-stack
-          cards:
-            #################
-            # Shed
-            #################
-            - type: "custom:button-card"
-              template:
-                - poat_card_room
-              icon: mdi:greenhouse
-              variables:
-                affix: shed
-                temperature_threshold: 90
-                entity_1:
-                  entity_id: binary_sensor.shed_door_sensor_window_door_is_open
-                  templates:
-                    - red_on
-
-  #################
-  # ROOM CARDS SMALL
-  #################
-  - type: conditional
-    conditions:
-      - condition: state
-        entity: input_boolean.welcome_toggle
-        state: "on"
-    card:
-      type: vertical-stack
-      cards:
-        - type: horizontal-stack
-          cards:
-            - type: "custom:button-card"
-              template:
-                - card_esh_room
-                - yellow_on
-              name: Living Room
-              entity: light.living_room_light
-              icon: mdi:sofa
-              tap_action:
-                action: navigate
-                navigation_path: "living-room"
-              variables:
-                ulm_custom_card_esh_room_light_entity: light.living_room_light
-                ulm_custom_card_esh_room_climate_entity: climate.living_room
-                ulm_card_thermostat_enable_popup: true
-                ulm_card_light_enable_popup: true
-              label: '[[[ return states["sensor.living_room_climate_air_temperature"].state + "°F - " + states["sensor.living_room_climate_humidity"].state + "%" ]]]'
-            - type: "custom:button-card"
-              template:
-                - card_esh_room
-                - yellow_on
-              name: Dining Room
-              entity: light.dining_room_light
-              icon: mdi:glass-cocktail
-              tap_action:
-                action: navigate
-                navigation_path: "dining-room"
-              variables:
-                ulm_custom_card_esh_room_light_entity: light.dining_room_light
-              label: '[[[ return states["sensor.dining_room_climate_air_temperature"].state + "°F - " + states["sensor.dining_room_climate_humidity"].state + "%"  ]]]'
-
-        - type: horizontal-stack
-          cards:
-            - type: "custom:button-card"
-              template:
-                - card_esh_room
-                - yellow_on
-              name: Office
-              entity: light.office_light
-              icon: mdi:controller
-              tap_action:
-                action: navigate
-                navigation_path: "office"
-              variables:
-                ulm_custom_card_esh_room_light_entity: light.office_light
-              label: '[[[ return states["sensor.office_climate_air_temperature"].state + "°F - " + states["sensor.office_climate_humidity"].state + "%" ]]]'
-            - type: "custom:button-card"
-              template:
-                - card_esh_room
-                - yellow_on
-              name: Kitchen
-              entity: switch.kitchen_lights_switch_1
-              icon: mdi:countertop-outline
-              tap_action:
-                action: navigate
-                navigation_path: "kitchen"
-              variables:
-                ulm_custom_card_esh_room_light_entity: switch.kitchen_lights_switch_1
-              label: '[[[ return states["sensor.kitchen_climate_air_temperature"].state + "°F - " + states["sensor.kitchen_climate_humidity"].state + "%"  ]]]'
-              styles:
-                card:
-                  - border-radius: "20px"
-                  - box-shadow: "var(--box-shadow)"
-                  - padding: "12px"
-                  - background-color: >-
-                      [[[
-                        if (states['group.cat_device_status'].state == "on") {
-                          return 'rgba(var(--color-background-red),var(--opacity-bg))';
-                        }
-                      ]]]
-
-        - type: horizontal-stack
-          cards:
-            - type: "custom:button-card"
-              template:
-                - card_esh_room
-                - yellow_on
-              name: Master Bedroom
-              entity: light.master_bedroom_light
-              icon: mdi:bed
-              tap_action:
-                action: navigate
-                navigation_path: "master-bedroom"
-              variables:
-                ulm_custom_card_esh_room_light_entity: light.master_bedroom_light
-              label: '[[[ return states["sensor.master_bedroom_climate_air_temperature"].state + "°F - " + states["sensor.master_bedroom_climate_humidity"].state + "%"  ]]]'
-            - type: "custom:button-card"
-              template:
-                - card_esh_room
-                - yellow_on
-              name: Master Bathroom
-              entity: switch.master_bath_switches
-              icon: mdi:shower-head
-              tap_action:
-                action: navigate
-                navigation_path: "master-bathroom"
-              variables:
-                ulm_custom_card_esh_room_light_entity: switch.master_bath_switches
-              label: '[[[ return states["sensor.master_bath_climate_air_temperature"].state + "°F - " + states["sensor.master_bath_climate_humidity"].state + "%"  ]]]'
-
-        - type: horizontal-stack
-          cards:
-            - type: "custom:button-card"
-              template:
-                - card_esh_room
-                - yellow_on
-              name: Guest Room
-              entity: switch.gina_computer_socket_1
-              icon: mdi:desk
-              tap_action:
-                action: navigate
-                navigation_path: "guest-room"
-              variables:
-                ulm_custom_card_esh_room_light_entity: switch.gina_computer_socket_1
-              label: '[[[ return states["sensor.guest_bedroom_climate_air_temperature"].state + "°F - " + states["sensor.guest_bedroom_climate_humidity"].state + "%"  ]]]'
-            - type: "custom:button-card"
-              template:
-                - card_esh_room
-                - yellow_on
-              name: Guest Bathroom
-              icon: mdi:shower
-              tap_action:
-                action: navigate
-                navigation_path: "guest-bathroom"
-              label: '[[[ return states["sensor.guest_bath_climate_air_temperature"].state + "°F - " + states["sensor.guest_bath_climate_humidity"].state + "%"  ]]]'
-
-        - type: horizontal-stack
-          cards:
-            - type: "custom:button-card"
-              template:
-                - card_esh_room
-                - yellow_on
-              name: Garage
-              entity: switch.garage_opener_socket_1
-              icon: mdi:garage
-              tap_action:
-                action: navigate
-                navigation_path: "garage"
-              variables:
-                ulm_custom_card_esh_room_light_entity: switch.garage_opener_socket_1
-              label: '[[[ return states["sensor.garage_climate_air_temperature"].state + "°F - " + states["sensor.garage_climate_humidity"].state + "%"  ]]]'
-              styles:
-                card:
-                  - background-color: >-
-                      [[[
-                        if (states['group.leak_sensors'].state == "on") {
-                          return 'rgba(var(--color-background-red),var(--opacity-bg))';
-                        }
-                      ]]]
-            - type: "custom:button-card"
-              template:
-                - card_esh_room
-                - yellow_on
-              name: Attic
-              icon: mdi:home-roof
-              tap_action:
-                action: navigate
-                navigation_path: "attic"
-              label: '[[[ return states["sensor.attic_climate_air_temperature"].state + "°F - " + states["sensor.attic_climate_humidity"].state + "%"  ]]]'
-
-        - type: horizontal-stack
-          cards:
-            - type: "custom:button-card"
-              template:
-                - card_esh_room
-              name: Shed
-              icon: mdi:greenhouse
-              tap_action:
-                action: navigate
-                navigation_path: "shed"
-              label: '[[[ return states["sensor.shed_climate_air_temperature"].state + "°F - " + states["sensor.shed_climate_humidity"].state + "%"  ]]]'
+      - type: horizontal-stack
+        cards:
+          #################
+          # Shed
+          #################
+          - type: "custom:button-card"
+            template:
+              - poat_card_room
+            icon: mdi:greenhouse
+            variables:
+              affix: shed
+              temperature_threshold: 90
+              entity_1:
+                entity_id: binary_sensor.shed_door_sensor_window_door_is_open
+                templates:
+                  - red_on
