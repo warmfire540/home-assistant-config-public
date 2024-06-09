@@ -10,7 +10,7 @@ washing_machine:
   message: Time to load the dryer...
   done_message: clear_notification
   state: 'off'
-  repeat: 10
+  repeat: 5
   data:
     tag: washer_done
   notifiers:

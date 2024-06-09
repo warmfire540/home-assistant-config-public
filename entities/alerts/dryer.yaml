@@ -1,0 +1,17 @@
+#####
+# Alert for dryer finished.
+#
+#####
+
+dryer:
+  name: Dryer done
+  entity_id: input_boolean.dryer_on
+  title: Dryer done!
+  message: Empty me and the lint thingy!
+  done_message: clear_notification
+  state: 'off'
+  repeat: 30
+  data:
+    tag: dryer_done
+  notifiers:
+    - family

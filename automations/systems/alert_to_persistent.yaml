@@ -3,7 +3,7 @@
 # https://community.home-assistant.io/t/in-alert-call-script-via-notify/678275/8
 #####
 
-alias: Create persistent notification from alert
+alias: Alert to Persistent
 id: 72676c87-8c72-4c0e-98e2-a5562a65dec9
 
 trigger:
@@ -13,8 +13,6 @@ trigger:
     event_data:
       domain: notify
       service: family
-    variables:
-      data: "{{ trigger.event.data.service_data.data | to_json }}"
   - platform: event
     id: dismiss 
     event_type: call_service
@@ -23,8 +21,6 @@ trigger:
       service: family
       service_data:
         message: clear_notification
-    variables:
-      data: "{{ trigger.event.data.service_data.data | to_json }}"
 
 action:
   - choose:
