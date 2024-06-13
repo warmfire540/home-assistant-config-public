@@ -6,7 +6,7 @@
 dryer:
   name: Dryer done
   entity_id: input_boolean.dryer_on
-  title: Dryer done!
+  title: 🧦Dryer done!
   message: Empty me and the lint thingy!
   done_message: clear_notification
   state: 'off'

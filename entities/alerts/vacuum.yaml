@@ -1,0 +1,23 @@
+#####
+# Alert for robot vacuums.
+#
+#####
+
+vacuum:
+  name: Vacuum issue
+  entity_id: group.robot_vacuums_status
+  title: 🤖 Vacuum problem!
+  message: >
+    Vacuum has an issue!
+
+
+    Rolo:       {{ state_attr("vacuum.rolo", "status") }}
+
+    Strong Boi: {{ state_attr("vacuum.e0000693817603917196", "error") }}
+  done_message: clear_notification
+  state: "on"
+  repeat: 10
+  data:
+    tag: vacuum_issue
+  notifiers:
+    - family

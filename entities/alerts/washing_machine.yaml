@@ -6,7 +6,7 @@
 washing_machine:
   name: Washing Machine done
   entity_id: input_boolean.washing_machine_on
-  title: Washer done!
+  title: 🩲 Washer done!
   message: Time to load the dryer...
   done_message: clear_notification
   state: 'off'

@@ -1,0 +1,17 @@
+#####
+# Alert for water leak sensors.
+#
+#####
+
+water:
+  name: Water Leak Alert
+  entity_id: group.leak_sensors
+  title: 💧 Water Leak Alert!
+  message: Water leak detected - check sensors now!
+  done_message: clear_notification
+  state: 'on'
+  repeat: 1
+  data:
+    tag: water_leak
+  notifiers:
+    - family

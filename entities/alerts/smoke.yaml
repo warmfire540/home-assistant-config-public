@@ -1,0 +1,22 @@
+#####
+# Alert for smoke sensors.
+#
+#####
+
+smoke:
+  name: Smoke Sensor triggered
+  entity_id: group.smoke_sensors
+  title: 🔥 Smoke/CO sensor triggered!
+  message: Smoke/CO sensor triggered!
+  done_message: clear_notification
+  state: 'on'
+  repeat: 1
+  data:
+    tag: smoke_sensor
+    push:
+      sound:
+        name: "default"
+        critical: 1
+        volume: 1.0
+  notifiers:
+    - family

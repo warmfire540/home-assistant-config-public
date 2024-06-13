@@ -10,25 +10,27 @@ cards:
     template: card_title
     name: House
   
-  - type: custom:auto-entities
-    card:
-      type: "custom:mini-graph-card"
-      name: Temperatures
-      show:
-        legend: false
-    filter:
-      include:
-        - entity_id: "sensor.*_climate_air_temperature"
+  - type: horizontal-stack
+    cards:
+      - type: custom:auto-entities
+        card:
+          type: "custom:mini-graph-card"
+          name: Temperatures
+          show:
+            legend: false
+        filter:
+          include:
+            - entity_id: "sensor.*_climate_air_temperature"
 
-  - type: custom:auto-entities
-    card:
-      type: "custom:mini-graph-card"
-      name: Humidities
-      show:
-        legend: false
-    filter:
-      include:
-        - entity_id: "sensor.*_climate_humidity"
+      - type: custom:auto-entities
+        card:
+          type: "custom:mini-graph-card"
+          name: Humidities
+          show:
+            legend: false
+        filter:
+          include:
+            - entity_id: "sensor.*_climate_humidity"
 
   - type: custom:auto-entities
     card:
@@ -42,6 +44,17 @@ cards:
 
   - type: thermostat
     entity: climate.living_room
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Alerts
+
+  - type: custom:auto-entities
+    card:
+      type: entities
+    filter:
+      include:
+        - domain: alert
 
   - type: "custom:anchor-card"
     anchor_id: low-battery
@@ -83,7 +96,7 @@ cards:
       - type: custom:trash-card
         entity: calendar.trash
         layout: vertical
-        next_days: 3
+        next_days: 4
         settings:
           others:
             color: grey
