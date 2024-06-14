@@ -13,5 +13,10 @@ water:
   repeat: 1
   data:
     tag: water_leak
+    push:
+      sound:
+        name: "default"
+        critical: 1
+        volume: 1.0
   notifiers:
     - family

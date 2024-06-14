@@ -7,11 +7,11 @@ dryer:
   name: Dryer done
   entity_id: input_boolean.dryer_on
   title: 🧦Dryer done!
-  message: Empty me and the lint thingy!
+  message: dryer is done
   done_message: clear_notification
-  state: 'off'
+  state: "off"
   repeat: 30
   data:
     tag: dryer_done
   notifiers:
-    - family
+    - family_ai
