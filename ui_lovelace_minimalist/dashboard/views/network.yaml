@@ -88,11 +88,13 @@ cards:
         - entity_id: "media_player.xbox*"
         - entity_id: select.cat_noms_manual_feed
         - entity_id: sensor.cat_noms_battery_status
+        - domain: automation
         - domain: button
         - domain: number
         - domain: conversation
-        - domain: tts
+        - domain: script
         - domain: stt
+        - domain: tts
         - name: "Kitchen Bulb*"
 
   - type: "custom:button-card"

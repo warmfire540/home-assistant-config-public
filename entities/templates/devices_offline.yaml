@@ -1,11 +1,13 @@
 ####
 # Count devices that are offline
 # Domains to exclude
+#  - automation
 #  - button
 #  - conversation
 #  - number
-#  - tts
+#  - script
 #  - stt
+#  - tts
 #####
 
 - sensor:
@@ -13,7 +15,7 @@
     unique_id: e9f2af25-7bab-4ad2-8cd0-47f2b3cae058
     icon: 'mdi:cloud-off-outline'
     state: "{{ states
-| rejectattr('domain','in',['button', 'tts', 'stt', 'number', 'conversation'])
+| rejectattr('domain','in',['button', 'tts', 'stt', 'number', 'conversation', 'automation', 'script'])
 | selectattr('state','in', ['unknown', 'unavailable'])
 | rejectattr('entity_id','search', 'poat_rgb|mfc_7860|plex|seedbox|poat_pi|media_player.xbox')
 | rejectattr('entity_id','in', ['select.cat_noms_manual_feed', 'sensor.cat_noms_battery_status'])
