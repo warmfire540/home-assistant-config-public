@@ -140,9 +140,9 @@ cards:
           variables:
             entity: group.smoke_sensors
         - type: "custom:button-card"
-          template: chip_mdi_icon_only
+          template: chip_icon_state_if_value
           variables:
-            ulm_chip_mdi_icon_only_entity: sensor.seedbox_vpn_on
+            entity: sensor.seedbox_vpn_on
             ulm_chip_mdi_icon_only_icon: mdi:vpn
           styles:
             icon:
@@ -153,6 +153,23 @@ cards:
                       return "var(--amber-color)";
                     else
                       return "var(--green-color)"; ]]]
+
+  # 2nd level
+  - type: custom:mod-card
+    style: 
+      hui-horizontal-stack-card$: |
+        #root { 
+          justify-content: center;
+        }
+    card:
+      type: horizontal-stack
+      cards:
+        - type: "custom:button-card"
+          template: chip_icon_state_if_value
+          variables:
+            entity: binary_sensor.pi_hole_status
+            on_state: "off"
+            navigation_path: "/the-matrix/pi-hole"
 
   - type: "custom:button-card"
     template: card_title

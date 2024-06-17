@@ -12,29 +12,6 @@ cards:
         template: card_title
         name: Lab
 
-      - type: "custom:button-card"
-        color_type: blank-card
-
-      - type: "custom:button-card"
-        entity: binary_sensor.pi_hole_status
-        hold_action:
-          action: call-service
-          service: pi_hole.disable
-          data:
-            duration: "00:05:00"
-          target:
-            device_id: e03d2a8d6db4afd53059dc33a584b7e2
-        state:
-          - value: "on"
-            color: green
-            icon: mdi:shield-check
-          - operator: default
-            color: red
-            icon: mdi:alert
-            styles:
-              card:
-                - animation: blink 2s ease infinite
-
   #################
   # INFO CHIPS
   #################

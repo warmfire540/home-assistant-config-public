@@ -1,0 +1,118 @@
+title: "Pi-Hole"
+path: "pi-hole"
+cards:
+  - type: "custom:button-card"
+    template: chip_back
+    variables:
+      ulm_chip_back_path: home
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: card_title
+        name: Pi-Hole
+
+  - type: "custom:button-card"
+    entity: binary_sensor.pi_hole_status
+    tap_action:
+      action: call-service
+      service: pi_hole.disable
+      data:
+        duration: "00:05:00"
+      target:
+        device_id: e03d2a8d6db4afd53059dc33a584b7e2
+    state:
+      - value: "on"
+        color: green
+        icon: mdi:shield-check
+      - operator: default
+        color: red
+        icon: mdi:alert
+        styles:
+          card:
+            - animation: blink 2s ease infinite
+
+  - type: horizontal-stack
+    cards:
+      - type: custom:mushroom-entity-card
+        entity: sensor.pi_hole_dns_queries_today
+        primary_info: state
+        secondary_info: name
+        card_mod:
+          style: |
+            ha-card {
+              background-color: rgba(var(--color-blue), 0.2);
+            }
+            ha-state-icon {
+              color: rgba(var(--color-blue), 0.5);
+            }
+      - type: custom:mushroom-entity-card
+        entity: sensor.pi_hole_ads_blocked_today
+        primary_info: state
+        secondary_info: name
+        card_mod:
+          style: |
+            ha-card {
+              background-color: rgba(var(--color-red), 0.2);
+            }
+            ha-state-icon {
+              color: rgba(var(--color-red), 0.5);
+            }
+
+  - type: horizontal-stack
+    cards:
+      - type: custom:mushroom-entity-card
+        entity: sensor.pi_hole_ads_percentage_blocked_today
+        primary_info: state
+        secondary_info: name
+        card_mod:
+          style: |
+            ha-card {
+              background-color: rgba(var(--color-yellow), 0.2);
+            }
+            ha-state-icon {
+              color: rgba(var(--color-yellow), 0.5);
+            }
+      - type: custom:mushroom-entity-card
+        entity: sensor.pi_hole_domains_blocked
+        primary_info: state
+        secondary_info: name
+        card_mod:
+          style: |
+            ha-card {
+              background-color: rgba(var(--color-green), 0.2);
+            }
+            ha-state-icon {
+              color: rgba(var(--color-green), 0.5);
+            }
+
+  - type: "custom:mini-graph-card"
+    entities:
+      - sensor.pi_hole_ads_blocked_today
+      - sensor.pi_hole_dns_queries_forwarded
+      - sensor.pi_hole_dns_queries_today
+    show:
+      labels: true
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Updates
+
+  - type: custom:auto-entities
+    card:
+      type: entities
+    filter:
+      include:
+        - entity_id: "update.pi_hole_*"
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Sensors
+
+  - type: custom:decluttering-card
+    template: pi_details
+    variables:
+      - pi_name: hole
+      - icon: mdi:pi-hole
+      - name: Pi Hole
+      - tracker: poat_hole
