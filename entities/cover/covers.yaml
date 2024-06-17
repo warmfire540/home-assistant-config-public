@@ -1,0 +1,15 @@
+####
+# Groups related to covers
+#
+#####
+
+platform: group
+unique_id: 529bb8a5-f202-4e6f-9130-739c30fcbd2b
+name: All Covers
+entities:
+  - cover.bedroom_blinds
+  - cover.dining_room_blinds
+  - cover.guest_bedroom_blinds
+  - cover.kitchen_blinds
+  - cover.living_room_blinds
+  - cover.office_blinds

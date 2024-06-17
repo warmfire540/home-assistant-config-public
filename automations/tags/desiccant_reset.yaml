@@ -1,0 +1,17 @@
+#####
+# Reset Dessiccant when NFC tag scanned
+#####
+
+alias: Tag Desiccant Reset is scanned
+id: a1260870-bc81-4d95-b7b6-e1ef9014a75b
+mode: single
+
+trigger:
+  platform: tag
+  tag_id: c375e9ea-6920-4f87-800b-0a2425ee2a98
+
+action:
+  - device_id: d4b20596bc910949fbc2e490af4591f0
+    domain: button
+    entity_id: 3452589cdf3310741175beddea66c21a
+    type: press

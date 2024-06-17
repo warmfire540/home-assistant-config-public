@@ -1,0 +1,153 @@
+title: "Net"
+path: "network"
+cards:
+  - type: "custom:button-card"
+    template: chip_back
+    variables:
+      ulm_chip_back_path: home
+
+  - type: "custom:button-card"
+    template: card_title
+    name: Net
+
+  - type: "custom:mini-graph-card"
+    name: Network
+    show:
+      extrema: true
+    entities:
+      - sensor.m5_download_speed
+      - sensor.m5_upload_speed
+
+  - type: custom:mini-graph-card
+    name: Speedtest
+    align_state: center
+    icon: mdi:speedometer
+    show:
+      extrema: true
+      labels: true
+    entities:
+      - entity: sensor.speedtest_download
+        name: Download
+        color: green
+      - entity: sensor.speedtest_upload
+        name: Upload
+        color: red
+      - entity: sensor.speedtest_ping
+        name: Ping
+        color: yellow
+    tap_action:
+      action: "call-service"
+      service: "homeassistant.update_entity"
+      service_data:
+        entity_id:
+          - sensor.speedtest_download
+          - sensor.speedtest_upload
+          - sensor.speedtest_ping
+
+  - type: "custom:button-card"
+    template: card_title
+    label: WiFi Strength
+
+  - type: custom:auto-entities
+    card:
+      type: entities
+    filter:
+      include:
+        - attributes:
+            device_class: signal_strength
+
+  - type: "custom:anchor-card"
+    anchor_id: disconnected
+    offset: -60
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Disconnected Devices
+
+  - type: custom:auto-entities
+    card:
+      type: entities
+    else:
+      type: markdown
+      content: >-
+        <ha-alert alert-type="info">Nothing disconnected!</ha-alert>
+    filter:
+      include:
+        - state: "unavailable"
+          options:
+            show_state: false
+        - state: "unknown"
+          options:
+            show_state: false
+      exclude:
+        - entity_id: "*poat_rgb*"
+        - entity_id: "*plex*"
+        - entity_id: "*seedbox*"
+        - entity_id: "*mfc_7860*"
+        - entity_id: "*poat_pi*"
+        - entity_id: "media_player.xbox*"
+        - entity_id: select.cat_noms_manual_feed
+        - entity_id: sensor.cat_noms_battery_status
+        - domain: automation
+        - domain: button
+        - domain: number
+        - domain: conversation
+        - domain: script
+        - domain: stt
+        - domain: tts
+        - name: "Kitchen Bulb*"
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Updates needed
+
+  - type: custom:auto-entities
+    card:
+      type: entities
+    else:
+      type: markdown
+      content: >-
+        <ha-alert alert-type="info">No updates!</ha-alert>
+    filter:
+      include:
+        - domain: update
+          state: "on"
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Pi Hole Overview
+
+  - type: custom:auto-entities
+    card:
+      type: entities
+    filter:
+      include:
+        - entity_id: "sensor.pi_hole_*"
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Connected Devices
+
+  - type: custom:auto-entities
+    card:
+      type: entities
+    filter:
+      include:
+        - domain: device_tracker
+          attributes:
+            source_type: router
+          options:
+            secondary: >-
+              {{ (as_timestamp(states[config.entity].last_changed) | timestamp_custom('%b %d %H:%M - ')) +
+              states(config.entity) + ' ' +
+                iif(
+                  state_attr(config.entity, "connection_type"),
+                  iif(
+                    state_attr(config.entity, "connection_type") is list,
+                    state_attr(config.entity, "connection_type")[0],
+                    state_attr(config.entity, "connection_type")
+                  ),
+                  'Dunno'
+                  )}}
+            state: '{{ state_attr(config.entity, "ip") }}'
+            type: "custom:template-entity-row"

@@ -1,0 +1,8 @@
+#####
+# Notification group "Family" - uses Google Generative AI
+# All mobile devices
+#####
+
+platform: group
+name: family_ai
+services: []

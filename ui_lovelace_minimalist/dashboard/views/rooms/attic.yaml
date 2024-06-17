@@ -1,0 +1,44 @@
+title: "Attic"
+path: "attic"
+cards:
+  - type: custom:decluttering-card
+    template: room_header
+    variables:
+      - sensor_prefix: attic
+      - room_name: Attic
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Devices
+
+  - type: custom:decluttering-card
+    template: z_wave_climate
+    variables:
+      - sensor_prefix: attic
+      - node_number: 14
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Sensors
+
+  - type: custom:decluttering-card
+    template: leak_sensors
+    variables:
+      - sensor_prefix: ac_pan
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: card_graph
+        entity: sensor.ac_heater_4_1min
+        variables:
+          ulm_card_graph_color: "var(--google-yellow)"
+          ulm_card_graph_entity: sensor.ac_heater_4_1min
+          ulm_card_graph_name: AC Heater
+      - type: "custom:button-card"
+        template: card_graph
+        entity: sensor.air_conditioner_2_1min
+        variables:
+          ulm_card_graph_color: "var(--google-yellow)"
+          ulm_card_graph_entity: sensor.air_conditioner_2_1min
+          ulm_card_graph_name: Air Conditioner

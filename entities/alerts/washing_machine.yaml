@@ -1,0 +1,18 @@
+#####
+# Alert for washing machine finished.
+#
+#####
+
+washing_machine:
+  name: Washing Machine done
+  entity_id: input_boolean.washing_machine_on
+  title: 🩲 Washer done!
+  message: false
+  done_message: clear_notification
+  state: "off"
+  repeat: 5
+  data:
+    tag: washer_done
+    prompt: washing machine is done
+  notifiers:
+    - family_ai

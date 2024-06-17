@@ -1,0 +1,16 @@
+#####
+# Sound Bar - script to toggle power .
+# 
+#####
+
+sound_bar_power:
+  alias: Sound Bar Power
+  sequence:
+  - service: remote.send_command
+    data:
+      device: Sound Bar
+      command: Power
+    target:
+      device_id: 7c0228accadb951d83724a364de2d662
+  mode: single
+  icon: mdi:soundbar

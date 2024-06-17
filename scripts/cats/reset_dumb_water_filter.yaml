@@ -1,0 +1,15 @@
+#####
+# Reset the the filter input_datetime for the dumb cat water.
+# 
+#####
+
+reset_dumb_water_filter:
+  alias: Reset dumb water filter
+  sequence:
+  - service: input_datetime.set_datetime
+    data:
+      datetime: "{{ now() }}"
+    target:
+      entity_id: input_datetime.cat_dumb_water_filter
+  mode: single
+  icon: mdi:air-filter

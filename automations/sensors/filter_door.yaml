@@ -1,0 +1,20 @@
+#####
+# Decrement filter counts when filters changed
+#####
+
+alias: Filter door opened
+id: abd8704e-9f85-415e-be1f-948955ab3b8d
+
+trigger:
+  - type: opened
+    platform: device
+    device_id: 07446f7e31f12e75b412ad0ba9942d32
+    entity_id: 1cbe5a6866415e32aa06e3ed4b23427e
+    domain: binary_sensor
+
+action:
+  - service: counter.decrement
+    entity_id: counter.large_air_filters
+    
+  - service: counter.decrement
+    entity_id: counter.small_air_filters

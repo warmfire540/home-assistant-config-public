@@ -1,0 +1,7 @@
+#####
+# MQTT sensors using Sonoff RF bridge
+#
+# https://www.home-assistant.io/integrations/sensor.mqtt/#new_format
+#####
+
+mqtt: !include_dir_merge_named ../entities/mqtt

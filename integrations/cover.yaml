@@ -1,0 +1,6 @@
+#####
+# Ability to group covers
+#
+#####
+
+cover: !include_dir_list ../entities/cover

@@ -1,0 +1,298 @@
+home_assistant_details:
+  card:
+    type: custom:stack-in-card
+    keep:
+      border_radius: true
+      margin: true
+    cards:
+      # title
+      - type: custom:button-card
+        name: Home Assistant
+        icon: mdi:home-assistant
+        show_name: true
+        show_entity_picture: true
+        styles:
+          card:
+            - padding: 5px
+            - border: 0px
+          grid:
+            - grid-template-areas: '"n i"'
+            - grid-template-columns: 3fr 1fr
+          name:
+            - justify-self: start
+            - padding-left: 20px
+            - font-size: 30px
+            - font-weight: 300
+      # cpu and temp
+      - type: horizontal-stack
+        cards:
+          - type: custom:mini-graph-card
+            entities:
+              - sensor.processor_use
+            hours_to_show: 24
+            points_per_hour: 2
+            hour24: true
+            animate: true
+            height: 150
+            name: CPU Usage
+            show:
+              extrema: true
+            color_thresholds:
+              - value: 100
+                color: '#d32f2f'
+              - value: 90
+                color: '#ffa000'
+              - value: 75
+                color: '#388e3c'
+            card_mod:
+              style: |
+                ha-card .states.flex{
+                  padding-bottom: 0px;
+                  }
+                ha-card .graph{
+                  margin-top: 0px !important;
+                }
+                ha-card .graph .graph__legend{
+                  padding-bottom: 0px !important;
+                }
+                ha-card .info.flex{
+                  padding-bottom: 0px !important;
+                }
+          - type: custom:mini-graph-card
+            entities:
+              - sensor.processor_temperature
+            hours_to_show: 24
+            points_per_hour: 2
+            hour24: true
+            animate: true
+            height: 150
+            name: Temp
+            show:
+              extrema: true
+            color_thresholds:
+              - value: 170
+                color: '#d32f2f'
+              - value: 150
+                color: '#ffa000'
+              - value: 140
+                color: '#388e3c'
+            card_mod:
+              style: |
+                ha-card .states.flex{
+                  padding-bottom: 0px;
+                  }
+                ha-card .graph{
+                  margin-top: 0px !important;
+                }
+                ha-card .graph .graph__legend{
+                  padding-bottom: 0px !important;
+                }
+                ha-card .info.flex{
+                  padding-bottom: 0px !important;
+                }
+      # mem and temp
+      - type: horizontal-stack
+        cards:
+          - type: custom:mini-graph-card
+            entities:
+              - sensor.memory_use_percent
+            hours_to_show: 24
+            points_per_hour: 2
+            hour24: true
+            animate: true
+            height: 150
+            name: Memory
+            show:
+              extrema: true
+            color_thresholds:
+              - value: 100
+                color: '#d32f2f'
+              - value: 90
+                color: '#ffa000'
+              - value: 75
+                color: '#388e3c'
+            card_mod:
+              style: |
+                ha-card .states.flex{
+                  padding-bottom: 0px;
+                  }
+                ha-card .graph{
+                  margin-top: 0px !important;
+                }
+                ha-card .graph .graph__legend{
+                  padding-bottom: 0px !important;
+                }
+                ha-card .info.flex{
+                  padding-bottom: 0px !important;
+                }
+          - type: custom:mini-graph-card
+            entities:
+              - sensor.disk_use_percent
+            hours_to_show: 24
+            points_per_hour: 2
+            hour24: true
+            animate: true
+            height: 150
+            name: Disk used
+            show:
+              extrema: true
+            color_thresholds:
+              - value: 100
+                color: '#d32f2f'
+              - value: 90
+                color: '#ffa000'
+              - value: 75
+                color: '#388e3c'
+            card_mod:
+              style: |
+                ha-card .states.flex{
+                  padding-bottom: 0px;
+                  }
+                ha-card .graph{
+                  margin-top: 0px !important;
+                }
+                ha-card .graph .graph__legend{
+                  padding-bottom: 0px !important;
+                }
+                ha-card .info.flex{
+                  padding-bottom: 0px !important;
+                }
+      # loads
+      - type: horizontal-stack
+        cards:
+          - type: custom:bar-card
+            entities:
+              - entity: sensor.system_monitor_load_1m
+                name: Load 1m
+                attribute: load_1m
+              - entity: sensor.system_monitor_load_5m
+                name: Load 5m
+                attribute: load_5m
+              - entity: sensor.system_monitor_load_15m
+                name: Load 15m
+                attribute: load_15m
+            stack: horizontal
+            max: 4
+            severity:
+              - color: '#d32f2f'
+                from: 2
+                to: 4
+              - color: '#ffa000'
+                from: 1
+                to: 2
+              - color: '#388e3c'
+                from: 0
+                to: 1
+            positions:
+              icon: 'off'
+              name: inside
+              value: inside
+              indicator: inside
+            card_mod:
+              style: |
+                bar-card-card{
+                  margin-right: 20px
+                }
+                bar-card-backgroundbar {
+                  border-radius: 8px;
+                }
+                bar-card-currentbar {
+                  border-radius: 8px;
+                }
+      # up / down
+      - type: custom:mini-graph-card
+        entities:
+          - entity: sensor.system_monitor_network_throughput_in_end0
+            color: '#91C0F8'
+            name: Download
+          - entity: sensor.system_monitor_network_throughput_out_end0
+            color: '#ffa000'
+            name: Upload
+            show_state: true
+        hours_to_show: 24
+        points_per_hour: 2
+        height: 75
+        animate: true
+        line_width: 2.5
+        show:
+          name: false
+          icon: false
+        card_mod:
+          style: |
+            ha-card .graph{
+              margin-top: -15px !important;
+            }
+            ha-card .graph .graph__legend{
+              padding-bottom: 0px !important;
+            }
+      # other and fold
+      - type: entities
+        entities:
+          - entity: sensor.last_boot
+            name: Uptime
+            icon: mdi:clock-outline
+          - entity: sensor.home_assistant_last_backup
+            name: Last backup
+          - entity: update.home_assistant_core_update
+            name: Core Update
+          - entity: update.home_assistant_supervisor_update
+            name: Supervisor Update
+          - entity: update.home_assistant_operating_system_update
+            name: OS Update
+          - type: custom:fold-entity-row
+            head:
+              type: section
+              label: Server Details
+            card_mod:
+              style:
+                hui-sensor-entity-row:
+                  $ hui-generic-entity-row $: |
+                    .pointer{
+                      color: #91C0F8;
+                    }
+                    .text-content{
+                      color: #e1e1e1;
+                    }
+                hui-simple-entity-row:
+                  $ hui-generic-entity-row $: |
+                    .pointer{
+                      color: #91C0F8;
+                    }
+                    .text-content{
+                      color: #e1e1e1;
+                    }
+            entities:
+              - type: attribute
+                entity: device_tracker.homeassistant
+                name: Hostname
+                attribute: friendly_name
+              - entity: sensor.ipv4_address_end0
+                name: IP Address
+              - entity: sensor.disk_use_percent
+                name: Storage
+              - type: attribute
+                entity: update.home_assistant_operating_system_update
+                name: OS
+                attribute: title
+              - type: attribute
+                entity: update.home_assistant_operating_system_update
+                name: OS Version
+                attribute: installed_version
+              - type: attribute
+                entity: sensor.rpi_poat_plex_rpi_monitor_poat_plex
+                name: Model
+                attribute: rpi_model
+              - type: attribute
+                entity: sensor.pi_plex_cpu
+                name: Arch
+                attribute: model
+        card_mod:
+          style:
+            hui-sensor-entity-row:
+              $ hui-generic-entity-row $: |
+                .pointer{
+                  color: #91C0F8;
+                }
+                .text-content{
+                  color: #e1e1e1;
+                }

@@ -1,0 +1,8 @@
+#####
+# This is all that remains of Configuration.yaml file.
+# By using packages: I'm pulling all other configuration files
+# from individual folders, starting with Integrations
+#####
+
+homeassistant:
+  packages: !include_dir_named integrations # package setup/config split

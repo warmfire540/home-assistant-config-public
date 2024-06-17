@@ -1,0 +1,166 @@
+title: "Living Room"
+path: "living-room"
+cards:
+  - type: custom:decluttering-card
+    template: room_header
+    variables:
+      - sensor_prefix: living_room
+      - room_name: Living Room
+
+  #################
+  # STATUS CHIPS
+  #################
+  - type: custom:mod-card
+    style:
+      hui-horizontal-stack-card$: |
+        #root { 
+          justify-content: center;
+        }
+    card:
+      type: horizontal-stack
+      cards:
+        - type: "custom:button-card"
+          template: chip_mdi_icon_state
+          entity: binary_sensor.rolo_error
+          styles:
+            icon:
+              - color: >
+                  [[[ if (entity.state == 'on')
+                        return "var(--red-color)" ;
+                      else return "var(--green-color)"; ]]]
+          variables:
+            ulm_chip_mdi_icon_state_entity: binary_sensor.rolo_error
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Devices
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: card_light
+        entity: light.living_room_light
+        variables:
+          ulm_card_light_enable_slider: true
+          ulm_card_light_enable_collapse: true
+      - type: "custom:button-card"
+        template: card_light
+        entity: switch.living_room_switch_switch_1
+
+  - type: custom:decluttering-card
+    template: cover
+    variables:
+      - sensor_prefix: living_room
+
+  - type: "custom:button-card"
+    template: card_thermostat
+    entity: climate.living_room
+    variables:
+      ulm_card_thermostat_enable_collapse: true
+      ulm_card_thermostat_enable_controls: true
+      ulm_card_thermostat_enable_hvac_modes: true
+      ulm_card_thermostat_enable_popup: true
+      ulm_card_thermostat_enable_background_color: true
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: card_light
+        entity: light.tv_led
+        variables:
+          ulm_card_light_enable_slider: true
+          ulm_card_light_enable_color: true
+          ulm_card_light_force_background_color: true
+          ulm_card_light_enable_collapse: true
+      - type: "custom:button-card"
+        template: card_script
+        variables:
+          ulm_card_script_title: Sound Bar
+          ulm_card_script_icon: "mdi:soundbar"
+        tap_action:
+          action: call-service
+          service: script.sound_bar_power
+
+  - type: media-control
+    entity: media_player.fire_tv_192_168_68_107
+
+  - type: custom:xiaomi-vacuum-map-card
+    entity: vacuum.rolo
+    map_source:
+      camera: camera.rolo_cleaning_map
+    calibration_source:
+      platform: Neato
+    vacuum_platform: Neato
+    map_locked: true
+    append_tiles: true
+    append_icons: true
+    tiles:
+      - tile_id: state
+        entity: vacuum.rolo
+        label: State
+        icon: mdi:map-marker
+      - tile_id: schedule
+        entity: switch.rolo_schedule
+        label: Schedule
+        icon: mdi:book-variant
+    icons:
+      - icon_id: dismiss-alert
+        entity: button.rolo_dismiss_alert
+        icon: mdi:button-pointer
+        tooltip: Dismiss alert
+      - icon_id: dismiss-alert
+        entity: switch.rolo_schedule
+        icon: mdi:book-variant
+        tooltip: Rolo schedule
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Sensors
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: card_binary_sensor
+        variables:
+          ulm_card_binary_sensor_alert: true
+          ulm_card_binary_sensor_name: Smoke
+        entity: binary_sensor.living_room_smoke_sensor_smoke_detected
+      - type: "custom:button-card"
+        template: card_binary_sensor
+        variables:
+          ulm_card_binary_sensor_alert: true
+          ulm_card_binary_sensor_name: Carbon Monoxide
+        entity: binary_sensor.living_room_smoke_sensor_carbon_monoxide_detected
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: card_graph
+        entity: sensor.living_room_up
+        variables:
+          ulm_card_graph_color: "var(--google-green)"
+          ulm_card_graph_entity: sensor.living_room_up
+      - type: "custom:button-card"
+        template: card_graph
+        entity: sensor.living_room_down
+        variables:
+          ulm_card_graph_color: "var(--google-green)"
+          ulm_card_graph_entity: sensor.living_room_down
+
+  - type: "custom:button-card"
+    template: card_graph
+    entity: sensor.living_room_15_1min
+    variables:
+      ulm_card_graph_color: "var(--google-yellow)"
+      ulm_card_graph_entity: sensor.living_room_15_1min
+      ulm_card_graph_name: Electricity 1 min
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Device Health
+
+  - type: custom:decluttering-card
+    template: z_wave_smoke_sensor
+    variables:
+      - sensor_prefix: living_room
+      - node_number: 19

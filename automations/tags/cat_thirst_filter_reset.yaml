@@ -1,0 +1,26 @@
+#####
+# Reset Cat Thirst filter when NFC tag scanned
+#####
+
+alias: Tag Cat Thirst is scanned
+id: 39b6ff5c-3dcd-40e6-aca0-95a03fa42ed7
+mode: single
+
+trigger:
+  platform: tag
+  tag_id: 0161dde0-0b79-4fea-b17d-3fa04096225b
+
+action:
+  - device_id: 249f4195abe2c4e17b946d59cda4a8c0
+    domain: button
+    entity_id: f3f0f1439223ae3e009f530cc3013876
+    type: press
+  - service: counter.decrement
+    target:
+      entity_id: counter.cat_filters
+  - condition: numeric_state
+    entity_id: counter.cat_filters
+    below: 1
+  - service: shopping_list.add_item
+    data:
+      name: cat water filters

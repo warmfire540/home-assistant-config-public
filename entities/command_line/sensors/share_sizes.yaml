@@ -1,0 +1,14 @@
+#####
+# Gets info on the share sizes
+#
+#####
+
+- sensor:
+    name: Odysseus %
+    unique_id: 2742db8f-54be-48de-862b-f89b2353f918
+    command: "df /media/pi_backups_full | tail -1 | awk '{print $4}'"
+
+- sensor:
+    name: Aristodemos %
+    unique_id: 5a285a2d-9076-455d-b67a-dfe0fd7f52ee
+    command: "df /media/pi_backups | tail -1 | awk '{print $4}'"

@@ -1,0 +1,19 @@
+#####
+# Script to clear persistent notification on HA and iOS
+#
+#####
+
+clear_notification:
+  alias: Clear Notification
+  sequence:
+    - service: notify.family
+      data:
+        message: clear_notification
+        data:
+          tag: "{{ tag }}"
+
+    - service: persistent_notification.dismiss
+      data:
+        notification_id: "{{ tag }}"
+  mode: single
+  icon: mdi:bell-off

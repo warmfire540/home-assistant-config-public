@@ -1,0 +1,62 @@
+title: "Master Bedroom"
+path: "master-bedroom"
+cards:
+  - type: custom:decluttering-card
+    template: room_header
+    variables:
+      - sensor_prefix: master_bedroom
+      - room_name: Master Bedroom
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Devices
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: card_light
+        entity: light.master_bedroom_light
+        variables:
+          ulm_card_light_enable_slider: true
+          ulm_card_light_enable_collapse: true
+      - type: "custom:button-card"
+        template: card_light
+        entity: switch.bedroom_switch_switch_1
+
+  - type: custom:decluttering-card
+    template: cover
+    variables:
+      - sensor_prefix: bedroom
+
+  - type: custom:decluttering-card
+    template: z_wave_climate
+    variables:
+      - sensor_prefix: master_bedroom
+      - node_number: 10
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Sensors
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: card_graph
+        entity: sensor.master_bedroom_up
+        variables:
+          ulm_card_graph_color: "var(--google-green)"
+          ulm_card_graph_entity: sensor.master_bedroom_up
+      - type: "custom:button-card"
+        template: card_graph
+        entity: sensor.master_bedroom_down
+        variables:
+          ulm_card_graph_color: "var(--google-green)"
+          ulm_card_graph_entity: sensor.master_bedroom_down
+
+  - type: "custom:button-card"
+    template: card_graph
+    entity: sensor.master_bedroom_bath_14_1min
+    variables:
+      ulm_card_graph_color: "var(--google-yellow)"
+      ulm_card_graph_entity: sensor.master_bedroom_bath_14_1min
+      ulm_card_graph_name: Electricity 1 min

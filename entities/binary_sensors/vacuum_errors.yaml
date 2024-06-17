@@ -1,0 +1,22 @@
+#####
+# Vacuums - Binary Sensors
+# Created Binary Sensors out of device attributes
+#####
+
+platform: template
+sensors:
+  strong_boi_error:
+    friendly_name: "Strong Boi Problem"
+    value_template: "{{ is_state('vacuum.e0000693817603917196', 'error') }}"
+    unique_id: c6a6b37d-02f0-451d-9095-da10222a6a94
+    device_class: problem
+    icon_template: >
+      mdi:robot-vacuum{{'-alert' if is_state('vacuum.e0000693817603917196', 'error')}}
+
+  rolo_error:
+    friendly_name: "Rolo Problem"
+    value_template: "{{ is_state('vacuum.rolo', 'error') }}"
+    unique_id: 05d593da-c57c-4aca-82cd-af9a88dda6e0
+    device_class: problem
+    icon_template: >
+      mdi:robot-vacuum{{'-alert' if is_state('vacuum.rolo', 'error')}}

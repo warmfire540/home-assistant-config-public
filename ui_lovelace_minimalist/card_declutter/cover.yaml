@@ -1,0 +1,12 @@
+cover:
+  card:
+    type: "custom:button-card"
+    template:
+      - card_cover
+      - battery_info
+    entity: cover.[[sensor_prefix]]_blinds
+    variables:
+      ulm_card_cover_enable_controls: true
+      ulm_card_cover_enable_slider: true
+      ulm_card_cover_color: green
+      ulm_battery_entity: sensor.[[sensor_prefix]]_blinds_battery

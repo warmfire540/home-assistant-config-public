@@ -1,0 +1,15 @@
+#####
+# Configures the lovelace dashboards via YAML
+#
+#####
+
+lovelace:
+  mode: storage
+  # Add yaml dashboards
+  dashboards:
+    the-matrix:
+      mode: yaml
+      title: Matrix
+      icon: mdi:home
+      show_in_sidebar: true
+      filename: ui_lovelace_minimalist/dashboard/home-dashboard.yaml

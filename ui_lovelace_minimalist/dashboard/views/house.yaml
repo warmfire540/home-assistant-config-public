@@ -1,0 +1,124 @@
+title: "House"
+path: "house"
+cards:
+  - type: "custom:button-card"
+    template: chip_back
+    variables:
+      ulm_chip_back_path: home
+
+  - type: "custom:button-card"
+    template: card_title
+    name: House
+  
+  - type: horizontal-stack
+    cards:
+      - type: custom:auto-entities
+        card:
+          type: "custom:mini-graph-card"
+          name: Temperatures
+          show:
+            legend: false
+        filter:
+          include:
+            - entity_id: "sensor.*_climate_air_temperature"
+
+      - type: custom:auto-entities
+        card:
+          type: "custom:mini-graph-card"
+          name: Humidities
+          show:
+            legend: false
+        filter:
+          include:
+            - entity_id: "sensor.*_climate_humidity"
+
+  - type: custom:auto-entities
+    card:
+      type: "custom:mini-graph-card"
+      name: Electricity
+      show:
+        legend: false
+    filter:
+      include:
+        - entity_id: "sensor.*_1min"
+
+  - type: thermostat
+    entity: climate.living_room
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Alerts
+
+  - type: custom:auto-entities
+    card:
+      type: entities
+    filter:
+      include:
+        - domain: alert
+
+  - type: "custom:anchor-card"
+    anchor_id: low-battery
+    offset: -60
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Batteries
+
+  - type: custom:auto-entities
+    card:
+      type: "custom:mini-graph-card"
+      name: Batteries
+      show:
+        legend: false
+        fill: false
+    filter:
+      include:
+        - attributes:
+            device_class: battery
+
+  - type: custom:auto-entities
+    card:
+      type: entities
+    filter:
+      include:
+        - attributes:
+            device_class: battery
+          options:
+            state_color: true
+      exclude:
+        - domain: binary_sensor
+    sort:
+      method: state
+      numeric: true
+
+  - type: horizontal-stack
+    cards:
+      - type: custom:trash-card
+        entity: calendar.trash
+        layout: vertical
+        next_days: 4
+        settings:
+          others:
+            color: grey
+            icon: mdi:trash-can-outline
+
+      - type: custom:trash-card
+        entity: calendar.recycling
+        layout: vertical
+        next_days: 7
+        settings:
+          others:
+            color: amber
+            icon: mdi:recycle-variant
+
+      - type: custom:trash-card
+        entity: calendar.yard_waste
+        next_days: 7
+        layout: vertical
+        settings:
+          others:
+            color: green
+            icon: mdi:flower
+
+  - type: shopping-list
+    title: Shopping List

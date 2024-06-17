@@ -1,0 +1,69 @@
+title: "Guest Bathroom"
+path: "guest-bath"
+cards:
+  - type: custom:decluttering-card
+    template: room_header
+    variables:
+      - sensor_prefix: guest_bath
+      - room_name: Guest Bathroom
+
+  #################
+  # STATUS CHIPS
+  #################
+  - type: custom:mod-card
+    style:
+      hui-horizontal-stack-card$: |
+        #root { 
+          justify-content: center;
+        }
+    card:
+      type: horizontal-stack
+      cards:
+        - type: "custom:button-card"
+          template: chip_mdi_icon_state
+          entity: group.cat_food_status
+          icon: mdi:cat
+          label: ""
+          styles:
+            icon:
+              - color: >
+                  [[[ if (entity.state == 'on') 
+                        return "var(--red-color)" ;
+                      else return "var(--green-color)"; ]]]
+          variables:
+            ulm_chip_mdi_icon_state_entity: group.cat_food_status
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Devices
+
+  - type: custom:decluttering-card
+    template: z_wave_climate
+    variables:
+      - sensor_prefix: guest_bath
+      - node_number: 8
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Sensors
+
+  - type: "custom:button-card"
+    template: card_graph
+    entity: sensor.office_g_bath_garage_3_1min
+    variables:
+      ulm_card_graph_color: "var(--google-yellow)"
+      ulm_card_graph_entity: sensor.office_g_bath_garage_3_1min
+      ulm_card_graph_name: Electricity 1 min
+
+  - type: "custom:button-card"
+    template: card_input_boolean
+    entity: binary_sensor.air_filter_door_sensor_window_door_is_open
+    variables:
+      ulm_card_input_boolean_force_background_color: true
+      ulm_card_input_boolean_name: Air Filter Door
+
+  - type: custom:decluttering-card
+    template: z_wave_door_sensor
+    variables:
+      - sensor_prefix: air_filter
+      - node_number: 22

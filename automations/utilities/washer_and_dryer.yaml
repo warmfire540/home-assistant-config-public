@@ -1,0 +1,88 @@
+#####
+# Set input boolean based on load sensor
+#
+#####
+
+alias: Washer & Dryer
+id: 00375bc8-c223-4914-a3d1-981a92fb915c
+
+trigger:
+  - platform: numeric_state
+    entity_id: sensor.clothes_washer_13_1min
+    id: washer_on
+    above: 20
+    for: '00:00:10'
+    variables:
+      input_entity: input_boolean.washing_machine_on
+  
+  - platform: numeric_state
+    entity_id: sensor.clothes_washer_13_1min
+    below: 2
+    for: "00:20:00" # handle pause in soak
+    id: washer_off
+    variables:
+      input_entity: input_boolean.washing_machine_on
+
+  - platform: numeric_state
+    entity_id: sensor.dryer_1_1min
+    above: 500
+    for: "00:00:10"
+    id: dryer_on
+    variables:
+      input_entity: input_boolean.dryer_on
+
+  - platform: numeric_state
+    entity_id: sensor.dryer_1_1min
+    below: 500
+    for: "00:05:00"
+    id: dryer_off
+    variables:
+      input_entity: input_boolean.dryer_on
+
+  - platform: device
+    type: opened
+    device_id: 357bc954ebb6225a55ae7d8b81f1fca7
+    entity_id: 4986450410536f6afbeaefa26a3fd5ce
+    domain: binary_sensor
+    id: dryer_door
+
+action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+          - washer_on
+          - dryer_on
+      - condition: template
+        value_template: '{{ states(input_entity)  == "off" }}'
+      sequence:
+        - service: input_boolean.turn_on
+          target:
+            entity_id: "{{ input_entity }}"
+        - condition: trigger
+          id:
+            - dryer_on
+        - service: alert.turn_off
+          target:
+            entity_id: alert.washing_machine
+    
+    - conditions:
+      - condition: trigger
+        id:
+          - washer_off
+          - dryer_off
+      - condition: template
+        value_template: '{{ states(input_entity)  == "on" }}'
+      sequence:
+        - service: input_boolean.turn_off
+          target:
+            entity_id:  "{{ input_entity }}"
+
+    - conditions:
+      - condition: trigger
+        id:
+          - dryer_door
+      sequence:
+        - service: alert.turn_off
+          target:
+            entity_id: alert.dryer
