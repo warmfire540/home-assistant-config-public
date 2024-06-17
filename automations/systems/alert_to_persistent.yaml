@@ -40,12 +40,22 @@ action:
           - not: "{{ trigger.event.data.service_data.message == 'clear_notification' }}"
         sequence:
           - service: google_generative_ai_conversation.generate_content
+            continue_on_error: true
             data:
-              prompt: "Briefly tell me that my {{ trigger.event.data.service_data.message }} in a country accent"
+              prompt: "Briefly tell me that my {{ trigger.event.data.service_data.data.prompt }} in a country accent"
             response_variable: generated_content
           - service: notify.family
             data:
-              message: "{{ generated_content['text'] }}"
+              message: >-
+                {% set m = generated_content['text'] if (generated_content is defined) else 'Google Rate Limit :(' %}
+
+                {% if (trigger.event.data.service_data.message != 'False') %}
+                  {{ m }}
+
+                  {{ trigger.event.data.service_data.message }}
+                {% else %}
+                  {{ m }}
+                {% endif %}
               title: "{{ trigger.event.data.service_data.title }}"
               data:
                 tag: "{{ trigger.event.data.service_data.data.tag }}"

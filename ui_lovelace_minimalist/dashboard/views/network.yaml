@@ -139,7 +139,15 @@ cards:
           options:
             secondary: >-
               {{ (as_timestamp(states[config.entity].last_changed) | timestamp_custom('%b %d %H:%M - ')) +
-              states(config.entity) +
-              ' ' + state_attr(config.entity, "connection_type")}}
+              states(config.entity) + ' ' +
+                iif(
+                  state_attr(config.entity, "connection_type"),
+                  iif(
+                    state_attr(config.entity, "connection_type") is list,
+                    state_attr(config.entity, "connection_type")[0],
+                    state_attr(config.entity, "connection_type")
+                  ),
+                  'Dunno'
+                  )}}
             state: '{{ state_attr(config.entity, "ip") }}'
             type: "custom:template-entity-row"

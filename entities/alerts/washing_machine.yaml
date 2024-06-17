@@ -7,11 +7,12 @@ washing_machine:
   name: Washing Machine done
   entity_id: input_boolean.washing_machine_on
   title: 🩲 Washer done!
-  message: Time to load the dryer...
+  message: false
   done_message: clear_notification
-  state: 'off'
+  state: "off"
   repeat: 5
   data:
     tag: washer_done
+    prompt: washing machine is done
   notifiers:
-    - family
+    - family_ai
