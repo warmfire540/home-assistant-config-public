@@ -11,16 +11,16 @@ sensors:
     friendly_name: "Strong Boi Filter Life"
     unique_id: 6362daa3-222f-4efc-a586-df6c268db280
     unit_of_measurement: "%"
-    value_template: "{{ state_attr('vacuum.e0000693817603917196', 'component_filter') }}"
+    value_template: "{{ state_attr('vacuum.strongboi', 'component_filter') }}"
 
   strongboi_main_brush:
     friendly_name: "Strong Boi Main Brush Life"
     unique_id: e77f4b26-f98c-4cd3-9536-4dc1d058f69e
     unit_of_measurement: "%"
-    value_template: "{{ state_attr('vacuum.e0000693817603917196', 'component_main_brush') }}"
+    value_template: "{{ state_attr('vacuum.strongboi', 'component_main_brush') }}"
 
   strongboi_side_brush:
     friendly_name: "Strong Boi Side Brush Life"
     unique_id: 803d9027-a851-4a95-aa1e-e0c5d6eef58f
     unit_of_measurement: "%"
-    value_template: "{{ state_attr('vacuum.e0000693817603917196', 'component_side_brush') }}"
+    value_template: "{{ state_attr('vacuum.strongboi', 'component_side_brush') }}"

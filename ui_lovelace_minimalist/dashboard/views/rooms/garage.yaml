@@ -40,7 +40,7 @@ cards:
     entity: switch.garage_opener_socket_1
 
   - type: "custom:vacuum-card"
-    entity: vacuum.e0000693817603917196
+    entity: vacuum.strongboi
     image: default
     compact_view: false
     show_name: true
@@ -92,7 +92,6 @@ cards:
     entity: input_boolean.washing_machine_on
     variables:
       ulm_card_input_boolean_force_background_color: true
-      
 
   - type: horizontal-stack
     cards:

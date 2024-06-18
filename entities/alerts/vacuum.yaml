@@ -13,7 +13,7 @@ vacuum:
 
     Rolo:       {{ state_attr("vacuum.rolo", "status") }}
 
-    Strong Boi: {{ state_attr("vacuum.e0000693817603917196", "error") }}
+    Strong Boi: {{ state_attr("vacuum.strongboi", "error") }}
   done_message: clear_notification
   state: "on"
   repeat: 10
