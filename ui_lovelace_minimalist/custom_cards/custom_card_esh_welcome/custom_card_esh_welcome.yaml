@@ -3,6 +3,7 @@ card_esh_welcome:
   template: "ulm_language_variables"
   variables:
     ulm_weather: "[[[ return variables.ulm_weather]]]"
+    ulm_current_scene: "[[[ return variables.ulm_current_scene]]]"
     entity_1:
       color: >
         [[[
@@ -87,6 +88,7 @@ card_esh_welcome:
         variables:
           ulm_card_esh_welcome_collapse: "[[[ return variables.ulm_card_esh_welcome_collapse ]]]"
           ulm_weather: "[[[ return variables.ulm_weather]]]"
+          ulm_current_scene: "[[[ return variables.ulm_current_scene]]]"
         styles:
           card:
             - border-radius: "none"
@@ -434,25 +436,62 @@ card_esh_welcome_topbar:
                 - color: "rgb(var(--color-theme))"
     item2:
       card:
-        type: "custom:button-card"
-        template: "chip_weather_date"
-        variables:
-          ulm_weather: "[[[ return variables.ulm_weather]]]"
-        tap_action:
-          action: "more-info"
-        entity: "[[[ return variables.ulm_weather]]]"
-        styles:
-          card:
-            - width: "100px"
-            - box-shadow: >
-                [[[
-                  if (hass.themes.darkMode){
-                    return "0px 2px 4px 0px rgba(0,0,0,0.80)";
-                  } else {
-                    return "var(--box-shadow)";
-                  }
-                ]]]
-            - "--mdc-ripple-press-opacity": 0.12 # allow click animation
+        type: horizontal-stack
+        cards:
+          - type: "custom:button-card"
+            template: "chip_weather_date"
+            variables:
+              ulm_weather: "[[[ return variables.ulm_weather]]]"
+            tap_action:
+              action: "more-info"
+            entity: "[[[ return variables.ulm_weather]]]"
+            styles:
+              card:
+                - width: "100px"
+                - box-shadow: >
+                    [[[
+                      if (hass.themes.darkMode){
+                        return "0px 2px 4px 0px rgba(0,0,0,0.80)";
+                      } else {
+                        return "var(--box-shadow)";
+                      }
+                    ]]]
+                - "--mdc-ripple-press-opacity": 0.12 # allow click animation
+          - type: "custom:button-card"
+            template: "chip_mdi_icon_state"
+            variables:
+              ulm_chip_mdi_icon_state_entity: "[[[ return variables.ulm_current_scene ]]]"
+              ulm_chip_mdi_icon_state_icon_color: >-
+                    [[[
+                      if (states[variables.ulm_current_scene].state === "Home"){
+                        return "rgba(var(--color-blue), 0.7)";
+                      } else {
+                        return "rgba(var(--color-red), 0.7)";
+                      }
+                    ]]]
+              ulm_chip_mdi_icon_state_label_color: >-
+                    [[[
+                      if (states[variables.ulm_current_scene].state === "Home"){
+                        return "rgba(var(--color-blue), 0.7)";
+                      } else {
+                        return "rgba(var(--color-red), 0.7)";
+                      }
+                    ]]]
+            tap_action:
+              action: "more-info"
+            entity: "[[[ return variables.ulm_current_scene ]]]"
+            styles:
+              card:
+                - width: "100px"
+                - box-shadow: >
+                    [[[
+                      if (hass.themes.darkMode){
+                        return "0px 2px 4px 0px rgba(0,0,0,0.80)";
+                      } else {
+                        return "var(--box-shadow)";
+                      }
+                    ]]]
+                - "--mdc-ripple-press-opacity": 0.12 # allow click animation
     item3:
       card:
         type: "custom:button-card"

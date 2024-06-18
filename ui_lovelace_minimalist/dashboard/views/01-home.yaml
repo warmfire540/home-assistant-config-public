@@ -6,6 +6,7 @@ cards:
     triggers_update: "input_boolean.welcome_toggle"
     variables:
       ulm_card_esh_welcome_collapse: input_boolean.welcome_toggle
+      ulm_current_scene: sensor.last_scene
       ulm_weather: weather.forecast_home
       entity_1:
         nav: "house"
@@ -50,6 +51,9 @@ cards:
           ulm_address: sensor.gina_s_iphone_13_mini_geocoded_location
           ulm_card_person_battery: sensor.gina_s_iphone_13_mini_battery_level
 
+  - type: "custom:button-card"
+    template: card_title
+    label: Status Updates
           
   #################
   # INFO CHIPS

@@ -1,0 +1,38 @@
+#####
+# Updates the current theme based on triggers
+# 
+#####
+
+alias: Change Scenes
+id: 16dd549f-4061-4bf2-b37d-6157bdfa0715
+
+trigger:
+  - platform: state
+    entity_id:
+      - binary_sensor.people_home
+    from: "on"
+    to: "off"
+    id: family-away
+  - platform: state
+    entity_id:
+      - binary_sensor.people_home
+    from: "off"
+    to: "on"
+    id: family-home
+
+action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: family-home
+      sequence:
+        - service: scene.turn_on
+          target:
+            entity_id: scene.home
+    - conditions:
+      - condition: trigger
+        id: family-away
+      sequence:
+        - service: scene.turn_on
+          target:
+            entity_id: scene.away

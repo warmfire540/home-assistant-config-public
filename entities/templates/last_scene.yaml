@@ -1,0 +1,10 @@
+####
+# Gives name of last activated scene
+#
+#####
+
+- sensor:
+  - name: Last scene
+    unique_id: b1b1fb2e-c247-4396-88cc-91f919391207
+    state: "{{ states.scene | sort(attribute='state', reverse=true) | map(attribute='name') | first }}"
+    icon: "{{ states.scene | sort(attribute='state', reverse=true) | map(attribute='attributes') | map(attribute='icon') | first }}"

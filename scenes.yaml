@@ -1,1 +1,25 @@
-[]
+- id: '1716402806859'
+  name: Away
+  entities: {}
+  icon: mdi:home-minus
+  metadata: {}
+- id: '1716402827823'
+  name: Home
+  entities: {}
+  icon: mdi:home
+  metadata: {}
+- id: '1716402862505'
+  name: Vacation
+  entities: {}
+  icon: mdi:plane-car
+  metadata: {}
+- id: '1716428655222'
+  name: Night
+  entities: {}
+  icon: mdi:weather-night
+  metadata: {}
+- id: '1716430789968'
+  name: Sleep
+  entities: {}
+  icon: mdi:sleep
+  metadata: {}
