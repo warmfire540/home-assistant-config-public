@@ -131,6 +131,7 @@ cards:
           template: chip_icon_state_if_value
           variables:
             entity: sensor.updates_available
+            navigation_path: "/the-matrix/network?anchor=updates"
         - type: "custom:button-card"
           template: chip_icon_state_if_value
           variables:
@@ -139,20 +140,6 @@ cards:
           template: chip_icon_state_if_value
           variables:
             entity: group.smoke_sensors
-        - type: "custom:button-card"
-          template: chip_icon_state_if_value
-          variables:
-            entity: sensor.seedbox_vpn_on
-            ulm_chip_mdi_icon_only_icon: mdi:vpn
-          styles:
-            icon:
-              - color: >
-                  [[[ if (states["sensor.seedbox_vpn_on"].state == "False")
-                      return "var(--red-color)";
-                    else if (states["sensor.seedbox_vpn_on"].state == "Offline")
-                      return "var(--amber-color)";
-                    else
-                      return "var(--green-color)"; ]]]
 
   # 2nd level
   - type: custom:mod-card
@@ -170,6 +157,20 @@ cards:
             entity: binary_sensor.pi_hole_status
             on_state: "off"
             navigation_path: "/the-matrix/pi-hole"
+        - type: "custom:button-card"
+          template: chip_icon_state_if_value
+          variables:
+            entity: sensor.seedbox_vpn_on
+            ulm_chip_mdi_icon_only_icon: mdi:vpn
+          styles:
+            icon:
+              - color: >
+                  [[[ if (states["sensor.seedbox_vpn_on"].state == "False")
+                      return "var(--red-color)";
+                    else if (states["sensor.seedbox_vpn_on"].state == "Offline")
+                      return "var(--amber-color)";
+                    else
+                      return "var(--green-color)"; ]]]
 
   - type: "custom:button-card"
     template: card_title

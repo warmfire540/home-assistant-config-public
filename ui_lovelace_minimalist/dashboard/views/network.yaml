@@ -97,6 +97,10 @@ cards:
         - domain: tts
         - name: "Kitchen Bulb*"
 
+  - type: "custom:anchor-card"
+    anchor_id: updates
+    offset: -60
+
   - type: "custom:button-card"
     template: card_title
     label: Updates needed
