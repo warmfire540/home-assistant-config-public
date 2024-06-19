@@ -85,6 +85,7 @@ card_esh_welcome:
       card:
         type: "custom:button-card"
         template: "card_esh_welcome_topbar"
+        triggers_update: "[[[ return variables.ulm_current_scene]]]"
         variables:
           ulm_card_esh_welcome_collapse: "[[[ return variables.ulm_card_esh_welcome_collapse ]]]"
           ulm_weather: "[[[ return variables.ulm_weather]]]"
@@ -461,30 +462,16 @@ card_esh_welcome_topbar:
             template: "chip_mdi_icon_state"
             variables:
               ulm_chip_mdi_icon_state_entity: "[[[ return variables.ulm_current_scene ]]]"
-              ulm_chip_mdi_icon_state_icon_color: >-
-                    [[[
-                      if (states[variables.ulm_current_scene].state === "Home"){
-                        return "rgba(var(--color-blue), 0.7)";
-                      } else if (states[variables.ulm_current_scene].state === "Vacation"){
-                        return "rgba(var(--color-green), 0.7)";
-                      } else if (states[variables.ulm_current_scene].state === "Night"){
-                        return "rgba(var(--color-purple), 0.7)";
-                      } else {
-                        return "rgba(var(--color-red), 0.7)";
-                      }
-                    ]]]
-              ulm_chip_mdi_icon_state_label_color: >-
-                    [[[
-                      if (states[variables.ulm_current_scene].state === "Home"){
-                        return "rgba(var(--color-blue), 0.7)";
-                      } else if (states[variables.ulm_current_scene].state === "Vacation"){
-                        return "rgba(var(--color-green), 0.7)";
-                      } else if (states[variables.ulm_current_scene].state === "Night"){
-                        return "rgba(var(--color-purple), 0.7)";
-                      } else {
-                        return "rgba(var(--color-red), 0.7)";
-                      }
-                    ]]]
+              ulm_chip_mdi_icon_state_icon_color: >
+                [[[
+                  var color = states[variables.ulm_current_scene].attributes.color;
+                  return 'rgba(var(--color-' + color + '), 0.7)';
+                ]]]
+              ulm_chip_mdi_icon_state_label_color: >
+                [[[
+                  var color = states[variables.ulm_current_scene].attributes.color;
+                  return 'rgba(var(--color-' + color + '), 0.7)';
+                ]]]
             tap_action:
               action: "more-info"
             entity: "[[[ return variables.ulm_current_scene ]]]"
