@@ -12,27 +12,59 @@ trigger:
       - binary_sensor.people_home
     from: "on"
     to: "off"
-    id: family-away
+    id: away
   - platform: state
     entity_id:
       - binary_sensor.people_home
     from: "off"
     to: "on"
-    id: family-home
+    id: home
+  - platform: state
+    entity_id:
+      - input_boolean.on_vacation
+    from: "on"
+    to: "off"
+    id: home
+  - platform: state
+    entity_id:
+      - input_boolean.on_vacation
+    from: "off"
+    to: "on"
+    id: vacation
+  - platform: numeric_state
+    entity_id: sun.sun
+    attribute: elevation
+    # Can be a positive or negative number
+    below: -4.0
+    id: night
 
 action:
   - choose:
     - conditions:
       - condition: trigger
-        id: family-home
+        id: home
       sequence:
         - service: scene.turn_on
           target:
             entity_id: scene.home
     - conditions:
       - condition: trigger
-        id: family-away
+        id: away
       sequence:
         - service: scene.turn_on
           target:
             entity_id: scene.away
+    - conditions:
+      - condition: trigger
+        id: vacation
+      sequence:
+        - service: scene.turn_on
+          target:
+            entity_id: scene.vacation
+    - conditions:
+      - condition: trigger
+        id: night
+      sequence:
+        - service: scene.turn_on
+          target:
+            entity_id: scene.night

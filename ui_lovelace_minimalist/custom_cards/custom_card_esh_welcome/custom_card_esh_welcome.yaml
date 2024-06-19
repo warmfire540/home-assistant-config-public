@@ -465,6 +465,10 @@ card_esh_welcome_topbar:
                     [[[
                       if (states[variables.ulm_current_scene].state === "Home"){
                         return "rgba(var(--color-blue), 0.7)";
+                      } else if (states[variables.ulm_current_scene].state === "Vacation"){
+                        return "rgba(var(--color-green), 0.7)";
+                      } else if (states[variables.ulm_current_scene].state === "Night"){
+                        return "rgba(var(--color-purple), 0.7)";
                       } else {
                         return "rgba(var(--color-red), 0.7)";
                       }
@@ -473,6 +477,10 @@ card_esh_welcome_topbar:
                     [[[
                       if (states[variables.ulm_current_scene].state === "Home"){
                         return "rgba(var(--color-blue), 0.7)";
+                      } else if (states[variables.ulm_current_scene].state === "Vacation"){
+                        return "rgba(var(--color-green), 0.7)";
+                      } else if (states[variables.ulm_current_scene].state === "Night"){
+                        return "rgba(var(--color-purple), 0.7)";
                       } else {
                         return "rgba(var(--color-red), 0.7)";
                       }

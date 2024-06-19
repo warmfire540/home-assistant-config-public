@@ -9,7 +9,7 @@ cards:
   - type: "custom:button-card"
     template: card_title
     name: House
-  
+
   - type: horizontal-stack
     cards:
       - type: custom:auto-entities
@@ -91,6 +91,10 @@ cards:
       method: state
       numeric: true
 
+  - type: "custom:button-card"
+    template: card_title
+    label: Schedules/Shopping
+
   - type: horizontal-stack
     cards:
       - type: custom:trash-card
@@ -119,6 +123,12 @@ cards:
           others:
             color: green
             icon: mdi:flower
+
+  - type: "custom:button-card"
+    template: card_input_boolean
+    entity: input_boolean.on_vacation
+    variables:
+      ulm_card_input_boolean_name: Vacation Time!
 
   - type: shopping-list
     title: Shopping List

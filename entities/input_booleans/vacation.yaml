@@ -1,0 +1,8 @@
+#####
+# If on vacation or not
+#
+#####
+
+on_vacation:
+  name: On Vacation
+  icon: mdi:palm-tree
