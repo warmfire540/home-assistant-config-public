@@ -1,6 +1,6 @@
 #####
 # Updates the current theme based on triggers
-# 
+#
 #####
 
 alias: Change Scenes
@@ -13,58 +13,86 @@ trigger:
     from: "on"
     to: "off"
     id: away
+    
   - platform: state
     entity_id:
       - binary_sensor.people_home
     from: "off"
     to: "on"
     id: home
+
   - platform: state
     entity_id:
       - input_boolean.on_vacation
     from: "on"
     to: "off"
     id: home
+
   - platform: state
     entity_id:
       - input_boolean.on_vacation
     from: "off"
     to: "on"
     id: vacation
+
   - platform: numeric_state
     entity_id: sun.sun
     attribute: elevation
-    # Can be a positive or negative number
     below: -4.0
     id: night
 
+  - platform: sun
+    event: sunrise
+    id: morning
+
 action:
   - choose:
-    - conditions:
-      - condition: trigger
-        id: home
-      sequence:
-        - service: scene.turn_on
-          target:
-            entity_id: scene.home
-    - conditions:
-      - condition: trigger
-        id: away
-      sequence:
-        - service: scene.turn_on
-          target:
-            entity_id: scene.away
-    - conditions:
-      - condition: trigger
-        id: vacation
-      sequence:
-        - service: scene.turn_on
-          target:
-            entity_id: scene.vacation
-    - conditions:
-      - condition: trigger
-        id: night
-      sequence:
-        - service: scene.turn_on
-          target:
-            entity_id: scene.night
+      # home scene
+      - conditions:
+          - or:
+              - condition: trigger
+                id: home
+              - and:
+                  - condition: trigger
+                    id: day
+                  - condition: state
+                    entity_id: binary_sensor.people_home
+                    state: "on"
+        sequence:
+          - service: scene.turn_on
+            target:
+              entity_id: scene.home
+
+      # away scene
+      - conditions:
+          - or:
+              - condition: trigger
+                id: away
+              - and:
+                  - condition: trigger
+                    id: day
+                  - condition: state
+                    entity_id: binary_sensor.people_home
+                    state: "off"
+        sequence:
+          - service: scene.turn_on
+            target:
+              entity_id: scene.away
+
+      # vacation scene
+      - conditions:
+          - condition: trigger
+            id: vacation
+        sequence:
+          - service: scene.turn_on
+            target:
+              entity_id: scene.vacation
+
+      # night scene
+      - conditions:
+          - condition: trigger
+            id: night
+        sequence:
+          - service: scene.turn_on
+            target:
+              entity_id: scene.night
