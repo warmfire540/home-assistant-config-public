@@ -77,7 +77,7 @@ cards:
     cards:
       - type: "custom:button-card"
         template: card_input_boolean
-        entity: input_boolean.dryer_on
+        entity: binary_sensor.dryer_on
         variables:
           ulm_card_input_boolean_force_background_color: true
       - type: "custom:button-card"

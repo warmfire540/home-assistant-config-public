@@ -1,9 +1,0 @@
-#####
-# Dryer is turned on
-# changed to ON after 10 seconds of activity
-# changed to off after automation triggers
-#####
-
-dryer_on:
-  name: Dryer
-  icon: mdi:tumble-dryer

@@ -11,33 +11,20 @@ trigger:
     entity_id: sensor.clothes_washer_13_1min
     id: washer_on
     above: 20
-    for: '00:00:10'
-    variables:
-      input_entity: input_boolean.washing_machine_on
-  
+    for: "00:00:10"
+
   - platform: numeric_state
     entity_id: sensor.clothes_washer_13_1min
     below: 2
     for: "00:20:00" # handle pause in soak
     id: washer_off
-    variables:
-      input_entity: input_boolean.washing_machine_on
 
-  - platform: numeric_state
-    entity_id: sensor.dryer_1_1min
-    above: 500
-    for: "00:00:10"
+  - platform: state
+    entity_id:
+      - binary_sensor.dryer_on
+    from: "off"
+    to: "on"
     id: dryer_on
-    variables:
-      input_entity: input_boolean.dryer_on
-
-  - platform: numeric_state
-    entity_id: sensor.dryer_1_1min
-    below: 500
-    for: "00:05:00"
-    id: dryer_off
-    variables:
-      input_entity: input_boolean.dryer_on
 
   - platform: device
     type: opened
@@ -48,41 +35,42 @@ trigger:
 
 action:
   - choose:
-    - conditions:
-      - condition: trigger
-        id:
-          - washer_on
-          - dryer_on
-      - condition: template
-        value_template: '{{ states(input_entity)  == "off" }}'
-      sequence:
-        - service: input_boolean.turn_on
-          target:
-            entity_id: "{{ input_entity }}"
-        - condition: trigger
-          id:
-            - dryer_on
-        - service: alert.turn_off
-          target:
-            entity_id: alert.washing_machine
-    
-    - conditions:
-      - condition: trigger
-        id:
-          - washer_off
-          - dryer_off
-      - condition: template
-        value_template: '{{ states(input_entity)  == "on" }}'
-      sequence:
-        - service: input_boolean.turn_off
-          target:
-            entity_id:  "{{ input_entity }}"
+      - conditions:
+          - condition: trigger
+            id:
+              - washer_on
+          - condition: template
+            value_template: '{{ states("input_boolean.washing_machine_on")  == "off" }}'
+        sequence:
+          - service: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.washing_machine_on
 
-    - conditions:
-      - condition: trigger
-        id:
-          - dryer_door
-      sequence:
-        - service: alert.turn_off
-          target:
-            entity_id: alert.dryer
+      - conditions:
+          - condition: trigger
+            id:
+              - washer_off
+          - condition: template
+            value_template: '{{ states("input_boolean.washing_machine_on")  == "on" }}'
+        sequence:
+          - service: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.washing_machine_on
+
+      - conditions:
+          - condition: trigger
+            id:
+              - dryer_on
+        sequence:
+          - service: alert.turn_off
+            target:
+              entity_id: alert.washing_machine
+
+      - conditions:
+          - condition: trigger
+            id:
+              - dryer_door
+        sequence:
+          - service: alert.turn_off
+            target:
+              entity_id: alert.dryer

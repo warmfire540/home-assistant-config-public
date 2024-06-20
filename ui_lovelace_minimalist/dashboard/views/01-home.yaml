@@ -54,12 +54,12 @@ cards:
   - type: "custom:button-card"
     template: card_title
     label: Status Updates
-          
+
   #################
   # INFO CHIPS
   #################
   - type: custom:mod-card
-    style: 
+    style:
       hui-horizontal-stack-card$: |
         #root { 
           justify-content: center;
@@ -83,11 +83,11 @@ cards:
           tap_action:
             action: navigate
             navigation_path: "/energy"
-        - type: 'custom:button-card'
+        - type: "custom:button-card"
           template: poat_chip_double_state
           variables:
-            ulm_chip_icon_double_state_icon: '❗'
-            ulm_chip_icon_double_state_icon_2: '⚠️'
+            ulm_chip_icon_double_state_icon: "❗"
+            ulm_chip_icon_double_state_icon_2: "⚠️"
             ulm_chip_icon_double_state_entity_1: counter.homeassistant_errors
             ulm_chip_icon_double_state_entity_2: counter.homeassistant_warnings
             ulm_chip_navigate_path: /config/logs
@@ -104,7 +104,7 @@ cards:
   # STATUS CHIPS
   #################
   - type: custom:mod-card
-    style: 
+    style:
       hui-horizontal-stack-card$: |
         #root { 
           justify-content: center;
@@ -147,7 +147,7 @@ cards:
 
   # 2nd level
   - type: custom:mod-card
-    style: 
+    style:
       hui-horizontal-stack-card$: |
         #root { 
           justify-content: center;
@@ -359,7 +359,7 @@ cards:
                 templates:
                   - blue_on
               entity_3:
-                entity_id: input_boolean.dryer_on
+                entity_id: binary_sensor.dryer_on
                 templates:
                   - blue_on
               entity_4:
