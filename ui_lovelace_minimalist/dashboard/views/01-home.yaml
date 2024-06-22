@@ -50,6 +50,9 @@ cards:
           ulm_card_person_use_entity_picture: true
           ulm_address: sensor.gina_s_iphone_13_mini_geocoded_location
           ulm_card_person_battery: sensor.gina_s_iphone_13_mini_battery_level
+        hold_action:
+            action: navigate
+            navigation_path: "/the-matrix/t1d"
 
   - type: "custom:button-card"
     template: card_title

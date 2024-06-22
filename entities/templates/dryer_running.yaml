@@ -7,4 +7,4 @@
     - name: Dryer Running
       unique_id: dryer_on
       icon: mdi:tumble-dryer
-      state: "{{ states('sensor.dryer_1_1min') | int > 0 }}"
+      state: "{{ states('sensor.dryer_1_1min') | int(0) > 5 }}"

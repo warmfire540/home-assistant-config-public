@@ -1,0 +1,14 @@
+#####
+# Add an entry for each entity that you want to overwrite.
+#
+# https://www.home-assistant.io/integrations/homeassistant/#manual-customization
+#####
+
+sensor.conduit_battery_level:
+  device_class: battery
+
+sensor.pump_battery_level:
+  device_class: battery
+
+sensor.sensor_battery_level:
+  device_class: battery

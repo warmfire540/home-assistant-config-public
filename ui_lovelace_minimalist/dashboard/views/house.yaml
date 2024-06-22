@@ -75,6 +75,8 @@ cards:
       include:
         - attributes:
             device_class: battery
+      exclude:
+        - domain: binary_sensor
 
   - type: custom:auto-entities
     card:

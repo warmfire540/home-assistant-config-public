@@ -54,7 +54,7 @@ action:
                 id: home
               - and:
                   - condition: trigger
-                    id: day
+                    id: morning
                   - condition: state
                     entity_id: binary_sensor.people_home
                     state: "on"
@@ -70,7 +70,7 @@ action:
                 id: away
               - and:
                   - condition: trigger
-                    id: day
+                    id: morning
                   - condition: state
                     entity_id: binary_sensor.people_home
                     state: "off"
