@@ -6,11 +6,11 @@ alias: rfbridge_demultiplexer
 id: 5c9b04c3-dff3-4400-b548-78d0c7831b51
 
 trigger:
-  - platform: mqtt
-    topic: tele/rf-bridge/RESULT
+  platform: mqtt
+  topic: tele/rf-bridge/RESULT
 
 action:
-  - service: python_script.rfbridge_demux
-    data_template:
-      payload: "{{ trigger.payload_json.RfReceived.Data }}"
-      time: "{{ (trigger.payload_json.Time | as_datetime | as_local).isoformat() }}"
+  service: python_script.rfbridge_demux
+  data_template:
+    payload: "{{ trigger.payload_json.RfReceived.Data }}"
+    time: "{{ (trigger.payload_json.Time | as_datetime | as_local).isoformat() }}"

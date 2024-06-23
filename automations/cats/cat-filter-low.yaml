@@ -6,12 +6,12 @@ alias: Cat water filter low
 id: 2190bbfc-f496-4719-839a-c90fcd995fba
 
 trigger:
-- platform: numeric_state
+  platform: numeric_state
   entity_id: sensor.pet_thirst_filter
   below: 5
 
 action:
-  - service: notify.persistent_notification
-    data:
-      message: The cat filter is low!
-      title: Replace me..
+  service: notify.persistent_notification
+  data:
+    message: The cat filter is low!
+    title: Replace me..

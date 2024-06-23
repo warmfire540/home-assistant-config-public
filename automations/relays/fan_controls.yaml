@@ -10,13 +10,13 @@ trigger:
   - platform: numeric_state
     entity_id: sensor.office_climate_air_temperature
     id: office_fan_on
-    above: 74
+    above: 79
     variables:
       switch: switch.office_fan
   - platform: numeric_state
     entity_id: sensor.office_climate_air_temperature
     id: office_fan_off
-    below: 75
+    below: 80
     variables:
       switch: switch.office_fan
 

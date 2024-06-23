@@ -19,19 +19,19 @@ trigger:
     id: warning
 
 action:
-  - choose:
-      - conditions:
-          - condition: trigger
-            id: warning
-        sequence:
-          - service: counter.increment
-            entity_id: counter.homeassistant_warnings
-      - conditions:
-          - condition: trigger
-            id: error
-        sequence:
-          - service: counter.increment
-            entity_id: counter.homeassistant_errors
+  choose:
+    - conditions:
+        condition: trigger
+        id: warning
+      sequence:
+        service: counter.increment
+        entity_id: counter.homeassistant_warnings
+    - conditions:
+        condition: trigger
+        id: error
+      sequence:
+        service: counter.increment
+        entity_id: counter.homeassistant_errors
 
 mode: queued
 max: 20

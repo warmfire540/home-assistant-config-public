@@ -13,7 +13,7 @@ trigger:
     from: "on"
     to: "off"
     id: away
-    
+
   - platform: state
     entity_id:
       - binary_sensor.people_home
@@ -46,53 +46,53 @@ trigger:
     id: morning
 
 action:
-  - choose:
-      # home scene
-      - conditions:
-          - or:
-              - condition: trigger
-                id: home
-              - and:
-                  - condition: trigger
-                    id: morning
-                  - condition: state
-                    entity_id: binary_sensor.people_home
-                    state: "on"
-        sequence:
-          - service: scene.turn_on
-            target:
-              entity_id: scene.home
-
-      # away scene
-      - conditions:
-          - or:
-              - condition: trigger
-                id: away
-              - and:
-                  - condition: trigger
-                    id: morning
-                  - condition: state
-                    entity_id: binary_sensor.people_home
-                    state: "off"
-        sequence:
-          - service: scene.turn_on
-            target:
-              entity_id: scene.away
-
-      # vacation scene
-      - conditions:
+  choose:
+    # home scene
+    - conditions:
+        or:
           - condition: trigger
-            id: vacation
-        sequence:
-          - service: scene.turn_on
-            target:
-              entity_id: scene.vacation
+            id: home
+          - and:
+              - condition: trigger
+                id: morning
+              - condition: state
+                entity_id: binary_sensor.people_home
+                state: "on"
+      sequence:
+        service: scene.turn_on
+        target:
+          entity_id: scene.home
 
-      # night scene
-      - conditions:
+    # away scene
+    - conditions:
+        or:
           - condition: trigger
-            id: night
-        sequence:
-          - service: scene.turn_on
-            target:
-              entity_id: scene.night
+            id: away
+          - and:
+              - condition: trigger
+                id: morning
+              - condition: state
+                entity_id: binary_sensor.people_home
+                state: "off"
+      sequence:
+        service: scene.turn_on
+        target:
+          entity_id: scene.away
+
+    # vacation scene
+    - conditions:
+        condition: trigger
+        id: vacation
+      sequence:
+        service: scene.turn_on
+        target:
+          entity_id: scene.vacation
+
+    # night scene
+    - conditions:
+        condition: trigger
+        id: night
+      sequence:
+        service: scene.turn_on
+        target:
+          entity_id: scene.night

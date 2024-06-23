@@ -6,10 +6,10 @@ alias: Seedbox VPN off alert
 id: 4cf2336b-949f-4241-adf7-2da850ab74ac
 
 trigger:
-  - platform: state
-    entity_id: sensor.seedbox_vpn_on
-    to: "False"
-    for: "00:01:00"
+  platform: state
+  entity_id: sensor.seedbox_vpn_on
+  to: "False"
+  for: "00:01:00"
 
 action:
   - service: notify.persistent_notification

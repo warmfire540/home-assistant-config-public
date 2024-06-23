@@ -1,0 +1,37 @@
+#####
+# Xbox turns TV on/off
+#####
+
+alias: Turn TV on/off when Xbox turned on/off
+id: e85e41ea-5ff3-42ae-b5f3-5b6c0cfcccf6
+
+trigger:
+  - platform: device
+    device_id: 4af44e03559bc018ab379a45f5037e39
+    domain: media_player
+    entity_id: 2578a87c64d2af515841f9dc31a3ab52
+    type: turned_off
+    id: xbox-off
+  - platform: device
+    device_id: 4af44e03559bc018ab379a45f5037e39
+    domain: media_player
+    entity_id: 2578a87c64d2af515841f9dc31a3ab52
+    type: turned_on
+    id: xbox-on
+
+action:
+  choose:
+    - conditions:
+        condition: trigger
+        id: xbox-on
+      sequence:
+        service: media_player.turn_on
+        target:
+          device_id: 1df0518e60999f55fe1e6d35b0afd607
+    - conditions:
+        condition: trigger
+        id: xbox-off
+      sequence:
+        service: media_player.turn_off
+        target:
+          device_id: 1df0518e60999f55fe1e6d35b0afd607
