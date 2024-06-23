@@ -1,0 +1,10 @@
+#####
+# Template sensor for the input_datetime
+#
+#####
+
+- sensor:
+    - name: Cat dumb water filter
+      unique_id: 4faeb54e-9460-49c3-b8f3-6a8c4f37da2f
+      device_class: timestamp
+      state: "{{ states('input_datetime.cat_dumb_water_filter') | as_datetime | as_local }}"

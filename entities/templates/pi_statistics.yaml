@@ -12,28 +12,24 @@
       icon: "mdi:ip-network"
       state: "{{ state_attr('sensor.rpi_poat_plex_rpi_monitor_poat_plex', 'networking').eth0.IP if state_attr('sensor.rpi_poat_plex_rpi_monitor_poat_plex', 'networking') }}"
 
-- sensor:
     - name: Share IP
       unique_id: 752682fa-b9a3-41cd-b0ff-121c9673e9e7
       icon: "mdi:ip-network"
       state: "{{ state_attr('sensor.rpi_poat_share_rpi_monitor_poat_share', 'networking').eth0.IP if state_attr('sensor.rpi_poat_share_rpi_monitor_poat_share', 'networking') }}"
 
-- sensor:
     - name: Pi Hole IP
       unique_id: 73759c0c-9d7e-4490-9acf-6ae97b9669f3
       icon: "mdi:ip-network"
       state: "{{ state_attr('sensor.rpi_poat_hole_rpi_monitor_poat_hole', 'networking').eth0.IP if state_attr('sensor.rpi_poat_hole_rpi_monitor_poat_hole', 'networking') }}"
 
-- sensor:
     - name: Seedbox IP
       unique_id: d6a539cf-e84c-494d-b840-329d38cafa63
       icon: "mdi:ip-network"
       state: "{{ state_attr('sensor.rpi_poat_seedbox_rpi_monitor_poat_seedbox', 'networking').eth0.IP if state_attr('sensor.rpi_poat_seedbox_rpi_monitor_poat_seedbox', 'networking') }}"
 
-#################
-# LOAD
-#################
-- sensor:
+    #################
+    # LOAD
+    #################
     - name: Pi Hole CPU
       unique_id: 376aa8ff-913b-4214-9f68-3e7e961e82ec
       icon: "mdi:chip"
@@ -63,7 +59,6 @@
             if state_attr('sensor.rpi_poat_hole_rpi_monitor_poat_hole', 'cpu') 
           }}
 
-- sensor:
     - name: Pi Share CPU
       unique_id: 72561c19-b001-42b0-a9f3-69959c045a8a
       icon: "mdi:chip"
@@ -93,7 +88,6 @@
             if state_attr('sensor.rpi_poat_share_rpi_monitor_poat_share', 'cpu') 
           }}
 
-- sensor:
     - name: Pi Seedbox CPU
       unique_id: e06002db-d115-429b-82d4-e04b5fc57789
       icon: "mdi:seed"
@@ -123,7 +117,6 @@
             if state_attr('sensor.rpi_poat_seedbox_rpi_monitor_poat_seedbox', 'cpu') 
           }}
 
-- sensor:
     - name: Pi Plex CPU
       unique_id: 3210c06d-7094-4b87-b218-4b18502f52c1
       icon: "mdi:plex"

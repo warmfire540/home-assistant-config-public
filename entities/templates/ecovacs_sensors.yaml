@@ -1,0 +1,22 @@
+####
+# Sensors for ecovacs card
+#
+# https://github.com/denysdovhan/vacuum-card
+# https://community.home-assistant.io/t/custom-vacuum-card-for-home-assistant/193638/45?page=3
+#####
+
+- sensor:
+    - name: Strong Boi Filter Life
+      unique_id: strongboi_filter
+      unit_of_measurement: "%"
+      state: "{{ state_attr('vacuum.strongboi', 'component_filter') }}"
+
+    - name: Strong Boi Main Brush Life
+      unique_id: strongboi_main_brush
+      unit_of_measurement: "%"
+      state: "{{ state_attr('vacuum.strongboi', 'component_main_brush') }}"
+
+    - name: Strong Boi Side Brush Life
+      unique_id: strongboi_side_brush
+      unit_of_measurement: "%"
+      state: "{{ state_attr('vacuum.strongboi', 'component_side_brush') }}"
