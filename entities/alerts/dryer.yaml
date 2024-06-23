@@ -14,5 +14,6 @@ dryer:
   data:
     tag: dryer_done
     prompt: dryer is done
+    backup: The dryer is finished
   notifiers:
     - family_ai

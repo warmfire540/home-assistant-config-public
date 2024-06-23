@@ -19,5 +19,7 @@ vacuum:
   repeat: 10
   data:
     tag: vacuum_issue
+    prompt: vacuum has a problem
+    backup: Vacuum is busted..
   notifiers:
-    - family
+    - family_ai

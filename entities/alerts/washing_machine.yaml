@@ -14,5 +14,6 @@ washing_machine:
   data:
     tag: washer_done
     prompt: washing machine is done
+    backup: Washing machine is done.
   notifiers:
     - family_ai

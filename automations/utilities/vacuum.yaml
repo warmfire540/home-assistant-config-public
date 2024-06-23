@@ -1,0 +1,27 @@
+#####
+# Notify when Vacuum is done
+#####
+
+alias: Vacuum notifications
+id: 3d016231-82c4-4462-91c5-153bf38d9b57
+
+trigger:
+  platform: state
+  entity_id:
+    - vacuum.rolo
+  from:
+    - cleaning
+    - error
+    - idle
+    - paused
+  to: docked
+
+action:
+  service: notify.family_ai
+  data:
+    title: 🧹 Rolo is finished!
+    message: false
+    data:
+      prompt: vacuum is done
+      backup: A new cleaning map is available!
+      tag: rolo_done

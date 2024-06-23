@@ -22,60 +22,71 @@ trigger:
       service: family_ai
 
 action:
-  - choose:
-      - conditions:
-          - condition: trigger
-            id: create
-          - not: "{{ trigger.event.data.service_data.message == 'clear_notification' }}"
-        sequence:
-          - service: persistent_notification.create
-            data:
-              message: "{{ trigger.event.data.service_data.message }}"
-              title: "{{ trigger.event.data.service_data.title }}"
-              notification_id: "{{ trigger.event.data.service_data.data.tag }}"
+  choose:
+    - conditions:
+        - condition: trigger
+          id: create
+        - not: "{{ trigger.event.data.service_data.message == 'clear_notification' }}"
+      sequence:
+        service: persistent_notification.create
+        data:
+          message: "{{ trigger.event.data.service_data.message }}"
+          title: "{{ trigger.event.data.service_data.title }}"
+          notification_id: "{{ trigger.event.data.service_data.data.tag }}"
 
-      - conditions:
-          - condition: trigger
-            id: create-ai
-          - not: "{{ trigger.event.data.service_data.message == 'clear_notification' }}"
-        sequence:
-          - service: google_generative_ai_conversation.generate_content
-            continue_on_error: true
-            data:
-              prompt: "Briefly tell me that my {{ trigger.event.data.service_data.data.prompt }} in a country accent"
-            response_variable: generated_content
-          - service: notify.family
-            data:
-              message: >-
-                {% set m = generated_content['text'] if (generated_content is defined) else 'Google Rate Limit :(' %}
+    - conditions:
+        - condition: trigger
+          id: create-ai
+        - not: "{{ trigger.event.data.service_data.message == 'clear_notification' }}"
+      sequence:
+        - service: google_generative_ai_conversation.generate_content
+          continue_on_error: true
+          data:
+            prompt: >-
+              Briefly tell me that my {{ trigger.event.data.service_data.data.prompt }} 
+              {{ [
+                'in a country accent',
+                'as samuel jackson',
+                'as darth vader',
+                'as yoda',
+                'like a medieval herald',
+                'as eminem',
+                'in chuckney'
+                ] | random
+              }}
+          response_variable: generated_content
+        - service: notify.family
+          data:
+            message: >-
+              {% set ai_response = generated_content['text'] if (generated_content is defined) else trigger.event.data.service_data.data.backup %}
 
-                {% if (trigger.event.data.service_data.message != 'False') %}
-                  {{ m }}
+              {% if (trigger.event.data.service_data.message != 'False' and trigger.event.data.service_data.message != false) %}
+                {{ ai_response }}
 
-                  {{ trigger.event.data.service_data.message }}
-                {% else %}
-                  {{ m }}
-                {% endif %}
-              title: "{{ trigger.event.data.service_data.title }}"
-              data:
-                tag: "{{ trigger.event.data.service_data.data.tag }}"
-
-      - conditions:
-          - condition: trigger
-            id: create-ai
-          - "{{ trigger.event.data.service_data.message == 'clear_notification' }}"
-        sequence:
-          - service: notify.family
+                {{ trigger.event.data.service_data.message }}
+              {% else %}
+                {{ ai_response }}
+              {% endif %}
+            title: "{{ trigger.event.data.service_data.title }}"
             data:
-              message: clear_notification
-              data:
-                tag: "{{ trigger.event.data.service_data.data.tag }}"
+              tag: "{{ trigger.event.data.service_data.data.tag }}"
 
-      - conditions:
-          - "{{ trigger.event.data.service_data.message == 'clear_notification' }}"
-        sequence:
-          - service: persistent_notification.dismiss
-            data:
-              notification_id: "{{ trigger.event.data.service_data.data.tag }}"
+    - conditions:
+        - condition: trigger
+          id: create-ai
+        - "{{ trigger.event.data.service_data.message == 'clear_notification' }}"
+      sequence:
+        service: notify.family
+        data:
+          message: clear_notification
+          data:
+            tag: "{{ trigger.event.data.service_data.data.tag }}"
+
+    - conditions:
+        - "{{ trigger.event.data.service_data.message == 'clear_notification' }}"
+      sequence:
+        service: persistent_notification.dismiss
+        data:
+          notification_id: "{{ trigger.event.data.service_data.data.tag }}"
 
 mode: queued
