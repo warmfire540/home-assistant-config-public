@@ -49,7 +49,7 @@ card_esh_welcome:
             if(variables.ulm_card_esh_welcome_collapse && states[variables.ulm_card_esh_welcome_collapse].state == 'on'){
               return "\'item1\' \'item2\' ";
             } else {
-              return "\'item1\' \'item2\' \'item3\'";
+              return "\'item1\' \'item2\' \'item3\' \'item4\'";
             }
           ]]]
       - grid-template-columns: "1fr"
@@ -155,6 +155,16 @@ card_esh_welcome:
           entity_3: "[[[ return variables.entity_3 ]]]"
           entity_4: "[[[ return variables.entity_4 ]]]"
           entity_5: "[[[ return variables.entity_5 ]]]"
+    item4:
+      card:
+        type: "custom:button-card"
+        template: "card_esh_sub_views_nav"
+        styles:
+          card:
+            - padding: "4px"
+        variables:
+          subview_1: "[[[ return variables.subview_1 ]]]"
+          subview_2: "[[[ return variables.subview_2 ]]]"
 
 card_esh_welcome_title:
   tap_action:
@@ -508,3 +518,39 @@ card_esh_welcome_topbar:
                   }
                 ]]]
             - "--mdc-ripple-press-opacity": 0.12 # allow click animation
+
+card_esh_sub_views_nav:
+  styles:
+    grid:
+      - grid-template-areas: |
+          [[[
+            return "'" + [(variables.subview_1?.nav ? 'item1' : ''),
+                        (variables.subview_2?.nav ? 'item2' : '')].join(' ') + "'";
+          ]]]
+      - grid-template-columns: |
+          [[[
+            return [(variables.subview_1?.nav ? '1fr' : ''),
+                    (variables.subview_2?.nav ? '1fr' : ''),].join(' ');
+          ]]]
+      - grid-template-rows: "min-content"
+      - justify-items: "center"
+  custom_fields:
+    item1:
+      card:
+        type: "custom:button-card"
+        template: chip_icon_state_if_value
+        entity: "[[[ return variables.subview_1?.entity; ]]]"
+        variables:
+          on_state: "off"
+          navigation_path: "[[[ return variables.subview_1?.nav; ]]]"
+    item2:
+      card:
+        type: "custom:button-card"
+        template: chip_mdi_icon_only
+        variables:
+          ulm_chip_mdi_icon_only_icon: "[[[ return variables.subview_2?.icon; ]]]"
+          ulm_chip_mdi_icon_only_icon_color:  "[[[ return `rgba(var(--color-${variables.subview_2?.color}), 1)`;]]]"
+        tap_action:
+          action: "navigate"
+          navigation_path: "[[[ return variables.subview_2?.nav; ]]]"
+

@@ -93,6 +93,15 @@ cards:
       - sensor.pi_hole_dns_queries_today
     show:
       labels: true
+      icon: false
+
+  - type: "custom:mini-graph-card"
+    entities:
+      - sensor.pi_hole_dns_unique_domains
+      - sensor.pi_hole_dns_unique_clients
+    show:
+      labels: true
+      icon: false
 
   - type: "custom:button-card"
     template: card_title

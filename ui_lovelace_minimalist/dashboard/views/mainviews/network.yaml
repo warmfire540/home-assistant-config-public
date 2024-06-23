@@ -119,17 +119,6 @@ cards:
 
   - type: "custom:button-card"
     template: card_title
-    label: Pi Hole Overview
-
-  - type: custom:auto-entities
-    card:
-      type: entities
-    filter:
-      include:
-        - entity_id: "sensor.pi_hole_*"
-
-  - type: "custom:button-card"
-    template: card_title
     label: Connected Devices
 
   - type: custom:auto-entities

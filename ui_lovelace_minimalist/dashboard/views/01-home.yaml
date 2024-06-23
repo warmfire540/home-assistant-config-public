@@ -9,52 +9,56 @@ cards:
       ulm_current_scene: sensor.last_scene
       ulm_weather: weather.forecast_home
       entity_1:
-        nav: "house"
-        icon: "mdi:home"
-        name: "House"
-        color: "blue"
+        nav: house
+        icon: mdi:home
+        name: House
+        color: blue
       entity_2:
-        nav: "lights"
-        icon: "mdi:lightbulb"
-        name: "Lights"
-        color: "yellow"
+        nav: lights
+        icon: mdi:lightbulb
+        name: Lights
+        color: yellow
       entity_3:
-        nav: "cats"
-        icon: "mdi:cat"
+        nav: cats
+        icon: mdi:cat
         name: Cats
-        color: "green"
+        color: green
       entity_4:
-        nav: "lab"
-        icon: "mdi:flask"
+        nav: lab
+        icon: mdi:flask
         name: Lab
-        color: "purple"
+        color: purple
       entity_5:
-        nav: "network"
-        icon: "mdi:network"
+        nav: network
+        icon: mdi:network
         name: Net
-        color: "red"
+        color: red
+      subview_1:
+        entity: binary_sensor.pi_hole_status
+        nav: pi-hole
+      subview_2:
+        nav: t1d
+        icon: mdi:diabetes
+        color: blue
 
   - type: horizontal-stack
     cards:
-      - type: "custom:button-card"
+      - type: custom:button-card
         template: card_person
         variables:
           ulm_card_person_entity: person.poat
           ulm_card_person_use_entity_picture: true
           ulm_address: sensor.poat_s_iphone_14_pro_max_geocoded_location
           ulm_card_person_battery: sensor.poat_s_iphone_14_pro_max_battery_level
-      - type: "custom:button-card"
+      - type: custom:button-card
         template: card_person
         variables:
           ulm_card_person_entity: person.gina
           ulm_card_person_use_entity_picture: true
           ulm_address: sensor.gina_s_iphone_13_mini_geocoded_location
           ulm_card_person_battery: sensor.gina_s_iphone_13_mini_battery_level
-        hold_action:
-          action: navigate
-          navigation_path: "/the-matrix/t1d"
 
-  - type: "custom:button-card"
+  - type: custom:button-card
     template: card_title
     label: Status Updates
 
@@ -70,7 +74,7 @@ cards:
     card:
       type: horizontal-stack
       cards:
-        - type: "custom:button-card"
+        - type: custom:button-card
           template: chip_mdi_icon_state
           variables:
             ulm_chip_mdi_icon_state_entity: sensor.living_room_climate_air_temperature
@@ -78,7 +82,7 @@ cards:
           tap_action:
             action: navigate
             navigation_path: "/the-matrix/house"
-        - type: "custom:button-card"
+        - type: custom:button-card
           template: chip_power_consumption
           variables:
             ulm_chip_electric_consumption: sensor.power_in_kw
@@ -86,7 +90,7 @@ cards:
           tap_action:
             action: navigate
             navigation_path: "/energy"
-        - type: "custom:button-card"
+        - type: custom:button-card
           template: poat_chip_double_state
           variables:
             ulm_chip_icon_double_state_icon: "❗"
@@ -115,35 +119,35 @@ cards:
     card:
       type: horizontal-stack
       cards:
-        - type: "custom:button-card"
+        - type: custom:button-card
           template: chip_icon_state_if_value
           variables:
             entity: sensor.devices_with_low_battery
             navigation_path: "/the-matrix/house?anchor=low-battery"
-        - type: "custom:button-card"
+        - type: custom:button-card
           template: chip_icon_state_if_value
           variables:
             entity: sensor.cat_device_failure_count
             navigation_path: "/the-matrix/cats?anchor=status"
-        - type: "custom:button-card"
+        - type: custom:button-card
           template: chip_icon_state_if_value
           variables:
             entity: sensor.devices_offline
             navigation_path: "/the-matrix/network?anchor=disconnected"
-        - type: "custom:button-card"
+        - type: custom:button-card
           template: chip_icon_state_if_value
           variables:
             entity: group.leak_sensors
-        - type: "custom:button-card"
+        - type: custom:button-card
           template: chip_icon_state_if_value
           variables:
             entity: sensor.updates_available
             navigation_path: "/the-matrix/network?anchor=updates"
-        - type: "custom:button-card"
+        - type: custom:button-card
           template: chip_icon_state_if_value
           variables:
             entity: group.robot_vacuums_status
-        - type: "custom:button-card"
+        - type: custom:button-card
           template: chip_icon_state_if_value
           variables:
             entity: group.smoke_sensors
@@ -158,13 +162,7 @@ cards:
     card:
       type: horizontal-stack
       cards:
-        - type: "custom:button-card"
-          template: chip_icon_state_if_value
-          variables:
-            entity: binary_sensor.pi_hole_status
-            on_state: "off"
-            navigation_path: "/the-matrix/pi-hole"
-        - type: "custom:button-card"
+        - type: custom:button-card
           template: chip_icon_state_if_value
           variables:
             entity: sensor.seedbox_vpn_on
@@ -179,7 +177,7 @@ cards:
                     else
                       return "var(--green-color)"; ]]]
 
-  - type: "custom:button-card"
+  - type: custom:button-card
     template: card_title
     name: Rooms
 
@@ -193,7 +191,7 @@ cards:
           #################
           # LIVING ROOM
           #################
-          - type: "custom:button-card"
+          - type: custom:button-card
             template:
               - poat_card_room
             icon: mdi:sofa
@@ -220,7 +218,7 @@ cards:
           #################
           # DINING ROOM
           #################
-          - type: "custom:button-card"
+          - type: custom:button-card
             template:
               - poat_card_room
             icon: mdi:glass-cocktail
@@ -232,7 +230,7 @@ cards:
           #################
           # OFFICE
           #################
-          - type: "custom:button-card"
+          - type: custom:button-card
             template:
               - poat_card_room
             icon: mdi:controller
@@ -257,7 +255,7 @@ cards:
           #################
           # KITCHEN
           #################
-          - type: "custom:button-card"
+          - type: custom:button-card
             template:
               - poat_card_room
             icon: mdi:countertop-outline
@@ -280,7 +278,7 @@ cards:
           #################
           # MASTER BEDROOM
           #################
-          - type: "custom:button-card"
+          - type: custom:button-card
             template:
               - poat_card_room
             icon: mdi:bed
@@ -290,7 +288,7 @@ cards:
           #################
           # MASTER BATHROOM
           #################
-          - type: "custom:button-card"
+          - type: custom:button-card
             template:
               - poat_card_room
             icon: mdi:shower-head
@@ -310,7 +308,7 @@ cards:
           #################
           # GUEST ROOM
           #################
-          - type: "custom:button-card"
+          - type: custom:button-card
             template:
               - poat_card_room
             icon: mdi:desk
@@ -324,7 +322,7 @@ cards:
           #################
           # GUEST BATHROOM
           #################
-          - type: "custom:button-card"
+          - type: custom:button-card
             template:
               - poat_card_room
             icon: mdi:shower
@@ -336,7 +334,7 @@ cards:
           #################
           # GARAGE
           #################
-          - type: "custom:button-card"
+          - type: custom:button-card
             template:
               - poat_card_room
             entity: switch.garage_opener_socket_1
@@ -367,7 +365,7 @@ cards:
           #################
           # ATTIC
           #################
-          - type: "custom:button-card"
+          - type: custom:button-card
             template:
               - poat_card_room
             icon: mdi:home-roof
@@ -382,7 +380,7 @@ cards:
           #################
           # Shed
           #################
-          - type: "custom:button-card"
+          - type: custom:button-card
             template:
               - poat_card_room
             icon: mdi:greenhouse

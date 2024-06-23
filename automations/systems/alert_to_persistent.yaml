@@ -51,7 +51,8 @@ action:
                 'as yoda',
                 'like a medieval herald',
                 'as eminem',
-                'in chuckney'
+                'in chuckney',
+                'as jar jar binks'
                 ] | random
               }}
           response_variable: generated_content

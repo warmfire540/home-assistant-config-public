@@ -263,18 +263,10 @@ cards:
   #################
   - type: "custom:button-card"
     template: card_title
-    label: Raspberries - Sensors
+    label: Raspberries - Status
 
   - type: custom:decluttering-card
     template: home_assistant_details
-
-  - type: custom:decluttering-card
-    template: pi_details
-    variables:
-      - pi_name: hole
-      - icon: mdi:pi-hole
-      - name: Pi Hole
-      - tracker: poat_hole
 
   - type: custom:decluttering-card
     template: pi_details

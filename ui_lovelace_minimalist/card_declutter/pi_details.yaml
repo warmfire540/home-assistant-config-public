@@ -246,7 +246,7 @@ pi_details:
                 state_not: "unavailable"
             row:
               entity: sensor.pi_[[pi_name]]_server_last_backup
-              name: backup
+              name: Last backup
           - type: custom:fold-entity-row
             head:
               type: section
