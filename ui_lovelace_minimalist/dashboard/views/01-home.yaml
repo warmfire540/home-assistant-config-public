@@ -250,7 +250,7 @@ cards:
                 templates:
                   - blue_on
               entity_4:
-                entity_id: switch.master_bedroom_fan
+                entity_id: switch.office_fan
                 templates:
                   - blue_on
 

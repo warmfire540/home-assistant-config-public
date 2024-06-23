@@ -1,0 +1,79 @@
+#####
+# Simple automation to turn fans on/off based on climate
+#
+#####
+
+alias: Fan relay control
+id: 8ed38c2d-13df-49f0-b3a8-e643f22777ad
+
+trigger:
+  - platform: numeric_state
+    entity_id: sensor.office_climate_air_temperature
+    id: office_fan_on
+    above: 74
+    variables:
+      switch: switch.office_fan
+  - platform: numeric_state
+    entity_id: sensor.office_climate_air_temperature
+    id: office_fan_off
+    below: 75
+    variables:
+      switch: switch.office_fan
+
+  - platform: numeric_state
+    entity_id: sensor.master_bath_climate_humidity
+    id: bathroom_fan_on
+    above: 64
+    variables:
+      switch: switch.master_bath_fan_relay
+  - platform: numeric_state
+    entity_id: sensor.master_bath_climate_humidity
+    id: bathroom_fan_off
+    below: 65
+    variables:
+      switch: switch.master_bath_fan_relay
+
+condition:
+  and:
+    - condition: state
+      alias: "People home"
+      entity_id: binary_sensor.people_home
+      state: "on"
+    - or:
+        - and:
+            - condition: trigger
+              id:
+                - office_fan_on
+                - bathroom_fan_on
+            - condition: template
+              value_template: '{{ states(switch)  == "off" }}'
+        - and:
+            - condition: trigger
+              id:
+                - office_fan_off
+                - bathroom_fan_off
+            - condition: template
+              value_template: '{{ states(switch)  == "on" }}'
+
+action:
+  choose:
+    - conditions:
+        condition: trigger
+        id:
+          - office_fan_on
+          - bathroom_fan_on
+      sequence:
+        service: switch.turn_on
+        target:
+          entity_id: "{{ switch }}"
+    - conditions:
+        condition: trigger
+        id:
+          - office_fan_off
+          - bathroom_fan_off
+      sequence:
+        service: switch.turn_off
+        target:
+          entity_id: "{{ switch }}"
+
+mode: single

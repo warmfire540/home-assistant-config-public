@@ -4,7 +4,7 @@
 #####
 
 alias: Count Home Assistant errors
-id: 'c057ca2c-ab20-4fe0-a32b-5980c0990fb2'
+id: "c057ca2c-ab20-4fe0-a32b-5980c0990fb2"
 
 trigger:
   - platform: event
@@ -20,18 +20,18 @@ trigger:
 
 action:
   - choose:
-    - conditions:
-      - condition: trigger
-        id: warning
-      sequence:
-        - service: counter.increment
-          entity_id: counter.homeassistant_warnings
-    - conditions:
-      - condition: trigger
-        id: error
-      sequence:
-        - service: counter.increment
-          entity_id: counter.homeassistant_errors
+      - conditions:
+          - condition: trigger
+            id: warning
+        sequence:
+          - service: counter.increment
+            entity_id: counter.homeassistant_warnings
+      - conditions:
+          - condition: trigger
+            id: error
+        sequence:
+          - service: counter.increment
+            entity_id: counter.homeassistant_errors
 
 mode: queued
 max: 20
