@@ -53,4 +53,14 @@ cards:
     template: z_wave_double_relay
     variables:
       - sensor_prefix: master_bath
-      - node_number: 15
+      - sensor_domain: switches
+      - name: Light Relay
+      - node_number: master_bath_switches
+
+  - type: custom:decluttering-card
+    template: z_wave_double_relay_no_scenes
+    variables:
+      - sensor_prefix: master_bath_fan
+      - sensor_domain: relay
+      - name: Fan Relay
+      - node_number: master_bath_fan_relay

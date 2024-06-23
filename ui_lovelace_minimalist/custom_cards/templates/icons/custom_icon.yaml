@@ -1,4 +1,0 @@
----
-custom_icon:
-  icon: >
-    [[[ return variables.icon; ]]]

@@ -1,15 +1,14 @@
-z_wave_double_relay:
+z_wave_double_relay_no_scenes:
   card:
     type: custom:stack-in-card
     cards:
       - type: custom:layout-card
         layout_type: grid
         layout:
-          grid-template-columns: repeat(5, 1fr)
-          grid-template-rows: repeat(2, 1fr)
+          grid-template-columns: repeat(6, 1fr)
+          grid-template-rows: repeat(1, 1fr)
           grid-template-areas: |
-            "firmware firmware seen switch1 switch2"
-            "scene1 scene1 scene2 scene2 status"
+            "firmware firmware status seen switch1 switch2"
           margin: 0
           padding: 0
           card_margin: 0
@@ -49,28 +48,6 @@ z_wave_double_relay:
               style: |
                 ha-card {
                   align-items: center;
-                }
-          - type: custom:mushroom-entity-card
-            entity: 'event.[[sensor_prefix]]_[[sensor_domain]]_scene_001'
-            name: Scene 1
-            icon_type: none
-            view_layout:
-              grid-area: scene1
-            card_mod:
-              style: |
-                ha-card {
-                  text-align: center;
-                }
-          - type: custom:mushroom-entity-card
-            entity: 'event.[[sensor_prefix]]_[[sensor_domain]]_scene_002'
-            name: Scene 2
-            icon_type: none
-            view_layout:
-              grid-area: scene2
-            card_mod:
-              style: |
-                ha-card {
-                  text-align: center;
                 }
           - type: custom:mushroom-entity-card
             entity: 'sensor.[[node_number]]_last_seen'

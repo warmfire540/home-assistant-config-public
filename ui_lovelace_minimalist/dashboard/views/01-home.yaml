@@ -209,10 +209,8 @@ cards:
                   - yellow_on
               entity_3:
                 entity_id: light.tv_led
-                icon: mdi:television
                 templates:
                   - blue_on
-                  - custom_icon
               entity_4:
                 entity_id: climate.living_room
                 templates:
@@ -249,10 +247,12 @@ cards:
                   - yellow_on
               entity_3:
                 entity_id: binary_sensor.poat_rgb_connectivity
-                icon: mdi:desktop-classic
                 templates:
                   - blue_on
-                  - custom_icon
+              entity_4:
+                entity_id: switch.master_bedroom_fan
+                templates:
+                  - blue_on
 
           #################
           # KITCHEN
@@ -268,16 +268,12 @@ cards:
                 - binary_sensor.dishwasher_leak_sensor
               entity_2:
                 entity_id: switch.under_cabinet_lights_switch_1
-                icon: mdi:countertop
                 templates:
                   - yellow_on
-                  - custom_icon
               entity_3:
                 entity_id: switch.dinette_light_switch_1
-                icon: mdi:table-chair
                 templates:
                   - yellow_on
-                  - custom_icon
 
       - type: horizontal-stack
         cards:
@@ -322,10 +318,8 @@ cards:
               affix: guest_bedroom
               entity_1:
                 entity_id: switch.gina_computer_socket_1
-                icon: mdi:laptop
                 templates:
                   - blue_on
-                  - custom_icon
 
           #################
           # GUEST BATHROOM
