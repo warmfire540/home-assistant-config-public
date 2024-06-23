@@ -84,6 +84,10 @@ cards:
   - type: media-control
     entity: media_player.fire_tv_192_168_68_107
 
+  - type: "custom:button-card"
+    template: card_title
+    label: Vacuum
+
   - type: custom:xiaomi-vacuum-map-card
     entity: vacuum.rolo
     map_source:

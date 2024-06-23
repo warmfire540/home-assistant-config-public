@@ -68,11 +68,6 @@ cards:
     template: card_title
     label: Sensors
 
-  - type: custom:decluttering-card
-    template: leak_sensors
-    variables:
-      - sensor_prefix: water_heater
-
   - type: horizontal-stack
     cards:
       - type: "custom:button-card"
@@ -116,6 +111,15 @@ cards:
       ulm_card_graph_color: "var(--google-yellow)"
       ulm_card_graph_entity: sensor.water_heater_5_1min
       ulm_card_graph_name: Water Heater
+
+  - type: "custom:button-card"
+    template: card_title
+    label: Device Health
+
+  - type: custom:decluttering-card
+    template: leak_sensors
+    variables:
+      - sensor_prefix: water_heater
 
   - type: custom:decluttering-card
     template: z_wave_door_sensor
