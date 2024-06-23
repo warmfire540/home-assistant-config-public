@@ -142,7 +142,7 @@ cards:
             source_type: router
           options:
             secondary: >-
-              {{ (as_timestamp(states[config.entity].last_changed) | timestamp_custom('%b %d %H:%M - ')) +
+              {{ ('Unknown' if states[config.entity] is none else as_timestamp(states[config.entity].last_changed, 0) | timestamp_custom('%b %d %H:%M - ')) +
               states(config.entity) + ' ' +
                 iif(
                   state_attr(config.entity, "connection_type"),
