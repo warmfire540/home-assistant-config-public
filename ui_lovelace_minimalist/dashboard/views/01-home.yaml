@@ -51,8 +51,8 @@ cards:
           ulm_address: sensor.gina_s_iphone_13_mini_geocoded_location
           ulm_card_person_battery: sensor.gina_s_iphone_13_mini_battery_level
         hold_action:
-            action: navigate
-            navigation_path: "/the-matrix/t1d"
+          action: navigate
+          navigation_path: "/the-matrix/t1d"
 
   - type: "custom:button-card"
     template: card_title
@@ -362,7 +362,7 @@ cards:
                 templates:
                   - blue_on
               entity_3:
-                entity_id: binary_sensor.dryer_on
+                entity_id: input_boolean.dryer_on
                 templates:
                   - blue_on
               entity_4:
