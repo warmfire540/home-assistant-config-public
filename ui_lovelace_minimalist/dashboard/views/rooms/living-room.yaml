@@ -51,6 +51,7 @@ cards:
     template: cover
     variables:
       - sensor_prefix: living_room
+      - fave_percent: 90
 
   - type: "custom:button-card"
     template: card_thermostat
@@ -80,6 +81,19 @@ cards:
         tap_action:
           action: call-service
           service: script.sound_bar_power
+  - type: "custom:button-card"
+    template: card_script
+    variables:
+      ulm_card_script_title: TV Power
+      ulm_card_script_icon: "mdi:television"
+    tap_action:
+      action: call-service
+      service: remote.send_command
+      target:
+        device_id: 7c0228accadb951d83724a364de2d662
+      data:
+        device: Living Room TV
+        command: Power
 
   - type: media-control
     entity: media_player.fire_tv_192_168_68_107

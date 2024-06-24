@@ -19,6 +19,7 @@ cards:
     template: cover
     variables:
       - sensor_prefix: guest_bedroom
+      - fave_percent: 25
 
   - type: "custom:button-card"
     template: card_title

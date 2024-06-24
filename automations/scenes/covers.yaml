@@ -1,0 +1,59 @@
+#####
+# Sets the shades based on several enviromental factors.
+#
+#####
+
+alias: Set shades
+id: 97e74d76-00cf-4069-b07e-81e383784973
+
+trigger:
+  - platform: sun
+    event: sunrise
+    id: morning
+    
+  - platform: numeric_state
+    entity_id: sun.sun
+    attribute: elevation
+    below: -3.0
+    id: night
+
+action:
+  choose:
+    # morning
+    - conditions:
+        condition: trigger
+        id: morning
+      sequence:
+        - service: cover.set_cover_position
+          data:
+            position: 80
+          target:
+            entity_id: 
+              - cover.bedroom_blinds
+              - cover.living_room_blinds
+        - service: cover.set_cover_position
+          data:
+            position: 30
+          target:
+            entity_id: 
+              - cover.guest_bedroom_blinds
+              - cover.dining_room_blinds
+
+    # night time
+    - conditions:
+        condition: trigger
+        id: night
+      sequence:
+        - service: cover.close_cover
+          target:
+            entity_id:
+              - cover.kitchen_blinds
+              - cover.office_blinds
+              - cover.living_room_blinds
+              - cover.guest_bedroom_blinds
+              - cover.dining_room_blinds
+        - service: cover.set_cover_position
+          data:
+            position: 20
+          target:
+            entity_id: cover.bedroom_blinds

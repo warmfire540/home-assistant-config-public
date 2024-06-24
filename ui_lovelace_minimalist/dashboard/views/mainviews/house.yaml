@@ -1,14 +1,18 @@
 title: "House"
 path: "house"
 cards:
-  - type: "custom:button-card"
+  - type: custom:button-card
     template: chip_back
     variables:
       ulm_chip_back_path: home
 
-  - type: "custom:button-card"
+  - type: custom:button-card
     template: card_title
     name: House
+
+  - type: custom:button-card
+    template: card_title
+    label: Sensors
 
   - type: horizontal-stack
     cards:
@@ -42,10 +46,55 @@ cards:
       include:
         - entity_id: "sensor.*_1min"
 
+  - type: custom:button-card
+    template: card_title
+    label: Climate
+
   - type: thermostat
     entity: climate.living_room
 
-  - type: "custom:button-card"
+  - type: entities
+    entities:
+      - cover.all_covers
+
+  - type: horizontal-stack
+    cards:
+      - type: custom:decluttering-card
+        template: cover
+        variables:
+          - sensor_prefix: living_room
+          - show_details: false
+      - type: custom:decluttering-card
+        template: cover
+        variables:
+          - sensor_prefix: dining_room
+          - show_details: false
+  - type: horizontal-stack
+    cards:
+      - type: custom:decluttering-card
+        template: cover
+        variables:
+          - sensor_prefix: kitchen
+          - show_details: false
+      - type: custom:decluttering-card
+        template: cover
+        variables:
+          - sensor_prefix: bedroom
+          - show_details: false
+  - type: horizontal-stack
+    cards:
+      - type: custom:decluttering-card
+        template: cover
+        variables:
+          - sensor_prefix: office
+          - show_details: false
+      - type: custom:decluttering-card
+        template: cover
+        variables:
+          - sensor_prefix: guest_bedroom
+          - show_details: false
+
+  - type: custom:button-card
     template: card_title
     label: Alerts
 
@@ -60,7 +109,7 @@ cards:
     anchor_id: low-battery
     offset: -60
 
-  - type: "custom:button-card"
+  - type: custom:button-card
     template: card_title
     label: Batteries
 
@@ -93,7 +142,7 @@ cards:
       method: state
       numeric: true
 
-  - type: "custom:button-card"
+  - type: custom:button-card
     template: card_title
     label: Schedules/Shopping
 
@@ -126,7 +175,7 @@ cards:
             color: green
             icon: mdi:flower
 
-  - type: "custom:button-card"
+  - type: custom:button-card
     template: card_input_boolean
     entity: input_boolean.on_vacation
     variables:

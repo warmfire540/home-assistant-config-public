@@ -32,6 +32,7 @@ cards:
     template: cover
     variables:
       - sensor_prefix: office
+      - fave_percent: 20
 
   - type: media-control
     entity: media_player.fire_tv_192_168_68_129

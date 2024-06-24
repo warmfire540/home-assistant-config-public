@@ -6,7 +6,10 @@ cover:
       - battery_info
     entity: cover.[[sensor_prefix]]_blinds
     variables:
-      ulm_card_cover_enable_controls: true
-      ulm_card_cover_enable_slider: true
+      fave_percent: false
+      show_details: true
+      ulm_card_cover_enable_controls: '[[show_details]]'
+      ulm_card_cover_enable_slider: '[[show_details]]'
       ulm_card_cover_color: green
       ulm_battery_entity: sensor.[[sensor_prefix]]_blinds_battery
+      ulm_card_cover_favorite_percentage: '[[fave_percent]]'
