@@ -45,19 +45,43 @@ trigger:
     event: sunrise
     id: morning
 
+  - platform: numeric_state
+    entity_id: sun.sun
+    attribute: elevation
+    below: -3.0
+    id: evening
+
 action:
   choose:
+    #####
+    # Morning scene
+    #  - open covers to desired position
+    #####
+    - conditions:
+        condition: trigger
+        id: morning
+      sequence:
+        service: scene.turn_on
+        target:
+          entity_id: scene.morning
+
+    
+    #####
+    # Evening scene
+    #  - close covers to desired position
+    #####
+    - conditions:
+        condition: trigger
+        id: evening
+      sequence:
+        service: scene.turn_on
+        target:
+          entity_id: scene.evening
+
     # home scene
     - conditions:
-        or:
-          - condition: trigger
-            id: home
-          - and:
-              - condition: trigger
-                id: morning
-              - condition: state
-                entity_id: binary_sensor.people_home
-                state: "on"
+        condition: trigger
+        id: home
       sequence:
         service: scene.turn_on
         target:
@@ -65,15 +89,8 @@ action:
 
     # away scene
     - conditions:
-        or:
-          - condition: trigger
-            id: away
-          - and:
-              - condition: trigger
-                id: morning
-              - condition: state
-                entity_id: binary_sensor.people_home
-                state: "off"
+        condition: trigger
+        id: away
       sequence:
         service: scene.turn_on
         target:

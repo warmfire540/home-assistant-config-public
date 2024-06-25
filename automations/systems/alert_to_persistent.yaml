@@ -46,13 +46,14 @@ action:
               Briefly tell me that my {{ trigger.event.data.service_data.data.prompt }} 
               {{ [
                 'in a country accent',
+                'in a british accent',
+                'in spanish',
+                'in german',
                 'as samuel jackson',
-                'as darth vader',
-                'as yoda',
-                'like a medieval herald',
-                'as eminem',
-                'in a chuckney accent',
                 'as jar jar binks'
+                'as eminem',
+                'as yoda',
+                'like a medieval herald'
                 ] | random
               }}
           response_variable: generated_content

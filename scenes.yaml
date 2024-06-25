@@ -23,3 +23,65 @@
   entities: {}
   icon: mdi:sleep
   metadata: {}
+- id: '1719333679264'
+  name: Morning
+  entities:
+    cover.living_room_blinds:
+      current_position: 80
+      device_class: shade
+      friendly_name: Living Room Blinds
+      supported_features: 15
+      state: open
+    cover.dining_room_blinds:
+      current_position: 30
+      device_class: shade
+      friendly_name: Dining Room Blinds
+      supported_features: 15
+      state: open
+  icon: mdi:weather-sunset-up
+  metadata: {}
+- id: '1719334006665'
+  name: Evening
+  entities:
+    cover.living_room_blinds:
+      current_position: 0
+      device_class: shade
+      friendly_name: Living Room Blinds
+      supported_features: 15
+      state: closed
+    cover.dining_room_blinds:
+      current_position: 0
+      device_class: shade
+      friendly_name: Dining Room Blinds
+      supported_features: 15
+      state: closed
+    cover.kitchen_blinds:
+      current_position: 0
+      device_class: shade
+      friendly_name: Kitchen Blinds
+      supported_features: 15
+      state: closed
+    cover.office_blinds:
+      current_position: 0
+      device_class: shade
+      friendly_name: Office Blinds
+      supported_features: 15
+      state: closed
+    cover.bedroom_blinds:
+      current_position: 20
+      device_class: shade
+      friendly_name: Bedroom Blinds
+      supported_features: 15
+      state: open
+    cover.guest_bedroom_blinds:
+      current_position: 0
+      device_class: shade
+      friendly_name: Guest Bedroom Blinds
+      supported_features: 15
+      state: closed
+  icon: mdi:weather-sunset-down
+  metadata:
+    cover.living_room_blinds:
+      entity_only: true
+    cover.dining_room_blinds:
+      entity_only: true

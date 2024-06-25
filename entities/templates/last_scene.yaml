@@ -15,5 +15,7 @@
         {% elif s == 'Away' %} red
         {% elif s == 'Night' %} purple
         {% elif s == 'Vacation' %} blue
+        {% elif s == 'Morning' %} yellow
+        {% elif s == 'Evening' %} pink
         {% else %} grey
         {% endif %}
