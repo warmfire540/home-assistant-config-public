@@ -1,14 +1,37 @@
 title: "Lab"
 path: "lab"
 cards:
-  - type: "custom:button-card"
-    template: chip_back
-    variables:
-      ulm_chip_back_path: home
+  - type: horizontal-stack
+    cards:
+      - type: custom:button-card
+        template: chip_back
+        variables:
+          ulm_chip_back_path: home
+      - type: custom:mod-card
+        style:
+          hui-horizontal-stack-card$: |
+            #root { 
+              justify-content: center;
+            }
+        card:
+          type: horizontal-stack
+          cards:
+            - type: custom:button-card
+              template: chip_navigate
+              label: 'Pi-Hole'
+              variables:
+                ulm_chip_navigate_path: pi-hole
+                ulm_chip_navigate_icon: mdi:pi-hole
+            - type: custom:button-card
+              template: chip_navigate
+              label: 'Z-Wave'
+              variables:
+                ulm_chip_navigate_path: z-wave
+                ulm_chip_navigate_icon: mdi:z-wave
 
   - type: horizontal-stack
     cards:
-      - type: "custom:button-card"
+      - type: custom:button-card
         template: card_title
         name: Lab
 
@@ -24,7 +47,7 @@ cards:
     card:
       type: horizontal-stack
       cards:
-        - type: "custom:button-card"
+        - type: custom:button-card
           template: chip_icon_label
           label: pi-hole
           icon: mdi:pi-hole
@@ -34,7 +57,10 @@ cards:
                   [[[ if (states["binary_sensor.poat_hole_local"].state == "on")
                     return "var(--green-color)" ;
                     else return "var(--red-color)"; ]]]
-        - type: "custom:button-card"
+          tap_action:
+            action: navigate
+            navigation_path: pi-hole
+        - type: custom:button-card
           template: chip_icon_label
           label: share
           icon: mdi:folder-network-outline
@@ -44,7 +70,7 @@ cards:
                   [[[ if (states["binary_sensor.poat_share_local"].state == "on")
                     return "var(--green-color)" ;
                     else return "var(--red-color)"; ]]]
-        - type: "custom:button-card"
+        - type: custom:button-card
           template: chip_icon_label
           label: seedbox
           icon: mdi:seed
@@ -55,7 +81,7 @@ cards:
                   [[[ if (states["binary_sensor.192_168_68_131"].state == "on")
                     return "var(--green-color)" ;
                     else return "var(--red-color)"; ]]]
-        - type: "custom:button-card"
+        - type: custom:button-card
           template: chip_icon_label
           label: plex
           icon: mdi:plex
@@ -66,7 +92,7 @@ cards:
                   [[[ if (states["binary_sensor.poat_plex_local"].state == "on")
                     return "var(--green-color)" ;
                     else return "var(--red-color)"; ]]]
-        - type: "custom:button-card"
+        - type: custom:button-card
           template: chip_mdi_icon_only
           variables:
             ulm_chip_mdi_icon_only_entity: sensor.mfc_7860dw_status
@@ -77,7 +103,7 @@ cards:
                   [[[ if (states["sensor.mfc_7860dw_status"].state == "unavailable")
                     return "var(--red-color)" ;
                     else return "var(--green-color)"; ]]]
-        - type: "custom:button-card"
+        - type: custom:button-card
           template: chip_mdi_icon_only
           variables:
             ulm_chip_mdi_icon_only_entity: sensor.seedbox_vpn_on
@@ -107,7 +133,7 @@ cards:
   #################
   # RASPBERRY CONTROL
   #################
-  - type: "custom:button-card"
+  - type: custom:button-card
     template: card_title
     label: Raspberries - Control
 
@@ -261,7 +287,7 @@ cards:
   #################
   # RASPBERRIES
   #################
-  - type: "custom:button-card"
+  - type: custom:button-card
     template: card_title
     label: Raspberries - Status
 
@@ -315,7 +341,7 @@ cards:
     card:
       type: vertical-stack
       cards:
-        - type: "custom:button-card"
+        - type: custom:button-card
           template: card_title
           label: Plex Controls
         - type: entities
@@ -353,16 +379,9 @@ cards:
   #################
   # DEVICE HEALTH
   #################
-  - type: "custom:button-card"
+  - type: custom:button-card
     template: card_title
     label: Device Health
-
-  - type: entities
-    title: 800 Series Z-Wave LR USB Hub
-    icon: mdi:z-wave
-    entities:
-      - entity: sensor.800_series_long_range_usb_controller_status
-        name: Status
 
   #################
   # TASMOTA
@@ -382,7 +401,7 @@ cards:
           card_margin: 0
         margin: 0px
         cards:
-          - type: "custom:button-card"
+          - type: custom:button-card
             template:
               - card_generic_swap
             entity: sensor.tasmota_firmware_version
@@ -391,7 +410,7 @@ cards:
               ulm_card_generic_swap_icon: "mdi:broadcast"
             view_layout:
               grid-area: firmware
-          - type: "custom:button-card"
+          - type: custom:button-card
             template: custom_card_mpse_wifisignal
             entity: sensor.tasmota_signal
             name: '[[[ return states["sensor.tasmota_ssid"].state + " (" + states["sensor.tasmota_wifi_connect_count"].state + ")"]]]'

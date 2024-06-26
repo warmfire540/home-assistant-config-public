@@ -6,11 +6,8 @@ cards:
     variables:
       ulm_chip_back_path: home
 
-  - type: horizontal-stack
-    cards:
-      - type: "custom:button-card"
-        template: card_title
-        name: Pi-Hole
+  - type: picture
+    image: /local/img/pi-hole.png
 
   - type: "custom:button-card"
     entity: binary_sensor.pi_hole_status

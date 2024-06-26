@@ -1,0 +1,38 @@
+title: "Z-Wave"
+path: "z-wave"
+cards:
+  - type: custom:button-card
+    template: chip_back
+    variables:
+      ulm_chip_back_path: home
+
+  - type: picture
+    image: /local/img/z-wave.png
+
+  - type: custom:button-card
+    template: card_title
+    label: Last Seen
+
+  - type: custom:auto-entities
+    card:
+      type: entities
+    filter:
+      include:
+        - entity_id: "*last_seen"
+    sort:
+      method: state
+      reverse: true
+
+  #################
+  # DEVICE HEALTH
+  #################
+  - type: custom:button-card
+    template: card_title
+    label: Device Health
+
+  - type: entities
+    title: 800 Series Z-Wave LR USB Hub
+    icon: mdi:z-wave
+    entities:
+      - entity: sensor.800_series_long_range_usb_controller_status
+        name: Status

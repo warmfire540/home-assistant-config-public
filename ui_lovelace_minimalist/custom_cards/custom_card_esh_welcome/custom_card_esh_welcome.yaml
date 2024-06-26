@@ -538,10 +538,12 @@ card_esh_sub_views_nav:
     item1:
       card:
         type: "custom:button-card"
-        template: chip_icon_state_if_value
-        entity: "[[[ return variables.subview_1?.entity; ]]]"
+        template: chip_mdi_icon_only
         variables:
-          on_state: "off"
+          ulm_chip_mdi_icon_only_icon: "[[[ return variables.subview_1?.icon; ]]]"
+          ulm_chip_mdi_icon_only_icon_color:  "[[[ return `rgba(var(--color-${variables.subview_1?.color}), 1)`;]]]"
+        tap_action:
+          action: "navigate"
           navigation_path: "[[[ return variables.subview_1?.nav; ]]]"
     item2:
       card:

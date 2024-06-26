@@ -34,9 +34,6 @@ cards:
         name: Net
         color: red
       subview_1:
-        entity: binary_sensor.pi_hole_status
-        nav: pi-hole
-      subview_2:
         nav: t1d
         icon: mdi:diabetes
         color: blue

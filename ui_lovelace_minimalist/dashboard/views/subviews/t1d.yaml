@@ -6,8 +6,5 @@ cards:
     variables:
       ulm_chip_back_path: home
 
-  - type: horizontal-stack
-    cards:
-      - type: "custom:button-card"
-        template: card_title
-        name: T1D
+  - type: picture
+    image: /local/img/medtronic.png
