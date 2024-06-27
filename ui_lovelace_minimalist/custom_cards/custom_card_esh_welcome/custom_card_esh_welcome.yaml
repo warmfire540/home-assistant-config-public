@@ -539,6 +539,12 @@ card_esh_sub_views_nav:
       card:
         type: "custom:button-card"
         template: chip_mdi_icon_only
+        state:
+          - operator: "template"
+            value: "[[[ return !variables.subview_1?.nav; ]]]"
+            styles:
+              card:
+                - display: "none"
         variables:
           ulm_chip_mdi_icon_only_icon: "[[[ return variables.subview_1?.icon; ]]]"
           ulm_chip_mdi_icon_only_icon_color:  "[[[ return `rgba(var(--color-${variables.subview_1?.color}), 1)`;]]]"
@@ -549,6 +555,12 @@ card_esh_sub_views_nav:
       card:
         type: "custom:button-card"
         template: chip_mdi_icon_only
+        state:
+          - operator: "template"
+            value: "[[[ return !variables.subview_2?.nav; ]]]"
+            styles:
+              card:
+                - display: "none"
         variables:
           ulm_chip_mdi_icon_only_icon: "[[[ return variables.subview_2?.icon; ]]]"
           ulm_chip_mdi_icon_only_icon_color:  "[[[ return `rgba(var(--color-${variables.subview_2?.color}), 1)`;]]]"
