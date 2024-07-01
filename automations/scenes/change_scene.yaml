@@ -8,17 +8,15 @@ id: 16dd549f-4061-4bf2-b37d-6157bdfa0715
 
 trigger:
   - platform: state
-    entity_id:
-      - binary_sensor.people_home
-    from: "on"
-    to: "off"
+    alias: "People away"
+    entity_id: zone.home
+    to: "0"
     id: away
 
   - platform: state
-    entity_id:
-      - binary_sensor.people_home
-    from: "off"
-    to: "on"
+    alias: "People home"
+    entity_id: zone.home
+    from: "0"
     id: home
 
   - platform: state
