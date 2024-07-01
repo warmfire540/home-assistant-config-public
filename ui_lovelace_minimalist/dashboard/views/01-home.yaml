@@ -60,51 +60,6 @@ cards:
     label: Status Updates
 
   #################
-  # INFO CHIPS
-  #################
-  - type: custom:mod-card
-    style:
-      hui-horizontal-stack-card$: |
-        #root { 
-          justify-content: center;
-        }
-    card:
-      type: horizontal-stack
-      cards:
-        - type: custom:button-card
-          template: chip_mdi_icon_state
-          variables:
-            ulm_chip_mdi_icon_state_entity: sensor.living_room_climate_air_temperature
-            ulm_chip_mdi_icon_state_icon: mdi:thermometer
-          tap_action:
-            action: navigate
-            navigation_path: "/the-matrix/house"
-        - type: custom:button-card
-          template: chip_power_consumption
-          variables:
-            ulm_chip_electric_consumption: sensor.power_in_kw
-            ulm_chip_electric_price: false
-          tap_action:
-            action: navigate
-            navigation_path: "/energy"
-        - type: custom:button-card
-          template: poat_chip_double_state
-          variables:
-            ulm_chip_icon_double_state_icon: "❗"
-            ulm_chip_icon_double_state_icon_2: "⚠️"
-            ulm_chip_icon_double_state_entity_1: counter.homeassistant_errors
-            ulm_chip_icon_double_state_entity_2: counter.homeassistant_warnings
-            ulm_chip_navigate_path: /config/logs
-          state:
-            - operator: template
-              value: >
-                [[[ return states['counter.homeassistant_errors'].state === '0' 
-                  && states['counter.homeassistant_warnings'].state === '0' ]]]
-              styles:
-                card:
-                  - display: none
-
-  #################
   # STATUS CHIPS
   #################
   - type: custom:mod-card
@@ -143,25 +98,6 @@ cards:
         - type: custom:button-card
           template: chip_icon_state_if_value
           variables:
-            entity: group.robot_vacuums_status
-        - type: custom:button-card
-          template: chip_icon_state_if_value
-          variables:
-            entity: group.smoke_sensors
-
-  # 2nd level
-  - type: custom:mod-card
-    style:
-      hui-horizontal-stack-card$: |
-        #root { 
-          justify-content: center;
-        }
-    card:
-      type: horizontal-stack
-      cards:
-        - type: custom:button-card
-          template: chip_icon_state_if_value
-          variables:
             entity: sensor.seedbox_vpn_on
             ulm_chip_mdi_icon_only_icon: mdi:vpn
           styles:
@@ -173,6 +109,22 @@ cards:
                       return "var(--amber-color)";
                     else
                       return "var(--green-color)"; ]]]
+        - type: custom:button-card
+          template: poat_chip_double_state
+          variables:
+            ulm_chip_icon_double_state_icon: "❗"
+            ulm_chip_icon_double_state_icon_2: "⚠️"
+            ulm_chip_icon_double_state_entity_1: counter.homeassistant_errors
+            ulm_chip_icon_double_state_entity_2: counter.homeassistant_warnings
+            ulm_chip_navigate_path: /config/logs
+          state:
+            - operator: template
+              value: >
+                [[[ return states['counter.homeassistant_errors'].state === '0' 
+                  && states['counter.homeassistant_warnings'].state === '0' ]]]
+              styles:
+                card:
+                  - display: none
 
   - type: custom:button-card
     template: card_title

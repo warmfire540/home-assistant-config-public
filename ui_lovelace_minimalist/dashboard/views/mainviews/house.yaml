@@ -12,6 +12,39 @@ cards:
 
   - type: custom:button-card
     template: card_title
+    label: Status Updates
+
+  #################
+  # INFO CHIPS
+  #################
+  - type: custom:mod-card
+    style:
+      hui-horizontal-stack-card$: |
+        #root { 
+          justify-content: center;
+        }
+    card:
+      type: horizontal-stack
+      cards:
+        - type: custom:button-card
+          template: chip_mdi_icon_state
+          variables:
+            ulm_chip_mdi_icon_state_entity: sensor.living_room_climate_air_temperature
+            ulm_chip_mdi_icon_state_icon: mdi:thermometer
+          tap_action:
+            action: navigate
+            navigation_path: "/the-matrix/house"
+        - type: custom:button-card
+          template: chip_power_consumption
+          variables:
+            ulm_chip_electric_consumption: sensor.power_in_kw
+            ulm_chip_electric_price: false
+          tap_action:
+            action: navigate
+            navigation_path: "/energy"
+
+  - type: custom:button-card
+    template: card_title
     label: Sensors
 
   - type: horizontal-stack
