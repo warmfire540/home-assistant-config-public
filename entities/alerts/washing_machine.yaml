@@ -10,7 +10,7 @@ washing_machine:
   message: false
   done_message: clear_notification
   state: "off"
-  repeat: 5
+  repeat: 10
   data:
     tag: washer_done
     prompt: washing machine is done

@@ -16,7 +16,7 @@ vacuum:
     Strong Boi: {{ state_attr("vacuum.strongboi", "error") }}
   done_message: clear_notification
   state: "on"
-  repeat: 10
+  repeat: 15
   data:
     tag: vacuum_issue
     prompt: vacuum has a problem

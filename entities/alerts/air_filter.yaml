@@ -1,0 +1,19 @@
+#####
+# Alert for air filter changing.
+#
+#####
+
+air_filter:
+  name: Change air filters
+  entity_id: calendar.air_filters
+  title: 💨 Change air filters!
+  message: false
+  done_message: clear_notification
+  state: "on"
+  repeat: 120
+  data:
+    tag: air_filter
+    prompt: ac air filter needs changed
+    backup: Change the air filters.
+  notifiers:
+    - family_ai
