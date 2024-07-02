@@ -9,6 +9,12 @@ chip_icon_state_if_value:
           [[[ if (entity.state > 0 || entity.state == variables.on_state) 
                 return "var(--red-color)" ;
               else return "var(--green-color)"; ]]]
+  state:
+    - operator: "template"
+      value: "[[[ return variables.optional && entity.state != variables.on_state; ]]]"
+      styles:
+        card:
+          - display: "none"
   variables:
     ulm_chip_mdi_icon_state_entity: "[[[ return variables.entity; ]]]"
     on_state: "on"
