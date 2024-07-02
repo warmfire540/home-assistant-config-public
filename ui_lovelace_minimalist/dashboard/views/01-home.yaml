@@ -1,9 +1,26 @@
 title: "Home"
 path: "home"
+type: custom:grid-layout
+layout:
+  grid-template-columns: auto
+  grid-template-rows: auto
+  grid-template-areas: |
+    "welcome people"
+    "welcome status"
+    "rooms rooms"
+  mediaquery:
+    "(max-width: 600px)":
+      grid-template-areas: |
+        "welcome"
+        "people"
+        "status"
+        "rooms"
 cards:
   - type: custom:button-card
     template: card_esh_welcome
     triggers_update: "input_boolean.welcome_toggle"
+    view_layout:
+      grid-area: welcome
     variables:
       ulm_card_esh_welcome_collapse: input_boolean.welcome_toggle
       ulm_current_scene: sensor.last_scene
@@ -39,6 +56,8 @@ cards:
         color: blue
 
   - type: horizontal-stack
+    view_layout:
+      grid-area: people
     cards:
       - type: custom:button-card
         template: card_person
@@ -55,86 +74,91 @@ cards:
           ulm_address: sensor.gina_s_iphone_13_mini_geocoded_location
           ulm_card_person_battery: sensor.gina_s_iphone_13_mini_battery_level
 
-  - type: custom:button-card
-    template: card_title
-    label: Status Updates
-
-  #################
-  # STATUS CHIPS
-  #################
-  - type: custom:mod-card
-    style:
-      hui-horizontal-stack-card$: |
-        #root { 
-          justify-content: center;
-        }
-    card:
-      type: horizontal-stack
-      cards:
-        - type: custom:button-card
-          template: chip_icon_state_if_value
-          variables:
-            entity: sensor.devices_with_low_battery
-            navigation_path: "/the-matrix/house?anchor=low-battery"
-        - type: custom:button-card
-          template: chip_icon_state_if_value
-          variables:
-            entity: sensor.cat_device_failure_count
-            navigation_path: "/the-matrix/cats?anchor=status"
-        - type: custom:button-card
-          template: chip_icon_state_if_value
-          variables:
-            entity: sensor.devices_offline
-            navigation_path: "/the-matrix/network?anchor=disconnected"
-        - type: custom:button-card
-          template: chip_icon_state_if_value
-          variables:
-            entity: group.leak_sensors
-        - type: custom:button-card
-          template: chip_icon_state_if_value
-          variables:
-            entity: sensor.updates_available
-            navigation_path: "/the-matrix/network?anchor=updates"
-        - type: custom:button-card
-          template: chip_icon_state_if_value
-          variables:
-            entity: sensor.seedbox_vpn_on
-            ulm_chip_mdi_icon_only_icon: mdi:vpn
-          styles:
-            icon:
-              - color: >
-                  [[[ if (states["sensor.seedbox_vpn_on"].state == "False")
-                      return "var(--red-color)";
-                    else if (states["sensor.seedbox_vpn_on"].state == "Offline")
-                      return "var(--amber-color)";
-                    else
-                      return "var(--green-color)"; ]]]
-        - type: custom:button-card
-          template: poat_chip_double_state
-          variables:
-            ulm_chip_icon_double_state_icon: "❗"
-            ulm_chip_icon_double_state_icon_2: "⚠️"
-            ulm_chip_icon_double_state_entity_1: counter.homeassistant_errors
-            ulm_chip_icon_double_state_entity_2: counter.homeassistant_warnings
-            ulm_chip_navigate_path: /config/logs
-          state:
-            - operator: template
-              value: >
-                [[[ return states['counter.homeassistant_errors'].state === '0' 
-                  && states['counter.homeassistant_warnings'].state === '0' ]]]
-              styles:
-                card:
-                  - display: none
-
-  - type: custom:button-card
-    template: card_title
-    name: Rooms
-
-  #################
-  # ROOM CARDS LARGE
-  #################
   - type: vertical-stack
+    view_layout:
+      grid-area: status
     cards:
+      - type: custom:button-card
+        template: card_title
+        label: Status Updates
+
+      #################
+      # STATUS CHIPS
+      #################
+      - type: custom:mod-card
+        style:
+          hui-horizontal-stack-card$: |
+            #root { 
+              justify-content: center;
+            }
+        card:
+          type: horizontal-stack
+          cards:
+            - type: custom:button-card
+              template: chip_icon_state_if_value
+              variables:
+                entity: sensor.devices_with_low_battery
+                navigation_path: "/the-matrix/house?anchor=low-battery"
+            - type: custom:button-card
+              template: chip_icon_state_if_value
+              variables:
+                entity: sensor.cat_device_failure_count
+                navigation_path: "/the-matrix/cats?anchor=status"
+            - type: custom:button-card
+              template: chip_icon_state_if_value
+              variables:
+                entity: sensor.devices_offline
+                navigation_path: "/the-matrix/network?anchor=disconnected"
+            - type: custom:button-card
+              template: chip_icon_state_if_value
+              variables:
+                entity: group.leak_sensors
+            - type: custom:button-card
+              template: chip_icon_state_if_value
+              variables:
+                entity: sensor.updates_available
+                navigation_path: "/the-matrix/network?anchor=updates"
+            - type: custom:button-card
+              template: chip_icon_state_if_value
+              variables:
+                entity: sensor.seedbox_vpn_on
+                ulm_chip_mdi_icon_only_icon: mdi:vpn
+              styles:
+                icon:
+                  - color: >
+                      [[[ if (states["sensor.seedbox_vpn_on"].state == "False")
+                          return "var(--red-color)";
+                        else if (states["sensor.seedbox_vpn_on"].state == "Offline")
+                          return "var(--amber-color)";
+                        else
+                          return "var(--green-color)"; ]]]
+            - type: custom:button-card
+              template: poat_chip_double_state
+              variables:
+                ulm_chip_icon_double_state_icon: "❗"
+                ulm_chip_icon_double_state_icon_2: "⚠️"
+                ulm_chip_icon_double_state_entity_1: counter.homeassistant_errors
+                ulm_chip_icon_double_state_entity_2: counter.homeassistant_warnings
+                ulm_chip_navigate_path: /config/logs
+              state:
+                - operator: template
+                  value: >
+                    [[[ return states['counter.homeassistant_errors'].state === '0' 
+                      && states['counter.homeassistant_warnings'].state === '0' ]]]
+                  styles:
+                    card:
+                      - display: none
+
+  #############
+  # ROOM CARDS
+  #############
+  - type: vertical-stack
+    view_layout:
+      grid-area: rooms
+    cards:
+      - type: custom:button-card
+        template: card_title
+        name: Rooms
       - type: horizontal-stack
         cards:
           #################
@@ -277,6 +301,8 @@ cards:
             icon: mdi:shower
             variables:
               affix: guest_bath
+              problem_entities:
+                - group.cat_food_status
 
       - type: horizontal-stack
         cards:
