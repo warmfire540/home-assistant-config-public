@@ -97,25 +97,30 @@ cards:
             - type: custom:button-card
               template: chip_icon_state_if_value
               variables:
+                optional: true
                 entity: sensor.devices_with_low_battery
                 navigation_path: "/the-matrix/house?anchor=low-battery"
             - type: custom:button-card
               template: chip_icon_state_if_value
               variables:
+                optional: true
                 entity: sensor.cat_device_failure_count
                 navigation_path: "/the-matrix/cats?anchor=status"
             - type: custom:button-card
               template: chip_icon_state_if_value
               variables:
+                optional: true
                 entity: sensor.devices_offline
                 navigation_path: "/the-matrix/network?anchor=disconnected"
             - type: custom:button-card
               template: chip_icon_state_if_value
               variables:
+                optional: true
                 entity: group.leak_sensors
             - type: custom:button-card
               template: chip_icon_state_if_value
               variables:
+                optional: true
                 entity: sensor.updates_available
                 navigation_path: "/the-matrix/network?anchor=updates"
             - type: custom:button-card
