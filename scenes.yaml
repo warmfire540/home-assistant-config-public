@@ -10,7 +10,12 @@
   metadata: {}
 - id: '1716402862505'
   name: Vacation
-  entities: {}
+  entities:
+    climate.living_room:
+      fan_mode: 'off'
+      hvac_action: idle
+      preset_mode: eco
+      friendly_name: Thermostat
   icon: mdi:plane-car
   metadata: {}
 - id: '1716428655222'
