@@ -10,7 +10,7 @@ dryer:
   message: false
   done_message: clear_notification
   state: "off"
-  repeat: 60
+  repeat: 240
   data:
     tag: dryer_done
     prompt: dryer is done

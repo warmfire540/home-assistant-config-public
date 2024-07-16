@@ -22,7 +22,7 @@ cats:
     Marbles Food Status:  {{ states("binary_sensor.cat_noms_status_problem") }}
   done_message: clear_notification
   state: "on"
-  repeat: 15
+  repeat: 120
   data:
     tag: cat_issue
     prompt: cat's feeder has an issue
