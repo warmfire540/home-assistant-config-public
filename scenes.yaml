@@ -12,10 +12,27 @@
   name: Vacation
   entities:
     climate.living_room:
+      hvac_modes:
+      - heat
+      - cool
+      - heat_cool
+      - 'off'
+      min_temp: 50
+      max_temp: 90
+      fan_modes:
+      - 'on'
+      - 'off'
+      preset_modes:
+      - none
+      - eco
+      supported_features: 411
+      current_temperature: 75
+      temperature: 82
       fan_mode: 'off'
       hvac_action: idle
       preset_mode: eco
       friendly_name: Thermostat
+      state: cool
   icon: mdi:plane-car
   metadata: {}
 - id: '1716428655222'
