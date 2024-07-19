@@ -160,6 +160,7 @@ cards:
   - type: custom:layout-card
     layout_type: custom:grid-layout
     layout:
+      # desktop screen
       grid-template-columns: repeat(6, 1fr)
       grid-template-rows: auto
       grid-template-areas: |
@@ -167,14 +168,16 @@ cards:
         "living dining office kitchen bedroom bath"
         "guest spare garage attic shed ."
       mediaquery:
-        "(max-width: 1400px)":
+        # portrait monitor
+        "(orientation: portrait)":
           grid-template-columns: repeat(4, 1fr)
           grid-template-areas: |
             "label label label label"
             "living dining office kitchen "
             "bedroom bath guest spare"
             "garage attic shed ."
-        "(max-width: 600px)":
+        # iphone 14 pro max
+        "(max-width: 430px)":
           grid-template-columns: 1fr 1fr
           grid-template-areas: |
             "label label"
