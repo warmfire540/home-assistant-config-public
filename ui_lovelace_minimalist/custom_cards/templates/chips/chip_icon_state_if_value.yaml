@@ -11,7 +11,7 @@ chip_icon_state_if_value:
               else return "var(--green-color)"; ]]]
   state:
     - operator: "template"
-      value: "[[[ return variables.optional && entity.state != variables.on_state; ]]]"
+      value: "[[[ return variables.optional && entity.state != variables.on_state && (isNaN(entity.state) || entity.state == 0); ]]]"
       styles:
         card:
           - display: "none"

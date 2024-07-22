@@ -6,6 +6,32 @@ cards:
     variables:
       - sensor_prefix: kitchen
       - room_name: Kitchen
+  
+  - type: vertical-stack
+    view_layout:
+      grid-area: status
+    cards:
+      - type: custom:button-card
+        template: card_title
+        label: Status Updates
+
+      #################
+      # STATUS CHIPS
+      #################
+      - type: custom:mod-card
+        style:
+          hui-horizontal-stack-card$: |
+            #root { 
+              justify-content: center;
+            }
+        card:
+          type: horizontal-stack
+          cards:
+            - type: custom:button-card
+              template: chip_icon_state_if_value
+              variables:
+                entity: sensor.cat_device_failure_count
+                navigation_path: "/the-matrix/cats?anchor=status"
 
   - type: "custom:button-card"
     template: card_title
