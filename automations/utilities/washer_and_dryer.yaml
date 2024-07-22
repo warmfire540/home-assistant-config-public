@@ -65,6 +65,11 @@ action:
           - service: alert.turn_off
             target:
               entity_id: alert.washing_machine
+          - service: notify.family
+            data:
+              message: clear_notification
+              data:
+                tag: washer_done
 
       - conditions:
           - condition: trigger
@@ -86,3 +91,8 @@ action:
           - service: alert.turn_off
             target:
               entity_id: alert.dryer
+          - service: notify.family
+            data:
+              message: clear_notification
+              data:
+                tag: dryer_done

@@ -22,3 +22,9 @@ action:
   - service: alert.turn_off
     target:
       entity_id: alert.air_filter
+
+  - service: notify.family
+    data:
+      message: clear_notification
+      data:
+        tag: air_filter
