@@ -17,7 +17,7 @@
     state: "{{ states
 | rejectattr('domain','in',['button', 'tts', 'stt', 'number', 'conversation', 'automation', 'script'])
 | selectattr('state','in', ['unknown', 'unavailable'])
-| rejectattr('entity_id','search', 'poat_rgb|mfc_7860|plex|seedbox|poat_pi|media_player.xbox')
+| rejectattr('entity_id','search', 'poat_rgb|mfc_7860|plex|seedbox|poat_pi|media_player.xbox|remote.fire_tv')
 | rejectattr('entity_id','in', ['select.cat_noms_manual_feed', 'sensor.cat_noms_battery_status'])
 | rejectattr('name','search', 'Kitchen Bulb')
 | list
