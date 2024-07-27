@@ -18,13 +18,13 @@ cards:
           cards:
             - type: custom:button-card
               template: chip_navigate
-              label: 'Pi-Hole'
+              label: "Pi-Hole"
               variables:
                 ulm_chip_navigate_path: pi-hole
                 ulm_chip_navigate_icon: mdi:pi-hole
             - type: custom:button-card
               template: chip_navigate
-              label: 'Z-Wave'
+              label: "Z-Wave"
               variables:
                 ulm_chip_navigate_path: z-wave
                 ulm_chip_navigate_icon: mdi:z-wave
@@ -374,7 +374,7 @@ cards:
               port: "32400"
               libraryName: Watch Next
               entity:
-                - media_player.fire_tv_192_168_68_129
+                - media_player.fire_tv_192_168_68_115
 
   #################
   # DEVICE TRACKING
