@@ -1,23 +1,53 @@
 title: "House"
 path: "house"
+type: custom:grid-layout
+layout:
+  grid-template-columns: auto
+  grid-template-rows: auto
+  grid-template-areas: |
+    "nav title status ."
+    "sensors climate covers alerts"
+    "batteries schedules . ."
+  mediaquery:
+    # portrait monitor
+    "only screen and (min-width: 769px) and (max-width: 1400px)":
+      grid-template-columns: 2 fr
+      grid-template-areas: |
+        "nav ."
+        "title status"
+        "sensors climate"
+        "alerts covers"
+        "batteries schedules"
+    # Smartphones
+    "only screen and (max-width: 768px)":
+      grid-template-columns: 1fr
+      grid-template-areas: |
+        "nav"
+        "title"
+        "status"
+        "sensors"
+        "climate"
+        "covers"
+        "alerts"
+        "batteries"
+        "schedules"
 cards:
   - type: custom:button-card
     template: chip_back
+    view_layout:
+      grid-area: nav
     variables:
       ulm_chip_back_path: home
 
   - type: custom:button-card
     template: card_title
     name: House
+    view_layout:
+      grid-area: title
 
-  - type: custom:button-card
-    template: card_title
-    label: Status Updates
-
-  #################
-  # INFO CHIPS
-  #################
   - type: custom:mod-card
+    view_layout:
+      grid-area: status
     style:
       hui-horizontal-stack-card$: |
         #root { 
@@ -43,176 +73,206 @@ cards:
             action: navigate
             navigation_path: "/energy"
 
-  - type: custom:button-card
-    template: card_title
-    label: Sensors
-
-  - type: horizontal-stack
+  - type: vertical-stack
+    view_layout:
+      grid-area: sensors
     cards:
+      - type: custom:button-card
+        template: card_title
+        label: Sensors
+
+      - type: horizontal-stack
+        cards:
+          - type: custom:auto-entities
+            card:
+              type: "custom:mini-graph-card"
+              name: Temperatures
+              show:
+                legend: false
+            filter:
+              include:
+                - entity_id: "sensor.*_climate_air_temperature"
+
+          - type: custom:auto-entities
+            card:
+              type: "custom:mini-graph-card"
+              name: Humidities
+              show:
+                legend: false
+            filter:
+              include:
+                - entity_id: "sensor.*_climate_humidity"
+
       - type: custom:auto-entities
         card:
           type: "custom:mini-graph-card"
-          name: Temperatures
+          name: Electricity
           show:
             legend: false
         filter:
           include:
-            - entity_id: "sensor.*_climate_air_temperature"
+            - entity_id: "sensor.*_1min"
+
+  - type: vertical-stack
+    view_layout:
+      grid-area: climate
+    cards:
+      - type: custom:button-card
+        template: card_title
+        label: Climate
+
+      - type: thermostat
+        entity: climate.living_room
+
+  - type: vertical-stack
+    view_layout:
+      grid-area: covers
+    cards:
+      - type: custom:button-card
+        template: card_title
+        label: Blinds
+
+      - type: entities
+        entities:
+          - cover.all_covers
+
+      - type: horizontal-stack
+        cards:
+          - type: custom:decluttering-card
+            template: cover
+            variables:
+              - sensor_prefix: living_room
+              - show_details: false
+          - type: custom:decluttering-card
+            template: cover
+            variables:
+              - sensor_prefix: dining_room
+              - show_details: false
+      - type: horizontal-stack
+        cards:
+          - type: custom:decluttering-card
+            template: cover
+            variables:
+              - sensor_prefix: kitchen
+              - show_details: false
+          - type: custom:decluttering-card
+            template: cover
+            variables:
+              - sensor_prefix: bedroom
+              - show_details: false
+      - type: horizontal-stack
+        cards:
+          - type: custom:decluttering-card
+            template: cover
+            variables:
+              - sensor_prefix: office
+              - show_details: false
+          - type: custom:decluttering-card
+            template: cover
+            variables:
+              - sensor_prefix: guest_bedroom
+              - show_details: false
+
+  - type: vertical-stack
+    view_layout:
+      grid-area: alerts
+    cards:
+      - type: custom:button-card
+        template: card_title
+        label: Alerts
+
+      - type: custom:auto-entities
+        card:
+          type: entities
+        filter:
+          include:
+            - domain: alert
+
+  - type: vertical-stack
+    view_layout:
+      grid-area: batteries
+    cards:
+      - type: "custom:anchor-card"
+        anchor_id: low-battery
+        offset: -60
+
+      - type: custom:button-card
+        template: card_title
+        label: Batteries
 
       - type: custom:auto-entities
         card:
           type: "custom:mini-graph-card"
-          name: Humidities
+          name: Batteries
           show:
             legend: false
+            fill: false
         filter:
           include:
-            - entity_id: "sensor.*_climate_humidity"
+            - attributes:
+                device_class: battery
+          exclude:
+            - domain: binary_sensor
 
-  - type: custom:auto-entities
-    card:
-      type: "custom:mini-graph-card"
-      name: Electricity
-      show:
-        legend: false
-    filter:
-      include:
-        - entity_id: "sensor.*_1min"
+      - type: custom:auto-entities
+        card:
+          type: entities
+        filter:
+          include:
+            - attributes:
+                device_class: battery
+              options:
+                state_color: true
+          exclude:
+            - domain: binary_sensor
+        sort:
+          method: state
+          numeric: true
 
-  - type: custom:button-card
-    template: card_title
-    label: Climate
-
-  - type: thermostat
-    entity: climate.living_room
-
-  - type: entities
-    entities:
-      - cover.all_covers
-
-  - type: horizontal-stack
+  - type: vertical-stack
+    view_layout:
+      grid-area: schedules
     cards:
-      - type: custom:decluttering-card
-        template: cover
+      - type: custom:button-card
+        template: card_title
+        label: Schedules/Shopping
+
+      - type: horizontal-stack
+        cards:
+          - type: custom:trash-card
+            entity: calendar.trash
+            layout: vertical
+            next_days: 4
+            settings:
+              others:
+                color: grey
+                icon: mdi:trash-can-outline
+
+          - type: custom:trash-card
+            entity: calendar.recycling
+            layout: vertical
+            next_days: 7
+            settings:
+              others:
+                color: amber
+                icon: mdi:recycle-variant
+
+          - type: custom:trash-card
+            entity: calendar.yard_waste
+            next_days: 7
+            layout: vertical
+            settings:
+              others:
+                color: green
+                icon: mdi:flower
+
+      - type: custom:button-card
+        template: card_input_boolean
+        entity: input_boolean.on_vacation
         variables:
-          - sensor_prefix: living_room
-          - show_details: false
-      - type: custom:decluttering-card
-        template: cover
-        variables:
-          - sensor_prefix: dining_room
-          - show_details: false
-  - type: horizontal-stack
-    cards:
-      - type: custom:decluttering-card
-        template: cover
-        variables:
-          - sensor_prefix: kitchen
-          - show_details: false
-      - type: custom:decluttering-card
-        template: cover
-        variables:
-          - sensor_prefix: bedroom
-          - show_details: false
-  - type: horizontal-stack
-    cards:
-      - type: custom:decluttering-card
-        template: cover
-        variables:
-          - sensor_prefix: office
-          - show_details: false
-      - type: custom:decluttering-card
-        template: cover
-        variables:
-          - sensor_prefix: guest_bedroom
-          - show_details: false
+          ulm_card_input_boolean_name: Vacation Time!
 
-  - type: custom:button-card
-    template: card_title
-    label: Alerts
-
-  - type: custom:auto-entities
-    card:
-      type: entities
-    filter:
-      include:
-        - domain: alert
-
-  - type: "custom:anchor-card"
-    anchor_id: low-battery
-    offset: -60
-
-  - type: custom:button-card
-    template: card_title
-    label: Batteries
-
-  - type: custom:auto-entities
-    card:
-      type: "custom:mini-graph-card"
-      name: Batteries
-      show:
-        legend: false
-        fill: false
-    filter:
-      include:
-        - attributes:
-            device_class: battery
-      exclude:
-        - domain: binary_sensor
-
-  - type: custom:auto-entities
-    card:
-      type: entities
-    filter:
-      include:
-        - attributes:
-            device_class: battery
-          options:
-            state_color: true
-      exclude:
-        - domain: binary_sensor
-    sort:
-      method: state
-      numeric: true
-
-  - type: custom:button-card
-    template: card_title
-    label: Schedules/Shopping
-
-  - type: horizontal-stack
-    cards:
-      - type: custom:trash-card
-        entity: calendar.trash
-        layout: vertical
-        next_days: 4
-        settings:
-          others:
-            color: grey
-            icon: mdi:trash-can-outline
-
-      - type: custom:trash-card
-        entity: calendar.recycling
-        layout: vertical
-        next_days: 7
-        settings:
-          others:
-            color: amber
-            icon: mdi:recycle-variant
-
-      - type: custom:trash-card
-        entity: calendar.yard_waste
-        next_days: 7
-        layout: vertical
-        settings:
-          others:
-            color: green
-            icon: mdi:flower
-
-  - type: custom:button-card
-    template: card_input_boolean
-    entity: input_boolean.on_vacation
-    variables:
-      ulm_card_input_boolean_name: Vacation Time!
-
-  - type: shopping-list
-    title: Shopping List
+      - type: shopping-list
+        title: Shopping List
+        view_layout:
+          grid-area: shopping
