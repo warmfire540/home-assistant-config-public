@@ -45,6 +45,9 @@ cards:
     view_layout:
       grid-area: title
 
+  #################
+  # STATUS CHIPS
+  #################
   - type: custom:mod-card
     view_layout:
       grid-area: status
@@ -72,7 +75,17 @@ cards:
           tap_action:
             action: navigate
             navigation_path: "/energy"
+        - type: custom:button-card
+          template: chip_icon_state_if_value
+          variables:
+            optional: true
+            entity: sensor.devices_with_low_battery
+            navigation_path: "/the-matrix/house?anchor=low-battery"
 
+
+  #################
+  # SENSORS
+  #################
   - type: vertical-stack
     view_layout:
       grid-area: sensors
@@ -113,6 +126,9 @@ cards:
           include:
             - entity_id: "sensor.*_1min"
 
+  #################
+  # CLIMATE
+  #################
   - type: vertical-stack
     view_layout:
       grid-area: climate
@@ -173,6 +189,9 @@ cards:
               - sensor_prefix: guest_bedroom
               - show_details: false
 
+  #################
+  # ALERTS
+  #################
   - type: vertical-stack
     view_layout:
       grid-area: alerts
@@ -229,6 +248,9 @@ cards:
           method: state
           numeric: true
 
+  #################
+  # SCHEDULES
+  #################
   - type: vertical-stack
     view_layout:
       grid-area: schedules
