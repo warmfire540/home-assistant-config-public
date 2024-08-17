@@ -121,6 +121,18 @@ cards:
               template: chip_icon_state_if_value
               variables:
                 optional: true
+                entity: binary_sensor.rolo_error
+                navigation_path: /the-matrix/living-room
+            - type: custom:button-card
+              template: chip_icon_state_if_value
+              variables:
+                optional: true
+                entity: binary_sensor.strong_boi_error
+                navigation_path: /the-matrix/garage
+            - type: custom:button-card
+              template: chip_icon_state_if_value
+              variables:
+                optional: true
                 entity: sensor.updates_available
                 navigation_path: "/the-matrix/network?anchor=updates"
             - type: custom:button-card

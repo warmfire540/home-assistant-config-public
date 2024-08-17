@@ -19,17 +19,10 @@ cards:
     card:
       type: horizontal-stack
       cards:
-        - type: "custom:button-card"
-          template: chip_mdi_icon_state
-          entity: binary_sensor.rolo_error
-          styles:
-            icon:
-              - color: >
-                  [[[ if (entity.state == 'on')
-                        return "var(--red-color)" ;
-                      else return "var(--green-color)"; ]]]
+        - type: custom:button-card
+          template: chip_icon_state_if_value
           variables:
-            ulm_chip_mdi_icon_state_entity: binary_sensor.rolo_error
+            entity: binary_sensor.rolo_error
 
   - type: "custom:button-card"
     template: card_title
