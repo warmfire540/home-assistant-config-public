@@ -122,6 +122,12 @@ cards:
               template: chip_icon_state_if_value
               variables:
                 optional: true
+                on_state: 'True'
+                entity: sensor.printer_left_on
+            - type: custom:button-card
+              template: chip_icon_state_if_value
+              variables:
+                optional: true
                 entity: binary_sensor.rolo_error
                 navigation_path: /the-matrix/living-room
             - type: custom:button-card
