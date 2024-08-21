@@ -1,9 +1,11 @@
 ---
 chip_icon_state_if_value:
-  type: "custom:button-card"
+  type: custom:button-card
   template: chip_mdi_icon_state
   label: "[[[ if (entity.state > 0) return entity.state; ]]]"
   styles:
+    card:
+      - margin-right: 5px
     icon:
       - color: >
           [[[ if (entity.state > 0 || entity.state == variables.on_state) 
@@ -14,7 +16,7 @@ chip_icon_state_if_value:
       value: "[[[ return variables.optional && entity.state != variables.on_state && (isNaN(entity.state) || entity.state == 0); ]]]"
       styles:
         card:
-          - display: "none"
+          - display: none
   variables:
     ulm_chip_mdi_icon_state_entity: "[[[ return variables.entity; ]]]"
     on_state: "on"
