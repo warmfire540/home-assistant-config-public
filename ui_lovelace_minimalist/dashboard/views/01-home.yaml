@@ -122,6 +122,11 @@ cards:
               template: chip_icon_state_if_value
               variables:
                 optional: true
+                entity: binary_sensor.garage_door_tilt_window_door_is_open
+            - type: custom:button-card
+              template: chip_icon_state_if_value
+              variables:
+                optional: true
                 on_state: 'True'
                 entity: sensor.printer_left_on
             - type: custom:button-card
@@ -384,6 +389,8 @@ cards:
           problem_entities:
             - binary_sensor.water_heater_leak_sensor
             - binary_sensor.strong_boi_error
+            - binary_sensor.garage_door_tilt_window_door_is_open
+            - binary_sensor.dryer_door_sensor_window_door_is_open
           entity_1:
             entity_id: switch.garage_opener_socket_1
             templates:
@@ -397,9 +404,9 @@ cards:
             templates:
               - blue_on
           entity_4:
-            entity_id: binary_sensor.dryer_door_sensor_window_door_is_open
+            entity_id: binary_sensor.garage_door_tilt_window_door_is_open
             templates:
-              - blue_on
+              - red_on
 
       #################
       # ATTIC

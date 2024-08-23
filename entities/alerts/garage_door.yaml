@@ -1,0 +1,19 @@
+#####
+# Alert for Garage door open.
+#
+#####
+
+garage:
+  name: Garage door
+  entity_id: binary_sensor.garage_door_tilt_window_door_is_open
+  title: 🚘 Garage Open!
+  message: false
+  done_message: clear_notification
+  state: "on"
+  repeat: 15
+  data:
+    tag: garage_door
+    prompt: garage is open
+    backup: The garage door is open!
+  notifiers:
+    - family_ai
