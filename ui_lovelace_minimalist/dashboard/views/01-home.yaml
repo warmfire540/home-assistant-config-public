@@ -392,21 +392,26 @@ cards:
             - binary_sensor.garage_door_tilt_window_door_is_open
             - binary_sensor.dryer_door_sensor_window_door_is_open
           entity_1:
-            entity_id: switch.garage_opener_socket_1
-            templates:
-              - blue_on
-          entity_2:
-            entity_id: input_boolean.washing_machine_on
-            templates:
-              - blue_on
-          entity_3:
-            entity_id: input_boolean.dryer_on
-            templates:
-              - blue_on
-          entity_4:
             entity_id: binary_sensor.garage_door_tilt_window_door_is_open
             templates:
               - red_on
+            tap_action:
+              action: call-service
+              service: switch.toggle
+              service_data:
+                entity_id: switch.garage_opener
+          entity_2:
+            entity_id: switch.garage_opener_socket_1
+            templates:
+              - blue_on
+          entity_3:
+            entity_id: input_boolean.washing_machine_on
+            templates:
+              - blue_on
+          entity_4:
+            entity_id: input_boolean.dryer_on
+            templates:
+              - blue_on
 
       #################
       # ATTIC

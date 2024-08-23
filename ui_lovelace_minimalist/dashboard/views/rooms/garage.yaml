@@ -22,15 +22,35 @@ cards:
         - type: custom:button-card
           template: chip_icon_state_if_value
           variables:
+            entity: binary_sensor.garage_door_tilt_window_door_is_open
+        - type: custom:button-card
+          template: chip_icon_state_if_value
+          variables:
             entity: binary_sensor.strong_boi_error
 
+  #################
+  # DEVICES
+  #################
   - type: "custom:button-card"
     template: card_title
     label: Devices
 
   - type: "custom:button-card"
     template: card_light
+    entity: binary_sensor.garage_door_tilt_window_door_is_open
+    variables:
+      ulm_card_light_name: Garage Door
+    tap_action:
+      action: call-service
+      service: switch.toggle
+      service_data:
+        entity_id: switch.garage_opener
+
+  - type: "custom:button-card"
+    template: card_light
     entity: switch.garage_opener_socket_1
+    variables:
+      ulm_card_light_name: Garage Door Power
 
   - type: "custom:vacuum-card"
     entity: vacuum.strongboi
@@ -51,12 +71,9 @@ cards:
           unit: "%"
           subtitle: Side Brush
 
-  - type: custom:decluttering-card
-    template: z_wave_climate
-    variables:
-      - sensor_prefix: garage
-      - node_number: 6
-
+  #################
+  # SENSORS
+  #################
   - type: "custom:button-card"
     template: card_title
     label: Sensors
@@ -118,9 +135,18 @@ cards:
       ulm_card_graph_entity: sensor.water_heater_5_1min
       ulm_card_graph_name: Water Heater
 
+  #################
+  # DEVICE HEALTH
+  #################
   - type: "custom:button-card"
     template: card_title
     label: Device Health
+
+  - type: custom:decluttering-card
+    template: z_wave_climate
+    variables:
+      - sensor_prefix: garage
+      - node_number: 6
 
   - type: custom:decluttering-card
     template: leak_sensors
