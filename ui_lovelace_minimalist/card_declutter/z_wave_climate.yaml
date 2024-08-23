@@ -5,11 +5,11 @@ z_wave_climate:
       - type: custom:layout-card
         layout_type: grid
         layout_options:
-          grid-template-columns: repeat(5, 1fr)
+          grid-template-columns: repeat(4, 1fr)
           grid-template-rows: repeat(2, 1fr)
           grid-template-areas: |
-            "firmware firmware firmware temp humid"
-            "moist overheat underheat batt status"
+            "firmware firmware temp humid"
+            "overheat underheat batt status"
           margin: 0
           padding: 0
           card_margin: 0
@@ -65,17 +65,6 @@ z_wave_climate:
             icon_type: none
             view_layout:
               grid-area: underheat
-            card_mod:
-              style: |
-                ha-card {
-                  text-align: center;
-                }
-          - type: custom:mushroom-entity-card
-            entity: 'binary_sensor.[[sensor_prefix]]_climate_moisture_alarm'
-            name: Moisture
-            icon_type: none
-            view_layout:
-              grid-area: moist
             card_mod:
               style: |
                 ha-card {
