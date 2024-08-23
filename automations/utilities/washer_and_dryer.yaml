@@ -22,6 +22,7 @@ trigger:
     id: washer_off
     variables:
       input_entity: input_boolean.washing_machine_on
+      end_entity: input_boolean.washing_machine_end
 
   - platform: numeric_state
     entity_id: sensor.dryer_1_1min
@@ -38,6 +39,7 @@ trigger:
     id: dryer_off
     variables:
       input_entity: input_boolean.dryer_on
+      end_entity: input_boolean.dryer_end
 
   - platform: device
     type: opened
@@ -45,6 +47,8 @@ trigger:
     entity_id: 4986450410536f6afbeaefa26a3fd5ce
     domain: binary_sensor
     id: dryer_door
+    variables:
+      end_entity: input_boolean.dryer_end
 
 action:
   - choose:
@@ -62,14 +66,12 @@ action:
           - condition: trigger
             id:
               - dryer_on
+          - service: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.washing_machine_end
           - service: alert.turn_off
             target:
               entity_id: alert.washing_machine
-          - service: notify.family
-            data:
-              message: clear_notification
-              data:
-                tag: washer_done
 
       - conditions:
           - condition: trigger
@@ -82,17 +84,15 @@ action:
           - service: input_boolean.turn_off
             target:
               entity_id: "{{ input_entity }}"
+          - service: input_boolean.turn_on
+            target:
+              entity_id: "{{ end_entity }}"
 
       - conditions:
           - condition: trigger
             id:
               - dryer_door
         sequence:
-          - service: alert.turn_off
+          - service: input_boolean.turn_off
             target:
-              entity_id: alert.dryer
-          - service: notify.family
-            data:
-              message: clear_notification
-              data:
-                tag: dryer_done
+              entity_id: "{{ end_entity }}"

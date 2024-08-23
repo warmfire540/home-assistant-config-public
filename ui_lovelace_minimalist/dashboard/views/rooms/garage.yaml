@@ -65,21 +65,34 @@ cards:
     cards:
       - type: "custom:button-card"
         template: card_input_boolean
-        entity: input_boolean.dryer_on
+        entity: input_boolean.washing_machine_on
         variables:
           ulm_card_input_boolean_force_background_color: true
       - type: "custom:button-card"
         template: card_input_boolean
-        entity: binary_sensor.dryer_door_sensor_window_door_is_open
+        entity: input_boolean.dryer_on
         variables:
           ulm_card_input_boolean_force_background_color: true
-          ulm_card_input_boolean_name: Dryer Door
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: card_input_boolean
+        entity: input_boolean.washing_machine_end
+        variables:
+          ulm_card_input_boolean_force_background_color: true
+      - type: "custom:button-card"
+        template: card_input_boolean
+        entity: input_boolean.dryer_end
+        variables:
+          ulm_card_input_boolean_force_background_color: true
 
   - type: "custom:button-card"
     template: card_input_boolean
-    entity: input_boolean.washing_machine_on
+    entity: binary_sensor.dryer_door_sensor_window_door_is_open
     variables:
       ulm_card_input_boolean_force_background_color: true
+      ulm_card_input_boolean_name: Dryer Door
 
   - type: horizontal-stack
     cards:

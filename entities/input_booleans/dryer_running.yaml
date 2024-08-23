@@ -7,3 +7,7 @@
 dryer_on:
   name: Dryer
   icon: mdi:tumble-dryer
+
+dryer_end:
+  name: Dryer End
+  icon: mdi:tumble-dryer-off

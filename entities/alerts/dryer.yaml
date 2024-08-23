@@ -5,11 +5,11 @@
 
 dryer:
   name: Dryer done
-  entity_id: input_boolean.dryer_on
+  entity_id: input_boolean.dryer_end
   title: 🧦 Dryer done!
   message: false
   done_message: clear_notification
-  state: "off"
+  state: "on"
   repeat: 240
   data:
     tag: dryer_done

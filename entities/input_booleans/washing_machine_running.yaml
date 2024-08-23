@@ -7,3 +7,7 @@
 washing_machine_on:
   name: Washing Machine
   icon: mdi:washing-machine
+
+washing_machine_end:
+  name: Washing Machine End
+  icon: mdi:washing-machine-off
