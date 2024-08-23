@@ -132,3 +132,11 @@ cards:
     variables:
       - sensor_prefix: dryer
       - node_number: 22
+
+  - type: custom:decluttering-card
+    template: z_wave_door_sensor
+    variables:
+      - name: Tilt Sensor
+      - sensor_prefix: garage
+      - sensor_type: tilt
+      - node_number: 26

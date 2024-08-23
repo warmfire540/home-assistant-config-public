@@ -1,4 +1,7 @@
 z_wave_door_sensor:
+  default:
+    - sensor_type: sensor
+    - name: Door Sensor
   card:
     type: custom:stack-in-card
     cards:
@@ -14,19 +17,19 @@ z_wave_door_sensor:
           card_margin: 0
         margin: 0px
         cards:
-          - type: 'custom:button-card'
+          - type: "custom:button-card"
             template:
               - card_generic_swap
               - battery_info
-            entity: 'update.[[sensor_prefix]]_door_sensor_firmware'
+            entity: "update.[[sensor_prefix]]_door_[[sensor_type]]_firmware"
             variables:
-              ulm_card_generic_swap_name: Door Sensor
+              ulm_card_generic_swap_name: "[[name]]"
               ulm_card_generic_swap_icon: mdi:z-wave
-              ulm_battery_entity: 'sensor.[[sensor_prefix]]_door_sensor_battery_level'
+              ulm_battery_entity: "sensor.[[sensor_prefix]]_door_[[sensor_type]]_battery_level"
             view_layout:
               grid-area: firmware
           - type: custom:mushroom-entity-card
-            entity: 'binary_sensor.[[sensor_prefix]]_door_sensor_window_door_is_open'
+            entity: "binary_sensor.[[sensor_prefix]]_door_[[sensor_type]]_window_door_is_open"
             primary_info: none
             secondary_info: none
             view_layout:
@@ -39,7 +42,7 @@ z_wave_door_sensor:
                   align-items: center;
                 }
           - type: custom:mushroom-entity-card
-            entity: 'binary_sensor.[[sensor_prefix]]_door_sensor_low_battery_level'
+            entity: "binary_sensor.[[sensor_prefix]]_door_[[sensor_type]]_low_battery_level"
             name: Battery
             icon_type: none
             view_layout:
@@ -50,7 +53,7 @@ z_wave_door_sensor:
                   text-align: center;
                 }
           - type: custom:mushroom-entity-card
-            entity: 'sensor.node_[[node_number]]_node_status'
+            entity: "sensor.node_[[node_number]]_node_status"
             name: Status
             icon_type: none
             view_layout:
