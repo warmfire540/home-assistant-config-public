@@ -2,8 +2,6 @@ title: "Home"
 path: "home"
 type: custom:grid-layout
 layout:
-  grid-template-columns: auto
-  grid-template-rows: auto
   grid-template-areas: |
     "welcome people"
     "welcome status"

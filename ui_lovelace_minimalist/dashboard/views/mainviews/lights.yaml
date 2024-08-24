@@ -1,52 +1,103 @@
 title: "Lights"
 path: "lights"
+type: custom:grid-layout
+layout:
+  grid-template-columns: auto
+  grid-template-rows: auto
+  grid-template-areas: |
+    "nav title status killswitch"
+    "cover cover cover cover"
+    "lights-on switches-on lights-off switches-off"
+  mediaquery:
+    # portrait monitor
+    "only screen and (min-width: 769px) and (max-width: 1400px)":
+      grid-template-areas: |
+        "nav ."
+        "title killswitch"
+        "status status"
+        "cover cover"
+        "lights-on switches-on"
+        "lights-off switches-off"
+    # Smartphones
+    "only screen and (max-width: 768px)":
+      grid-template-areas: |
+        "nav ."
+        "title killswitch"
+        "status status"
+        "cover cover"
+        "lights-on lights-on"
+        "switches-on switches-on"
+        "lights-off lights-off"
+        "switches-off switches-off"
 cards:
   - type: "custom:button-card"
     template: chip_back
+    view_layout:
+      grid-area: nav
     variables:
       ulm_chip_back_path: home
 
-  - type: horizontal-stack
-    cards:
-      - type: "custom:button-card"
-        template: card_title
-        name: Lights
+  - type: "custom:button-card"
+    template: card_title
+    name: Lights
+    view_layout:
+      grid-area: title
 
-      - type: custom:mushroom-chips-card
-        chips:
-          - type: entity
+  #################
+  # STATUS CHIPS
+  #################
+  - type: custom:mod-card
+    view_layout:
+      grid-area: status
+    style:
+      hui-horizontal-stack-card$: |
+        #root { 
+          justify-content: center;
+        }
+    card:
+      type: horizontal-stack
+      cards:
+        - type: custom:button-card
+          template: chip_icon_state_if_value
+          variables:
             entity: sensor.lights_on
-            name: Lights On
-            icon_color: amber
-          - type: entity
+            on_color: var(--amber-color)
+        - type: custom:button-card
+          template: chip_icon_state_if_value
+          variables:
             entity: sensor.switches_on
-            icon_color: amber
-        alignment: center
+            on_color: var(--amber-color)
 
-      - type: "custom:button-card"
-        template: chip_icon_label
-        label: Kill lights
-        icon: "mdi:power-plug-off"
-        tap_action:
-          action: call-service
-          service: script.turn_off_house
-        styles:
-          icon:
-            - color: >
-                [[[ if (states['sensor.lights_on'].state >= 1) 
-                      return "var(--green-color)" ;
-                    else return "var(--red-color)"; ]]]
+  - type: "custom:button-card"
+    template: chip_icon_label
+    label: Kill lights
+    icon: "mdi:power-plug-off"
+    view_layout:
+      grid-area: killswitch
+    tap_action:
+      action: call-service
+      service: script.turn_off_house
+    styles:
+      icon:
+        - color: >
+            [[[ if (states['sensor.lights_on'].state >= 1) 
+                  return "var(--green-color)" ;
+                else return "var(--red-color)"; ]]]
 
   - type: "custom:button-card"
     template:
       - card_cover
     entity: cover.all_covers
+    view_layout:
+      grid-area: cover
     variables:
       ulm_card_cover_enable_controls: true
       ulm_card_cover_enable_slider: true
       ulm_card_cover_color: green
 
   - type: custom:auto-entities
+    view_layout:
+      grid-area: lights-on
     card:
       type: glance
       title: Lights on
@@ -63,6 +114,8 @@ cards:
               action: toggle
 
   - type: custom:auto-entities
+    view_layout:
+      grid-area: switches-on
     card:
       type: glance
       title: Switches on
@@ -79,6 +132,8 @@ cards:
               action: toggle
 
   - type: custom:auto-entities
+    view_layout:
+      grid-area: lights-off
     card:
       type: glance
       title: Lights off
@@ -95,6 +150,8 @@ cards:
               action: toggle
 
   - type: custom:auto-entities
+    view_layout:
+      grid-area: switches-off
     card:
       type: glance
       title: Switches off

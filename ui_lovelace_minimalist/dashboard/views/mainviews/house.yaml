@@ -2,8 +2,6 @@ title: "House"
 path: "house"
 type: custom:grid-layout
 layout:
-  grid-template-columns: auto
-  grid-template-rows: auto
   grid-template-areas: |
     "nav title status ."
     "sensors climate covers alerts"
@@ -11,7 +9,6 @@ layout:
   mediaquery:
     # portrait monitor
     "only screen and (min-width: 769px) and (max-width: 1400px)":
-      grid-template-columns: 2 fr
       grid-template-areas: |
         "nav ."
         "title status"
@@ -20,7 +17,6 @@ layout:
         "batteries schedules"
     # Smartphones
     "only screen and (max-width: 768px)":
-      grid-template-columns: 1fr
       grid-template-areas: |
         "nav"
         "title"
@@ -296,5 +292,3 @@ cards:
 
       - type: shopping-list
         title: Shopping List
-        view_layout:
-          grid-area: shopping
