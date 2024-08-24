@@ -11,10 +11,6 @@ cards:
     template: card_title
     label: Devices
 
-  - type: "custom:button-card"
-    template: card_light
-    entity: switch.gina_computer_socket_1
-
   - type: custom:decluttering-card
     template: cover
     variables:

@@ -354,10 +354,6 @@ cards:
           grid-area: guest
         variables:
           affix: guest_bedroom
-          entity_1:
-            entity_id: switch.gina_computer_socket_1
-            templates:
-              - blue_on
 
       #################
       # GUEST BATHROOM
