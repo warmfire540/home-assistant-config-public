@@ -89,6 +89,7 @@ cards:
       title: Lights on
     else:
       type: markdown
+      title: Lights on
       content: >-
         <ha-alert alert-type="info">No lights on!</ha-alert>
     filter:
@@ -107,6 +108,7 @@ cards:
       title: Switches on
     else:
       type: markdown
+      title: Switches on
       content: >-
         <ha-alert alert-type="info">No switches on!</ha-alert>
     filter:

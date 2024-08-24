@@ -1,84 +1,57 @@
 title: "Cats"
 path: "cats"
+type: custom:grid-layout
+layout:
+  grid-template-areas: |
+    "nav title status"
+    "chonk-title . ."
+    "chonk chonk thicc"
+    "feeder-title . ."
+    "water noms fountain"
+  mediaquery:
+    # portrait monitor
+    "only screen and (min-width: 769px) and (max-width: 1400px)":
+      grid-template-areas: |
+        "nav ."
+        "title status"
+        "chonk-title ."
+        "chonk thicc"
+        "feeder-title ."
+        "water noms"
+        "fountain ."
+    # Smartphones
+    "only screen and (max-width: 768px)":
+      grid-template-areas: |
+        "nav"
+        "title"
+        "status"
+        "chonk-title"
+        "chonk"
+        "thicc"
+        "feeder-title"
+        "water"
+        "noms"
+        "fountain"
 cards:
   - type: "custom:button-card"
     template: chip_back
+    view_layout:
+      grid-area: nav
     variables:
       ulm_chip_back_path: home
 
   - type: "custom:button-card"
     template: card_title
     name: Cats
-
-  - type: "custom:button-card"
-    template: card_title
-    label: Chonk
-
-  - type: horizontal-stack
-    cards:
-      - type: "custom:button-card"
-        name: Lags
-        entity: number.lagertha_set_weight
-        entity_picture: "[[[ return states['number.lagertha_set_weight'].attributes.entity_picture; ]]]"
-        layout: name_state
-        show_entity_picture: true
-        show_state: true
-      - type: "custom:button-card"
-        name: Ellie
-        entity: number.ellie_set_weight
-        entity_picture: "[[[ return states['number.ellie_set_weight'].attributes.entity_picture; ]]]"
-        layout: name_state
-        show_entity_picture: true
-        show_state: true
-
-  - type: horizontal-stack
-    cards:
-      - type: "custom:button-card"
-        name: TP
-        entity: number.the_punisher_set_weight
-        entity_picture: "[[[ return states['number.the_punisher_set_weight'].attributes.entity_picture; ]]]"
-        layout: name_state
-        show_entity_picture: true
-        show_state: true
-      - type: "custom:button-card"
-        name: Marbles
-        entity: number.marbles_set_weight
-        entity_picture: "[[[ return states['number.marbles_set_weight'].attributes.entity_picture; ]]]"
-        layout: name_state
-        show_entity_picture: true
-        show_state: true
-
-  - type: horizontal-stack
-    cards:
-      - type: custom:mini-graph-card
-        name: Thiccness
-        unit: "lb"
-        hours_to_show: 300
-        points_per_hour: 0.05
-        show_points: false
-        icon: mdi:weight-kilogram
-        entities:
-          - entity: number.lagertha_set_weight
-            name: Lags
-          - entity: number.ellie_set_weight
-            name: Ellie
-          - entity: number.the_punisher_set_weight
-            name: TP
-          - entity: number.marbles_set_weight
-            name: Marbles
-
-  - type: "custom:button-card"
-    template: card_title
-    label: Feeders
-
-  - type: "custom:anchor-card"
-    anchor_id: status
-    offset: -60
+    view_layout:
+      grid-area: title
 
   #################
   # STATUS CHIPS
   #################
   - type: custom:mod-card
+    view_layout:
+      grid-area: status
     style: 
       hui-horizontal-stack-card$: |
         #root { 
@@ -90,7 +63,7 @@ cards:
         - type: "custom:button-card"
           template: chip_mdi_icon_state
           entity: sensor.pet_thirst_filter
-          label: "[[[ return 'Filter ' + entity.state + '%'; ]]]"
+          label: "[[[ return entity.state + '%'; ]]]"
           styles:
             icon:
               - color: >
@@ -132,96 +105,172 @@ cards:
           variables:
             entity: binary_sensor.cat_noms_food_level
 
-  - type: horizontal-stack
+  
+  - type: "custom:button-card"
+    template: card_title
+    label: Chonk
+    view_layout:
+      grid-area: chonk-title
+
+  - type: vertical-stack
+    view_layout:
+      grid-area: chonk
     cards:
-      - type: entities
-        title: Water Fountain
-        card_mod:
-          style: |
-            ha-card {
-              background: 
-                {% if is_state('group.cat_water_status', 'on') %}
-                  rgba(var(--color-background-red),var(--opacity-bg))
-                {% endif %}
-            }
+      - type: horizontal-stack
+        cards:
+          - type: "custom:button-card"
+            name: Lags
+            entity: number.lagertha_set_weight
+            entity_picture: "[[[ return states['number.lagertha_set_weight'].attributes.entity_picture; ]]]"
+            layout: name_state
+            show_entity_picture: true
+            show_state: true
+          - type: "custom:button-card"
+            name: Ellie
+            entity: number.ellie_set_weight
+            entity_picture: "[[[ return states['number.ellie_set_weight'].attributes.entity_picture; ]]]"
+            layout: name_state
+            show_entity_picture: true
+            show_state: true
+
+      - type: horizontal-stack
+        cards:
+          - type: "custom:button-card"
+            name: TP
+            entity: number.the_punisher_set_weight
+            entity_picture: "[[[ return states['number.the_punisher_set_weight'].attributes.entity_picture; ]]]"
+            layout: name_state
+            show_entity_picture: true
+            show_state: true
+          - type: "custom:button-card"
+            name: Marbles
+            entity: number.marbles_set_weight
+            entity_picture: "[[[ return states['number.marbles_set_weight'].attributes.entity_picture; ]]]"
+            layout: name_state
+            show_entity_picture: true
+            show_state: true
+
+  - type: horizontal-stack
+    view_layout:
+      grid-area: thicc
+    cards:
+      - type: custom:mini-graph-card
+        name: Thiccness
+        unit: "lb"
+        hours_to_show: 300
+        points_per_hour: 0.05
+        show_points: false
+        icon: mdi:weight-kilogram
         entities:
-          - entity: switch.pet_thirst_power
-            name: Power
-          - type: section
-            label: Sensors
-          - entity: binary_sensor.pet_thirst_water_level
-            name: Water Level
-          - entity: sensor.pet_thirst_filter
-            name: Filter %
+          - entity: number.lagertha_set_weight
+            name: Lags
+          - entity: number.ellie_set_weight
+            name: Ellie
+          - entity: number.the_punisher_set_weight
+            name: TP
+          - entity: number.marbles_set_weight
+            name: Marbles
 
-          - type: section
-            label: Configuration
-          - entity: switch.pet_thirst_light
-            name: Light
-          - entity: switch.pet_thirst_do_not_disturb
-            name: Do not disturb
-          - entity: button.pet_thirst_reset_filter
-            name: Reset Filter
-          - entity: select.pet_thirst_mode
-            name: Mode
-          - entity: select.pet_thirst_light_brightness
-            name: Light brightness
+  - type: "custom:button-card"
+    template: card_title
+    label: Feeders
+    view_layout:
+      grid-area: feeder-title
 
-          - type: section
-            label: Diagnostic
-          - entity: sensor.pet_thirst_energy_usage
-            name: Energy usage
-          - entity: sensor.pet_thirst_last_data_update
-            name: Last updated
-          - entity: sensor.pet_thirst_purified_water_today
-            name: Purified today
-          - entity: counter.cat_filters
-            name: Spare filters
+  - type: entities
+    title: Water Fountain
+    view_layout:
+      grid-area: water
+    card_mod:
+      style: |
+        ha-card {
+          background: 
+            {% if is_state('group.cat_water_status', 'on') %}
+              rgba(var(--color-background-red),var(--opacity-bg))
+            {% endif %}
+        }
+    entities:
+      - entity: switch.pet_thirst_power
+        name: Power
+      - type: section
+        label: Sensors
+      - entity: binary_sensor.pet_thirst_water_level
+        name: Water Level
+      - entity: sensor.pet_thirst_filter
+        name: Filter %
 
-      - type: entities
-        title: Cat Noms
-        card_mod:
-          style: |
-            ha-card {
-              background: 
-                {% if is_state('group.cat_food_status', 'on') %}
-                  rgba(var(--color-background-red),var(--opacity-bg))
-                {% endif %}
-            }
-        entities:
-          - entity: select.cat_noms_manual_feed
-            name: Manual feed
+      - type: section
+        label: Configuration
+      - entity: switch.pet_thirst_light
+        name: Light
+      - entity: switch.pet_thirst_do_not_disturb
+        name: Do not disturb
+      - entity: button.pet_thirst_reset_filter
+        name: Reset Filter
+      - entity: select.pet_thirst_mode
+        name: Mode
+      - entity: select.pet_thirst_light_brightness
+        name: Light brightness
 
-          - type: section
-            label: Sensors
-          - entity: sensor.cat_noms_desiccant_days_remaining
-            name: Desicant remaining
-          - entity: binary_sensor.cat_noms_food_level
-            name: Food Level
+      - type: section
+        label: Diagnostic
+      - entity: sensor.pet_thirst_energy_usage
+        name: Energy usage
+      - entity: sensor.pet_thirst_last_data_update
+        name: Last updated
+      - entity: sensor.pet_thirst_purified_water_today
+        name: Purified today
+      - entity: counter.cat_filters
+        name: Spare filters
 
-          - type: section
-            label: Configuration
-          - entity: switch.cat_noms_indicator_light
-            name: Light
-          - entity: switch.cat_noms_child_lock
-            name: Child Lock
-          - entity: button.cat_noms_reset_desiccant
-            name: Reset Desiccant
+  - type: entities
+    title: Cat Noms
+    view_layout:
+      grid-area: noms
+    card_mod:
+      style: |
+        ha-card {
+          background: 
+            {% if is_state('group.cat_food_status', 'on') %}
+              rgba(var(--color-background-red),var(--opacity-bg))
+            {% endif %}
+        }
+    entities:
+      - entity: select.cat_noms_manual_feed
+        name: Manual feed
 
-          - type: section
-            label: Diagnostic
-          - entity: sensor.cat_noms_battery_status
-            name: Battery
-          - entity: sensor.cat_noms_error
-            name: Error
-          - entity: sensor.cat_noms_rssi
-            name: RSII
-          - entity: sensor.cat_noms_status
-            name: Status
+      - type: section
+        label: Sensors
+      - entity: sensor.cat_noms_desiccant_days_remaining
+        name: Desicant remaining
+      - entity: binary_sensor.cat_noms_food_level
+        name: Food Level
+
+      - type: section
+        label: Configuration
+      - entity: switch.cat_noms_indicator_light
+        name: Light
+      - entity: switch.cat_noms_child_lock
+        name: Child Lock
+      - entity: button.cat_noms_reset_desiccant
+        name: Reset Desiccant
+
+      - type: section
+        label: Diagnostic
+      - entity: sensor.cat_noms_battery_status
+        name: Battery
+      - entity: sensor.cat_noms_error
+        name: Error
+      - entity: sensor.cat_noms_rssi
+        name: RSII
+      - entity: sensor.cat_noms_status
+        name: Status
 
   - type: entities
     title: Dumb Water Fountain
     icon: mdi:fountain
+    view_layout:
+      grid-area: fountain
     entities:
       - entity: sensor.cat_dumb_water_filter
         name: Filter Changed

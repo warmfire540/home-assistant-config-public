@@ -104,7 +104,7 @@ cards:
               variables:
                 optional: true
                 entity: sensor.cat_device_failure_count
-                navigation_path: "/the-matrix/cats?anchor=status"
+                navigation_path: "/the-matrix/cats"
             - type: custom:button-card
               template: chip_icon_state_if_value
               variables:
