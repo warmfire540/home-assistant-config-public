@@ -1,4 +1,8 @@
 cover:
+  default:
+    - fave_percent: false
+    - show_details: true
+    - compact: false
   card:
     type: "custom:button-card"
     template:
@@ -6,10 +10,9 @@ cover:
       - battery_info
     entity: cover.[[sensor_prefix]]_blinds
     variables:
-      fave_percent: false
-      show_details: true
-      ulm_card_cover_enable_controls: '[[show_details]]'
+      ulm_card_cover_enable_controls: 'false if [[compact]] else [[show_details]]'
       ulm_card_cover_enable_slider: '[[show_details]]'
+      ulm_card_cover_enable_horizontal: '[[compact]]'
       ulm_card_cover_color: green
       ulm_battery_entity: sensor.[[sensor_prefix]]_blinds_battery
       ulm_card_cover_favorite_percentage: '[[fave_percent]]'

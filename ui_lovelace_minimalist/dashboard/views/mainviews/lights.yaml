@@ -6,7 +6,6 @@ layout:
   grid-template-rows: auto
   grid-template-areas: |
     "nav title status killswitch"
-    "cover cover cover cover"
     "lights-on switches-on lights-off switches-off"
   mediaquery:
     # portrait monitor
@@ -15,7 +14,6 @@ layout:
         "nav ."
         "title killswitch"
         "status status"
-        "cover cover"
         "lights-on switches-on"
         "lights-off switches-off"
     # Smartphones
@@ -24,7 +22,6 @@ layout:
         "nav ."
         "title killswitch"
         "status status"
-        "cover cover"
         "lights-on lights-on"
         "switches-on switches-on"
         "lights-off lights-off"
@@ -83,17 +80,6 @@ cards:
             [[[ if (states['sensor.lights_on'].state >= 1) 
                   return "var(--green-color)" ;
                 else return "var(--red-color)"; ]]]
-
-  - type: "custom:button-card"
-    template:
-      - card_cover
-    entity: cover.all_covers
-    view_layout:
-      grid-area: cover
-    variables:
-      ulm_card_cover_enable_controls: true
-      ulm_card_cover_enable_slider: true
-      ulm_card_cover_color: green
 
   - type: custom:auto-entities
     view_layout:

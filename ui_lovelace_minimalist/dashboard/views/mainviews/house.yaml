@@ -148,42 +148,42 @@ cards:
         entities:
           - cover.all_covers
 
-      - type: horizontal-stack
-        cards:
-          - type: custom:decluttering-card
-            template: cover
-            variables:
-              - sensor_prefix: living_room
-              - show_details: false
-          - type: custom:decluttering-card
-            template: cover
-            variables:
-              - sensor_prefix: dining_room
-              - show_details: false
-      - type: horizontal-stack
-        cards:
-          - type: custom:decluttering-card
-            template: cover
-            variables:
-              - sensor_prefix: kitchen
-              - show_details: false
-          - type: custom:decluttering-card
-            template: cover
-            variables:
-              - sensor_prefix: bedroom
-              - show_details: false
-      - type: horizontal-stack
-        cards:
-          - type: custom:decluttering-card
-            template: cover
-            variables:
-              - sensor_prefix: office
-              - show_details: false
-          - type: custom:decluttering-card
-            template: cover
-            variables:
-              - sensor_prefix: guest_bedroom
-              - show_details: false
+      - type: custom:decluttering-card
+        template: cover
+        variables:
+          - sensor_prefix: living_room
+          - show_details: false
+          - compact: true
+      - type: custom:decluttering-card
+        template: cover
+        variables:
+          - sensor_prefix: dining_room
+          - show_details: false
+          - compact: true
+      - type: custom:decluttering-card
+        template: cover
+        variables:
+          - sensor_prefix: kitchen
+          - show_details: false
+          - compact: true
+      - type: custom:decluttering-card
+        template: cover
+        variables:
+          - sensor_prefix: bedroom
+          - show_details: false
+          - compact: true
+      - type: custom:decluttering-card
+        template: cover
+        variables:
+          - sensor_prefix: office
+          - show_details: false
+          - compact: true
+      - type: custom:decluttering-card
+        template: cover
+        variables:
+          - sensor_prefix: guest_bedroom
+          - show_details: false
+          - compact: true
 
   #################
   # ALERTS
