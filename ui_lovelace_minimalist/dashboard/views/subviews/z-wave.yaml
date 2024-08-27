@@ -1,38 +1,117 @@
 title: "Z-Wave"
 path: "z-wave"
+type: custom:grid-layout
+layout:
+  grid-template-areas: |
+    "nav logo status . . ."
+    "seen nodes health . . ."
+  mediaquery:
+    # portrait monitor
+    "only screen and (min-width: 769px) and (max-width: 1400px)":
+      grid-template-areas: |
+        "nav . logo status"
+        "seen nodes health health"
+    # Smartphones
+    "only screen and (max-width: 768px)":
+      grid-template-areas: |
+        "nav"
+        "logo"
+        "status"
+        "nodes"
+        "seen"
+        "health"
 cards:
   - type: custom:button-card
     template: chip_back
+    view_layout:
+      grid-area: nav
     variables:
       ulm_chip_back_path: home
 
+  #################
+  # STATUS CHIPS
+  #################
+  - type: custom:mod-card
+    view_layout:
+      grid-area: status
+    style:
+      hui-horizontal-stack-card$: |
+        #root { 
+          justify-content: center;
+        }
+    card:
+      type: horizontal-stack
+      cards:
+        - type: custom:button-card
+          template: chip_icon_state_if_value
+          variables:
+            entity: sensor.dead_z_wave_nodes
+            navigation_path: "/the-matrix/z-wave"
+
   - type: picture
     image: /local/img/z-wave.png
+    card_mod:
+      style: |
+        @media (min-width: 769px) {
+          ha-card {
+            max-width: 425px;
+          }
+        }
+    view_layout:
+      grid-area: logo
 
-  - type: custom:button-card
-    template: card_title
-    label: Last Seen
+  - type: vertical-stack
+    view_layout:
+      grid-area: nodes
+    cards:
+      - type: custom:button-card
+        template: card_title
+        label: Node Status
 
-  - type: custom:auto-entities
-    card:
-      type: entities
-    filter:
-      include:
-        - entity_id: "*last_seen"
-    sort:
-      method: state
-      reverse: true
+      - type: custom:auto-entities
+        card:
+          type: entities
+        name:
+        filter:
+          include:
+            - entity_id: "sensor.*_node_status"
+        sort:
+          method: state
+          reverse: true
+
+  - type: vertical-stack
+    view_layout:
+      grid-area: seen
+    cards:
+      - type: custom:button-card
+        template: card_title
+        label: Last Seen
+
+      - type: custom:auto-entities
+        card:
+          type: entities
+        name:
+        filter:
+          include:
+            - entity_id: "*last_seen"
+        sort:
+          method: state
+          reverse: true
 
   #################
   # DEVICE HEALTH
   #################
-  - type: custom:button-card
-    template: card_title
-    label: Device Health
+  - type: vertical-stack
+    view_layout:
+      grid-area: health
+    cards:
+      - type: custom:button-card
+        template: card_title
+        label: Device Health
 
-  - type: entities
-    title: 800 Series Z-Wave LR USB Hub
-    icon: mdi:z-wave
-    entities:
-      - entity: sensor.800_series_long_range_usb_controller_status
-        name: Status
+      - type: entities
+        title: 800 Series Z-Wave LR USB Hub
+        icon: mdi:z-wave
+        entities:
+          - entity: sensor.800_series_long_range_usb_controller_status
+            name: Status

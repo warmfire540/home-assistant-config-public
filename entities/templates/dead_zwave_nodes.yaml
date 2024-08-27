@@ -1,0 +1,15 @@
+#####
+# Template sensor for dead z-wave nodes
+#
+#####
+
+- sensor:
+    - name: Dead Z-Wave Nodes
+      unique_id: 63219bac-033f-405e-9108-b481d5af867d
+      icon: mdi:z-wave
+      state: "{{ states
+| selectattr('entity_id','search', 'node_status')
+| selectattr('state','in', ['dead', 'unknown', 'unavailable'])
+| list
+| count
+}}"

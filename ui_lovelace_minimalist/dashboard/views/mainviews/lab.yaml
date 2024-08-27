@@ -36,7 +36,7 @@ cards:
         name: Lab
 
   #################
-  # INFO CHIPS
+  # STATUS CHIPS
   #################
   - type: custom:mod-card
     style:
@@ -48,61 +48,36 @@ cards:
       type: horizontal-stack
       cards:
         - type: custom:button-card
-          template: chip_icon_label
-          label: pi-hole
-          icon: mdi:pi-hole
-          styles:
-            icon:
-              - color: >
-                  [[[ if (states["binary_sensor.poat_hole_local"].state == "on")
-                    return "var(--green-color)" ;
-                    else return "var(--red-color)"; ]]]
-          tap_action:
-            action: navigate
-            navigation_path: pi-hole
-        - type: custom:button-card
-          template: chip_icon_label
-          label: share
-          icon: mdi:folder-network-outline
-          styles:
-            icon:
-              - color: >
-                  [[[ if (states["binary_sensor.poat_share_local"].state == "on")
-                    return "var(--green-color)" ;
-                    else return "var(--red-color)"; ]]]
-        - type: custom:button-card
-          template: chip_icon_label
-          label: seedbox
-          icon: mdi:seed
-          entity: sensor.rpi_poat_seedbox_rpi_monitor_poat_seedbox
-          styles:
-            icon:
-              - color: >
-                  [[[ if (states["binary_sensor.192_168_68_131"].state == "on")
-                    return "var(--green-color)" ;
-                    else return "var(--red-color)"; ]]]
-        - type: custom:button-card
-          template: chip_icon_label
-          label: plex
-          icon: mdi:plex
-          entity: sensor.rpi_poat_plex_rpi_monitor_poat_plex
-          styles:
-            icon:
-              - color: >
-                  [[[ if (states["binary_sensor.poat_plex_local"].state == "on")
-                    return "var(--green-color)" ;
-                    else return "var(--red-color)"; ]]]
-        - type: custom:button-card
-          template: chip_mdi_icon_only
+          template: chip_icon_state_if_value
           variables:
-            ulm_chip_mdi_icon_only_entity: sensor.mfc_7860dw_status
-            ulm_chip_mdi_icon_only_icon: mdi:printer
-          styles:
-            icon:
-              - color: >
-                  [[[ if (states["sensor.mfc_7860dw_status"].state == "unavailable")
-                    return "var(--red-color)" ;
-                    else return "var(--green-color)"; ]]]
+            entity: sensor.dead_z_wave_nodes
+            navigation_path: "/the-matrix/z-wave"
+        - type: custom:button-card
+          template: chip_icon_state_if_value
+          variables:
+            entity: binary_sensor.poat_hole_local
+            navigation_path: "/the-matrix/pi-hole"
+            on_state: "off"
+        - type: custom:button-card
+          template: chip_icon_state_if_value
+          variables:
+            entity: binary_sensor.poat_share_local
+            on_state: "off"
+        - type: custom:button-card
+          template: chip_icon_state_if_value
+          variables:
+            entity: binary_sensor.192_168_68_131
+            on_state: "off"
+        - type: custom:button-card
+          template: chip_icon_state_if_value
+          variables:
+            entity: binary_sensor.poat_plex_local
+            on_state: "off"
+        - type: custom:button-card
+          template: chip_icon_state_if_value
+          variables:
+            entity: sensor.mfc_7860dw_status
+            on_state: "unavailable"
         - type: custom:button-card
           template: chip_mdi_icon_only
           variables:

@@ -10,7 +10,7 @@ poat_card_room:
     humidity_threshold: 60
     temperature_threshold: 80
     z_humidity_sensor: "[[[ return 'sensor.' + variables.affix + '_climate_humidity'; ]]]"
-    z_problem_exists: "[[[ return variables.problem_entities?.some(e => states[e].state == 'on'); ]]]"
+    z_problem_exists: "[[[ return variables.problem_entities?.some(e => states[e].state == 'on' || states[e].state > 0); ]]]"
     z_temperature_sensor: "[[[ return 'sensor.' + variables.affix + '_climate_air_temperature'; ]]]"
     entity_1:
       entity_id: "[[[ return 'light.' + variables.affix + '_light'; ]]]"

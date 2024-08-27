@@ -115,6 +115,12 @@ cards:
               template: chip_icon_state_if_value
               variables:
                 optional: true
+                entity: sensor.dead_z_wave_nodes
+                navigation_path: "/the-matrix/z-wave"
+            - type: custom:button-card
+              template: chip_icon_state_if_value
+              variables:
+                optional: true
                 entity: group.leak_sensors
             - type: custom:button-card
               template: chip_icon_state_if_value
@@ -125,7 +131,7 @@ cards:
               template: chip_icon_state_if_value
               variables:
                 optional: true
-                on_state: 'True'
+                on_state: "True"
                 entity: sensor.printer_left_on
             - type: custom:button-card
               template: chip_icon_state_if_value
@@ -273,6 +279,8 @@ cards:
           problem_entities:
             - binary_sensor.office_smoke_sensor_smoke_detected
             - binary_sensor.office_smoke_sensor_carbon_monoxide_detected
+            - sensor.dead_z_wave_nodes
+            - sensor.printer_left_on
           entity_2:
             entity_id: switch.office_switch_switch_1
             templates:
