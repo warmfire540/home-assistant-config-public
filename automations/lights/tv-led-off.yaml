@@ -8,7 +8,7 @@ id: 16f855bf-9b9b-4028-93b8-17fd0c3dd6a2
 trigger:
   platform: state
   entity_id:
-    - media_player.fire_tv_192_168_68_107
+    - media_player.living_room_fire_tv
   from:
     - playing
     - idle

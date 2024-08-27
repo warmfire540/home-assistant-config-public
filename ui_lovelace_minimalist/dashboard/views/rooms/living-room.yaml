@@ -89,7 +89,7 @@ cards:
         command: Power
 
   - type: media-control
-    entity: media_player.fire_tv_192_168_68_107
+    entity: media_player.living_room_fire_tv
 
   - type: "custom:button-card"
     template: card_title

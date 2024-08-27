@@ -349,34 +349,7 @@ cards:
               port: "32400"
               libraryName: Watch Next
               entity:
-                - media_player.fire_tv_192_168_68_115
-
-  #################
-  # DEVICE TRACKING
-  #################
-  - type: custom:button-card
-    template: card_title
-    label: Device Tracking
-
-  - type: map
-    aspect_ratio: 16:9
-    auto_fit: true
-    entities:
-      - device_tracker.house_keys
-      - device_tracker.spare_house_key
-      - device_tracker.spare_wires
-      - device_tracker.ginas_iphone_13_mini
-      - device_tracker.poat_s_iphone_14_pro_max
-      - device_tracker.poat_s_iphone_14_pro_max_2
-      - zone.home
-
-  - type: custom:auto-entities
-    card:
-      type: entities
-    filter:
-      include:
-        - attributes:
-            source_type: gps
+                - media_player.office_fire_tv
 
   #################
   # DEVICE HEALTH
