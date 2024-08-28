@@ -25,11 +25,7 @@ action:
           - condition: sun
             after: sunset
         then:
-          - type: turn_on
-            device_id: d15b188afbaf9ee89d930c8562b90e43
-            entity_id: 2b8e3356b2c40c937a32e0591a002acc
-            domain: light
-          - type: turn_off
-            device_id: 638ff6dbd16db764b99b0b1bc72a8a31
-            entity_id: a37b21ddc27f77fa2c928543f0a7664a
-            domain: light
+          - service: light.turn_on
+            entity_id: light.tv_led
+          - service: light.turn_off
+            entity_id: light.living_room_light

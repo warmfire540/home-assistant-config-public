@@ -30,7 +30,7 @@ sensors:
 
   cat_filter_problem:
     friendly_name: "Cat Filter Problem"
-    value_template: "{{ is_state('sensor.pet_thirst_filter', '0') }}"
+    value_template: "{{ states('sensor.pet_thirst_filter', '0') in  ['0', 'unavailable'] }}"
     unique_id: 42fcc316-0ec8-472c-b8ad-979016188d6e
     device_class: problem
     icon_template: mdi:filter
