@@ -263,9 +263,9 @@ home_assistant_details:
                     }
             entities:
               - type: attribute
-                entity: device_tracker.homeassistant
+                entity: device_tracker.pretty_fly_for_a_wifi_homeassistant_wired
                 name: Hostname
-                attribute: friendly_name
+                attribute: host_name
               - entity: sensor.ipv4_address_end0
                 name: IP Address
               - entity: sensor.disk_use_percent
@@ -279,11 +279,11 @@ home_assistant_details:
                 name: OS Version
                 attribute: installed_version
               - type: attribute
-                entity: sensor.rpi_poat_plex_rpi_monitor_poat_plex
+                entity: sensor.rpi_poat_share_rpi_monitor_poat_share
                 name: Model
                 attribute: rpi_model
               - type: attribute
-                entity: sensor.pi_plex_cpu
+                entity: sensor.pi_share_cpu
                 name: Arch
                 attribute: model
         card_mod:

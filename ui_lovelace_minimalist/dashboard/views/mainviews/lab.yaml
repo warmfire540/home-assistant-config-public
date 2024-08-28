@@ -1,10 +1,50 @@
 title: "Lab"
 path: "lab"
+type: custom:grid-layout
+layout:
+  grid-template-areas: |
+    "nav title status"
+    "control shares printer"
+    "status-title . ."
+    "rpi-has rpi-hole rpi-share"
+    "rpi-seed rpi-plex plex"
+    "health . ."
+  mediaquery:
+    # portrait monitor
+    "only screen and (min-width: 769px) and (max-width: 1400px)":
+      grid-template-areas: |
+        "nav ."
+        "title status"
+        "control shares"
+        "status-title printer"
+        "rpi-has rpi-hole"
+        "rpi-share rpi-seed"
+        "rpi-plex plex"
+        "health . "
+    # Smartphones
+    "only screen and (max-width: 768px)":
+      grid-template-areas: |
+        "nav"
+        "title"
+        "status"
+        "shares"
+        "control"
+        "printer"
+        "status-title"
+        "rpi-has"
+        "rpi-hole"
+        "rpi-share"
+        "rpi-seed"
+        "rpi-plex"
+        "plex"
+        "health"
 cards:
   - type: horizontal-stack
     cards:
       - type: custom:button-card
         template: chip_back
+        view_layout:
+          grid-area: nav
         variables:
           ulm_chip_back_path: home
       - type: custom:mod-card
@@ -29,16 +69,18 @@ cards:
                 ulm_chip_navigate_path: z-wave
                 ulm_chip_navigate_icon: mdi:z-wave
 
-  - type: horizontal-stack
-    cards:
-      - type: custom:button-card
-        template: card_title
-        name: Lab
+  - type: custom:button-card
+    template: card_title
+    name: Lab
+    view_layout:
+      grid-area: title
 
   #################
   # STATUS CHIPS
   #################
   - type: custom:mod-card
+    view_layout:
+      grid-area: status
     style:
       hui-horizontal-stack-card$: |
         #root { 
@@ -93,7 +135,12 @@ cards:
                       else
                         return "var(--green-color)"; ]]]
 
+  #################
+  # SHARES
+  #################
   - type: horizontal-stack
+    view_layout:
+      grid-area: shares
     cards:
       - type: custom:mini-graph-card
         name: Share(s) %
@@ -108,125 +155,128 @@ cards:
   #################
   # RASPBERRY CONTROL
   #################
-  - type: custom:button-card
-    template: card_title
-    label: Raspberries - Control
+  - type: vertical-stack
+    view_layout:
+      grid-area: control
+    cards:
+      - type: custom:button-card
+        template: card_title
+        label: Raspberries - Control
 
-  #################
-  # PI CONTROL
-  #################
-  - type: entities
-    entities:
-      - entity: device_tracker.poat_hole
-        type: custom:multiple-entity-row
-        name: poat-hole
-        icon: mdi:pi-hole
-        show_state: false
-        secondary_info:
-          attribute: ip
+      - type: entities
         entities:
-          - entity: sensor.pi_hole_server_last_backup
-            name: backup
-          - entity: button.rpi_poat_hole_rpi_reboot_poat_hole_command
-            icon: mdi:restart
-            name: restart
-            tap_action:
-              action: toggle
-          - entity: button.rpi_poat_hole_rpi_shutdown_poat_hole_command
-            icon: mdi:power
-            name: shutdown
-          - entity: button.rpi_poat_hole_rpi_restart_service_poat_hole_command
-            icon: mdi:restore-alert
-            name: shutdown
-      - entity: device_tracker.poat_share
-        type: custom:multiple-entity-row
-        name: poat-share
-        icon: mdi:folder-network-outline
-        show_state: false
-        secondary_info:
-          attribute: ip
-        entities:
-          - entity: button.rpi_poat_share_rpi_reboot_poat_share_command
-            icon: mdi:restart
-            name: restart
-          - entity: button.rpi_poat_share_rpi_shutdown_poat_share_command
-            icon: mdi:power
-            name: shutdown
-          - entity: button.rpi_poat_share_rpi_restart_service_poat_share_command
-            icon: mdi:restore-alert
-            name: restore
-      - type: conditional
-        conditions:
-          - entity: binary_sensor.192_168_68_131
-            state: "on"
-        row:
-          entity: device_tracker.pi_seedbox
-          type: custom:multiple-entity-row
-          name: poat-seedbox
-          icon: mdi:seed
-          show_state: false
-          secondary_info:
-            attribute: ip
-          entities:
-            - entity: sensor.deluge_last_backup
-              name: backup
-            - entity: button.poat_seedbox_rpi_reboot_poat_seedbox_command
-              icon: mdi:restart
-              name: restart
-            - entity: button.poat_seedbox_rpi_shutdown_poat_seedbox_command
-              icon: mdi:power
-              name: shutdown
-            - entity: button.poat_seedbox_rpi_restart_service_poat_seedbox_command
-              icon: mdi:restore-alert
-              name: restore
-      - type: conditional
-        conditions:
-          - entity: binary_sensor.poat_plex_local
-            state: "on"
-        row:
-          entity: device_tracker.pi_plex
-          type: custom:multiple-entity-row
-          name: poat-plex
-          icon: mdi:plex
-          show_state: false
-          secondary_info:
-            attribute: ip
-          entities:
-            - entity: sensor.plex_server_last_backup
-              name: backup
-            - entity: button.rpi_poat_plex_rpi_reboot_poat_plex_command
-              icon: mdi:restart
-              name: restart
-            - entity: button.rpi_poat_plex_rpi_shutdown_poat_plex_command
-              icon: mdi:power
-              name: shutdown
-            - entity: button.rpi_poat_plex_rpi_restart_service_poat_plex_command
-              icon: mdi:restore-alert
-              name: restore
-      - entity: device_tracker.homeassistant
-        type: custom:multiple-entity-row
-        name: homeassistant
-        icon: mdi:home-assistant
-        show_state: false
-        secondary_info:
-          attribute: ip
-        entities:
-          - entity: sensor.home_assistant_last_backup
-            name: backup
-          - entity: script.reboot_home_assistant
-            icon: mdi:restart
-            name: restart
-          - entity: script.shutdown_home_assistant
-            icon: mdi:power
-            name: shutdown
-          - entity: script.reboot_home_assistant
-            icon: mdi:restore-alert
-            name: restore
+          - entity: device_tracker.pretty_fly_for_a_wifi_pi_hole_wired
+            type: custom:multiple-entity-row
+            name: poat-hole
+            icon: mdi:pi-hole
+            show_state: false
+            secondary_info:
+              attribute: ip
+            entities:
+              - entity: sensor.pi_hole_server_last_backup
+                name: backup
+              - entity: button.rpi_poat_hole_rpi_reboot_poat_hole_command
+                icon: mdi:restart
+                name: restart
+                tap_action:
+                  action: toggle
+              - entity: button.rpi_poat_hole_rpi_shutdown_poat_hole_command
+                icon: mdi:power
+                name: shutdown
+              - entity: button.rpi_poat_hole_rpi_restart_service_poat_hole_command
+                icon: mdi:restore-alert
+                name: shutdown
+          - entity: device_tracker.pretty_fly_for_a_wifi_poat_share_wired
+            type: custom:multiple-entity-row
+            name: poat-share
+            icon: mdi:folder-network-outline
+            show_state: false
+            secondary_info:
+              attribute: ip
+            entities:
+              - entity: button.rpi_poat_share_rpi_reboot_poat_share_command
+                icon: mdi:restart
+                name: restart
+              - entity: button.rpi_poat_share_rpi_shutdown_poat_share_command
+                icon: mdi:power
+                name: shutdown
+              - entity: button.rpi_poat_share_rpi_restart_service_poat_share_command
+                icon: mdi:restore-alert
+                name: restore
+          - type: conditional
+            conditions:
+              - entity: binary_sensor.192_168_68_131
+                state: "on"
+            row:
+              entity: device_tracker.pi_seedbox
+              type: custom:multiple-entity-row
+              name: poat-seedbox
+              icon: mdi:seed
+              show_state: false
+              secondary_info:
+                attribute: ip
+              entities:
+                - entity: sensor.deluge_last_backup
+                  name: backup
+                - entity: button.poat_seedbox_rpi_reboot_poat_seedbox_command
+                  icon: mdi:restart
+                  name: restart
+                - entity: button.poat_seedbox_rpi_shutdown_poat_seedbox_command
+                  icon: mdi:power
+                  name: shutdown
+                - entity: button.poat_seedbox_rpi_restart_service_poat_seedbox_command
+                  icon: mdi:restore-alert
+                  name: restore
+          - type: conditional
+            conditions:
+              - entity: binary_sensor.poat_plex_local
+                state: "on"
+            row:
+              entity: device_tracker.pi_plex
+              type: custom:multiple-entity-row
+              name: poat-plex
+              icon: mdi:plex
+              show_state: false
+              secondary_info:
+                attribute: ip
+              entities:
+                - entity: sensor.plex_server_last_backup
+                  name: backup
+                - entity: button.rpi_poat_plex_rpi_reboot_poat_plex_command
+                  icon: mdi:restart
+                  name: restart
+                - entity: button.rpi_poat_plex_rpi_shutdown_poat_plex_command
+                  icon: mdi:power
+                  name: shutdown
+                - entity: button.rpi_poat_plex_rpi_restart_service_poat_plex_command
+                  icon: mdi:restore-alert
+                  name: restore
+          - entity: device_tracker.pretty_fly_for_a_wifi_homeassistant_wired
+            type: custom:multiple-entity-row
+            name: homeassistant
+            icon: mdi:home-assistant
+            show_state: false
+            secondary_info:
+              attribute: ip
+            entities:
+              - entity: sensor.home_assistant_last_backup
+                name: backup
+              - entity: script.reboot_home_assistant
+                icon: mdi:restart
+                name: restart
+              - entity: script.shutdown_home_assistant
+                icon: mdi:power
+                name: shutdown
+              - entity: script.reboot_home_assistant
+                icon: mdi:restore-alert
+                name: restore
 
   #################
   # PRINTER
   #################
   - type: conditional
+    view_layout:
+      grid-area: printer
     conditions:
       - condition: state
         entity: sensor.mfc_7860dw_status
@@ -265,12 +315,28 @@ cards:
   - type: custom:button-card
     template: card_title
     label: Raspberries - Status
+    view_layout:
+      grid-area: status-title
 
   - type: custom:decluttering-card
     template: home_assistant_details
+    view_layout:
+      grid-area: rpi-has
 
   - type: custom:decluttering-card
     template: pi_details
+    view_layout:
+      grid-area: rpi-hole
+    variables:
+      - pi_name: hole
+      - icon: mdi:pi-hole
+      - name: Pi Hole
+      - tracker: pi_hole
+
+  - type: custom:decluttering-card
+    template: pi_details
+    view_layout:
+      grid-area: rpi-share
     variables:
       - pi_name: share
       - icon: mdi:folder-network-outline
@@ -278,6 +344,8 @@ cards:
       - tracker: poat_share
 
   - type: conditional
+    view_layout:
+      grid-area: rpi-seed
     conditions:
       - condition: state
         entity: sensor.rpi_poat_seedbox_rpi_monitor_poat_seedbox
@@ -292,6 +360,8 @@ cards:
         - tracker: pi_seedbox
 
   - type: conditional
+    view_layout:
+      grid-area: rpi-plex
     conditions:
       - condition: state
         entity: sensor.rpi_poat_plex_rpi_monitor_poat_plex
@@ -309,6 +379,8 @@ cards:
   # PLEX
   #################
   - type: conditional
+    view_layout:
+      grid-area: plex
     conditions:
       - condition: state
         entity: binary_sensor.poat_plex_local
@@ -354,70 +426,74 @@ cards:
   #################
   # DEVICE HEALTH
   #################
-  - type: custom:button-card
-    template: card_title
-    label: Device Health
-
-  #################
-  # TASMOTA
-  #################
-  - type: custom:stack-in-card
+  - type: vertical-stack
+    view_layout:
+      grid-area: health
     cards:
-      - type: custom:layout-card
-        layout_type: grid
-        layout_options:
-          grid-template-columns: repeat(5, 1fr)
-          grid-template-rows: repeat(2, 1fr)
-          grid-template-areas: |
-            "firmware firmware firmware ip ip"
-            "wifi wifi rssi restart restart"
-          margin: 0
-          padding: 0
-          card_margin: 0
-        margin: 0px
+      - type: custom:button-card
+        template: card_title
+        label: Device Health
+
+      #################
+      # TASMOTA
+      #################
+      - type: custom:stack-in-card
         cards:
-          - type: custom:button-card
-            template:
-              - card_generic_swap
-            entity: sensor.tasmota_firmware_version
-            variables:
-              ulm_card_generic_swap_name: Sonoff RF Bridge (Tasmota)
-              ulm_card_generic_swap_icon: "mdi:broadcast"
-            view_layout:
-              grid-area: firmware
-          - type: custom:button-card
-            template: custom_card_mpse_wifisignal
-            entity: sensor.tasmota_signal
-            name: '[[[ return states["sensor.tasmota_ssid"].state + " (" + states["sensor.tasmota_wifi_connect_count"].state + ")"]]]'
-            view_layout:
-              grid-area: wifi
-          - type: custom:mushroom-template-card
-            primary: "{{ 'Connections: ' + states('sensor.tasmota_wifi_connect_count') }}"
-            secondary: "{{ states('sensor.tasmota_ip') }}"
-            view_layout:
-              grid-area: ip
-            card_mod:
-              style: |
-                ha-card {
-                  text-align: center;
-                }
-          - type: custom:mushroom-template-card
-            primary: "{{ 'Clients: ' + states('sensor.tasmota_mqtt_connect_count') }}"
-            secondary: "{{ 'RSII ' + states('sensor.tasmota_rssi') + '%' }}"
-            view_layout:
-              grid-area: rssi
-            card_mod:
-              style: |
-                ha-card {
-                  text-align: center;
-                }
-          - type: custom:mushroom-template-card
-            primary: "{{ states('sensor.tasmota_restart_reason') }}"
-            secondary: "{{ states('sensor.tasmota_last_restart_time') }}"
-            view_layout:
-              grid-area: restart
-            card_mod:
-              style: |
-                ha-card {
-                  text-align: center;
-                }
+          - type: custom:layout-card
+            layout_type: grid
+            layout_options:
+              grid-template-columns: repeat(5, 1fr)
+              grid-template-rows: repeat(2, 1fr)
+              grid-template-areas: |
+                "firmware firmware firmware ip ip"
+                "wifi wifi rssi restart restart"
+              margin: 0
+              padding: 0
+              card_margin: 0
+            margin: 0px
+            cards:
+              - type: custom:button-card
+                template:
+                  - card_generic_swap
+                entity: sensor.tasmota_firmware_version
+                variables:
+                  ulm_card_generic_swap_name: Sonoff RF Bridge (Tasmota)
+                  ulm_card_generic_swap_icon: "mdi:broadcast"
+                view_layout:
+                  grid-area: firmware
+              - type: custom:button-card
+                template: custom_card_mpse_wifisignal
+                entity: sensor.tasmota_signal
+                name: '[[[ return states["sensor.tasmota_ssid"].state + " (" + states["sensor.tasmota_wifi_connect_count"].state + ")"]]]'
+                view_layout:
+                  grid-area: wifi
+              - type: custom:mushroom-template-card
+                primary: "{{ 'Connections: ' + states('sensor.tasmota_wifi_connect_count') }}"
+                secondary: "{{ states('sensor.tasmota_ip') }}"
+                view_layout:
+                  grid-area: ip
+                card_mod:
+                  style: |
+                    ha-card {
+                      text-align: center;
+                    }
+              - type: custom:mushroom-template-card
+                primary: "{{ 'Clients: ' + states('sensor.tasmota_mqtt_connect_count') }}"
+                secondary: "{{ 'RSII ' + states('sensor.tasmota_rssi') + '%' }}"
+                view_layout:
+                  grid-area: rssi
+                card_mod:
+                  style: |
+                    ha-card {
+                      text-align: center;
+                    }
+              - type: custom:mushroom-template-card
+                primary: "{{ states('sensor.tasmota_restart_reason') }}"
+                secondary: "{{ states('sensor.tasmota_last_restart_time') }}"
+                view_layout:
+                  grid-area: restart
+                card_mod:
+                  style: |
+                    ha-card {
+                      text-align: center;
+                    }
