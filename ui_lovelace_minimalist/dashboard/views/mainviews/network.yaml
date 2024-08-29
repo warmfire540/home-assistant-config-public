@@ -15,8 +15,8 @@ cards:
     show:
       extrema: true
     entities:
-      - sensor.m5_download_speed
-      - sensor.m5_upload_speed
+      - sensor.pretty_fly_for_a_wifi_download_speed
+      - sensor.pretty_fly_for_a_wifi_upload_speed
 
   - type: custom:mini-graph-card
     name: Speedtest
