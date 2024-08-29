@@ -1,0 +1,105 @@
+z_wave_plug:
+  card:
+    type: custom:stack-in-card
+    cards:
+      - type: custom:layout-card
+        layout_type: grid
+        layout_options:
+          grid-template-columns: repeat(5, 1fr)
+          grid-template-rows: repeat(2, 1fr)
+          grid-template-areas: |
+            "firmware firmware amps watts switch"
+            "current load voltage status status"
+          margin: 0
+          padding: 0
+          card_margin: 0
+        margin: 0px
+        cards:
+          - type: 'custom:button-card'
+            template:
+              - card_generic_swap
+            entity: 'update.[[sensor_prefix]]_plug_firmware'
+            variables:
+              ulm_card_generic_swap_name: Plug
+              ulm_card_generic_swap_icon: mdi:z-wave
+            view_layout:
+              grid-area: firmware
+          - type: custom:mushroom-entity-card
+            entity: 'sensor.[[sensor_prefix]]_plug_electric_consumption_a'
+            name: Amps
+            icon_type: none
+            view_layout:
+              grid-area: amps
+            card_mod:
+              style: |
+                ha-card {
+                  text-align: center;
+                }
+          - type: custom:mushroom-entity-card
+            entity: 'sensor.[[sensor_prefix]]_plug_electric_consumption_w'
+            name: Watts
+            icon_type: none
+            view_layout:
+              grid-area: watts
+            card_mod:
+              style: |
+                ha-card {
+                  text-align: center;
+                }
+          - type: custom:mushroom-entity-card
+            entity: 'switch.[[sensor_prefix]]_plug'
+            primary_info: none
+            secondary_info: none
+            view_layout:
+              grid-area: switch
+            tap_action:
+              action: toggle
+            card_mod:
+              style: |
+                ha-card {
+                  align-items: center;
+                }
+          - type: custom:mushroom-entity-card
+            entity: 'binary_sensor.[[sensor_prefix]]_plug_over_current_detected'
+            name: Current
+            icon_type: none
+            view_layout:
+              grid-area: current
+            card_mod:
+              style: |
+                ha-card {
+                  text-align: center;
+                }
+          - type: custom:mushroom-entity-card
+            entity: 'binary_sensor.[[sensor_prefix]]_plug_over_load_detected'
+            name: Load
+            icon_type: none
+            view_layout:
+              grid-area: load
+            card_mod:
+              style: |
+                ha-card {
+                  text-align: center;
+                }
+          - type: custom:mushroom-entity-card
+            entity: 'binary_sensor.[[sensor_prefix]]_plug_over_voltage_detected'
+            name: Voltage
+            icon_type: none
+            view_layout:
+              grid-area: voltage
+            card_mod:
+              style: |
+                ha-card {
+                  text-align: center;
+                }
+          - type: custom:mushroom-entity-card
+            entity: 'sensor.node_[[node_number]]_node_status'
+            name: Status
+            icon_type: none
+            view_layout:
+              grid-area: status
+            card_mod:
+              style: |
+                ha-card {
+                  text-align: center;
+                }

@@ -381,7 +381,7 @@ cards:
       - type: custom:button-card
         template:
           - poat_card_room
-        entity: switch.garage_opener_socket_1
+        entity: switch.garage_opener_plug
         icon: mdi:garage
         view_layout:
           grid-area: garage
@@ -403,7 +403,7 @@ cards:
               service_data:
                 entity_id: switch.garage_opener
           entity_2:
-            entity_id: switch.garage_opener_socket_1
+            entity_id: switch.garage_opener_plug
             templates:
               - blue_on
           entity_3:

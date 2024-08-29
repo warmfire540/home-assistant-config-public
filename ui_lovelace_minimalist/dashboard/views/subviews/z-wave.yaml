@@ -59,6 +59,9 @@ cards:
         }
     view_layout:
       grid-area: logo
+    tap_action:
+      action: navigate
+      navigation_path : /config/integrations/integration/zwave_js
 
   - type: vertical-stack
     view_layout:
