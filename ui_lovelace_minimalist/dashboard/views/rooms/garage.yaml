@@ -52,6 +52,12 @@ cards:
     variables:
       ulm_card_light_name: Garage Door Power
 
+  - type: "custom:button-card"
+    template: card_light
+    entity: switch.water_softener_plug
+    variables:
+      ulm_card_light_name: Water Softener
+
   - type: "custom:vacuum-card"
     entity: vacuum.strongboi
     image: default

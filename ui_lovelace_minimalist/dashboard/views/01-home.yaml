@@ -381,7 +381,6 @@ cards:
       - type: custom:button-card
         template:
           - poat_card_room
-        entity: switch.garage_opener_plug
         icon: mdi:garage
         view_layout:
           grid-area: garage
@@ -429,9 +428,13 @@ cards:
           temperature_threshold: 100
           problem_entities:
             - binary_sensor.ac_pan_leak_sensor
+          entity_1:
+            entity_id: switch.water_softener_plug
+            templates:
+              - blue_on
 
       #################
-      # Shed
+      # SHED
       #################
       - type: custom:button-card
         template:
