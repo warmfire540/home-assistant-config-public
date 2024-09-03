@@ -5,12 +5,12 @@
 
 air_filter:
   name: Change air filters
-  entity_id: calendar.air_filters
+  entity_id: input_boolean.air_filters_need_changed
   title: 💨 Change air filters!
   message: false
   done_message: clear_notification
   state: "on"
-  repeat: 120
+  repeat: 1440
   data:
     tag: air_filter
     prompt: ac air filter needs changed

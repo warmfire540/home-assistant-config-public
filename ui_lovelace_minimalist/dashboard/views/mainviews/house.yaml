@@ -140,6 +140,15 @@ cards:
 
       - type: thermostat
         entity: climate.living_room
+      
+      - type: horizontal-stack
+        cards:
+          - type: 'custom:button-card'
+            template: card_generic
+            entity: counter.large_air_filters
+          - type: 'custom:button-card'
+            template: card_generic
+            entity: counter.small_air_filters
 
   - type: vertical-stack
     view_layout:
