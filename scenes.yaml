@@ -5,7 +5,11 @@
   metadata: {}
 - id: '1716402827823'
   name: Home
-  entities: {}
+  entities:
+    switch.water_softener_plug:
+      icon: mdi:water-boiler
+      friendly_name: 'Water Softener Plug'
+      state: 'on'
   icon: mdi:home
   metadata: {}
 - id: '1716402862505'
@@ -33,6 +37,10 @@
       preset_mode: eco
       friendly_name: Thermostat
       state: cool
+    switch.water_softener_plug:
+      icon: mdi:water-boiler
+      friendly_name: 'Water Softener Plug'
+      state: 'off'
   icon: mdi:plane-car
   metadata: {}
 - id: '1716428655222'
