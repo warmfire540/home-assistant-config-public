@@ -150,21 +150,13 @@ cards:
               variables:
                 optional: true
                 entity: sensor.updates_available
-                navigation_path: "/the-matrix/network?anchor=updates"
+                navigation_path: /the-matrix/network?anchor=updates
             - type: custom:button-card
               template: chip_icon_state_if_value
               variables:
+                optional: true
                 entity: sensor.seedbox_vpn_on
-                ulm_chip_mdi_icon_only_icon: mdi:vpn
-              styles:
-                icon:
-                  - color: >
-                      [[[ if (states["sensor.seedbox_vpn_on"].state == "False")
-                          return "var(--red-color)";
-                        else if (states["sensor.seedbox_vpn_on"].state == "Offline")
-                          return "var(--amber-color)";
-                        else
-                          return "var(--green-color)"; ]]]
+                navigation_path: /the-matrix/network
             - type: custom:button-card
               template: poat_chip_double_state
               variables:

@@ -1,17 +1,49 @@
 title: "Net"
 path: "network"
+type: custom:grid-layout
+layout:
+  grid-template-areas: |
+    "nav title ."
+    "network speed wifi"
+    "connected disconnected updates"
+  mediaquery:
+    # portrait monitor
+    "only screen and (min-width: 769px) and (max-width: 1400px)":
+      grid-template-areas: |
+        "nav ."
+        "title ."
+        "network speed"
+        "wifi updates"
+        "connected disconnected"
+    # Smartphones
+    "only screen and (max-width: 768px)":
+      grid-template-areas: |
+        "nav"
+        "title"
+        "network"
+        "speed"
+        "wifi"
+        "disconnected"
+        "updates"
+        "connected"
 cards:
   - type: "custom:button-card"
     template: chip_back
+    view_layout:
+      grid-area: nav
     variables:
       ulm_chip_back_path: home
 
   - type: "custom:button-card"
     template: card_title
     name: Net
+    view_layout:
+      grid-area: title
 
   - type: "custom:mini-graph-card"
     name: Network
+    view_layout:
+      grid-area: network
     show:
       extrema: true
     entities:
@@ -22,6 +54,8 @@ cards:
     name: Speedtest
     align_state: center
     icon: mdi:speedometer
+    view_layout:
+      grid-area: speed
     show:
       extrema: true
       labels: true
@@ -44,104 +78,120 @@ cards:
           - sensor.speedtest_upload
           - sensor.speedtest_ping
 
-  - type: "custom:button-card"
-    template: card_title
-    label: WiFi Strength
+  - type: vertical-stack
+    view_layout:
+      grid-area: wifi
+    cards:
+      - type: "custom:button-card"
+        template: card_title
+        label: WiFi Strength
 
-  - type: custom:auto-entities
-    card:
-      type: entities
-    filter:
-      include:
-        - attributes:
-            device_class: signal_strength
+      - type: custom:auto-entities
+        card:
+          type: entities
+        filter:
+          include:
+            - attributes:
+                device_class: signal_strength
 
-  - type: "custom:anchor-card"
-    anchor_id: disconnected
-    offset: -60
+  - type: vertical-stack
+    view_layout:
+      grid-area: disconnected
+    cards:
+      - type: "custom:anchor-card"
+        anchor_id: disconnected
+        offset: -60
 
-  - type: "custom:button-card"
-    template: card_title
-    label: Disconnected Devices
+      - type: "custom:button-card"
+        template: card_title
+        label: Disconnected Devices
 
-  - type: custom:auto-entities
-    card:
-      type: entities
-    else:
-      type: markdown
-      content: >-
-        <ha-alert alert-type="info">Nothing disconnected!</ha-alert>
-    filter:
-      include:
-        - state: "unavailable"
-          options:
-            show_state: false
-        - state: "unknown"
-          options:
-            show_state: false
-      exclude:
-        - entity_id: "*poat_rgb*"
-        - entity_id: "*plex*"
-        - entity_id: "*seedbox*"
-        - entity_id: "*mfc_7860*"
-        - entity_id: "*poat_pi*"
-        - entity_id: "remote.fire_tv*"
-        - entity_id: "media_player.xbox*"
-        - entity_id: select.cat_noms_manual_feed
-        - entity_id: sensor.cat_noms_battery_status
-        - domain: automation
-        - domain: button
-        - domain: number
-        - domain: conversation
-        - domain: script
-        - domain: stt
-        - domain: tts
-        - name: "Kitchen Bulb*"
+      - type: custom:auto-entities
+        card:
+          type: entities
+        else:
+          type: markdown
+          content: >-
+            <ha-alert alert-type="info">Nothing disconnected!</ha-alert>
+        filter:
+          include:
+            - state: "unavailable"
+              options:
+                show_state: false
+            - state: "unknown"
+              options:
+                show_state: false
+          exclude:
+            - entity_id: "*poat_rgb*"
+            - entity_id: "*plex*"
+            - entity_id: "*seedbox*"
+            - entity_id: "*mfc_7860*"
+            - entity_id: "*poat_pi*"
+            - entity_id: "remote.fire_tv*"
+            - entity_id: "media_player.xbox*"
+            - entity_id: select.cat_noms_manual_feed
+            - entity_id: sensor.cat_noms_battery_status
+            - domain: automation
+            - domain: button
+            - domain: number
+            - domain: conversation
+            - domain: script
+            - domain: stt
+            - domain: tts
+            - name: "Kitchen Bulb*"
 
-  - type: "custom:anchor-card"
-    anchor_id: updates
-    offset: -60
+  - type: vertical-stack
+    view_layout:
+      grid-area: updates
+    cards:
+      - type: "custom:anchor-card"
+        anchor_id: updates
+        offset: -60
 
-  - type: "custom:button-card"
-    template: card_title
-    label: Updates needed
+      - type: "custom:button-card"
+        template: card_title
+        label: Updates needed
 
-  - type: custom:auto-entities
-    card:
-      type: entities
-    else:
-      type: markdown
-      content: >-
-        <ha-alert alert-type="info">No updates!</ha-alert>
-    filter:
-      include:
-        - domain: update
-          state: "on"
+      - type: custom:auto-entities
+        card:
+          type: entities
+        else:
+          type: markdown
+          content: >-
+            <ha-alert alert-type="info">No updates!</ha-alert>
+        filter:
+          include:
+            - domain: update
+              state: "on"
 
-  - type: "custom:button-card"
-    template: card_title
-    label: Connected Devices
+  - type: vertical-stack
+    view_layout:
+      grid-area: connected
+    cards:
+      - type: "custom:button-card"
+        template: card_title
+        label: Connected Devices
 
-  - type: custom:auto-entities
-    card:
-      type: entities
-    filter:
-      include:
-        - domain: device_tracker
-          attributes:
-            source_type: router
-          options:
-            secondary: >-
-              {{ ('Unknown' if states[config.entity] is none else as_timestamp(states[config.entity].last_changed, 0) | timestamp_custom('%b %d %H:%M - ')) +
-              states(config.entity) + ' ' +
-                iif(
-                  state_attr(config.entity, "connection_type"),
-                  iif(
-                    state_attr(config.entity, "connection_type") is list,
-                    state_attr(config.entity, "connection_type")[0],
-                    state_attr(config.entity, "connection_type")
-                  ),
-                  'Dunno'
-                  )}}
-            state: '{{ state_attr(config.entity, "ip") }}'
-            type: "custom:template-entity-row"
+      - type: custom:auto-entities
+        card:
+          type: entities
+        filter:
+          include:
+            - domain: device_tracker
+              attributes:
+                source_type: router
+              options:
+                secondary: >-
+                  {{ ('Unknown' if states[config.entity] is none else as_timestamp(states[config.entity].last_changed, 0) | timestamp_custom('%b %d %H:%M - ')) +
+                  states(config.entity) + ' ' +
+                    iif(
+                      state_attr(config.entity, "connection_type"),
+                      iif(
+                        state_attr(config.entity, "connection_type") is list,
+                        state_attr(config.entity, "connection_type")[0],
+                        state_attr(config.entity, "connection_type")
+                      ),
+                      'Dunno'
+                      )}}
+                state: '{{ state_attr(config.entity, "ip") }}'
+                type: "custom:template-entity-row"
