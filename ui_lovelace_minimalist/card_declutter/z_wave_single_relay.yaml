@@ -1,12 +1,10 @@
-z_wave_single_relay_no_scene:
+z_wave_single_relay:
   card:
     type: custom:stack-in-card
     cards:
       - type: custom:layout-card
         layout_type: grid
         layout:
-          grid-template-columns: repeat(6, 1fr)
-          grid-template-rows: repeat(1, 1fr)
           grid-template-areas: |
             "firmware firmware status seen switch"
           margin: 0
@@ -24,7 +22,7 @@ z_wave_single_relay_no_scene:
             view_layout:
               grid-area: firmware
           - type: custom:mushroom-entity-card
-            entity: 'switch.[[sensor_prefix]]'
+            entity: '[[sensor_domain]].[[sensor_prefix]]'
             primary_info: none
             secondary_info: none
             view_layout:
