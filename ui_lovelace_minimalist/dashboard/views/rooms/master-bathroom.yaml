@@ -1,77 +1,119 @@
 title: "Master Bathroom"
 path: "master-bath"
+type: custom:grid-layout
+layout:
+  grid-template-areas: |
+    "header . ."
+    "devices sensors health"
+  mediaquery:
+    # portrait monitor
+    "only screen and (min-width: 769px) and (max-width: 1400px)":
+      grid-template-areas: |
+        "header header"
+        "devices sensors"
+        "health ."
+    # Smartphones
+    "only screen and (max-width: 768px)":
+      grid-template-areas: |
+        "header"
+        "devices"
+        "sensors"
+        "health"
 cards:
   - type: custom:decluttering-card
     template: room_header
+    view_layout:
+      grid-area: header
     variables:
       - sensor_prefix: master_bath
       - room_name: Master Bathroom
 
-  - type: "custom:button-card"
-    template: card_title
-    label: Devices
-
-  - type: horizontal-stack
+  #################
+  # DEVICES
+  #################
+  - type: vertical-stack
+    view_layout:
+      grid-area: devices
     cards:
       - type: "custom:button-card"
-        template: card_light
-        entity: light.master_bath_light
-        variables:
-          ulm_card_light_enable_slider: true
-      - type: vertical-stack
+        template: card_title
+        label: Devices
+
+      - type: horizontal-stack
         cards:
           - type: "custom:button-card"
             template: card_light
-            entity: switch.master_bath_shower_light
+            entity: light.master_bath_light
             variables:
-              ulm_card_light_color: blue
-          - type: "custom:button-card"
-            template: card_light
-            entity: switch.master_bath_light_2
-            variables:
-              ulm_card_light_color: blue
+              ulm_card_light_enable_slider: true
+          - type: vertical-stack
+            cards:
+              - type: "custom:button-card"
+                template: card_light
+                entity: switch.master_bath_shower_light
+                variables:
+                  ulm_card_light_color: blue
+              - type: "custom:button-card"
+                template: card_light
+                entity: switch.master_bath_light_2
+                variables:
+                  ulm_card_light_color: blue
 
-  - type: "custom:button-card"
-    template: card_title
-    label: Sensors
+  #################
+  # SENSORS
+  #################
+  - type: vertical-stack
+    view_layout:
+      grid-area: sensors
+    cards:
+      - type: "custom:button-card"
+        template: card_title
+        label: Sensors
 
-  - type: "custom:button-card"
-    template: card_graph
-    entity: sensor.master_bath_gfi_8_1min
-    variables:
-      ulm_card_graph_color: "var(--google-yellow)"
-      ulm_card_graph_entity: sensor.master_bath_gfi_8_1min
-      ulm_card_graph_name: Electricity 1 min
+      - type: "custom:button-card"
+        template: card_graph
+        entity: sensor.master_bath_gfi_8_1min
+        variables:
+          ulm_card_graph_color: "var(--google-yellow)"
+          ulm_card_graph_entity: sensor.master_bath_gfi_8_1min
+          ulm_card_graph_name: Electricity 1 min
 
-  - type: "custom:button-card"
-    template: card_title
-    label: Device Health
+  #################
+  # DEVICE HEALTH
+  #################
+  - type: vertical-stack
+    view_layout:
+      grid-area: health
+    cards:
+      - type: "custom:button-card"
+        template: card_title
+        label: Device Health
 
-  - type: custom:decluttering-card
-    template: z_wave_climate
-    variables:
-      - sensor_prefix: master_bath
-      - node_number: 4
+      - type: custom:decluttering-card
+        template: z_wave_climate
+        variables:
+          - sensor_prefix: master_bath
+          - node_number: 4
 
-  - type: custom:decluttering-card
-    template: z_wave_single_relay
-    variables:
-      - sensor_prefix: master_bath_shower_light
-      - name: Shower Light
-      - node_number: 31
+      - type: custom:decluttering-card
+        template: z_wave_single_relay
+        variables:
+          - sensor_prefix: master_bath_shower_light
+          - name: Shower Light
+          - node_number: 31
 
-  - type: custom:decluttering-card
-    template: z_wave_double_relay
-    variables:
-      - sensor_prefix: master_bath
-      - sensor_domain: light
-      - name: Dimmer
-      - node_number: node_32
-      - switch1: light
+      - type: custom:decluttering-card
+        template: z_wave_double_relay
+        variables:
+          - sensor_prefix: master_bath
+          - sensor_domain: light
+          - name: Dimmer
+          - node_number: node_32
+          - switch1: light
 
-  - type: custom:decluttering-card
-    template: z_wave_double_relay
-    variables:
-      - sensor_prefix: master_bath_fan
-      - name: Fan Relay
-      - node_number: master_bath_fan_relay
+      - type: custom:decluttering-card
+        template: z_wave_double_relay
+        variables:
+          - sensor_prefix: master_bath_fan
+          - name: Fan Relay
+          - node_number: master_bath_fan_relay
