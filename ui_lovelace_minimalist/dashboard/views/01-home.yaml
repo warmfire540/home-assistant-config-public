@@ -332,16 +332,12 @@ cards:
           grid-area: bath
         variables:
           affix: master_bath
-          entity_1:
-            entity_id: light.master_bath_dimmer
-            templates:
-              - yellow_on
           entity_2:
-            entity_id: switch.master_bath_fan_relay_2
+            entity_id: switch.master_bath_shower_light
             templates:
               - yellow_on
           entity_3:
-            entity_id: switch.master_bath_fan_relay
+            entity_id: switch.master_bath_light_2
             templates:
               - blue_on
 

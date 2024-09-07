@@ -15,19 +15,19 @@ cards:
     cards:
       - type: "custom:button-card"
         template: card_light
-        entity: light.master_bath_dimmer
+        entity: light.master_bath_light
         variables:
           ulm_card_light_enable_slider: true
       - type: vertical-stack
         cards:
           - type: "custom:button-card"
             template: card_light
-            entity: switch.master_bath_fan_relay_2
+            entity: switch.master_bath_shower_light
             variables:
               ulm_card_light_color: blue
           - type: "custom:button-card"
             template: card_light
-            entity: switch.master_bath_fan_relay
+            entity: switch.master_bath_light_2
             variables:
               ulm_card_light_color: blue
 
@@ -56,15 +56,22 @@ cards:
   - type: custom:decluttering-card
     template: z_wave_single_relay
     variables:
-      - sensor_prefix: master_bath_dimmer
-      - sensor_domain: light
-      - name: Light
-      - node_number: 30
+      - sensor_prefix: master_bath_shower_light
+      - name: Shower Light
+      - node_number: 31
 
   - type: custom:decluttering-card
-    template: z_wave_double_relay_no_scenes
+    template: z_wave_double_relay
+    variables:
+      - sensor_prefix: master_bath
+      - sensor_domain: light
+      - name: Dimmer
+      - node_number: node_32
+      - switch1: light
+
+  - type: custom:decluttering-card
+    template: z_wave_double_relay
     variables:
       - sensor_prefix: master_bath_fan
-      - sensor_domain: relay
       - name: Fan Relay
       - node_number: master_bath_fan_relay

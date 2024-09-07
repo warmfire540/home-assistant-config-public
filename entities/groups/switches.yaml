@@ -10,3 +10,4 @@ all_light_switches:
     - switch.garage_opener_plug
     - switch.living_room_switch_switch_1
     - switch.bedroom_switch_switch_1
+    - switch.master_bath_shower_light

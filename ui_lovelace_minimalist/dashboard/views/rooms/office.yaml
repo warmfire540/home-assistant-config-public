@@ -241,6 +241,5 @@ cards:
     template: z_wave_single_relay
     variables:
       - sensor_prefix: office_fan
-      - sensor_domain: switch
       - name: Fan Relay
       - node_number: 24

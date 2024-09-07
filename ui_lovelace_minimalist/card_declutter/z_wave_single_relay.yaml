@@ -1,4 +1,6 @@
 z_wave_single_relay:
+  default:
+    - sensor_domain: switch
   card:
     type: custom:stack-in-card
     cards:

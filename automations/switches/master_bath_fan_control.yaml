@@ -7,33 +7,48 @@ alias: Master bath fan control
 id: d4b5014e-bfd7-4aa7-8735-a66b8902a3f5
 
 trigger:
-  - platform: device
-    type: turned_off
-    device_id: a7d59fc3bcf6e681098ae46ff3f0c7c6
-    entity_id: 9740c0c5015300f70c057dccfaa3b04f
-    domain: switch
-    id: fan-off
-  - platform: device
-    type: turned_on
-    device_id: a7d59fc3bcf6e681098ae46ff3f0c7c6
-    entity_id: 9740c0c5015300f70c057dccfaa3b04f
-    domain: switch
+  - platform: state
+    entity_id:
+      - switch.master_bath_light_2
+    from: "off"
+    to: "on"
     id: fan-on
+    variables:
+      switch: switch.master_bath_fan_relay
+  - platform: state
+    entity_id:
+      - switch.master_bath_light_2
+    from: "on"
+    to: "off"
+    id: fan-off
+  
+  - platform: state
+    entity_id:
+      - switch.master_bath_shower_light
+    from: "off"
+    to: "on"
+    id: light-on
+    variables:
+      switch: switch.master_bath_fan_relay_2
+  - platform: state
+    entity_id:
+      - switch.master_bath_shower_light
+    from: "on"
+    to: "off"
+    id: light-off
 
 action:
   choose:
     - conditions:
-        - condition: trigger
-          id:
-            - fan-off
-        - condition: numeric_state
-          entity_id: sensor.master_bath_climate_humidity
-          above: 64
+        condition: trigger
+        id:
+          - fan-on
+          - light-on
       sequence:
-        - type: turn_off
-          device_id: e3d6ecef0926d1a385c264ccd7b93b66
-          entity_id: b2e971f6506f5eb52b6502c5f269bd62
-          domain: switch
+        - service: switch.turn_on
+          target:
+            entity_id: "{{ switch }}"
+
     - conditions:
         - condition: trigger
           id:
@@ -42,25 +57,17 @@ action:
           entity_id: sensor.master_bath_climate_humidity
           below: 65
       sequence:
-        - type: turn_off
-          device_id: e3d6ecef0926d1a385c264ccd7b93b66
-          entity_id: b2e971f6506f5eb52b6502c5f269bd62
-          domain: switch
-        - type: turn_off
-          device_id: e3d6ecef0926d1a385c264ccd7b93b66
-          entity_id: 87589a5e310bd9e2b9d6ddcf928fd151
-          domain: switch
+        - service: switch.turn_off
+          target:
+            entity_id: switch.master_bath_fan_relay
+
     - conditions:
-        - condition: trigger
-          id:
-            - fan-on
+        condition: trigger
+        id:
+          - light-off
       sequence:
-        - type: turn_on
-          device_id: e3d6ecef0926d1a385c264ccd7b93b66
-          entity_id: b2e971f6506f5eb52b6502c5f269bd62
-          domain: switch
-        - type: turn_on
-          device_id: e3d6ecef0926d1a385c264ccd7b93b66
-          entity_id: 87589a5e310bd9e2b9d6ddcf928fd151
-          domain: switch
+        - service: switch.turn_off
+          target:
+            entity_id: switch.master_bath_fan_relay_2
+
 mode: single
