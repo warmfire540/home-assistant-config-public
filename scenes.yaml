@@ -8,8 +8,35 @@
   entities:
     switch.water_softener_plug:
       icon: mdi:water-boiler
-      friendly_name: 'Water Softener Plug'
+      friendly_name: 'Water Softener Plug '
       state: 'on'
+    switch.garage_opener_plug:
+      friendly_name: 'Garage Opener Plug '
+      state: 'on'
+    climate.living_room:
+      hvac_modes:
+      - heat
+      - cool
+      - heat_cool
+      - 'off'
+      min_temp: 50
+      max_temp: 90
+      fan_modes:
+      - 'on'
+      - 'off'
+      preset_modes:
+      - none
+      - eco
+      current_temperature: 74
+      temperature: 74
+      target_temp_high:
+      target_temp_low:
+      fan_mode: 'off'
+      hvac_action: idle
+      preset_mode: none
+      friendly_name: Thermostat
+      supported_features: 411
+      state: cool
   icon: mdi:home
   metadata: {}
 - id: '1716402862505'
@@ -29,23 +56,51 @@
       preset_modes:
       - none
       - eco
-      supported_features: 411
-      current_temperature: 75
-      temperature: 82
+      temperature: 75
+      target_temp_high:
+      target_temp_low:
       fan_mode: 'off'
       hvac_action: idle
       preset_mode: eco
       friendly_name: Thermostat
+      supported_features: 411
       state: cool
     switch.water_softener_plug:
       icon: mdi:water-boiler
-      friendly_name: 'Water Softener Plug'
+      friendly_name: 'Water Softener Plug '
+      state: 'off'
+    switch.garage_opener_plug:
+      friendly_name: 'Garage Opener Plug '
       state: 'off'
   icon: mdi:plane-car
   metadata: {}
 - id: '1716428655222'
   name: Night
-  entities: {}
+  entities:
+    climate.living_room:
+      hvac_modes:
+      - heat
+      - cool
+      - heat_cool
+      - 'off'
+      min_temp: 50
+      max_temp: 90
+      fan_modes:
+      - 'on'
+      - 'off'
+      preset_modes:
+      - none
+      - eco
+      current_temperature: 74
+      temperature: 71
+      target_temp_high:
+      target_temp_low:
+      fan_mode: 'off'
+      hvac_action: cooling
+      preset_mode: none
+      friendly_name: Thermostat
+      supported_features: 411
+      state: cool
   icon: mdi:weather-night
   metadata: {}
 - id: '1716430789968'
