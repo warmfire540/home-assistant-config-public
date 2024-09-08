@@ -11,17 +11,12 @@ cards:
     template: card_title
     label: Devices
 
-  - type: horizontal-stack
-    cards:
-      - type: "custom:button-card"
-        template: card_light
-        entity: light.master_bedroom_light
-        variables:
-          ulm_card_light_enable_slider: true
-          ulm_card_light_enable_collapse: true
-      - type: "custom:button-card"
-        template: card_light
-        entity: switch.bedroom_switch_switch_1
+  - type: "custom:button-card"
+    template: card_light
+    entity: light.master_bedroom_light
+    variables:
+      ulm_card_light_enable_slider: true
+      ulm_card_light_enable_collapse: true
 
   - type: custom:decluttering-card
     template: cover
@@ -65,3 +60,11 @@ cards:
     variables:
       - sensor_prefix: master_bedroom
       - node_number: 10
+
+  - type: custom:decluttering-card
+    template: z_wave_single_relay
+    variables:
+      - sensor_prefix: master_bedroom_light
+      - sensor_domain: light
+      - name: Light
+      - node_number: 30

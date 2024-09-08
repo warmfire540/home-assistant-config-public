@@ -46,6 +46,7 @@ cards:
             entity: light.master_bath_light
             variables:
               ulm_card_light_enable_slider: true
+              ulm_card_light_enable_collapse: true
           - type: vertical-stack
             cards:
               - type: "custom:button-card"
