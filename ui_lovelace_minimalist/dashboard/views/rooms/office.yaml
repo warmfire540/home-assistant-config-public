@@ -199,21 +199,6 @@ cards:
           ulm_card_binary_sensor_name: Carbon Monoxide
         entity: binary_sensor.office_smoke_sensor_carbon_monoxide_detected
 
-  - type: horizontal-stack
-    cards:
-      - type: "custom:button-card"
-        template: card_graph
-        entity: sensor.office_up
-        variables:
-          ulm_card_graph_color: "var(--google-green)"
-          ulm_card_graph_entity: sensor.office_up
-      - type: "custom:button-card"
-        template: card_graph
-        entity: sensor.office_down
-        variables:
-          ulm_card_graph_color: "var(--google-green)"
-          ulm_card_graph_entity: sensor.office_down
-
   - type: "custom:button-card"
     template: card_graph
     entity: sensor.office_g_bath_garage_3_1min

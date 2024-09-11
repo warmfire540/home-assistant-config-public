@@ -7,6 +7,9 @@ cards:
       - sensor_prefix: master_bedroom
       - room_name: Master Bedroom
 
+  #################
+  # DEVICES
+  #################
   - type: "custom:button-card"
     template: card_title
     label: Devices
@@ -24,24 +27,12 @@ cards:
       - sensor_prefix: bedroom
       - fave_percent: 20
 
+  #################
+  # SENSORS
+  #################
   - type: "custom:button-card"
     template: card_title
     label: Sensors
-
-  - type: horizontal-stack
-    cards:
-      - type: "custom:button-card"
-        template: card_graph
-        entity: sensor.master_bedroom_up
-        variables:
-          ulm_card_graph_color: "var(--google-green)"
-          ulm_card_graph_entity: sensor.master_bedroom_up
-      - type: "custom:button-card"
-        template: card_graph
-        entity: sensor.master_bedroom_down
-        variables:
-          ulm_card_graph_color: "var(--google-green)"
-          ulm_card_graph_entity: sensor.master_bedroom_down
 
   - type: "custom:button-card"
     template: card_graph
@@ -51,6 +42,9 @@ cards:
       ulm_card_graph_entity: sensor.master_bedroom_bath_14_1min
       ulm_card_graph_name: Electricity 1 min
 
+  #################
+  # DEVICE HEALTH
+  #################
   - type: "custom:button-card"
     template: card_title
     label: Device Health

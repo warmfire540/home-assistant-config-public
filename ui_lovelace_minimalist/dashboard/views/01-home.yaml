@@ -433,6 +433,7 @@ cards:
         variables:
           affix: shed
           temperature_threshold: 90
+          humidity_threshold: 70
           entity_1:
             entity_id: binary_sensor.shed_door_sensor_window_door_is_open
             templates:

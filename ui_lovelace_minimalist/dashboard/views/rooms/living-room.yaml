@@ -24,6 +24,9 @@ cards:
           variables:
             entity: binary_sensor.rolo_error
 
+  #################
+  # DEVICES
+  #################
   - type: "custom:button-card"
     template: card_title
     label: Devices
@@ -119,6 +122,9 @@ cards:
         icon: mdi:book-variant
         tooltip: Rolo schedule
 
+  #################
+  # SENSORS
+  #################
   - type: "custom:button-card"
     template: card_title
     label: Sensors
@@ -142,16 +148,18 @@ cards:
     cards:
       - type: "custom:button-card"
         template: card_graph
-        entity: sensor.living_room_up
+        entity: sensor.pretty_fly_for_a_wifi_living_room_data_usage_day
         variables:
           ulm_card_graph_color: "var(--google-green)"
-          ulm_card_graph_entity: sensor.living_room_up
+          ulm_card_graph_entity: sensor.pretty_fly_for_a_wifi_living_room_data_usage_day
+          ulm_card_graph_name: Daily Usage
       - type: "custom:button-card"
         template: card_graph
-        entity: sensor.living_room_down
+        entity: sensor.pretty_fly_for_a_wifi_living_room_connected_clients
         variables:
           ulm_card_graph_color: "var(--google-green)"
-          ulm_card_graph_entity: sensor.living_room_down
+          ulm_card_graph_entity: sensor.pretty_fly_for_a_wifi_living_room_connected_clients
+          ulm_card_graph_name: Connected Clients
 
   - type: "custom:button-card"
     template: card_graph
@@ -161,6 +169,9 @@ cards:
       ulm_card_graph_entity: sensor.living_room_15_1min
       ulm_card_graph_name: Electricity 1 min
 
+#################
+  # DEVICE HEALTH
+  #################
   - type: "custom:button-card"
     template: card_title
     label: Device Health

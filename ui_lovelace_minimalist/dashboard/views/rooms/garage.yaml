@@ -121,6 +121,23 @@ cards:
     cards:
       - type: "custom:button-card"
         template: card_graph
+        entity: sensor.pretty_fly_for_a_wifi_garage_data_usage_day
+        variables:
+          ulm_card_graph_color: "var(--google-green)"
+          ulm_card_graph_entity: sensor.pretty_fly_for_a_wifi_garage_data_usage_day
+          ulm_card_graph_name: Daily Usage
+      - type: "custom:button-card"
+        template: card_graph
+        entity: sensor.pretty_fly_for_a_wifi_garage_connected_clients
+        variables:
+          ulm_card_graph_color: "var(--google-green)"
+          ulm_card_graph_entity: sensor.pretty_fly_for_a_wifi_garage_connected_clients
+          ulm_card_graph_name: Connected Clients
+
+  - type: horizontal-stack
+    cards:
+      - type: "custom:button-card"
+        template: card_graph
         entity: sensor.clothes_washer_13_1min
         variables:
           ulm_card_graph_color: "var(--google-yellow)"

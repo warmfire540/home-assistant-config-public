@@ -191,7 +191,7 @@ cards:
                         state_attr(config.entity, "connection_type")[0],
                         state_attr(config.entity, "connection_type")
                       ),
-                      'Dunno'
+                      ''
                       )}}
                 state: '{{ state_attr(config.entity, "ip") }}'
                 type: "custom:template-entity-row"
