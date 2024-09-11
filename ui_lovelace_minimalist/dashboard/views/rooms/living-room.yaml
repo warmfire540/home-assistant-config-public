@@ -122,6 +122,11 @@ cards:
         icon: mdi:book-variant
         tooltip: Rolo schedule
 
+  - type: custom:decluttering-card
+    template: eero
+    variables:
+      - location: living_room
+
   #################
   # SENSORS
   #################
@@ -143,23 +148,6 @@ cards:
           ulm_card_binary_sensor_alert: true
           ulm_card_binary_sensor_name: Carbon Monoxide
         entity: binary_sensor.living_room_smoke_sensor_carbon_monoxide_detected
-
-  - type: horizontal-stack
-    cards:
-      - type: "custom:button-card"
-        template: card_graph
-        entity: sensor.pretty_fly_for_a_wifi_living_room_data_usage_day
-        variables:
-          ulm_card_graph_color: "var(--google-green)"
-          ulm_card_graph_entity: sensor.pretty_fly_for_a_wifi_living_room_data_usage_day
-          ulm_card_graph_name: Daily Usage
-      - type: "custom:button-card"
-        template: card_graph
-        entity: sensor.pretty_fly_for_a_wifi_living_room_connected_clients
-        variables:
-          ulm_card_graph_color: "var(--google-green)"
-          ulm_card_graph_entity: sensor.pretty_fly_for_a_wifi_living_room_connected_clients
-          ulm_card_graph_name: Connected Clients
 
   - type: "custom:button-card"
     template: card_graph

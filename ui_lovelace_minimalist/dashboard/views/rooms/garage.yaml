@@ -77,6 +77,11 @@ cards:
           unit: "%"
           subtitle: Side Brush
 
+  - type: custom:decluttering-card
+    template: eero
+    variables:
+      - location: garage
+
   #################
   # SENSORS
   #################
@@ -116,23 +121,6 @@ cards:
     variables:
       ulm_card_input_boolean_force_background_color: true
       ulm_card_input_boolean_name: Dryer Door
-
-  - type: horizontal-stack
-    cards:
-      - type: "custom:button-card"
-        template: card_graph
-        entity: sensor.pretty_fly_for_a_wifi_garage_data_usage_day
-        variables:
-          ulm_card_graph_color: "var(--google-green)"
-          ulm_card_graph_entity: sensor.pretty_fly_for_a_wifi_garage_data_usage_day
-          ulm_card_graph_name: Daily Usage
-      - type: "custom:button-card"
-        template: card_graph
-        entity: sensor.pretty_fly_for_a_wifi_garage_connected_clients
-        variables:
-          ulm_card_graph_color: "var(--google-green)"
-          ulm_card_graph_entity: sensor.pretty_fly_for_a_wifi_garage_connected_clients
-          ulm_card_graph_name: Connected Clients
 
   - type: horizontal-stack
     cards:
