@@ -19,3 +19,7 @@ all_lights:
     - light.master_bath_light
     - switch.under_cabinet_lights_switch_1
     - switch.dinette_light_switch_1
+    - switch.kitchen_lights_switch_1
+    - switch.kitchen_lights_2_switch_1
+    - switch.master_bath_shower_light
+    - switch.master_bath_light_2

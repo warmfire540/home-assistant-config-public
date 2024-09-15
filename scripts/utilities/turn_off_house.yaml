@@ -24,16 +24,8 @@ turn_off_house:
       entity_id: 93d5c96256c5cab2a3ff2686e4516fa5
       domain: light
     - type: turn_off
-      device_id: 638ff6dbd16db764b99b0b1bc72a8a31
-      entity_id: a37b21ddc27f77fa2c928543f0a7664a
-      domain: light
-    - type: turn_off
       device_id: 8a97ebc676b4f2b05000d2cf4d677044
       entity_id: a19780d4ea46fd9307fa966c4c0afc76
-      domain: light
-    - type: turn_off
-      device_id: 0aaa07ba40ab8ba2fd5937b94c3c036e
-      entity_id: 8478ac397dc1b56400f5be8ff8f2b9bf
       domain: light
   mode: single
   icon: mdi:power-plug-off

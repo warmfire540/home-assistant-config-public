@@ -9,3 +9,6 @@ all_light_switches:
     - switch.office_switch_switch_1
     - switch.garage_opener_plug
     - switch.master_bath_shower_light
+    - switch.water_softener_plug
+    - switch.office_fan
+    - switch.pet_thirst_power
