@@ -14,6 +14,7 @@ trigger:
     for: "00:00:10"
     variables:
       input_entity: input_boolean.washing_machine_on
+      end_entity: input_boolean.washing_machine_end
 
   - platform: numeric_state
     entity_id: sensor.clothes_washer_13_1min
@@ -31,6 +32,7 @@ trigger:
     id: dryer_on
     variables:
       input_entity: input_boolean.dryer_on
+      end_entity: input_boolean.dryer_end
 
   - platform: numeric_state
     entity_id: sensor.dryer_1_1min
@@ -63,15 +65,15 @@ action:
           - service: input_boolean.turn_on
             target:
               entity_id: "{{ input_entity }}"
+          - service: input_boolean.turn_off
+            target:
+              entity_id: "{{ end_entity }}"
           - condition: trigger
             id:
               - dryer_on
           - service: input_boolean.turn_off
             target:
               entity_id: input_boolean.washing_machine_end
-          - service: alert.turn_off
-            target:
-              entity_id: alert.washing_machine
 
       - conditions:
           - condition: trigger

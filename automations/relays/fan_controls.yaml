@@ -25,13 +25,13 @@ trigger:
     id: bathroom_fan_on
     above: 64
     variables:
-      switch: switch.master_bath_light_2
+      switch: switch.master_bath_fan
   - platform: numeric_state
     entity_id: sensor.master_bath_climate_humidity
     id: bathroom_fan_off
     below: 65
     variables:
-      switch: switch.master_bath_light_2
+      switch: switch.master_bath_fan
 
 condition:
   and:

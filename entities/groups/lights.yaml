@@ -22,4 +22,4 @@ all_lights:
     - switch.kitchen_lights_switch_1
     - switch.kitchen_lights_2_switch_1
     - switch.master_bath_shower_light
-    - switch.master_bath_light_2
+    - switch.master_bath_fan

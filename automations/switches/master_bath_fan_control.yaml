@@ -9,7 +9,7 @@ id: d4b5014e-bfd7-4aa7-8735-a66b8902a3f5
 trigger:
   - platform: state
     entity_id:
-      - switch.master_bath_light_2
+      - switch.master_bath_fan
     from: "off"
     to: "on"
     id: fan-on
@@ -17,11 +17,11 @@ trigger:
       switch: switch.master_bath_fan_relay
   - platform: state
     entity_id:
-      - switch.master_bath_light_2
+      - switch.master_bath_fan
     from: "on"
     to: "off"
     id: fan-off
-  
+
   - platform: state
     entity_id:
       - switch.master_bath_shower_light

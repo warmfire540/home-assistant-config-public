@@ -19,14 +19,9 @@ cards:
         variables:
           ulm_card_light_enable_slider: true
           ulm_card_light_enable_collapse: true
-      - type: vertical-stack
-        cards:
-          - type: "custom:button-card"
-            template: card_light
-            entity: switch.office_switch_switch_1
-          - type: "custom:button-card"
-            template: card_light
-            entity: switch.office_fan
+      - type: "custom:button-card"
+        template: card_light
+        entity: switch.office_fan
 
   - type: custom:decluttering-card
     template: cover
@@ -223,8 +218,11 @@ cards:
       - node_number: 20
 
   - type: custom:decluttering-card
-    template: z_wave_single_relay
+    template: z_wave_double_switch
     variables:
-      - sensor_prefix: office_fan
-      - name: Fan Relay
-      - node_number: 24
+      - sensor_prefix: office
+      - sensor_domain: light
+      - name: Ceiling Fan
+      - node_number: 40
+      - switch1: light
+      - switch2: switch.office_fan

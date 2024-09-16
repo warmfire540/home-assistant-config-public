@@ -1,7 +1,6 @@
-z_wave_double_relay:
+z_wave_double_switch:
   default:
     - switch1: switch
-    - switch2: switch
     - sensor_domain: relay
   card:
     type: custom:stack-in-card
@@ -42,7 +41,7 @@ z_wave_double_relay:
                   align-items: center;
                 }
           - type: custom:mushroom-entity-card
-            entity: '[[switch2]].[[sensor_prefix]]_[[sensor_domain]]_2'
+            entity: '[[switch2]]'
             primary_info: none
             secondary_info: none
             view_layout:
@@ -55,7 +54,7 @@ z_wave_double_relay:
                   align-items: center;
                 }
           - type: custom:mushroom-entity-card
-            entity: 'sensor.[[node_number]]_last_seen'
+            entity: 'sensor.node_[[node_number]]_last_seen'
             name: Last Seen
             icon_type: none
             view_layout:
@@ -66,7 +65,7 @@ z_wave_double_relay:
                   text-align: center;
                 }
           - type: custom:mushroom-entity-card
-            entity: 'sensor.[[node_number]]_node_status'
+            entity: 'sensor.node_[[node_number]]_node_status'
             name: Status
             icon_type: none
             view_layout:

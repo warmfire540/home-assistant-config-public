@@ -20,10 +20,6 @@ turn_off_house:
       entity_id: 6f198d82006e374f6c75293f0e046c61
       domain: switch
     - type: turn_off
-      device_id: 8247e8dbd9b8722c278db133e081c470
-      entity_id: 93d5c96256c5cab2a3ff2686e4516fa5
-      domain: light
-    - type: turn_off
       device_id: 8a97ebc676b4f2b05000d2cf4d677044
       entity_id: a19780d4ea46fd9307fa966c4c0afc76
       domain: light

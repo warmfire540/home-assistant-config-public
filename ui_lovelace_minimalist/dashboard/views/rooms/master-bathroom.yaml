@@ -56,7 +56,7 @@ cards:
                   ulm_card_light_color: blue
               - type: "custom:button-card"
                 template: card_light
-                entity: switch.master_bath_light_2
+                entity: switch.master_bath_fan
                 variables:
                   ulm_card_light_color: blue
 
@@ -104,17 +104,19 @@ cards:
           - node_number: 31
 
       - type: custom:decluttering-card
-        template: z_wave_double_relay
+        template: z_wave_double_switch
         variables:
           - sensor_prefix: master_bath
           - sensor_domain: light
-          - name: Dimmer
-          - node_number: node_32
+          - name: Light & Fan
+          - node_number: 32
           - switch1: light
+          - switch2: switch.master_bath_fan
 
       - type: custom:decluttering-card
-        template: z_wave_double_relay
+        template: z_wave_double_switch
         variables:
           - sensor_prefix: master_bath_fan
           - name: Fan Relay
           - node_number: master_bath_fan_relay
+          - switch2: switch.master_bath_fan_relay_2

@@ -6,7 +6,6 @@
 all_light_switches:
   name: All Light Switches
   entities:
-    - switch.office_switch_switch_1
     - switch.garage_opener_plug
     - switch.master_bath_shower_light
     - switch.water_softener_plug
