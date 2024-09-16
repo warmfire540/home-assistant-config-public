@@ -2,7 +2,7 @@ title: "Test"
 path: "test"
 cards:
   - type: "custom:button-card"
-    template: poat_card_room
+    template: room_summary
     icon: mdi:shower
     variables:
       affix: office

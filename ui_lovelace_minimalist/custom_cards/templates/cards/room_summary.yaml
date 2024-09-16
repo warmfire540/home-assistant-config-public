@@ -1,5 +1,5 @@
 ---
-poat_card_room:
+room_summary:
   template:
     - card_room
 

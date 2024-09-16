@@ -221,7 +221,7 @@ cards:
       #################
       - type: custom:button-card
         template:
-          - poat_card_room
+          - room_summary
         icon: mdi:sofa
         view_layout:
           grid-area: living
@@ -246,7 +246,7 @@ cards:
       #################
       - type: custom:button-card
         template:
-          - poat_card_room
+          - room_summary
         icon: mdi:glass-cocktail
         view_layout:
           grid-area: dining
@@ -258,7 +258,7 @@ cards:
       #################
       - type: custom:button-card
         template:
-          - poat_card_room
+          - room_summary
         icon: mdi:controller
         view_layout:
           grid-area: office
@@ -283,7 +283,7 @@ cards:
       #################
       - type: custom:button-card
         template:
-          - poat_card_room
+          - room_summary
         icon: mdi:countertop-outline
         view_layout:
           grid-area: kitchen
@@ -306,7 +306,7 @@ cards:
       #################
       - type: custom:button-card
         template:
-          - poat_card_room
+          - room_summary
         icon: mdi:bed
         view_layout:
           grid-area: bedroom
@@ -318,7 +318,7 @@ cards:
       #################
       - type: custom:button-card
         template:
-          - poat_card_room
+          - room_summary
         icon: mdi:shower-head
         view_layout:
           grid-area: bath
@@ -338,7 +338,7 @@ cards:
       #################
       - type: custom:button-card
         template:
-          - poat_card_room
+          - room_summary
         icon: mdi:desk
         view_layout:
           grid-area: guest
@@ -350,7 +350,7 @@ cards:
       #################
       - type: custom:button-card
         template:
-          - poat_card_room
+          - room_summary
         icon: mdi:shower
         view_layout:
           grid-area: spare
@@ -364,7 +364,7 @@ cards:
       #################
       - type: custom:button-card
         template:
-          - poat_card_room
+          - room_summary
         icon: mdi:garage
         view_layout:
           grid-area: garage
@@ -404,7 +404,7 @@ cards:
       #################
       - type: custom:button-card
         template:
-          - poat_card_room
+          - room_summary
         icon: mdi:home-roof
         view_layout:
           grid-area: attic
@@ -424,7 +424,7 @@ cards:
       #################
       - type: custom:button-card
         template:
-          - poat_card_room
+          - room_summary
         icon: mdi:greenhouse
         view_layout:
           grid-area: shed
