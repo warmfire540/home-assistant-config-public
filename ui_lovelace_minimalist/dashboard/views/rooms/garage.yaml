@@ -1,8 +1,30 @@
 title: "Garage"
 path: "garage"
+type: custom:grid-layout
+layout:
+  grid-template-areas: |
+    "header status ."
+    "devices sensors health"
+  mediaquery:
+    # portrait monitor
+    "only screen and (min-width: 769px) and (max-width: 1400px)":
+      grid-template-areas: |
+        "header status"
+        "devices sensors"
+        "health ."
+    # Smartphones
+    "only screen and (max-width: 768px)":
+      grid-template-areas: |
+        "header"
+        "status"
+        "devices"
+        "sensors"
+        "health"
 cards:
   - type: custom:decluttering-card
     template: room_header
+    view_layout:
+      grid-area: header
     variables:
       - sensor_prefix: garage
       - room_name: Garage
@@ -11,6 +33,8 @@ cards:
   # STATUS CHIPS
   #################
   - type: custom:mod-card
+    view_layout:
+      grid-area: status
     style:
       hui-horizontal-stack-card$: |
         #root { 
@@ -31,155 +55,167 @@ cards:
   #################
   # DEVICES
   #################
-  - type: "custom:button-card"
-    template: card_title
-    label: Devices
+  - type: vertical-stack
+    view_layout:
+      grid-area: devices
+    cards:
+      - type: "custom:button-card"
+        template: card_title
+        label: Devices
 
-  - type: "custom:button-card"
-    template: card_light
-    entity: binary_sensor.garage_door_tilt_window_door_is_open
-    variables:
-      ulm_card_light_name: Garage Door
-    tap_action:
-      action: call-service
-      service: switch.toggle
-      service_data:
-        entity_id: switch.garage_opener
+      - type: "custom:button-card"
+        template: card_light
+        entity: binary_sensor.garage_door_tilt_window_door_is_open
+        variables:
+          ulm_card_light_name: Garage Door
+        tap_action:
+          action: call-service
+          service: switch.toggle
+          service_data:
+            entity_id: switch.garage_opener
 
-  - type: "custom:button-card"
-    template: card_light
-    entity: switch.garage_opener_plug
-    variables:
-      ulm_card_light_name: Garage Door Power
+      - type: "custom:button-card"
+        template: card_light
+        entity: switch.garage_opener_plug
+        variables:
+          ulm_card_light_name: Garage Door Power
 
-  - type: "custom:button-card"
-    template: card_light
-    entity: switch.water_softener_plug
-    variables:
-      ulm_card_light_name: Water Softener
+      - type: "custom:button-card"
+        template: card_light
+        entity: switch.water_softener_plug
+        variables:
+          ulm_card_light_name: Water Softener
 
-  - type: "custom:vacuum-card"
-    entity: vacuum.strongboi
-    image: default
-    compact_view: false
-    show_name: true
-    show_toolbar: true
-    show_status: true
-    stats:
-      default:
-        - entity_id: sensor.strongboi_filter
-          unit: "%"
-          subtitle: Filter
-        - entity_id: sensor.strongboi_main_brush
-          unit: "%"
-          subtitle: Main Brush
-        - entity_id: sensor.strongboi_side_brush
-          unit: "%"
-          subtitle: Side Brush
-
-  - type: custom:decluttering-card
-    template: eero
-    variables:
-      - location: garage
+      - type: "custom:vacuum-card"
+        entity: vacuum.strongboi
+        image: default
+        compact_view: false
+        show_name: true
+        show_toolbar: true
+        show_status: true
+        stats:
+          default:
+            - entity_id: sensor.strongboi_filter
+              unit: "%"
+              subtitle: Filter
+            - entity_id: sensor.strongboi_main_brush
+              unit: "%"
+              subtitle: Main Brush
+            - entity_id: sensor.strongboi_side_brush
+              unit: "%"
+              subtitle: Side Brush
 
   #################
   # SENSORS
   #################
-  - type: "custom:button-card"
-    template: card_title
-    label: Sensors
-
-  - type: horizontal-stack
+  - type: vertical-stack
+    view_layout:
+      grid-area: sensors
     cards:
       - type: "custom:button-card"
-        template: card_input_boolean
-        entity: input_boolean.washing_machine_on
-        variables:
-          ulm_card_input_boolean_force_background_color: true
+        template: card_title
+        label: Sensors
+
+      - type: horizontal-stack
+        cards:
+          - type: "custom:button-card"
+            template: card_input_boolean
+            entity: input_boolean.washing_machine_on
+            variables:
+              ulm_card_input_boolean_force_background_color: true
+          - type: "custom:button-card"
+            template: card_input_boolean
+            entity: input_boolean.dryer_on
+            variables:
+              ulm_card_input_boolean_force_background_color: true
+
+      - type: horizontal-stack
+        cards:
+          - type: "custom:button-card"
+            template: card_input_boolean
+            entity: input_boolean.washing_machine_end
+            variables:
+              ulm_card_input_boolean_force_background_color: true
+          - type: "custom:button-card"
+            template: card_input_boolean
+            entity: input_boolean.dryer_end
+            variables:
+              ulm_card_input_boolean_force_background_color: true
+
       - type: "custom:button-card"
         template: card_input_boolean
-        entity: input_boolean.dryer_on
+        entity: binary_sensor.dryer_door_sensor_window_door_is_open
         variables:
           ulm_card_input_boolean_force_background_color: true
+          ulm_card_input_boolean_name: Dryer Door
 
-  - type: horizontal-stack
-    cards:
-      - type: "custom:button-card"
-        template: card_input_boolean
-        entity: input_boolean.washing_machine_end
-        variables:
-          ulm_card_input_boolean_force_background_color: true
-      - type: "custom:button-card"
-        template: card_input_boolean
-        entity: input_boolean.dryer_end
-        variables:
-          ulm_card_input_boolean_force_background_color: true
-
-  - type: "custom:button-card"
-    template: card_input_boolean
-    entity: binary_sensor.dryer_door_sensor_window_door_is_open
-    variables:
-      ulm_card_input_boolean_force_background_color: true
-      ulm_card_input_boolean_name: Dryer Door
-
-  - type: horizontal-stack
-    cards:
+      - type: horizontal-stack
+        cards:
+          - type: "custom:button-card"
+            template: card_graph
+            entity: sensor.clothes_washer_13_1min
+            variables:
+              ulm_card_graph_color: "var(--google-yellow)"
+              ulm_card_graph_entity: sensor.clothes_washer_13_1min
+              ulm_card_graph_name: Washer
+          - type: "custom:button-card"
+            template: card_graph
+            entity: sensor.dryer_1_1min
+            variables:
+              ulm_card_graph_color: "var(--google-yellow)"
+              ulm_card_graph_entity: sensor.dryer_1_1min
+              ulm_card_graph_name: Dryer
       - type: "custom:button-card"
         template: card_graph
-        entity: sensor.clothes_washer_13_1min
+        entity: sensor.water_heater_5_1min
         variables:
           ulm_card_graph_color: "var(--google-yellow)"
-          ulm_card_graph_entity: sensor.clothes_washer_13_1min
-          ulm_card_graph_name: Washer
-      - type: "custom:button-card"
-        template: card_graph
-        entity: sensor.dryer_1_1min
-        variables:
-          ulm_card_graph_color: "var(--google-yellow)"
-          ulm_card_graph_entity: sensor.dryer_1_1min
-          ulm_card_graph_name: Dryer
-  - type: "custom:button-card"
-    template: card_graph
-    entity: sensor.water_heater_5_1min
-    variables:
-      ulm_card_graph_color: "var(--google-yellow)"
-      ulm_card_graph_entity: sensor.water_heater_5_1min
-      ulm_card_graph_name: Water Heater
+          ulm_card_graph_entity: sensor.water_heater_5_1min
+          ulm_card_graph_name: Water Heater
 
   #################
   # DEVICE HEALTH
   #################
-  - type: "custom:button-card"
-    template: card_title
-    label: Device Health
+  - type: vertical-stack
+    view_layout:
+      grid-area: health
+    cards:
+      - type: "custom:button-card"
+        template: card_title
+        label: Device Health
 
-  - type: custom:decluttering-card
-    template: z_wave_climate
-    variables:
-      - sensor_prefix: garage
-      - node_number: 6
+      - type: custom:decluttering-card
+        template: z_wave_climate
+        variables:
+          - sensor_prefix: garage
+          - node_number: 6
 
-  - type: custom:decluttering-card
-    template: z_wave_plug
-    variables:
-      - sensor_prefix: garage_opener
-      - node_number: 28
+      - type: custom:decluttering-card
+        template: z_wave_plug
+        variables:
+          - sensor_prefix: garage_opener
+          - node_number: 28
 
-  - type: custom:decluttering-card
-    template: leak_sensors
-    variables:
-      - sensor_prefix: water_heater
+      - type: custom:decluttering-card
+        template: leak_sensors
+        variables:
+          - sensor_prefix: water_heater
 
-  - type: custom:decluttering-card
-    template: z_wave_door_sensor
-    variables:
-      - sensor_prefix: dryer
-      - node_number: 22
+      - type: custom:decluttering-card
+        template: z_wave_door_sensor
+        variables:
+          - sensor_prefix: dryer
+          - node_number: 22
 
-  - type: custom:decluttering-card
-    template: z_wave_door_sensor
-    variables:
-      - name: Tilt Sensor
-      - sensor_prefix: garage
-      - sensor_type: tilt
-      - node_number: 26
+      - type: custom:decluttering-card
+        template: z_wave_door_sensor
+        variables:
+          - name: Tilt Sensor
+          - sensor_prefix: garage
+          - sensor_type: tilt
+          - node_number: 26
+
+      - type: custom:decluttering-card
+        template: eero
+        variables:
+          - location: garage
