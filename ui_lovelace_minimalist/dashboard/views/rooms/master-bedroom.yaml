@@ -1,8 +1,29 @@
 title: "Master Bedroom"
 path: "master-bedroom"
+type: custom:grid-layout
+layout:
+  grid-template-areas: |
+    "header . ."
+    "devices sensors health"
+  mediaquery:
+    # portrait monitor
+    "only screen and (min-width: 769px) and (max-width: 1400px)":
+      grid-template-areas: |
+        "header header"
+        "devices sensors"
+        "health ."
+    # Smartphones
+    "only screen and (max-width: 768px)":
+      grid-template-areas: |
+        "header"
+        "devices"
+        "sensors"
+        "health"
 cards:
   - type: custom:decluttering-card
     template: room_header
+    view_layout:
+      grid-area: header
     variables:
       - sensor_prefix: master_bedroom
       - room_name: Master Bedroom
@@ -10,55 +31,67 @@ cards:
   #################
   # DEVICES
   #################
-  - type: "custom:button-card"
-    template: card_title
-    label: Devices
+  - type: vertical-stack
+    view_layout:
+      grid-area: devices
+    cards:
+      - type: "custom:button-card"
+        template: card_title
+        label: Devices
 
-  - type: "custom:button-card"
-    template: card_light
-    entity: light.master_bedroom_light
-    variables:
-      ulm_card_light_enable_slider: true
-      ulm_card_light_enable_collapse: true
+      - type: "custom:button-card"
+        template: card_light
+        entity: light.master_bedroom_light
+        variables:
+          ulm_card_light_enable_slider: true
+          ulm_card_light_enable_collapse: true
 
-  - type: custom:decluttering-card
-    template: cover
-    variables:
-      - sensor_prefix: bedroom
-      - fave_percent: 20
+      - type: custom:decluttering-card
+        template: cover
+        variables:
+          - sensor_prefix: bedroom
+          - fave_percent: 20
 
   #################
   # SENSORS
   #################
-  - type: "custom:button-card"
-    template: card_title
-    label: Sensors
+  - type: vertical-stack
+    view_layout:
+      grid-area: sensors
+    cards:
+      - type: "custom:button-card"
+        template: card_title
+        label: Sensors
 
-  - type: "custom:button-card"
-    template: card_graph
-    entity: sensor.master_bedroom_bath_14_1min
-    variables:
-      ulm_card_graph_color: "var(--google-yellow)"
-      ulm_card_graph_entity: sensor.master_bedroom_bath_14_1min
-      ulm_card_graph_name: Electricity 1 min
+      - type: "custom:button-card"
+        template: card_graph
+        entity: sensor.master_bedroom_bath_14_1min
+        variables:
+          ulm_card_graph_color: "var(--google-yellow)"
+          ulm_card_graph_entity: sensor.master_bedroom_bath_14_1min
+          ulm_card_graph_name: Electricity 1 min
 
   #################
   # DEVICE HEALTH
   #################
-  - type: "custom:button-card"
-    template: card_title
-    label: Device Health
+  - type: vertical-stack
+    view_layout:
+      grid-area: health
+    cards:
+      - type: "custom:button-card"
+        template: card_title
+        label: Device Health
 
-  - type: custom:decluttering-card
-    template: z_wave_climate
-    variables:
-      - sensor_prefix: master_bedroom
-      - node_number: 10
+      - type: custom:decluttering-card
+        template: z_wave_climate
+        variables:
+          - sensor_prefix: master_bedroom
+          - node_number: 10
 
-  - type: custom:decluttering-card
-    template: z_wave_single_relay
-    variables:
-      - sensor_prefix: master_bedroom_light
-      - sensor_domain: light
-      - name: Light
-      - node_number: 30
+      - type: custom:decluttering-card
+        template: z_wave_single_relay
+        variables:
+          - sensor_prefix: master_bedroom_light
+          - sensor_domain: light
+          - name: Light
+          - node_number: 30
