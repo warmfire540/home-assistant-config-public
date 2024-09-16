@@ -1,203 +1,240 @@
 title: "Kitchen"
 path: "kitchen"
+type: custom:grid-layout
+layout:
+  grid-template-areas: |
+    "header status ."
+    "devices sensors health"
+  mediaquery:
+    # portrait monitor
+    "only screen and (min-width: 769px) and (max-width: 1400px)":
+      grid-template-areas: |
+        "header status"
+        "devices sensors"
+        "health ."
+    # Smartphones
+    "only screen and (max-width: 768px)":
+      grid-template-areas: |
+        "header"
+        "status"
+        "devices"
+        "sensors"
+        "health"
 cards:
   - type: custom:decluttering-card
     template: room_header
+    view_layout:
+      grid-area: header
     variables:
       - sensor_prefix: kitchen
       - room_name: Kitchen
-  
-  - type: vertical-stack
+
+  #################
+  # STATUS CHIPS
+  #################
+  - type: custom:mod-card
     view_layout:
       grid-area: status
+    style:
+      hui-horizontal-stack-card$: |
+        #root { 
+          justify-content: center;
+        }
+    card:
+      type: horizontal-stack
+      cards:
+        - type: custom:button-card
+          template: chip_icon_state_if_value
+          variables:
+            entity: sensor.cat_device_failure_count
+            navigation_path: "/the-matrix/cats?anchor=status"
+
+  #################
+  # DEVICES
+  #################
+  - type: vertical-stack
+    view_layout:
+      grid-area: devices
     cards:
-      - type: custom:button-card
+      - type: "custom:button-card"
         template: card_title
-        label: Status Updates
+        label: Devices
 
-      #################
-      # STATUS CHIPS
-      #################
-      - type: custom:mod-card
-        style:
-          hui-horizontal-stack-card$: |
-            #root { 
-              justify-content: center;
-            }
+      - type: horizontal-stack
+        cards:
+          - type: "custom:button-card"
+            template: card_light
+            entity: switch.kitchen_lights_switch_1
+          - type: "custom:button-card"
+            template: card_light
+            entity: switch.kitchen_lights_2_switch_1
+      - type: horizontal-stack
+        cards:
+          - type: "custom:button-card"
+            template: card_light
+            entity: switch.under_cabinet_lights_switch_1
+          - type: "custom:button-card"
+            template: card_light
+            entity: switch.dinette_light_switch_1
+
+      - type: conditional
+        conditions:
+          - condition: state
+            entity: switch.kitchen_lights_switch_1
+            state: "on"
         card:
-          type: horizontal-stack
-          cards:
-            - type: custom:button-card
-              template: chip_icon_state_if_value
-              variables:
-                entity: sensor.cat_device_failure_count
-                navigation_path: "/the-matrix/cats?anchor=status"
-
-  - type: "custom:button-card"
-    template: card_title
-    label: Devices
-
-  - type: horizontal-stack
-    cards:
-      - type: "custom:button-card"
-        template: card_light
-        entity: switch.kitchen_lights_switch_1
-      - type: "custom:button-card"
-        template: card_light
-        entity: switch.kitchen_lights_2_switch_1
-  - type: horizontal-stack
-    cards:
-      - type: "custom:button-card"
-        template: card_light
-        entity: switch.under_cabinet_lights_switch_1
-      - type: "custom:button-card"
-        template: card_light
-        entity: switch.dinette_light_switch_1
-
-  - type: conditional
-    conditions:
-      - condition: state
-        entity: switch.kitchen_lights_switch_1
-        state: "on"
-    card:
-      type: custom:layout-card
-      layout_type: grid
-      layout_options:
-        grid-template-columns: auto 13%
-        grid-template-areas: |
-          "main arrow"
-        margin: 0
-        padding: 0
-        card_margin: 0
-      margin: 0px
-      cards:
-        - type: "custom:button-card"
-          template: card_light
-          entity: light.kitchen_bulbs
-          variables:
-            ulm_card_light_enable_slider: true
-            ulm_card_light_enable_collapse: true
-            ulm_card_light_enable_color: true
-            ulm_card_light_enable_horizontal: true
-          view_layout:
-            grid-area: main
-        - type: custom:mushroom-entity-card
-          entity: input_boolean.kitchen_bulbs
-          icon: mdi:arrow-down-bold
-          primary_info: none
-          secondary_info: none
-          view_layout:
-            grid-area: arrow
-          tap_action:
-            action: toggle
-
-  - type: conditional
-    conditions:
-      - condition: state
-        entity: input_boolean.kitchen_bulbs
-        state: "on"
-      - condition: state
-        entity: switch.kitchen_lights_switch_1
-        state: "on"
-    card:
-      type: vertical-stack
-      cards:
-        - type: horizontal-stack
+          type: custom:layout-card
+          layout_type: grid
+          layout_options:
+            grid-template-columns: auto 13%
+            grid-template-areas: |
+              "main arrow"
+            margin: 0
+            padding: 0
+            card_margin: 0
+          margin: 0px
           cards:
             - type: "custom:button-card"
               template: card_light
-              entity: light.kitchen_bulb_1
+              entity: light.kitchen_bulbs
               variables:
+                ulm_card_light_enable_slider: true
+                ulm_card_light_enable_collapse: true
                 ulm_card_light_enable_color: true
-                ulm_card_light_name: Bulb 1
+                ulm_card_light_enable_horizontal: true
+              view_layout:
+                grid-area: main
+            - type: custom:mushroom-entity-card
+              entity: input_boolean.kitchen_bulbs
+              icon: mdi:arrow-down-bold
+              primary_info: none
+              secondary_info: none
+              view_layout:
+                grid-area: arrow
+              tap_action:
+                action: toggle
+
+      - type: conditional
+        conditions:
+          - condition: state
+            entity: input_boolean.kitchen_bulbs
+            state: "on"
+          - condition: state
+            entity: switch.kitchen_lights_switch_1
+            state: "on"
+        card:
+          type: vertical-stack
+          cards:
+            - type: horizontal-stack
+              cards:
+                - type: "custom:button-card"
+                  template: card_light
+                  entity: light.kitchen_bulb_1
+                  variables:
+                    ulm_card_light_enable_color: true
+                    ulm_card_light_name: Bulb 1
+                - type: "custom:button-card"
+                  template: card_light
+                  entity: light.le_rgbcwbr30_3
+                  variables:
+                    ulm_card_light_enable_color: true
+                    ulm_card_light_name: Bulb 2
+                - type: "custom:button-card"
+                  template: card_light
+                  entity: light.kitchen_bulb_3
+                  variables:
+                    ulm_card_light_enable_color: true
+                    ulm_card_light_name: Bulb 3
+                - type: "custom:button-card"
+                  template: card_light
+                  entity: light.le_rgbcwbr30
+                  variables:
+                    ulm_card_light_enable_color: true
+                    ulm_card_light_name: Bulb 4
+
             - type: "custom:button-card"
-              template: card_light
-              entity: light.le_rgbcwbr30_3
+              template: "card_scenes_welcome"
               variables:
-                ulm_card_light_enable_color: true
-                ulm_card_light_name: Bulb 2
-            - type: "custom:button-card"
-              template: card_light
-              entity: light.kitchen_bulb_3
-              variables:
-                ulm_card_light_enable_color: true
-                ulm_card_light_name: Bulb 3
-            - type: "custom:button-card"
-              template: card_light
-              entity: light.le_rgbcwbr30
-              variables:
-                ulm_card_light_enable_color: true
-                ulm_card_light_name: Bulb 4
+                entity_1:
+                  entity_id: script.kitchen_bulbs_cool_bright
+                  color: red
+                  name: Cool Bright
+                entity_2:
+                  entity_id: script.kitchen_bulbs_rest
+                  color: purple
+                  name: Rest
+                entity_3:
+                  entity_id: script.kitchen_bulbs_tokyo_dynamic
+                  color: pink
+                  name: Tokyo
 
-        - type: "custom:button-card"
-          template: "card_scenes_welcome"
-          variables:
-            entity_1:
-              entity_id: script.kitchen_bulbs_cool_bright
-              color: red
-              name: Cool Bright
-            entity_2:
-              entity_id: script.kitchen_bulbs_rest
-              color: purple
-              name: Rest
-            entity_3:
-              entity_id: script.kitchen_bulbs_tokyo_dynamic
-              color: pink
-              name: Tokyo
+      - type: custom:decluttering-card
+        template: cover
+        variables:
+          - sensor_prefix: kitchen
 
-  - type: custom:decluttering-card
-    template: cover
-    variables:
-      - sensor_prefix: kitchen
-
-  - type: "custom:button-card"
-    template: card_title
-    label: Sensors
-
-  - type: horizontal-stack
+  #################
+  # SENSORS
+  #################
+  - type: vertical-stack
+    view_layout:
+      grid-area: sensors
     cards:
       - type: "custom:button-card"
-        template: card_graph
-        entity: sensor.kitchen_outlets_1_9_1min
-        variables:
-          ulm_card_graph_color: "var(--google-yellow)"
-          ulm_card_graph_entity: sensor.kitchen_outlets_1_9_1min
-          ulm_card_graph_name: Outlets 1
-      - type: "custom:button-card"
-        template: card_graph
-        entity: sensor.kitchen_outlets_2_fridge_11_1min
-        variables:
-          ulm_card_graph_color: "var(--google-yellow)"
-          ulm_card_graph_entity: sensor.kitchen_outlets_2_fridge_11_1min
-          ulm_card_graph_name: Outlets 2
-  - type: horizontal-stack
+        template: card_title
+        label: Sensors
+
+      - type: horizontal-stack
+        cards:
+          - type: "custom:button-card"
+            template: card_graph
+            entity: sensor.kitchen_outlets_1_9_1min
+            variables:
+              ulm_card_graph_color: "var(--google-yellow)"
+              ulm_card_graph_entity: sensor.kitchen_outlets_1_9_1min
+              ulm_card_graph_name: Outlets 1
+          - type: "custom:button-card"
+            template: card_graph
+            entity: sensor.kitchen_outlets_2_fridge_11_1min
+            variables:
+              ulm_card_graph_color: "var(--google-yellow)"
+              ulm_card_graph_entity: sensor.kitchen_outlets_2_fridge_11_1min
+              ulm_card_graph_name: Outlets 2
+      - type: horizontal-stack
+        cards:
+          - type: "custom:button-card"
+            template: card_graph
+            entity: sensor.kitchen_outlets_3_10_1min
+            variables:
+              ulm_card_graph_color: "var(--google-yellow)"
+              ulm_card_graph_entity: sensor.kitchen_outlets_3_10_1min
+              ulm_card_graph_name: Outlets 3
+          - type: "custom:button-card"
+            template: card_graph
+            entity: sensor.range_6_1min
+            variables:
+              ulm_card_graph_color: "var(--google-yellow)"
+              ulm_card_graph_entity: sensor.range_6_1min
+              ulm_card_graph_name: Range
+
+  #################
+  # DEVICE HEALTH
+  #################
+  - type: vertical-stack
+    view_layout:
+      grid-area: health
     cards:
       - type: "custom:button-card"
-        template: card_graph
-        entity: sensor.kitchen_outlets_3_10_1min
+        template: card_title
+        label: Device Health
+
+      - type: custom:decluttering-card
+        template: leak_sensors
         variables:
-          ulm_card_graph_color: "var(--google-yellow)"
-          ulm_card_graph_entity: sensor.kitchen_outlets_3_10_1min
-          ulm_card_graph_name: Outlets 3
-      - type: "custom:button-card"
-        template: card_graph
-        entity: sensor.range_6_1min
+          - sensor_prefix: dishwasher
+
+      - type: custom:decluttering-card
+        template: z_wave_climate
         variables:
-          ulm_card_graph_color: "var(--google-yellow)"
-          ulm_card_graph_entity: sensor.range_6_1min
-          ulm_card_graph_name: Range
-
-  - type: "custom:button-card"
-    template: card_title
-    label: Device Health
-
-  - type: custom:decluttering-card
-    template: leak_sensors
-    variables:
-      - sensor_prefix: dishwasher
-
-  - type: custom:decluttering-card
-    template: z_wave_climate
-    variables:
-      - sensor_prefix: kitchen
-      - node_number: 7
+          - sensor_prefix: kitchen
+          - node_number: 7
