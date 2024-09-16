@@ -1,5 +1,6 @@
 title: "T1D"
 path: "t1d"
+subview: true
 cards:
   - type: "custom:button-card"
     template: chip_back

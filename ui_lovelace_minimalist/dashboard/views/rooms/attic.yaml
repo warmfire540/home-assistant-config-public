@@ -1,5 +1,6 @@
 title: "Attic"
 path: "attic"
+subview: true
 type: custom:grid-layout
 layout:
   grid-template-areas: |

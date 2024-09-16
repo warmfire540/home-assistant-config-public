@@ -1,25 +1,21 @@
-title: "Net"
+title: "Network"
 path: "network"
+subview: true
 type: custom:grid-layout
 layout:
   grid-template-areas: |
-    "nav title ."
     "network speed wifi"
     "connected disconnected updates"
   mediaquery:
     # portrait monitor
     "only screen and (min-width: 769px) and (max-width: 1400px)":
       grid-template-areas: |
-        "nav ."
-        "title ."
         "network speed"
         "wifi updates"
         "connected disconnected"
     # Smartphones
     "only screen and (max-width: 768px)":
       grid-template-areas: |
-        "nav"
-        "title"
         "network"
         "speed"
         "wifi"
@@ -27,19 +23,6 @@ layout:
         "updates"
         "connected"
 cards:
-  - type: "custom:button-card"
-    template: chip_back
-    view_layout:
-      grid-area: nav
-    variables:
-      ulm_chip_back_path: home
-
-  - type: "custom:button-card"
-    template: card_title
-    name: Net
-    view_layout:
-      grid-area: title
-
   - type: "custom:mini-graph-card"
     name: Network
     view_layout:

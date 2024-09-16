@@ -1,5 +1,6 @@
 title: "Test"
 path: "test"
+subview: true
 cards:
   - type: "custom:button-card"
     template: room_summary

@@ -1,5 +1,6 @@
 title: "Shed"
 path: "shed"
+subview: true
 type: custom:grid-layout
 layout:
   grid-template-areas: |

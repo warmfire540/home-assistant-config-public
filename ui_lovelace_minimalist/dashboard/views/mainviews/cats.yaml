@@ -1,9 +1,10 @@
 title: "Cats"
 path: "cats"
+subview: true
 type: custom:grid-layout
 layout:
   grid-template-areas: |
-    "nav title status"
+    "status status status"
     "chonk-title . ."
     "chonk chonk thicc"
     "feeder-title . ."
@@ -12,8 +13,7 @@ layout:
     # portrait monitor
     "only screen and (min-width: 769px) and (max-width: 1400px)":
       grid-template-areas: |
-        "nav ."
-        "title status"
+        "status status"
         "chonk-title ."
         "chonk thicc"
         "feeder-title ."
@@ -22,8 +22,6 @@ layout:
     # Smartphones
     "only screen and (max-width: 768px)":
       grid-template-areas: |
-        "nav"
-        "title"
         "status"
         "chonk-title"
         "chonk"
@@ -33,19 +31,6 @@ layout:
         "noms"
         "fountain"
 cards:
-  - type: "custom:button-card"
-    template: chip_back
-    view_layout:
-      grid-area: nav
-    variables:
-      ulm_chip_back_path: home
-
-  - type: "custom:button-card"
-    template: card_title
-    name: Cats
-    view_layout:
-      grid-area: title
-
   #################
   # STATUS CHIPS
   #################

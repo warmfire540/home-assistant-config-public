@@ -1,5 +1,6 @@
 title: "Pi-Hole"
 path: "pi-hole"
+subview: true
 cards:
   - type: "custom:button-card"
     template: chip_back

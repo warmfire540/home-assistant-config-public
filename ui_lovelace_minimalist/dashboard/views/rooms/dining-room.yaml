@@ -1,5 +1,6 @@
 title: "Dining Room"
 path: "dining-room"
+subview: true
 type: custom:grid-layout
 layout:
   grid-template-areas: |

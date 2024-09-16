@@ -1,9 +1,10 @@
 title: "House"
 path: "house"
+subview: true
 type: custom:grid-layout
 layout:
   grid-template-areas: |
-    "nav title status ."
+    "status status status ."
     "sensors climate covers alerts"
     "batteries schedules tracking ."
     "poat-phone gina-phone . ."
@@ -11,8 +12,7 @@ layout:
     # portrait monitor
     "only screen and (min-width: 769px) and (max-width: 1400px)":
       grid-template-areas: |
-        "nav ."
-        "title status"
+        "status status"
         "sensors climate"
         "alerts covers"
         "batteries schedules"
@@ -21,8 +21,6 @@ layout:
     # Smartphones
     "only screen and (max-width: 768px)":
       grid-template-areas: |
-        "nav"
-        "title"
         "status"
         "sensors"
         "climate"
@@ -34,19 +32,6 @@ layout:
         "poat-phone"
         "gina-phone"
 cards:
-  - type: custom:button-card
-    template: chip_back
-    view_layout:
-      grid-area: nav
-    variables:
-      ulm_chip_back_path: home
-
-  - type: custom:button-card
-    template: card_title
-    name: House
-    view_layout:
-      grid-area: title
-
   #################
   # STATUS CHIPS
   #################

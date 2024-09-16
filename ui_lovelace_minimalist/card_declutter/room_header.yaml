@@ -2,34 +2,6 @@ room_header:
   card:
     type: vertical-stack
     cards:
-      - type: custom:state-switch
-        entity: mediaquery
-        states:
-          # Smartphones
-          "only screen and (max-width: 768px)":
-            type: vertical-stack
-            cards:
-              - type: "custom:button-card"
-                template: chip_back
-                variables:
-                  ulm_chip_back_path: home
-
-              - type: "custom:button-card"
-                template: card_title
-                name: "[[room_name]]"
-          # anything else
-          "all":
-            type: horizontal-stack
-            cards:
-              - type: "custom:button-card"
-                template: chip_back
-                variables:
-                  ulm_chip_back_path: home
-
-              - type: "custom:button-card"
-                template: card_title
-                name: "[[room_name]]"
-
       - type: horizontal-stack
         cards:
           - type: "custom:button-card"

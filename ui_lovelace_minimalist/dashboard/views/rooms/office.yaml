@@ -1,5 +1,6 @@
 title: "Office"
 path: "office"
+subview: true
 type: custom:grid-layout
 layout:
   grid-template-areas: |
