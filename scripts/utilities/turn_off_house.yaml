@@ -7,21 +7,37 @@ turn_off_house:
   alias: Turn off House
   sequence:
   - parallel:
-    - type: turn_off
-      device_id: 372f18359255040c2be1bab51dfee88f
-      entity_id: 1ff22c449438e5a34cd28755e7612caf
-      domain: switch
-    - type: turn_off
-      device_id: 5c47f50af82fecdbb0a888ae067933d3
-      entity_id: 59153632335ad0706e19a66574fa0996
-      domain: switch
-    - type: turn_off
-      device_id: cb2b2ac3c127f8df071c01a766c85e7e
-      entity_id: 6f198d82006e374f6c75293f0e046c61
-      domain: switch
-    - type: turn_off
-      device_id: 8a97ebc676b4f2b05000d2cf4d677044
-      entity_id: a19780d4ea46fd9307fa966c4c0afc76
-      domain: light
+    - action: light.turn_off
+      target:
+        entity_id:
+          - light.kitchen_bulbs
+          - light.tv_led
+          - light.le_rgbcwbr30_3
+          - light.le_rgbcwbr30
+          - light.kitchen_bulb_1
+          - light.kitchen_bulb_3
+          - light.master_bedroom_light
+          - light.pretty_fly_for_a_wifi_garage_status_light
+          - light.pretty_fly_for_a_wifi_living_room_status_light
+          - light.master_bath_light
+          - light.living_room_light
+          - light.dining_room_light
+          - light.office_light
+          - light.guest_bedroom_light
+
+    - action: switch.turn_off
+      target:
+        entity_id:
+          - switch.kitchen_lights_switch_1
+          - switch.under_cabinet_lights_switch_1
+          - switch.dinette_light_switch_1
+          - switch.kitchen_lights_2_switch_1
+          - switch.master_bath_shower_light
+          - switch.master_bath_fan_relay
+          - switch.master_bath_fan_relay_2
+          - switch.garage_opener_plug
+          - switch.office_fan
+          - switch.master_bath_fan
+          - switch.guest_bedroom_fan
   mode: single
   icon: mdi:power-plug-off

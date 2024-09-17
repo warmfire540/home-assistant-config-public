@@ -4,7 +4,6 @@
 # {{ states
 #  | selectattr('domain', 'in', ['light', 'switch'])
 #  | selectattr('entity_id', 'search', 'light')
-#  | rejectattr('entity_id', 'search', 'pretty_fly_for_a_wifi')
 #  | map(attribute='entity_id')
 #  | list
 #  }}
@@ -27,6 +26,8 @@ all_lights:
     - switch.cat_noms_indicator_light
     - switch.master_bath_shower_light
     - light.master_bedroom_light
+    - light.pretty_fly_for_a_wifi_garage_status_light
+    - light.pretty_fly_for_a_wifi_living_room_status_light
     - light.master_bath_light
     - light.living_room_light
     - light.dining_room_light
