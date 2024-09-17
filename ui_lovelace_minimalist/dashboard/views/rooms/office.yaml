@@ -51,6 +51,8 @@ cards:
           - type: "custom:button-card"
             template: card_light
             entity: switch.office_fan
+            variables:
+              ulm_card_light_color: blue
 
       - type: custom:decluttering-card
         template: cover

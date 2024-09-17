@@ -269,10 +269,6 @@ cards:
             - binary_sensor.office_smoke_sensor_carbon_monoxide_detected
             - sensor.dead_z_wave_nodes
             - sensor.printer_left_on
-          entity_2:
-            entity_id: switch.office_fan
-            templates:
-              - blue_on
           entity_3:
             entity_id: binary_sensor.poat_rgb_connectivity
             templates:
@@ -324,14 +320,10 @@ cards:
           grid-area: bath
         variables:
           affix: master_bath
-          entity_2:
+          entity_3:
             entity_id: switch.master_bath_shower_light
             templates:
               - yellow_on
-          entity_3:
-            entity_id: switch.master_bath_fan
-            templates:
-              - blue_on
 
       #################
       # GUEST ROOM

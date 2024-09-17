@@ -1,25 +1,34 @@
 ####
 # Groups related to lights mainly
 #
+# {{ states
+#  | selectattr('domain', 'in', ['light', 'switch'])
+#  | selectattr('entity_id', 'search', 'light')
+#  | rejectattr('entity_id', 'search', 'pretty_fly_for_a_wifi')
+#  | map(attribute='entity_id')
+#  | list
+#  }}
 #####
 
 all_lights:
   name: All Lights
   entities:
+    - light.kitchen_bulbs
     - light.tv_led
-    - light.le_rgbcwbr30
-    - light.le_rgbcwbr30_2
-    - light.kitchen_bulb_3
     - light.le_rgbcwbr30_3
-    - light.office_light
-    - light.master_bedroom_light
-    - light.living_room_light
-    - light.dining_room_light
-    - light.kitchen_light
-    - light.master_bath_light
+    - light.le_rgbcwbr30
+    - light.kitchen_bulb_1
+    - light.kitchen_bulb_3
+    - switch.kitchen_lights_switch_1
     - switch.under_cabinet_lights_switch_1
     - switch.dinette_light_switch_1
-    - switch.kitchen_lights_switch_1
     - switch.kitchen_lights_2_switch_1
+    - switch.pet_thirst_light
+    - switch.cat_noms_indicator_light
     - switch.master_bath_shower_light
-    - switch.master_bath_fan
+    - light.master_bedroom_light
+    - light.master_bath_light
+    - light.living_room_light
+    - light.dining_room_light
+    - light.office_light
+    - light.guest_bedroom_light

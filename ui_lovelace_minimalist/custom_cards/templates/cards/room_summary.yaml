@@ -16,6 +16,10 @@ room_summary:
       entity_id: "[[[ return 'light.' + variables.affix + '_light'; ]]]"
       templates:
         - yellow_on
+    entity_2:
+      entity_id: "[[[ return 'switch.' + variables.affix + '_fan'; ]]]"
+      templates:
+        - blue_on
 
   #################
   # CLIMATE

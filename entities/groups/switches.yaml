@@ -1,13 +1,30 @@
 ####
 # Groups related to switches
 #
+# {{ states 
+#  | selectattr('domain', 'in', ['switch'])
+#  | rejectattr('entity_id', 'search', 'light')
+#  | rejectattr('entity_id', 'search', 'pretty_fly_for_a_wifi')
+#  | map(attribute='entity_id')
+#  | list
+# }}
 #####
 
 all_light_switches:
   name: All Light Switches
   entities:
-    - switch.garage_opener_plug
-    - switch.master_bath_shower_light
-    - switch.water_softener_plug
-    - switch.office_fan
+    - switch.pi_hole
     - switch.pet_thirst_power
+    - switch.pet_thirst_do_not_disturb
+    - switch.cat_noms_child_lock
+    - switch.master_bath_fan_relay_external_switch_multiple_click_detection
+    - switch.master_bath_fan_relay
+    - switch.master_bath_fan_relay_2
+    - switch.garage_opener
+    - switch.garage_opener_plug
+    - switch.water_softener_plug
+    - switch.poat_rgb_monitor
+    - switch.rolo_schedule
+    - switch.office_fan
+    - switch.master_bath_fan
+    - switch.guest_bedroom_fan
