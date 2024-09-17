@@ -4,15 +4,17 @@ subview: true
 type: custom:grid-layout
 layout:
   grid-template-areas: |
-    "network wifi connected"
     "network disconnected updates"
+    "network wifi connected"
   mediaquery:
     # portrait monitor
     "only screen and (min-width: 769px) and (max-width: 1400px)":
       grid-template-areas: |
-        "network wifi"
         "network disconnected"
-        "connected updates"
+        "network updates"
+        "network wifi"
+        "network ."
+        "connected ."
     # Smartphones
     "only screen and (max-width: 768px)":
       grid-template-areas: |

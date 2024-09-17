@@ -214,7 +214,7 @@ cards:
           - sensor_prefix: living_room_light
           - sensor_domain: light
           - name: Light
-          - node_number: 34
+          - node_number: 42
 
       - type: custom:decluttering-card
         template: eero
