@@ -4,62 +4,101 @@ subview: true
 type: custom:grid-layout
 layout:
   grid-template-areas: |
-    "network speed wifi"
-    "connected disconnected updates"
+    "network wifi connected"
+    "network disconnected updates"
   mediaquery:
     # portrait monitor
     "only screen and (min-width: 769px) and (max-width: 1400px)":
       grid-template-areas: |
-        "network speed"
-        "wifi updates"
-        "connected disconnected"
+        "network wifi"
+        "network disconnected"
+        "connected updates"
     # Smartphones
     "only screen and (max-width: 768px)":
       grid-template-areas: |
         "network"
-        "speed"
         "wifi"
         "disconnected"
         "updates"
         "connected"
 cards:
-  - type: "custom:mini-graph-card"
-    name: Network
+  - type: vertical-stack
     view_layout:
       grid-area: network
-    show:
-      extrema: true
-    entities:
-      - sensor.pretty_fly_for_a_wifi_download_speed
-      - sensor.pretty_fly_for_a_wifi_upload_speed
+    cards:
+      - type: "custom:button-card"
+        template: card_title
+        label: Network Stats
 
-  - type: custom:mini-graph-card
-    name: Speedtest
-    align_state: center
-    icon: mdi:speedometer
-    view_layout:
-      grid-area: speed
-    show:
-      extrema: true
-      labels: true
-    entities:
-      - entity: sensor.speedtest_download
-        name: Download
-        color: green
-      - entity: sensor.speedtest_upload
-        name: Upload
-        color: red
-      - entity: sensor.speedtest_ping
-        name: Ping
-        color: yellow
-    tap_action:
-      action: "call-service"
-      service: "homeassistant.update_entity"
-      service_data:
-        entity_id:
-          - sensor.speedtest_download
-          - sensor.speedtest_upload
-          - sensor.speedtest_ping
+      - type: "custom:mini-graph-card"
+        name: Network
+        show:
+          extrema: true
+        entities:
+          - sensor.pretty_fly_for_a_wifi_download_speed
+          - sensor.pretty_fly_for_a_wifi_upload_speed
+
+      - type: custom:mini-graph-card
+        name: Speedtest
+        align_state: center
+        icon: mdi:speedometer
+        show:
+          extrema: true
+          labels: true
+        entities:
+          - entity: sensor.speedtest_download
+            name: Download
+            color: green
+          - entity: sensor.speedtest_upload
+            name: Upload
+            color: red
+          - entity: sensor.speedtest_ping
+            name: Ping
+            color: yellow
+        tap_action:
+          action: "call-service"
+          service: "homeassistant.update_entity"
+          service_data:
+            entity_id:
+              - sensor.speedtest_download
+              - sensor.speedtest_upload
+              - sensor.speedtest_ping
+
+      - type: custom:auto-entities
+        card:
+          type: "custom:mini-graph-card"
+          name: Usage Per Day
+          show:
+            legend: false
+            extrema: true
+            fill: false
+        filter:
+          include:
+            - entity_id: "sensor.pretty_fly_for_a_wifi_*_data_usage_day"
+
+      - type: custom:auto-entities
+        card:
+          type: "custom:mini-graph-card"
+          name: Upload Rate
+          show:
+            legend: false
+            extrema: true
+            fill: false
+        filter:
+          include:
+            - entity_id: "sensor.pretty_fly_for_a_wifi_*_upload_rate"
+
+      - type: custom:auto-entities
+        card:
+          type: "custom:mini-graph-card"
+          name: Download Rate
+          show:
+            legend: false
+            extrema: true
+            fill: false
+        filter:
+          include:
+            - entity_id: "sensor.pretty_fly_for_a_wifi_*_download_rate"
 
   - type: vertical-stack
     view_layout:
@@ -68,6 +107,18 @@ cards:
       - type: "custom:button-card"
         template: card_title
         label: WiFi Strength
+
+      - type: custom:auto-entities
+        card:
+          type: "custom:mini-graph-card"
+          name: Wifi
+          show:
+            legend: false
+            fill: false
+        filter:
+          include:
+            - attributes:
+                device_class: signal_strength
 
       - type: custom:auto-entities
         card:
@@ -169,12 +220,9 @@ cards:
                   states(config.entity) + ' ' +
                     iif(
                       state_attr(config.entity, "connection_type"),
-                      iif(
-                        state_attr(config.entity, "connection_type") is list,
-                        state_attr(config.entity, "connection_type")[0],
-                        state_attr(config.entity, "connection_type")
-                      ),
+                      state_attr(config.entity, "connection_type"),
                       ''
                       )}}
                 state: '{{ state_attr(config.entity, "ip") }}'
                 type: "custom:template-entity-row"
+

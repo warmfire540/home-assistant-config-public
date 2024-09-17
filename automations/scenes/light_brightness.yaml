@@ -1,0 +1,66 @@
+#####
+# Control brightness throughout the day
+# Make sure to have Ramp Rate On (Manual Control) set to 2 seconds
+#####
+
+alias: Light Brightness
+id: 81093fa5-dbf2-4351-a5f6-1fd81aaf3e1a
+
+trigger:
+  - platform: state
+    entity_id:
+      - light.office_light
+      - light.master_bath_light
+      - light.living_room_light
+    from: "off"
+    to: "on"
+    variables:
+      night_percent: 20
+      evening_percent: 40
+
+  - platform: state
+    entity_id:
+      - light.guest_bedroom_light
+      - light.master_bedroom_light
+    from: "off"
+    to: "on"
+    variables:
+      night_percent: 40
+      evening_percent: 55
+
+action:
+  choose:
+    - conditions:
+        condition: state
+        entity_id: sensor.last_scene
+        state: Night
+      sequence:
+        - action: light.turn_on
+          data:
+            brightness_pct: "{{ night_percent }}"
+          target:
+            entity_id: "{{ trigger.entity_id }}"
+
+    - conditions:
+        condition: state
+        entity_id: sensor.last_scene
+        state: Evening
+      sequence:
+        - action: light.turn_on
+          data:
+            brightness_pct: "{{ evening_percent }}"
+          target:
+            entity_id: "{{ trigger.entity_id }}"
+      
+    - conditions:
+        condition: state
+        entity_id: sensor.last_scene
+        state:
+          - Morning
+      sequence:
+        - action: light.turn_on
+          data:
+            brightness_pct: 100
+          target:
+            entity_id: "{{ trigger.entity_id }}"
+
