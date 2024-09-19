@@ -293,7 +293,7 @@ cards:
             templates:
               - yellow_on
           entity_3:
-            entity_id: switch.dinette_light_switch_1
+            entity_id: light.dinette_light
             templates:
               - yellow_on
 

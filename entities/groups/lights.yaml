@@ -18,13 +18,6 @@ all_lights:
     - light.le_rgbcwbr30
     - light.kitchen_bulb_1
     - light.kitchen_bulb_3
-    - switch.kitchen_lights_switch_1
-    - switch.under_cabinet_lights_switch_1
-    - switch.dinette_light_switch_1
-    - switch.kitchen_lights_2_switch_1
-    - switch.pet_thirst_light
-    - switch.cat_noms_indicator_light
-    - switch.master_bath_shower_light
     - light.master_bedroom_light
     - light.pretty_fly_for_a_wifi_garage_status_light
     - light.pretty_fly_for_a_wifi_living_room_status_light
@@ -33,3 +26,10 @@ all_lights:
     - light.dining_room_light
     - light.office_light
     - light.guest_bedroom_light
+    - light.dinette_light
+    - switch.kitchen_lights_switch_1
+    - switch.under_cabinet_lights_switch_1
+    - switch.kitchen_lights_2_switch_1
+    - switch.pet_thirst_light
+    - switch.cat_noms_indicator_light
+    - switch.master_bath_shower_light

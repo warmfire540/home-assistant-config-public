@@ -1,43 +1,43 @@
 #####
 # Lights - script to turn off all lights .
-# 
+#
 #####
 
 turn_off_house:
   alias: Turn off House
   sequence:
-  - parallel:
-    - action: light.turn_off
-      target:
-        entity_id:
-          - light.kitchen_bulbs
-          - light.tv_led
-          - light.le_rgbcwbr30_3
-          - light.le_rgbcwbr30
-          - light.kitchen_bulb_1
-          - light.kitchen_bulb_3
-          - light.master_bedroom_light
-          - light.pretty_fly_for_a_wifi_garage_status_light
-          - light.pretty_fly_for_a_wifi_living_room_status_light
-          - light.master_bath_light
-          - light.living_room_light
-          - light.dining_room_light
-          - light.office_light
-          - light.guest_bedroom_light
+    - parallel:
+        - action: light.turn_off
+          target:
+            entity_id:
+              - light.kitchen_bulbs
+              - light.tv_led
+              - light.le_rgbcwbr30_3
+              - light.le_rgbcwbr30
+              - light.kitchen_bulb_1
+              - light.kitchen_bulb_3
+              - light.master_bedroom_light
+              - light.pretty_fly_for_a_wifi_garage_status_light
+              - light.pretty_fly_for_a_wifi_living_room_status_light
+              - light.master_bath_light
+              - light.living_room_light
+              - light.dining_room_light
+              - light.office_light
+              - light.guest_bedroom_light
+              - light.dinette_light
 
-    - action: switch.turn_off
-      target:
-        entity_id:
-          - switch.kitchen_lights_switch_1
-          - switch.under_cabinet_lights_switch_1
-          - switch.dinette_light_switch_1
-          - switch.kitchen_lights_2_switch_1
-          - switch.master_bath_shower_light
-          - switch.master_bath_fan_relay
-          - switch.master_bath_fan_relay_2
-          - switch.garage_opener_plug
-          - switch.office_fan
-          - switch.master_bath_fan
-          - switch.guest_bedroom_fan
+        - action: switch.turn_off
+          target:
+            entity_id:
+              - switch.kitchen_lights_switch_1
+              - switch.under_cabinet_lights_switch_1
+              - switch.kitchen_lights_2_switch_1
+              - switch.master_bath_shower_light
+              - switch.master_bath_fan_relay
+              - switch.master_bath_fan_relay_2
+              - switch.garage_opener_plug
+              - switch.office_fan
+              - switch.master_bath_fan
+              - switch.guest_bedroom_fan
   mode: single
   icon: mdi:power-plug-off
