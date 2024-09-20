@@ -37,7 +37,7 @@ cards:
   - type: custom:mod-card
     view_layout:
       grid-area: status
-    style: 
+    style:
       hui-horizontal-stack-card$: |
         #root { 
           justify-content: center;
@@ -90,7 +90,6 @@ cards:
           variables:
             entity: binary_sensor.cat_noms_food_level
 
-  
   - type: "custom:button-card"
     template: card_title
     label: Chonk
@@ -259,5 +258,6 @@ cards:
     entities:
       - entity: sensor.cat_dumb_water_filter
         name: Filter Changed
+      - entity: counter.dumb_water_filters
       - entity: script.reset_dumb_water_filter
         name: Reset Filter
