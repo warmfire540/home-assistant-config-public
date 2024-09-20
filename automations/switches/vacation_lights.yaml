@@ -1,0 +1,52 @@
+#####
+# Control lights during vacation
+#
+#####
+
+alias: Vacation Light Control
+id: 4990a561-6634-43eb-8e6c-f5c080a90699
+
+trigger:
+  - platform: time
+    at: "22:00:00"
+    id: lights-on
+  - platform: time
+    at: "01:00:00"
+    id: lights-off
+
+condition:
+  - condition: state
+    entity_id: input_boolean.on_vacation
+    state: "on"
+
+action:
+  choose:
+    - conditions:
+        condition: trigger
+        id: lights-on
+      sequence:
+        - service: light.turn_on
+          entity_id: light.dinette_light
+          data:
+            brightness_pct: 80
+        - service: light.turn_on
+          entity_id: light.dining_room_light
+          data:
+            brightness_pct: 80
+        - service: notify.persistent_notification
+          data:
+            message: Vacation lights turned on.
+            title: Vacation mode!
+
+    - conditions:
+        condition: trigger
+        id: lights-off
+      sequence:
+        - service: light.turn_off
+          entity_id: light.dinette_light
+        - service: light.turn_off
+          entity_id: light.dining_room_light
+        - service: notify.persistent_notification
+          data:
+            message: Vacation lights turned off.
+            title: Vacation mode!
