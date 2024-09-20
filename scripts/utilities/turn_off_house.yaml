@@ -29,9 +29,9 @@ turn_off_house:
         - action: switch.turn_off
           target:
             entity_id:
-              - switch.kitchen_lights_switch_1
-              - switch.under_cabinet_lights_switch_1
-              - switch.kitchen_lights_2_switch_1
+              - switch.kitchen_lights
+              - switch.under_cabinet_lights
+              - switch.kitchen_lights
               - switch.master_bath_shower_light
               - switch.master_bath_fan_relay
               - switch.master_bath_fan_relay_2

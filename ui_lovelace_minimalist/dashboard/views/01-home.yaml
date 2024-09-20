@@ -289,7 +289,7 @@ cards:
             - group.cat_water_status
             - binary_sensor.dishwasher_leak_sensor
           entity_2:
-            entity_id: switch.under_cabinet_lights_switch_1
+            entity_id: switch.under_cabinet_lights
             templates:
               - yellow_on
           entity_3:
