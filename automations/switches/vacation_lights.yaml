@@ -7,8 +7,10 @@ alias: Vacation Light Control
 id: 4990a561-6634-43eb-8e6c-f5c080a90699
 
 trigger:
-  - platform: time
-    at: "22:00:00"
+  - platform: state
+    entity_id:
+      - sensor.last_scene
+    to: Night
     id: lights-on
   - platform: time
     at: "01:00:00"
