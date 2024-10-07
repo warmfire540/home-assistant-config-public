@@ -129,6 +129,10 @@ cards:
           include:
             - attributes:
                 device_class: signal_strength
+        sort:
+          method: state
+          numeric: true
+          reverse: true
 
   - type: vertical-stack
     view_layout:
@@ -229,4 +233,8 @@ cards:
                       )}}
                 state: '{{ state_attr(config.entity, "ip") }}'
                 type: "custom:template-entity-row"
-
+        sort:
+          method: attribute
+          attribute: ip
+          reverse: true
+          ip: true
