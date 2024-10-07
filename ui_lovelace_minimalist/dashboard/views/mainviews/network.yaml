@@ -136,6 +136,7 @@ cards:
     cards:
       - type: "custom:anchor-card"
         anchor_id: disconnected
+        timeout: 300
         offset: -60
 
       - type: "custom:button-card"
@@ -182,6 +183,7 @@ cards:
     cards:
       - type: "custom:anchor-card"
         anchor_id: updates
+        timeout: 300
         offset: -60
 
       - type: "custom:button-card"

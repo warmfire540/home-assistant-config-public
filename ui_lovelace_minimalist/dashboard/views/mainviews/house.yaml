@@ -208,6 +208,7 @@ cards:
     cards:
       - type: "custom:anchor-card"
         anchor_id: low-battery
+        timeout: 300
         offset: -60
 
       - type: custom:button-card
