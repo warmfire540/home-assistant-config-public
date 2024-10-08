@@ -7,27 +7,31 @@ alias: Fan relay control
 id: 8ed38c2d-13df-49f0-b3a8-e643f22777ad
 
 trigger:
-  - platform: numeric_state
+  - trigger: numeric_state
     entity_id: sensor.office_climate_air_temperature
+    alias: Office humidity high
     id: office_fan_on
     above: 80
     variables:
       switch: switch.office_fan
-  - platform: numeric_state
+  - trigger: numeric_state
     entity_id: sensor.office_climate_air_temperature
+    alias: Office humidity low
     id: office_fan_off
     below: 79
     variables:
       switch: switch.office_fan
 
-  - platform: numeric_state
+  - trigger: numeric_state
     entity_id: sensor.master_bath_climate_humidity
+    alias: Bathroom humidity high
     id: bathroom_fan_on
     above: 64
     variables:
       switch: switch.master_bath_fan
-  - platform: numeric_state
+  - trigger: numeric_state
     entity_id: sensor.master_bath_climate_humidity
+    alias: Bathroom humidity low
     id: bathroom_fan_off
     below: 65
     variables:
@@ -64,7 +68,7 @@ action:
           - office_fan_on
           - bathroom_fan_on
       sequence:
-        service: switch.turn_on
+        action: switch.turn_on
         target:
           entity_id: "{{ switch }}"
     - conditions:
@@ -73,7 +77,7 @@ action:
           - office_fan_off
           - bathroom_fan_off
       sequence:
-        service: switch.turn_off
+        action: switch.turn_off
         target:
           entity_id: "{{ switch }}"
 

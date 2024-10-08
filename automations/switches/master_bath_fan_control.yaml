@@ -7,32 +7,32 @@ alias: Master bath fan control
 id: d4b5014e-bfd7-4aa7-8735-a66b8902a3f5
 
 trigger:
-  - platform: state
-    entity_id:
-      - switch.master_bath_fan
+  - trigger: state
+    entity_id: switch.master_bath_fan
+    alias: Bath fan switch on
     from: "off"
     to: "on"
     id: fan-on
     variables:
       switch: switch.master_bath_fan_relay
-  - platform: state
-    entity_id:
-      - switch.master_bath_fan
+  - trigger: state
+    entity_id: switch.master_bath_fan
+    alias: Bath fan switch off
     from: "on"
     to: "off"
     id: fan-off
 
-  - platform: state
-    entity_id:
-      - switch.master_bath_shower_light
+  - trigger: state
+    entity_id: switch.master_bath_shower_light
+    alias: Bath light switch on
     from: "off"
     to: "on"
     id: light-on
     variables:
       switch: switch.master_bath_fan_relay_2
-  - platform: state
-    entity_id:
-      - switch.master_bath_shower_light
+  - trigger: state
+    entity_id: switch.master_bath_shower_light
+    alias: Bath light switch off
     from: "on"
     to: "off"
     id: light-off
@@ -45,9 +45,9 @@ action:
           - fan-on
           - light-on
       sequence:
-        - service: switch.turn_on
-          target:
-            entity_id: "{{ switch }}"
+        action: switch.turn_on
+        target:
+          entity_id: "{{ switch }}"
 
     - conditions:
         - condition: trigger
@@ -57,17 +57,29 @@ action:
           entity_id: sensor.master_bath_climate_humidity
           below: 65
       sequence:
-        - service: switch.turn_off
-          target:
-            entity_id: switch.master_bath_fan_relay
+        action: switch.turn_off
+        target:
+          entity_id: switch.master_bath_fan_relay
+
+    - conditions:
+        - condition: trigger
+          id:
+            - fan-off
+        - condition: numeric_state
+          entity_id: sensor.master_bath_climate_humidity
+          above: 64
+      sequence:
+        action: switch.turn_on
+        target:
+          entity_id: switch.master_bath_fan
 
     - conditions:
         condition: trigger
         id:
           - light-off
       sequence:
-        - service: switch.turn_off
-          target:
-            entity_id: switch.master_bath_fan_relay_2
+        action: switch.turn_off
+        target:
+          entity_id: switch.master_bath_fan_relay_2
 
 mode: single
