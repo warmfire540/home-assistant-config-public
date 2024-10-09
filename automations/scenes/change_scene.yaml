@@ -7,43 +7,41 @@ alias: Change Scenes
 id: 16dd549f-4061-4bf2-b37d-6157bdfa0715
 
 trigger:
-  - platform: state
+  - trigger: state
     alias: "People away"
     entity_id: zone.home
     to: "0"
     id: away
 
-  - platform: state
+  - trigger: state
     alias: "People home"
     entity_id: zone.home
     from: "0"
     id: home
 
-  - platform: state
-    entity_id:
-      - input_boolean.on_vacation
+  - trigger: state
+    entity_id: input_boolean.on_vacation
     from: "on"
     to: "off"
     id: home
 
-  - platform: state
-    entity_id:
-      - input_boolean.on_vacation
+  - trigger: state
+    entity_id: input_boolean.on_vacation
     from: "off"
     to: "on"
     id: vacation
 
-  - platform: numeric_state
+  - trigger: numeric_state
     entity_id: sun.sun
     attribute: elevation
     below: -4.0
     id: night
 
-  - platform: sun
+  - trigger: sun
     event: sunrise
     id: morning
 
-  - platform: numeric_state
+  - trigger: numeric_state
     entity_id: sun.sun
     attribute: elevation
     below: -2.5
@@ -59,7 +57,7 @@ action:
           condition: trigger
           id: morning
         sequence:
-          service: scene.turn_on
+          action: scene.turn_on
           target:
             entity_id: scene.morning
 
@@ -71,7 +69,7 @@ action:
           condition: trigger
           id: evening
         sequence:
-          service: scene.turn_on
+          action: scene.turn_on
           target:
             entity_id: scene.evening
 
@@ -83,9 +81,9 @@ action:
           condition: trigger
           id: home
         sequence:
-          - service: input_boolean.turn_off
+          - action: input_boolean.turn_off
             entity_id: input_boolean.on_vacation
-          - service: scene.turn_on
+          - action: scene.turn_on
             target:
               entity_id: scene.home
 
@@ -94,7 +92,7 @@ action:
           condition: trigger
           id: away
         sequence:
-          service: scene.turn_on
+          action: scene.turn_on
           target:
             entity_id: scene.away
 
@@ -106,7 +104,7 @@ action:
           condition: trigger
           id: vacation
         sequence:
-          service: scene.turn_on
+          action: scene.turn_on
           target:
             entity_id: scene.vacation
 
@@ -118,10 +116,10 @@ action:
           condition: trigger
           id: night
         sequence:
-          service: scene.turn_on
+          action: scene.turn_on
           target:
             entity_id: scene.night
-  
+
   # reactivate vaca scene?
   - condition: state
     entity_id: input_boolean.on_vacation

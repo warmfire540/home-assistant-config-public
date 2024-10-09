@@ -125,13 +125,13 @@ cards:
 
       - type: thermostat
         entity: climate.living_room
-      
+
       - type: horizontal-stack
         cards:
-          - type: 'custom:button-card'
+          - type: "custom:button-card"
             template: card_generic
             entity: counter.large_air_filters
-          - type: 'custom:button-card'
+          - type: "custom:button-card"
             template: card_generic
             entity: counter.small_air_filters
 
@@ -258,31 +258,30 @@ cards:
       - type: horizontal-stack
         cards:
           - type: custom:trash-card
-            entity: calendar.trash
+            entities:
+              - calendar.trash
             layout: vertical
-            next_days: 4
-            settings:
-              others:
-                color: grey
-                icon: mdi:trash-can-outline
-
-          - type: custom:trash-card
-            entity: calendar.recycling
-            layout: vertical
-            next_days: 7
-            settings:
-              others:
-                color: amber
+            next_days: 5
+            items_per_row: 3
+            day_style: counter
+            hide_time_range: true
+            use_summary: false
+            pattern:
+              - pattern: trash
+                icon: mdi:trash-can
+                label: Waste
+                color: dark-grey
+                type: waste
+              - pattern: recycling
+                label: Recycling
                 icon: mdi:recycle-variant
-
-          - type: custom:trash-card
-            entity: calendar.yard_waste
-            next_days: 7
-            layout: vertical
-            settings:
-              others:
-                color: green
+                color: amber
+                type: recycle
+              - pattern: yard
+                label: Organic
                 icon: mdi:flower
+                color: light-green
+                type: organic
 
       - type: custom:button-card
         template: card_input_boolean
@@ -327,80 +326,18 @@ cards:
   #################
   # PHONES
   #################
-  - type: entities
-    title: Poat's iPhone
+  - type: custom:decluttering-card
+    template: iphone
     view_layout:
       grid-area: poat-phone
-    entities:
-      - entity: sensor.poat_s_iphone_14_pro_max_activity
-        name: Activity
-      - entity: sensor.poat_s_iphone_14_pro_max_average_active_pace
-        name: Average Active Pace
-      - entity: sensor.poat_s_iphone_14_pro_max_battery_level
-        name: Battery Level
-      - entity: sensor.poat_s_iphone_14_pro_max_battery_state
-        name: Battery State
-      - entity: sensor.poat_s_iphone_14_pro_max_bssid
-        name: BSSID
-      - entity: sensor.poat_s_iphone_14_pro_max_connection_type
-        name: Connection Type
-      - entity: sensor.poat_s_iphone_14_pro_max_distance
-        name: Distance
-      - entity: binary_sensor.poat_s_iphone_14_pro_max_focus
-        name: Focus
-      - entity: sensor.poat_s_iphone_14_pro_max_geocoded_location
-        name: Geocoded Location
-      - entity: sensor.poat_s_iphone_14_pro_max_last_update_trigger
-        name: Last Update Trigger
-      - entity: sensor.poat_s_iphone_14_pro_max_location_permission
-        name: Location permission
-      - entity: sensor.poat_s_iphone_14_pro_max_ssid
-        name: SSID
-      - entity: sensor.poat_s_iphone_14_pro_max_steps
-        name: Steps
-      - entity: sensor.poat_s_iphone_14_pro_max_storage
-        name: Storage
-      - entity: sensor.poat_s_iphone_14_pro_max_watch_battery
-        name: Watch Battery
-      - entity: sensor.poat_s_iphone_14_pro_max_app_version
-        name: App Version
-      - device_tracker.poat_s_iphone_14_pro_max_2
+    variables:
+      - name: Poat
+      - phone: poat_s_iphone_14_pro_max
 
-  - type: entities
-    title: Gina's iPhone
+  - type: custom:decluttering-card
+    template: iphone
     view_layout:
       grid-area: gina-phone
-    entities:
-      - entity: sensor.gina_s_iphone_13_mini_activity
-        name: Activity
-      - entity: sensor.gina_s_iphone_13_mini_average_active_pace
-        name: Average Active Pace
-      - entity: sensor.gina_s_iphone_13_mini_battery_level
-        name: Battery Level
-      - entity: sensor.gina_s_iphone_13_mini_battery_state
-        name: Battery State
-      - entity: sensor.gina_s_iphone_13_mini_bssid
-        name: BSSID
-      - entity: sensor.gina_s_iphone_13_mini_connection_type
-        name: Connection Type
-      - entity: sensor.gina_s_iphone_13_mini_distance
-        name: Distance
-      - entity: binary_sensor.gina_s_iphone_13_mini_focus
-        name: Focus
-      - entity: sensor.gina_s_iphone_13_mini_geocoded_location
-        name: Geocoded Location
-      - entity: sensor.gina_s_iphone_13_mini_last_update_trigger
-        name: Last Update Trigger
-      - entity: sensor.gina_s_iphone_13_mini_location_permission
-        name: Location permission
-      - entity: sensor.gina_s_iphone_13_mini_ssid
-        name: SSID
-      - entity: sensor.gina_s_iphone_13_mini_steps
-        name: Steps
-      - entity: sensor.gina_s_iphone_13_mini_storage
-        name: Storage
-      - entity: sensor.gina_s_iphone_13_mini_watch_battery
-        name: Watch Battery
-      - entity: sensor.gina_s_iphone_13_mini_app_version
-        name: App Version
-      - device_tracker.gina_s_iphone_13_mini_2
+    variables:
+      - name: Gina
+      - phone: gina_s_iphone_13_mini

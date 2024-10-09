@@ -1,0 +1,40 @@
+iphone:
+  card:
+    type: entities
+    title: "[[name]]'s iPhone"
+    view_layout:
+      grid-area: poat-phone
+    entities:
+      - entity: sensor.[[phone]]_activity
+        name: Activity
+      - entity: sensor.[[phone]]_average_active_pace
+        name: Average Active Pace
+      - entity: sensor.[[phone]]_battery_level
+        name: Battery Level
+      - entity: sensor.[[phone]]_battery_state
+        name: Battery State
+      - entity: sensor.[[phone]]_bssid
+        name: BSSID
+      - entity: sensor.[[phone]]_connection_type
+        name: Connection Type
+      - entity: sensor.[[phone]]_distance
+        name: Distance
+      - entity: binary_sensor.[[phone]]_focus
+        name: Focus
+      - entity: sensor.[[phone]]_geocoded_location
+        name: Geocoded Location
+      - entity: sensor.[[phone]]_last_update_trigger
+        name: Last Update Trigger
+      - entity: sensor.[[phone]]_location_permission
+        name: Location permission
+      - entity: sensor.[[phone]]_ssid
+        name: SSID
+      - entity: sensor.[[phone]]_steps
+        name: Steps
+      - entity: sensor.[[phone]]_storage
+        name: Storage
+      - entity: sensor.[[phone]]_watch_battery
+        name: Watch Battery
+      - entity: sensor.[[phone]]_app_version
+        name: App Version
+      - device_tracker.[[phone]]_2
