@@ -80,12 +80,14 @@ cards:
         entity: switch.garage_opener_plug
         variables:
           ulm_card_light_name: Garage Door Power
+          ulm_card_light_color: green
 
       - type: "custom:button-card"
         template: card_light
         entity: switch.water_softener_plug
         variables:
           ulm_card_light_name: Water Softener
+          ulm_card_light_color: green
 
       - type: "custom:vacuum-card"
         entity: vacuum.strongboi

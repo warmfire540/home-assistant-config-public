@@ -76,31 +76,7 @@
   metadata: {}
 - id: '1716428655222'
   name: Night
-  entities:
-    climate.living_room:
-      hvac_modes:
-      - heat
-      - cool
-      - heat_cool
-      - 'off'
-      min_temp: 50
-      max_temp: 90
-      fan_modes:
-      - 'on'
-      - 'off'
-      preset_modes:
-      - none
-      - eco
-      current_temperature: 74
-      temperature: 71
-      target_temp_high:
-      target_temp_low:
-      fan_mode: 'off'
-      hvac_action: cooling
-      preset_mode: none
-      friendly_name: Thermostat
-      supported_features: 411
-      state: cool
+  entities: {}
   icon: mdi:weather-night
   metadata: {}
 - id: '1716430789968'

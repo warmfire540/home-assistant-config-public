@@ -44,6 +44,7 @@ cards:
         entity: switch.water_softener_plug
         variables:
           ulm_card_light_name: Water Softener
+          ulm_card_light_color: green
 
   #################
   # SENSORS
