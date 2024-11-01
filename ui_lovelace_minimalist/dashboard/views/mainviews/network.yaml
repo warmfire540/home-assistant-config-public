@@ -140,8 +140,8 @@ cards:
     cards:
       - type: "custom:anchor-card"
         anchor_id: disconnected
-        timeout: 300
-        offset: -60
+        timeout: 500
+        offset: -50
 
       - type: "custom:button-card"
         template: card_title
@@ -187,8 +187,8 @@ cards:
     cards:
       - type: "custom:anchor-card"
         anchor_id: updates
-        timeout: 300
-        offset: -60
+        timeout: 500
+        offset: -50
 
       - type: "custom:button-card"
         template: card_title

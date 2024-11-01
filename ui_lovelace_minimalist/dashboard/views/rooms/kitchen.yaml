@@ -49,6 +49,10 @@ cards:
           variables:
             entity: sensor.cat_device_failure_count
             navigation_path: "/the-matrix/cats?anchor=status"
+        - type: custom:button-card
+          template: chip_icon_state_if_value
+          variables:
+            entity: input_boolean.dishwasher_needs_cleaned
 
   #################
   # DEVICES
@@ -179,6 +183,13 @@ cards:
       - type: "custom:button-card"
         template: card_title
         label: Sensors
+
+      - type: "custom:button-card"
+        template: card_input_boolean
+        entity: input_boolean.dishwasher_needs_cleaned
+        variables:
+          ulm_card_input_boolean_force_background_color: true
+          ulm_card_input_boolean_color: red
 
       - type: horizontal-stack
         cards:

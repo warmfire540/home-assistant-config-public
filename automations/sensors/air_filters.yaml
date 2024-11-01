@@ -7,19 +7,19 @@ id: abd8704e-9f85-415e-be1f-948955ab3b8d
 
 trigger:
   - type: opened
-    platform: device
+    trigger: device
     device_id: 07446f7e31f12e75b412ad0ba9942d32
     entity_id: 1cbe5a6866415e32aa06e3ed4b23427e
     domain: binary_sensor
     id: door
-  - platform: calendar
+  - trigger: calendar
     event: start
     entity_id: calendar.air_filters
     id: calendar
 
 condition:
   condition: template # only fire once every 10 minutes at most
-  value_template: "{{ ( as_timestamp(now()) - as_timestamp(state_attr('automation.filter_door_opened', 'last_triggered')) | int(0) ) > 3600 }}"  
+  value_template: "{{ ( as_timestamp(now()) - as_timestamp(state_attr('automation.filter_door_opened', 'last_triggered')) | int(0) ) > 3600 }}"
 
 action:
   choose:
@@ -31,16 +31,16 @@ action:
         - action: input_boolean.turn_on
           target:
             entity_id: input_boolean.air_filters_need_changed
-    
+
     - conditions:
         - condition: trigger
           id:
             - door
       sequence:
-        - service: counter.decrement
+        - action: counter.decrement
           entity_id: counter.large_air_filters
 
-        - service: counter.decrement
+        - action: counter.decrement
           entity_id: counter.small_air_filters
 
         - action: input_boolean.turn_off

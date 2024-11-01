@@ -158,6 +158,11 @@ cards:
                 entity: sensor.seedbox_vpn_on
                 navigation_path: /the-matrix/network
             - type: custom:button-card
+              template: chip_icon_state_if_value
+              variables:
+                entity: input_boolean.dishwasher_needs_cleaned
+                navigation_path: /the-matrix/kitchen
+            - type: custom:button-card
               template: poat_chip_double_state
               variables:
                 ulm_chip_icon_double_state_icon: "❗"
@@ -288,6 +293,7 @@ cards:
           problem_entities:
             - group.cat_water_status
             - binary_sensor.dishwasher_leak_sensor
+            - input_boolean.dishwasher_needs_cleaned
           entity_2:
             entity_id: switch.under_cabinet_lights
             templates:

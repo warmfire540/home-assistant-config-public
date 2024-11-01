@@ -5,7 +5,7 @@
 
 clean_dishwasher:
   name: Clean Dishwasher
-  entity_id: calendar.dishwasher
+  entity_id: input_boolean.dishwasher_needs_cleaned
   title: 🧼 Clean Dishwasher!
   message: false
   done_message: clear_notification

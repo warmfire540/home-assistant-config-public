@@ -1,0 +1,18 @@
+
+#####
+# Set boolean when time to clean the dishwasher
+#####
+
+alias: Clean dishwasher tracking
+id: de2a99ed-c56f-4caa-b923-3b514ee13df2
+
+trigger:
+  trigger: calendar
+  event: start
+  entity_id: calendar.air_filters
+
+action:
+  action: input_boolean.turn_on
+  target:
+    entity_id: input_boolean.dishwasher_needs_cleaned
+  

@@ -1,0 +1,8 @@
+#####
+# If air filter needs changed
+#
+#####
+
+dishwasher_needs_cleaned:
+  name: Clean Dishwasher
+  icon: mdi:dishwasher-alert
