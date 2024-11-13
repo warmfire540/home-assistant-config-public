@@ -7,14 +7,14 @@ alias: Alert to Persistent
 id: 72676c87-8c72-4c0e-98e2-a5562a65dec9
 
 trigger:
-  - platform: event
+  - trigger: event
     id: create
     event_type: call_service
     event_data:
       domain: notify
       service: family
 
-  - platform: event
+  - trigger: event
     id: create-ai
     event_type: call_service
     event_data:
@@ -23,23 +23,27 @@ trigger:
 
 action:
   choose:
+    # if notify.family is used - create a persistent notification as well
+    # not triggered if clear_notification used
     - conditions:
         - condition: trigger
           id: create
         - not: "{{ trigger.event.data.service_data.message == 'clear_notification' }}"
       sequence:
-        service: persistent_notification.create
+        action: persistent_notification.create
         data:
           message: "{{ trigger.event.data.service_data.message }}"
           title: "{{ trigger.event.data.service_data.title }}"
           notification_id: "{{ trigger.event.data.service_data.data.tag }}"
 
+    # if notify.family_ai is used - call ai then notify.family
+    # not triggered if clear_notification used
     - conditions:
         - condition: trigger
           id: create-ai
         - not: "{{ trigger.event.data.service_data.message == 'clear_notification' }}"
       sequence:
-        - service: google_generative_ai_conversation.generate_content
+        - action: google_generative_ai_conversation.generate_content
           continue_on_error: true
           data:
             prompt: >-
@@ -57,7 +61,7 @@ action:
                 ] | random
               }}
           response_variable: generated_content
-        - service: notify.family
+        - action: notify.family
           data:
             message: >-
               {% set ai_response = generated_content['text'] if (generated_content is defined) else trigger.event.data.service_data.data.backup %}
@@ -73,21 +77,25 @@ action:
             data:
               tag: "{{ trigger.event.data.service_data.data.tag }}"
 
+    # if notify.family_ai is used - call notify.family with clear_notification
+    # triggered if clear_notification used
     - conditions:
         - condition: trigger
           id: create-ai
         - "{{ trigger.event.data.service_data.message == 'clear_notification' }}"
       sequence:
-        service: notify.family
+        action: notify.family
         data:
           message: clear_notification
           data:
             tag: "{{ trigger.event.data.service_data.data.tag }}"
 
+    # if notify.family is used - clear persistent notification
+    # triggered if clear_notification used
     - conditions:
         - "{{ trigger.event.data.service_data.message == 'clear_notification' }}"
       sequence:
-        service: persistent_notification.dismiss
+        action: persistent_notification.dismiss
         data:
           notification_id: "{{ trigger.event.data.service_data.data.tag }}"
 

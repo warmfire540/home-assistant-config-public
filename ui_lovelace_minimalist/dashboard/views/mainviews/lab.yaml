@@ -343,7 +343,7 @@ cards:
         - pi_name: seedbox
         - icon: mdi:seed
         - name: Pi Seedbox
-        - tracker: pi_seedbox
+        - tracker: poat_seedbox
 
   - type: conditional
     view_layout:
