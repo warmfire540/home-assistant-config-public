@@ -94,7 +94,7 @@ cards:
         - type: custom:button-card
           template: chip_icon_state_if_value
           variables:
-            entity: binary_sensor.192_168_68_131
+            entity: binary_sensor.poat_seedbox_local
             on_state: "off"
         - type: custom:button-card
           template: chip_icon_state_if_value
@@ -191,10 +191,10 @@ cards:
                 name: restore
           - type: conditional
             conditions:
-              - entity: binary_sensor.192_168_68_131
+              - entity: binary_sensor.poat_seedbox_local
                 state: "on"
             row:
-              entity: device_tracker.pi_seedbox
+              entity: device_tracker.pretty_fly_for_a_wifi_poat_seedbox_wired
               type: custom:multiple-entity-row
               name: poat-seedbox
               icon: mdi:seed

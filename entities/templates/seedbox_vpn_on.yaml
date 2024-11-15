@@ -7,7 +7,7 @@
     - name: Seedbox VPN on
       unique_id: dc9c2f6a-2e41-476f-8867-22e494a7c6bd
       icon: "mdi:vpn"
-      state: "{% if (states('binary_sensor.192_168_68_131') == 'off') %}
+      state: "{% if (states('binary_sensor.poat_seedbox_local') == 'off') %}
                 Offline
               {% else %}
                 {{
