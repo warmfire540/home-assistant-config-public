@@ -58,19 +58,15 @@ cards:
       grid-area: people
     cards:
       - type: custom:button-card
-        template: card_person
+        template: poat_person_card
         variables:
-          ulm_card_person_entity: person.poat
-          ulm_card_person_use_entity_picture: true
-          ulm_address: sensor.poat_s_iphone_14_pro_max_geocoded_location
-          ulm_card_person_battery: sensor.poat_s_iphone_14_pro_max_battery_level
+          person: poat
+          phone: iphone_14_pro_max
       - type: custom:button-card
-        template: card_person
+        template: poat_person_card
         variables:
-          ulm_card_person_entity: person.gina
-          ulm_card_person_use_entity_picture: true
-          ulm_address: sensor.gina_s_iphone_13_mini_geocoded_location
-          ulm_card_person_battery: sensor.gina_s_iphone_13_mini_battery_level
+          person: gina
+          phone: iphone_13_mini
 
   - type: vertical-stack
     view_layout:

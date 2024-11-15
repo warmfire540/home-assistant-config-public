@@ -1,0 +1,11 @@
+#####
+# Ability to mute notifications
+#####
+
+gina_mute:
+  name: Gina Mute
+  icon: mdi:face-woman-shimmer
+
+poat_mute:
+  name: Poat Mute
+  icon: mdi:face-man-shimmer

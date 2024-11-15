@@ -195,6 +195,21 @@ cards:
         template: card_title
         label: Alerts
 
+      - type: horizontal-stack
+        cards:
+          - type: "custom:button-card"
+            template: card_input_boolean
+            entity: input_boolean.poat_mute
+            variables:
+              ulm_card_input_boolean_color: red
+              ulm_card_input_boolean_force_background_color: true
+          - type: "custom:button-card"
+            template: card_input_boolean
+            entity: input_boolean.gina_mute
+            variables:
+              ulm_card_input_boolean_color: red
+              ulm_card_input_boolean_force_background_color: true
+
       - type: custom:auto-entities
         card:
           type: entities

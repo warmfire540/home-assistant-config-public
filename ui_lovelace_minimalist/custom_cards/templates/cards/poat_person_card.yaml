@@ -1,0 +1,21 @@
+---
+poat_person_card:
+  template: card_person
+  styles:
+    card:
+      - background-color: >
+          [[[ if (states[variables.z_mute_entity].state == 'on') 
+                return "rgba(var(--color-background-red),var(--opacity-bg))"; ]]]
+  variables:
+    ulm_card_person_entity: "[[[ return 'person.' + variables.person; ]]]"
+    ulm_card_person_use_entity_picture: true
+    ulm_address: "[[[ return 'sensor.' + variables.person + '_s_' + variables.phone + '_geocoded_location'; ]]]"
+    ulm_card_person_battery: "[[[ return 'sensor.' + variables.person + '_s_' + variables.phone + '_battery_level'; ]]]"
+    z_mute_entity: "[[[ return 'input_boolean.' + variables.person + '_mute'; ]]]"
+  hold_action:
+    action: call-service
+    service: input_boolean.toggle
+    service_data:
+      entity_id: "[[[ return variables.z_mute_entity; ]]]"
+  triggers_update:
+    - "[[[ return variables.z_mute_entity; ]]]"
