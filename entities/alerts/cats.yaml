@@ -8,18 +8,25 @@ cats:
   entity_id: group.cat_device_status
   title: 🐱 Cat device problem!
   message: >
-    Water Level:          {{ states("binary_sensor.pet_thirst_water_level") }}
+    {% set sensors = {
+          "kitchen water low": "binary_sensor.pet_thirst_water_level",
+          "kitchen filter old": "binary_sensor.cat_filter_problem",
+          "Marbs food low": "binary_sensor.cat_noms_food_level",
+          "Marbs battery issue": "binary_sensor.cat_battery_problem",
+          "Marbs recharge desiccant": "binary_sensor.cat_desicant_problem",
+          "Marbs status issue": "binary_sensor.cat_noms_status_problem"
+      } %}
 
-    Water Filter:         {{ states("binary_sensor.cat_filter_problem") }}
+      {% set ns = namespace(issues = []) %}
 
+      {% for issue, sensor in sensors.items() %}
+        {% if states(sensor) == "on" %}
+          {% set ns.issues = ns.issues + [issue] %}
+        {% endif %}
+      {% endfor %}
 
-    Marbles Food Level:   {{ states("binary_sensor.cat_noms_food_level") }}
+      Problems.. {{ ns.issues | join(', ') }}
 
-    Marbles Food Battery: {{ states("binary_sensor.cat_battery_problem") }}
-
-    Marbles Desicant:     {{ states("binary_sensor.cat_desicant_problem") }}
-
-    Marbles Food Status:  {{ states("binary_sensor.cat_noms_status_problem") }}
   done_message: clear_notification
   state: "on"
   repeat: 120

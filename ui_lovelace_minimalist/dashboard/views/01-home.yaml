@@ -150,6 +150,7 @@ cards:
             - type: custom:button-card
               template: chip_icon_state_if_value
               variables:
+                optional: true
                 entity: sensor.seedbox_vpn_on
                 navigation_path: /the-matrix/network
             - type: custom:button-card

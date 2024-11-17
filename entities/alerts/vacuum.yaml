@@ -5,15 +5,10 @@
 
 vacuum:
   name: Vacuum issue
-  entity_id: group.robot_vacuums_status
+  entity_id: binary_sensor.rolo_error
   title: 🤖 Vacuum problem!
   message: >
-    Vacuum has an issue!
-
-
-    Rolo:       {{ state_attr("vacuum.rolo", "status") }}
-
-    Strong Boi: {{ state_attr("vacuum.strongboi", "error") }}
+    Rolo has an issue..  {{ state_attr("vacuum.rolo", "status") }}
   done_message: clear_notification
   state: "on"
   repeat: 60
