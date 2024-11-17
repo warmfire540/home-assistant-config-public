@@ -218,7 +218,7 @@ cards:
               - entity: binary_sensor.poat_plex_local
                 state: "on"
             row:
-              entity: device_tracker.pi_plex
+              entity: device_tracker.pretty_fly_for_a_wifi_poat_plex_wired
               type: custom:multiple-entity-row
               name: poat-plex
               icon: mdi:plex
@@ -359,7 +359,7 @@ cards:
         - pi_name: plex
         - icon: mdi:plex
         - name: Pi Plex
-        - tracker: pi_plex
+        - tracker: poat_plex
 
   #################
   # PLEX
