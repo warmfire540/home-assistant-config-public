@@ -228,10 +228,6 @@ cards:
             - binary_sensor.living_room_smoke_sensor_smoke_detected
             - binary_sensor.living_room_smoke_sensor_carbon_monoxide_detected
           entity_2:
-            entity_id: light.tv_led
-            templates:
-              - blue_on
-          entity_3:
             entity_id: climate.living_room
             templates:
               - yellow_on
@@ -248,6 +244,7 @@ cards:
           grid-area: dining
         variables:
           affix: dining_room
+          entity_2: null
 
       #################
       # OFFICE

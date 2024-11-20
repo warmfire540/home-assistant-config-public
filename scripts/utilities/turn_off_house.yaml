@@ -11,7 +11,6 @@ turn_off_house:
           target:
             entity_id:
               - light.kitchen_bulbs
-              - light.tv_led
               - light.le_rgbcwbr30_3
               - light.le_rgbcwbr30
               - light.kitchen_bulb_1
