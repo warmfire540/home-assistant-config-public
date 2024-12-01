@@ -50,6 +50,10 @@ cards:
           template: chip_icon_state_if_value
           variables:
             entity: binary_sensor.rolo_error
+        - type: custom:button-card
+          template: chip_icon_state_if_value
+          variables:
+            entity: input_boolean.air_filters_need_changed
 
   #################
   # DEVICES
@@ -148,6 +152,13 @@ cards:
               ulm_card_binary_sensor_name: Carbon Monoxide
             entity: binary_sensor.living_room_smoke_sensor_carbon_monoxide_detected
 
+      - type: "custom:button-card"
+        template: card_input_boolean
+        entity: input_boolean.air_filters_need_changed
+        variables:
+          ulm_card_input_boolean_force_background_color: true
+          ulm_card_input_boolean_color: red
+          
       - type: "custom:button-card"
         template: card_graph
         entity: sensor.living_room_15_1min

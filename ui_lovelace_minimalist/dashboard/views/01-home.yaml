@@ -151,6 +151,12 @@ cards:
               template: chip_icon_state_if_value
               variables:
                 optional: true
+                entity: input_boolean.air_filters_need_changed
+                navigation_path: /the-matrix/living-room
+            - type: custom:button-card
+              template: chip_icon_state_if_value
+              variables:
+                optional: true
                 entity: input_boolean.dishwasher_needs_cleaned
                 navigation_path: /the-matrix/kitchen
             - type: custom:button-card
@@ -227,6 +233,7 @@ cards:
             - binary_sensor.rolo_error
             - binary_sensor.living_room_smoke_sensor_smoke_detected
             - binary_sensor.living_room_smoke_sensor_carbon_monoxide_detected
+            - input_boolean.air_filters_need_changed
           entity_2:
             entity_id: climate.living_room
             templates:
