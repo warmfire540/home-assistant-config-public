@@ -407,7 +407,7 @@ cards:
               port: "32400"
               libraryName: Watch Next
               entity:
-                - media_player.office_fire_tv
+                - media_player.living_room_tv
 
   #################
   # DEVICE HEALTH

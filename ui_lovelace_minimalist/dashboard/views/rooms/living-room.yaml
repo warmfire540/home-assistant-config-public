@@ -79,6 +79,9 @@ cards:
           - sensor_prefix: living_room
           - fave_percent: 90
 
+      - type: media-control
+        entity: media_player.living_room_tv
+
       - type: "custom:button-card"
         template: card_thermostat
         entity: climate.living_room

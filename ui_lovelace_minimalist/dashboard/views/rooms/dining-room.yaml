@@ -92,3 +92,8 @@ cards:
           - sensor_domain: light
           - name: Light
           - node_number: 37
+
+      - type: custom:decluttering-card
+        template: eero
+        variables:
+          - location: patio

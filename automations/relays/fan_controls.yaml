@@ -26,14 +26,14 @@ trigger:
     entity_id: sensor.master_bath_climate_humidity
     alias: Bathroom humidity high
     id: bathroom_fan_on
-    above: 64
+    above: 70
     variables:
       switch: switch.master_bath_fan
   - trigger: numeric_state
     entity_id: sensor.master_bath_climate_humidity
     alias: Bathroom humidity low
     id: bathroom_fan_off
-    below: 65
+    below: 69
     variables:
       switch: switch.master_bath_fan
 

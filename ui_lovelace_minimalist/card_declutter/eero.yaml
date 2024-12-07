@@ -7,28 +7,28 @@ eero:
     cards:
       - type: entities
         entities:
-          - entity: update.pretty_fly_for_a_wifi_[[location]]_firmware
+          - entity: update.[[location]]_eero_firmware
             name: Firmware
-          - entity: button.pretty_fly_for_a_wifi_[[location]]_reboot
+          - entity: button.[[location]]_eero_reboot
             name: Reboot
-          - entity: light.pretty_fly_for_a_wifi_[[location]]_status_light
+          - entity: light.[[location]]_eero_status_light
             name: Status Light
-          - entity: sensor.pretty_fly_for_a_wifi_[[location]]_status
+          - entity: sensor.[[location]]_eero_status
             name: Status
         title: Eero Pro 6E
       - type: horizontal-stack
         cards:
           - type: "custom:button-card"
             template: card_graph
-            entity: sensor.pretty_fly_for_a_wifi_[[location]]_data_usage_day
+            entity: sensor.[[location]]_eero_data_usage_day
             variables:
               ulm_card_graph_color: "var(--google-green)"
-              ulm_card_graph_entity: sensor.pretty_fly_for_a_wifi_[[location]]_data_usage_day
+              ulm_card_graph_entity: sensor.[[location]]_eero_data_usage_day
               ulm_card_graph_name: Daily Usage
           - type: "custom:button-card"
             template: card_graph
-            entity: sensor.pretty_fly_for_a_wifi_[[location]]_connected_clients
+            entity: sensor.[[location]]_eero_connected_clients
             variables:
               ulm_card_graph_color: "var(--google-green)"
-              ulm_card_graph_entity: sensor.pretty_fly_for_a_wifi_[[location]]_connected_clients
+              ulm_card_graph_entity: sensor.[[location]]_eero_connected_clients
               ulm_card_graph_name: Connected Clients

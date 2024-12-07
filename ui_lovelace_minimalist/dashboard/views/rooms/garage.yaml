@@ -201,7 +201,16 @@ cards:
         template: z_wave_door_sensor
         variables:
           - sensor_prefix: dryer
+          - name: Dryer Door
           - node_number: 22
+
+      - type: custom:decluttering-card
+        template: z_wave_single_relay
+        variables:
+          - sensor_prefix: garage_opener
+          - sensor_domain: switch
+          - name: Garage Opener
+          - node_number: 27
 
       - type: custom:decluttering-card
         template: z_wave_door_sensor
