@@ -66,12 +66,19 @@ cards:
         template: card_title
         label: Devices
 
-      - type: "custom:button-card"
-        template: card_light
-        entity: light.living_room_light
-        variables:
-          ulm_card_light_enable_slider: true
-          ulm_card_light_enable_collapse: true
+      - type: horizontal-stack
+        cards:
+          - type: "custom:button-card"
+            template: card_light
+            entity: light.living_room_light
+            variables:
+              ulm_card_light_enable_slider: true
+              ulm_card_light_enable_collapse: true
+          - type: "custom:button-card"
+            template: card_light
+            entity: switch.living_room_fan
+            variables:
+              ulm_card_light_color: blue
 
       - type: custom:decluttering-card
         template: cover
@@ -188,12 +195,14 @@ cards:
           - node_number: 19
 
       - type: custom:decluttering-card
-        template: z_wave_single_relay
+        template: z_wave_double_switch
         variables:
-          - sensor_prefix: living_room_light
+          - sensor_prefix: living_room
           - sensor_domain: light
-          - name: Light
-          - node_number: 42
+          - name: Ceiling Fan
+          - node_number: 48
+          - switch1: light
+          - switch2: switch.living_room_fan
 
       - type: custom:decluttering-card
         template: eero

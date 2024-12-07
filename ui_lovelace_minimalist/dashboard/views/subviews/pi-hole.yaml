@@ -30,6 +30,14 @@ cards:
           card:
             - animation: blink 2s ease infinite
 
+  - type: "custom:button-card"
+    template: card_light
+    entity: switch.pi_hole
+    variables:
+      ulm_card_light_enable_color: true
+      ulm_card_light_force_background_color: true
+      ulm_card_light_color: green
+
   - type: horizontal-stack
     cards:
       - type: custom:mushroom-entity-card

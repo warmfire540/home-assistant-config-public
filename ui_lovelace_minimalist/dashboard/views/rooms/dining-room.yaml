@@ -40,9 +40,19 @@ cards:
         template: card_title
         label: Devices
 
-      - type: "custom:button-card"
-        template: card_light
-        entity: light.dining_room_light
+      - type: horizontal-stack
+        cards:
+          - type: "custom:button-card"
+            template: card_light
+            entity: light.dining_room_light
+            variables:
+              ulm_card_light_enable_slider: true
+              ulm_card_light_enable_collapse: true
+          - type: "custom:button-card"
+            template: card_light
+            entity: switch.dining_room_fan
+            variables:
+              ulm_card_light_color: blue
 
       - type: custom:decluttering-card
         template: cover
@@ -92,6 +102,16 @@ cards:
           - sensor_domain: light
           - name: Light
           - node_number: 37
+
+      - type: custom:decluttering-card
+        template: z_wave_double_switch
+        variables:
+          - sensor_prefix: dining_room
+          - sensor_domain: light
+          - name: Ceiling Fan
+          - node_number: 47
+          - switch1: light
+          - switch2: switch.dining_room_fan
 
       - type: custom:decluttering-card
         template: eero
