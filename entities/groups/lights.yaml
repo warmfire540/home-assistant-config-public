@@ -26,9 +26,8 @@ all_lights:
     - light.office_light
     - light.guest_bedroom_light
     - light.dinette_light
-    - switch.kitchen_lights
+    - light.kitchen_light
     - switch.under_cabinet_lights
-    - switch.kitchen_lights
     - switch.pet_thirst_light
     - switch.cat_noms_indicator_light
     - switch.master_bath_shower_light

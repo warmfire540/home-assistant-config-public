@@ -67,20 +67,30 @@ cards:
 
       - type: "custom:button-card"
         template: card_light
-        entity: switch.kitchen_lights
+        entity: light.kitchen_light
+
+      - type: "custom:button-card"
+        template: card_light
+        entity: switch.under_cabinet_lights
+          
       - type: horizontal-stack
         cards:
           - type: "custom:button-card"
             template: card_light
-            entity: switch.under_cabinet_lights
+            entity: light.dinette_light
+            variables:
+              ulm_card_light_enable_slider: true
+              ulm_card_light_enable_collapse: true
           - type: "custom:button-card"
             template: card_light
-            entity: light.dinette_light
+            entity: switch.dinette_fan
+            variables:
+              ulm_card_light_color: blue
 
       - type: conditional
         conditions:
           - condition: state
-            entity: switch.kitchen_lights
+            entity: light.kitchen_light
             state: "on"
         card:
           type: custom:layout-card
@@ -120,7 +130,7 @@ cards:
             entity: input_boolean.kitchen_bulbs
             state: "on"
           - condition: state
-            entity: switch.kitchen_lights
+            entity: light.kitchen_light
             state: "on"
         card:
           type: vertical-stack
@@ -249,18 +259,10 @@ cards:
       - type: custom:decluttering-card
         template: z_wave_single_relay
         variables:
-          - sensor_prefix: dinette_light
-          - sensor_domain: light
-          - name: Dinette Light
-          - node_number: 43
-
-      - type: custom:decluttering-card
-        template: z_wave_single_relay
-        variables:
-          - sensor_prefix: dinette_light
+          - sensor_prefix: kitchen_light
           - sensor_domain: light
           - name: Kitchen Light
-          - node_number: 45
+          - node_number: 52
 
       - type: custom:decluttering-card
         template: z_wave_single_relay
@@ -269,3 +271,13 @@ cards:
           - sensor_domain: light
           - name: Cabinet Lights
           - node_number: 46
+
+      - type: custom:decluttering-card
+        template: z_wave_double_switch
+        variables:
+          - sensor_prefix: dinette
+          - sensor_domain: light
+          - name: Ceiling Fan
+          - node_number: 51
+          - switch1: light
+          - switch2: switch.dinette_fan

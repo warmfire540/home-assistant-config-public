@@ -24,13 +24,12 @@ turn_off_house:
               - light.office_light
               - light.guest_bedroom_light
               - light.dinette_light
+              - light.kitchn_light
 
         - action: switch.turn_off
           target:
             entity_id:
-              - switch.kitchen_lights
               - switch.under_cabinet_lights
-              - switch.kitchen_lights
               - switch.master_bath_shower_light
               - switch.master_bath_fan_relay
               - switch.master_bath_fan_relay_2
