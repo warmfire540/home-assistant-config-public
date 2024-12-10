@@ -1,0 +1,95 @@
+#####
+# Trigger scenes in the kitchen
+#
+#####
+
+alias: Change Kitchen Scenes
+id: 3e97bd1e-4e42-4f5c-87ba-34bd2be0fc3a
+
+trigger:
+  - alias: Big button pressed
+    trigger: state
+    entity_id: event.kitchen_light_scene_005
+    id: large-button
+
+  - alias: Scene One button pressed
+    trigger: state
+    entity_id: event.kitchen_light_scene_001
+    id: scene-one
+
+  - alias: Scene Two button pressed
+    trigger: state
+    entity_id: event.kitchen_light_scene_002
+    id: scene-two
+
+  - alias: Scene Two button pressed
+    trigger: state
+    entity_id: event.kitchen_light_scene_003
+    id: scene-three
+
+  - alias: Scene Two button pressed
+    trigger: state
+    entity_id: event.kitchen_light_scene_004
+    id: scene-four
+
+action:
+  choose:
+    - conditions:
+        alias: Big button pressed
+        condition: trigger
+        id: large-button
+      sequence:
+        alias: "Choose an action based on the type of event"
+        choose:
+          - conditions:
+              alias: Double pressed big button
+              condition: state
+              entity_id: event.kitchen_light_scene_005
+              attribute: event_type
+              state: KeyPressed2x
+            sequence:
+              action: light.turn_on
+              target:
+                entity_id: light.kitchen_bulbs
+              data:
+                brightness_pct: 100
+          - conditions:
+              alias: Big button held down
+              condition: state
+              entity_id: event.kitchen_light_scene_005
+              attribute: event_type
+              state: KeyHeldDown
+            sequence:
+              action: light.turn_on
+              target:
+                entity_id: light.kitchen_bulbs
+              data:
+                brightness_pct: 50
+
+    - conditions:
+        alias: Scene One button pressed
+        condition: trigger
+        id: scene-one
+      sequence:
+        action: script.kitchen_bulbs_cool_bright
+
+    - conditions:
+        alias: Scene Two button pressed
+        condition: trigger
+        id: scene-two
+      sequence:
+        action: script.kitchen_bulbs_rest
+
+    - conditions:
+        alias: Scene Three button pressed
+        condition: trigger
+        id: scene-three
+      sequence:
+        action: script.kitchen_bulbs_tokyo_dynamic
+
+    - conditions:
+        alias: Scene Three button pressed
+        condition: trigger
+        id: scene-four
+      sequence:
+        action: script.kitchen_bulbs_jolly_dynamic

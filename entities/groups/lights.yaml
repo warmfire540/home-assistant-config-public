@@ -12,11 +12,10 @@
 all_lights:
   name: All Lights
   entities:
-    - light.kitchen_bulbs
-    - light.le_rgbcwbr30_3
-    - light.le_rgbcwbr30
     - light.kitchen_bulb_1
+    - light.kitchen_bulb_2
     - light.kitchen_bulb_3
+    - light.kitchen_bulb_4
     - light.master_bedroom_light
     - light.pretty_fly_for_a_wifi_garage_status_light
     - light.pretty_fly_for_a_wifi_living_room_status_light
