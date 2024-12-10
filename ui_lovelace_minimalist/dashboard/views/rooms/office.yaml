@@ -61,7 +61,7 @@ cards:
           - fave_percent: 20
 
       - type: media-control
-        entity: media_player.office_fire_tv
+        entity: media_player.office_tv
 
       - type: media-control
         entity: media_player.xbox_x

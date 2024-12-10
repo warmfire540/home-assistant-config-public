@@ -187,6 +187,37 @@ cards:
         variables:
           - sensor_prefix: kitchen
 
+      - type: entities
+        entities:
+          - entity: number.snack_station_freezer_temperature
+            name: Freezer temperature
+          - entity: number.snack_station_fridge_temperature
+            name: Fridge temperature
+
+          - type: section
+            label: Sensors
+          - entity: binary_sensor.snack_station_door
+            name: Door
+          - entity: sensor.snack_station_fresh_air_filter
+            name: Fresh air filter
+          - entity: binary_sensor.snack_station_power_saving_mode
+            name: Power saving mode
+          - entity: binary_sensor.snack_station_sabbath
+            name: Sabbath
+          - entity: sensor.snack_station_water_filter_used
+            name: Water filter used
+
+          - type: section
+            label: Events
+          - entity: event.snack_station_notification
+            name: Notification
+
+          - type: section
+            label: Configuration
+          - entity: switch.snack_station_ice_plus
+            name: Ice plus
+        title: Snack Station
+
   #################
   # SENSORS
   #################
