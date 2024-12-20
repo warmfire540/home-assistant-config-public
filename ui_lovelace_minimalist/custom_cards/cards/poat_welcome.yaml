@@ -1,44 +1,41 @@
 ---
-card_esh_welcome:
-  template: "ulm_language_variables"
+poat_welcome:
+  template: ulm_language_variables
+  triggers_update:
+    - input_boolean.welcome_toggle
   variables:
-    ulm_weather: "[[[ return variables.ulm_weather]]]"
-    ulm_current_scene: "[[[ return variables.ulm_current_scene]]]"
+    welcome_collapse: input_boolean.welcome_toggle
+    ulm_current_scene: sensor.last_scene
+    ulm_weather: weather.forecast_home
     entity_1:
-      color: >
-        [[[
-          var colors = ['yellow', 'blue', 'red', 'purple','green', 'pink'];
-          var color = colors[Math.floor(Math.random() * colors.length)];
-          return color;
-        ]]]
+      nav: house
+      icon: mdi:home
+      name: House
+      color: blue
     entity_2:
-      color: >
-        [[[
-          var colors = ['yellow', 'blue', 'red', 'purple','green', 'pink'];
-          var color = colors[Math.floor(Math.random() * colors.length)];
-          return color;
-        ]]]
+      nav: lights
+      icon: mdi:lightbulb
+      name: Lights
+      color: yellow
     entity_3:
-      color: >
-        [[[
-          var colors = ['yellow', 'blue', 'red', 'purple','green', 'pink'];
-          var color = colors[Math.floor(Math.random() * colors.length)];
-          return color;
-        ]]]
+      nav: cats
+      icon: mdi:cat
+      name: Cats
+      color: green
     entity_4:
-      color: >
-        [[[
-          var colors = ['yellow', 'blue', 'red', 'purple','green', 'pink'];
-          var color = colors[Math.floor(Math.random() * colors.length)];
-          return color;
-        ]]]
+      nav: lab
+      icon: mdi:flask
+      name: Lab
+      color: purple
     entity_5:
-      color: >
-        [[[
-          var colors = ['yellow', 'blue', 'red', 'purple','green', 'pink'];
-          var color = colors[Math.floor(Math.random() * colors.length)];
-          return color;
-        ]]]
+      nav: network
+      icon: mdi:network
+      name: Net
+      color: red
+    subview_1:
+      nav: t1d
+      icon: mdi:diabetes
+      color: blue
   show_icon: false
   show_label: true
   show_name: false
@@ -46,7 +43,7 @@ card_esh_welcome:
     grid:
       - grid-template-areas: >
           [[[
-            if(variables.ulm_card_esh_welcome_collapse && states[variables.ulm_card_esh_welcome_collapse].state == 'on'){
+            if(variables.welcome_collapse && states[variables.welcome_collapse].state == 'on'){
               return "\'item1\' \'item2\' ";
             } else {
               return "\'item1\' \'item2\' \'item3\' \'item4\'";
@@ -65,7 +62,7 @@ card_esh_welcome:
       item3:
         - display: >
             [[[
-              if(variables.ulm_card_esh_welcome_collapse && states[variables.ulm_card_esh_welcome_collapse].state == 'on'){
+              if(variables.welcome_collapse && states[variables.welcome_collapse].state == 'on'){
                 return "none";
               } else {
                 return "block";
@@ -74,7 +71,7 @@ card_esh_welcome:
       item4:
         - display: >
             [[[
-              if(variables.ulm_card_esh_welcome_collapse && states[variables.ulm_card_esh_welcome_collapse].state == 'on'){
+              if(variables.welcome_collapse && states[variables.welcome_collapse].state == 'on'){
                 return "none";
               } else {
                 return "block";
@@ -87,7 +84,7 @@ card_esh_welcome:
         template: "card_esh_welcome_topbar"
         triggers_update: "[[[ return variables.ulm_current_scene]]]"
         variables:
-          ulm_card_esh_welcome_collapse: "[[[ return variables.ulm_card_esh_welcome_collapse ]]]"
+          welcome_collapse: "[[[ return variables.welcome_collapse ]]]"
           ulm_weather: "[[[ return variables.ulm_weather]]]"
           ulm_current_scene: "[[[ return variables.ulm_current_scene]]]"
         styles:
@@ -421,10 +418,10 @@ card_esh_welcome_topbar:
           action: "call-service"
           service: "input_boolean.toggle"
           service_data:
-            entity_id: "[[[ return variables.ulm_card_esh_welcome_collapse ]]]"
+            entity_id: "[[[ return variables.welcome_collapse ]]]"
         show_icon: true
         icon: "mdi:chevron-up"
-        entity: "[[[ return variables.ulm_card_esh_welcome_collapse ]]]"
+        entity: "[[[ return variables.welcome_collapse ]]]"
         styles:
           grid:
             - grid-template-areas: "'i'"
@@ -437,7 +434,7 @@ card_esh_welcome_topbar:
                     return "var(--box-shadow)";
                   }
                 ]]]
-            - visibility: "[[[ return variables.ulm_card_esh_welcome_collapse ? 'visible' : 'hidden'; ]]]"
+            - visibility: "[[[ return variables.welcome_collapse ? 'visible' : 'hidden'; ]]]"
             - "--mdc-ripple-press-opacity": 0.12 # allow click animation
         state:
           - value: "on"
@@ -567,4 +564,3 @@ card_esh_sub_views_nav:
         tap_action:
           action: "navigate"
           navigation_path: "[[[ return variables.subview_2?.nav; ]]]"
-

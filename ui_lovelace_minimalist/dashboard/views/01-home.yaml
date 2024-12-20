@@ -1,5 +1,5 @@
-title: "Home"
-path: "home"
+title: Home
+path: home
 type: custom:grid-layout
 layout:
   grid-template-areas: |
@@ -15,43 +15,9 @@ layout:
         "rooms"
 cards:
   - type: custom:button-card
-    template: card_esh_welcome
-    triggers_update: "input_boolean.welcome_toggle"
+    template: poat_welcome
     view_layout:
       grid-area: welcome
-    variables:
-      ulm_card_esh_welcome_collapse: input_boolean.welcome_toggle
-      ulm_current_scene: sensor.last_scene
-      ulm_weather: weather.forecast_home
-      entity_1:
-        nav: house
-        icon: mdi:home
-        name: House
-        color: blue
-      entity_2:
-        nav: lights
-        icon: mdi:lightbulb
-        name: Lights
-        color: yellow
-      entity_3:
-        nav: cats
-        icon: mdi:cat
-        name: Cats
-        color: green
-      entity_4:
-        nav: lab
-        icon: mdi:flask
-        name: Lab
-        color: purple
-      entity_5:
-        nav: network
-        icon: mdi:network
-        name: Net
-        color: red
-      subview_1:
-        nav: t1d
-        icon: mdi:diabetes
-        color: blue
 
   - type: horizontal-stack
     view_layout:
