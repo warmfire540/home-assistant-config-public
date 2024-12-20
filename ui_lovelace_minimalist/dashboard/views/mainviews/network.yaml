@@ -171,6 +171,7 @@ cards:
             - entity_id: "media_player.xbox*"
             - entity_id: select.cat_noms_manual_feed
             - entity_id: sensor.cat_noms_battery_status
+            - entity_id: event.snack_station_notification
             - domain: automation
             - domain: button
             - domain: number
@@ -179,6 +180,7 @@ cards:
             - domain: stt
             - domain: tts
             - name: "Kitchen Bulb*"
+            - integration: cast
 
   - type: vertical-stack
     view_layout:

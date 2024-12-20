@@ -55,7 +55,7 @@ action:
             - fan-off
         - condition: numeric_state
           entity_id: sensor.master_bath_climate_humidity
-          below: 65
+          below: 70
       sequence:
         action: switch.turn_off
         target:
@@ -67,7 +67,7 @@ action:
             - fan-off
         - condition: numeric_state
           entity_id: sensor.master_bath_climate_humidity
-          above: 64
+          above: 69
       sequence:
         action: switch.turn_on
         target:

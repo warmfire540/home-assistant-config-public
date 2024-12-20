@@ -94,7 +94,7 @@ cards:
         template: z_wave_climate
         variables:
           - sensor_prefix: master_bedroom
-          - node_number: 10
+          - node_number: 35
 
       - type: custom:decluttering-card
         template: z_wave_double_switch

@@ -18,7 +18,8 @@
 | rejectattr('domain','in',['button', 'tts', 'stt', 'number', 'conversation', 'automation', 'script'])
 | selectattr('state','in', ['unknown', 'unavailable'])
 | rejectattr('entity_id','search', 'poat_rgb|mfc_7860|plex|seedbox|poat_pi|media_player.xbox')
-| rejectattr('entity_id','in', ['select.cat_noms_manual_feed', 'sensor.cat_noms_battery_status'])
+| rejectattr('entity_id','in', ['select.cat_noms_manual_feed', 'sensor.cat_noms_battery_status', 'event.snack_station_notification', 'media_player.lg_webos_tv_oled42c4pua'])
+| rejectattr('entity_id', 'in', integration_entities('cast'))
 | rejectattr('name','search', 'Kitchen Bulb')
 | list
 | count }}"
