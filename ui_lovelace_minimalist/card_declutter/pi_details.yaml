@@ -202,10 +202,10 @@ pi_details:
       # up / down
       - type: custom:mini-graph-card
         entities:
-          - entity: sensor.pretty_fly_for_a_wifi_[[tracker]]_wired_download_rate
+          - entity: sensor.[[tracker]]_wired_download_rate
             color: '#91C0F8'
             name: Download
-          - entity: sensor.pretty_fly_for_a_wifi_[[tracker]]_wired_upload_rate
+          - entity: sensor.[[tracker]]_wired_upload_rate
             color: '#ffa000'
             name: Upload
             show_state: true
@@ -273,7 +273,7 @@ pi_details:
                 name: Hostname
                 attribute: fqdn
               - type: attribute
-                entity: device_tracker.pretty_fly_for_a_wifi_[[tracker]]_wired
+                entity: device_tracker.[[tracker]]_wired
                 name: IP Address
                 attribute: ip
               - type: attribute

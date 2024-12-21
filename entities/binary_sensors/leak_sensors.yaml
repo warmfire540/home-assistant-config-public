@@ -6,7 +6,6 @@
 platform: group
 name: Leak Sensors
 unique_id: f3afd612-64a6-40e2-9c2c-0bbd0704e872
-icon: mdi:pipe-leak
 entities:
   - binary_sensor.water_heater_leak_sensor
   - binary_sensor.dishwasher_leak_sensor

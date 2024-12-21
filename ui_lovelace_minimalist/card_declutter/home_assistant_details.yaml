@@ -263,7 +263,7 @@ home_assistant_details:
                     }
             entities:
               - type: attribute
-                entity: device_tracker.pretty_fly_for_a_wifi_homeassistant_wired
+                entity: device_tracker.homeassistant_wired
                 name: Hostname
                 attribute: host_name
               - entity: sensor.ipv4_address_end0

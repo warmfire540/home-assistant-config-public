@@ -76,7 +76,7 @@ cards:
             fill: false
         filter:
           include:
-            - entity_id: "sensor.pretty_fly_for_a_wifi_*_data_usage_day"
+            - entity_id: "sensor.*_data_usage_day"
 
       - type: custom:auto-entities
         card:
@@ -88,7 +88,7 @@ cards:
             fill: false
         filter:
           include:
-            - entity_id: "sensor.pretty_fly_for_a_wifi_*_upload_rate"
+            - entity_id: "sensor.*_upload_rate"
 
       - type: custom:auto-entities
         card:
@@ -100,7 +100,7 @@ cards:
             fill: false
         filter:
           include:
-            - entity_id: "sensor.pretty_fly_for_a_wifi_*_download_rate"
+            - entity_id: "sensor.*_download_rate"
 
   - type: vertical-stack
     view_layout:

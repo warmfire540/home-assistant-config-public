@@ -151,7 +151,7 @@ cards:
 
       - type: entities
         entities:
-          - entity: device_tracker.pretty_fly_for_a_wifi_pi_hole_wired
+          - entity: device_tracker.pi_hole_wired
             type: custom:multiple-entity-row
             name: poat-hole
             icon: mdi:pi-hole
@@ -172,7 +172,7 @@ cards:
               - entity: button.rpi_poat_hole_rpi_restart_service_poat_hole_command
                 icon: mdi:restore-alert
                 name: shutdown
-          - entity: device_tracker.pretty_fly_for_a_wifi_poat_share_wired
+          - entity: device_tracker.poat_share_wired
             type: custom:multiple-entity-row
             name: poat-share
             icon: mdi:folder-network-outline
@@ -194,7 +194,7 @@ cards:
               - entity: binary_sensor.poat_seedbox_local
                 state: "on"
             row:
-              entity: device_tracker.pretty_fly_for_a_wifi_poat_seedbox_wired
+              entity: device_tracker.poat_seedbox_wired
               type: custom:multiple-entity-row
               name: poat-seedbox
               icon: mdi:seed
@@ -218,7 +218,7 @@ cards:
               - entity: binary_sensor.poat_plex_local
                 state: "on"
             row:
-              entity: device_tracker.pretty_fly_for_a_wifi_poat_plex_wired
+              entity: device_tracker.poat_plex_wired
               type: custom:multiple-entity-row
               name: poat-plex
               icon: mdi:plex
@@ -237,7 +237,7 @@ cards:
                 - entity: button.rpi_poat_plex_rpi_restart_service_poat_plex_command
                   icon: mdi:restore-alert
                   name: restore
-          - entity: device_tracker.pretty_fly_for_a_wifi_homeassistant_wired
+          - entity: device_tracker.homeassistant_wired
             type: custom:multiple-entity-row
             name: homeassistant
             icon: mdi:home-assistant
