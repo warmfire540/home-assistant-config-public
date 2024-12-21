@@ -1,0 +1,34 @@
+status_chips:
+  template: ulm_language_variables
+  styles:
+    card:
+      - background: none
+      - padding: 0px
+    grid:
+      - grid-template-areas: "'chips'"
+      - justify-items: center
+  custom_fields:
+    chips:
+      card:
+        type: custom:mod-card
+        style:
+          hui-horizontal-stack-card$: |
+            #root { 
+              --stack-card-gap: 0;
+            }
+        card:
+          type: custom:auto-entities
+          card:
+            type: horizontal-stack
+          card_param: cards
+          filter:
+            include:
+              - label: Status
+                options:
+                  type: custom:button-card
+                  template: chip_icon_state_if_value
+                  variables:
+                    optional: true
+          sort:
+            method: state
+            numeric: true

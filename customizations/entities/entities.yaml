@@ -12,3 +12,15 @@ sensor.pump_battery_level:
 
 sensor.sensor_battery_level:
   device_class: battery
+
+binary_sensor.rolo_error:
+  navigation_path: /the-matrix/living-room
+
+input_boolean.air_filters_need_changed:
+  navigation_path: /the-matrix/living-room
+
+input_boolean.dishwasher_needs_cleaned:
+  navigation_path: /the-matrix/kitchen
+
+counter.homeassistant_warnings:
+  on_color: yellow

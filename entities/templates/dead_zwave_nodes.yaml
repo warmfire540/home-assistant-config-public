@@ -13,3 +13,5 @@
 | list
 | count
 }}"
+      attributes:
+        navigation_path: /the-matrix/z-wave

@@ -16,3 +16,5 @@
                         else false
                 }}
               {% endif %}"
+      attributes:
+        navigation_path: /the-matrix/network

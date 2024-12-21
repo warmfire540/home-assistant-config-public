@@ -23,3 +23,5 @@
 | rejectattr('name','search', 'Kitchen Bulb')
 | list
 | count }}"
+    attributes:
+      navigation_path: /the-matrix/network?anchor=disconnected

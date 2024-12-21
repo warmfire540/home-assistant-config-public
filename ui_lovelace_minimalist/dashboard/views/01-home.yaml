@@ -14,11 +14,17 @@ layout:
         "status"
         "rooms"
 cards:
+  #################
+  # WELCOME
+  #################
   - type: custom:button-card
     template: poat_welcome
     view_layout:
       grid-area: welcome
 
+  #################
+  # PEOPLE
+  #################
   - type: horizontal-stack
     view_layout:
       grid-area: people
@@ -34,6 +40,9 @@ cards:
           person: gina
           phone: iphone_13_mini
 
+  #################
+  # STATUS CHIPS
+  #################
   - type: vertical-stack
     view_layout:
       grid-area: status
@@ -42,105 +51,8 @@ cards:
         template: card_title
         label: Status Updates
 
-      #################
-      # STATUS CHIPS
-      #################
-      - type: custom:mod-card
-        style:
-          hui-horizontal-stack-card$: |
-            #root { 
-              justify-content: center;
-              --stack-card-gap: 0;
-            }
-        card:
-          type: horizontal-stack
-          cards:
-            - type: custom:button-card
-              template: chip_icon_state_if_value
-              variables:
-                optional: true
-                entity: sensor.devices_with_low_battery
-                navigation_path: "/the-matrix/house?anchor=low-battery"
-            - type: custom:button-card
-              template: chip_icon_state_if_value
-              variables:
-                optional: true
-                entity: sensor.cat_device_failure_count
-                navigation_path: "/the-matrix/cats"
-            - type: custom:button-card
-              template: chip_icon_state_if_value
-              variables:
-                optional: true
-                entity: sensor.devices_offline
-                navigation_path: "/the-matrix/network?anchor=disconnected"
-            - type: custom:button-card
-              template: chip_icon_state_if_value
-              variables:
-                optional: true
-                entity: sensor.dead_z_wave_nodes
-                navigation_path: "/the-matrix/z-wave"
-            - type: custom:button-card
-              template: chip_icon_state_if_value
-              variables:
-                optional: true
-                entity: group.leak_sensors
-            - type: custom:button-card
-              template: chip_icon_state_if_value
-              variables:
-                optional: true
-                entity: binary_sensor.garage_door_tilt_window_door_is_open
-            - type: custom:button-card
-              template: chip_icon_state_if_value
-              variables:
-                optional: true
-                on_state: "True"
-                entity: sensor.printer_left_on
-            - type: custom:button-card
-              template: chip_icon_state_if_value
-              variables:
-                optional: true
-                entity: binary_sensor.rolo_error
-                navigation_path: /the-matrix/living-room
-            - type: custom:button-card
-              template: chip_icon_state_if_value
-              variables:
-                optional: true
-                entity: sensor.updates_available
-                navigation_path: /the-matrix/network?anchor=updates
-            - type: custom:button-card
-              template: chip_icon_state_if_value
-              variables:
-                optional: true
-                entity: sensor.seedbox_vpn_on
-                navigation_path: /the-matrix/network
-            - type: custom:button-card
-              template: chip_icon_state_if_value
-              variables:
-                optional: true
-                entity: input_boolean.air_filters_need_changed
-                navigation_path: /the-matrix/living-room
-            - type: custom:button-card
-              template: chip_icon_state_if_value
-              variables:
-                optional: true
-                entity: input_boolean.dishwasher_needs_cleaned
-                navigation_path: /the-matrix/kitchen
-            - type: custom:button-card
-              template: poat_chip_double_state
-              variables:
-                ulm_chip_icon_double_state_icon: "❗"
-                ulm_chip_icon_double_state_icon_2: "⚠️"
-                ulm_chip_icon_double_state_entity_1: counter.homeassistant_errors
-                ulm_chip_icon_double_state_entity_2: counter.homeassistant_warnings
-                ulm_chip_navigate_path: /config/logs
-              state:
-                - operator: template
-                  value: >
-                    [[[ return states['counter.homeassistant_errors'].state === '0' 
-                      && states['counter.homeassistant_warnings'].state === '0' ]]]
-                  styles:
-                    card:
-                      - display: none
+      - type: custom:button-card
+        template: status_chips
 
   #############
   # ROOM CARDS

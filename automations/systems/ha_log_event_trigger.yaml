@@ -7,12 +7,12 @@ alias: Count Home Assistant errors
 id: "c057ca2c-ab20-4fe0-a32b-5980c0990fb2"
 
 trigger:
-  - platform: event
+  - trigger: event
     event_type: system_log_event
     event_data:
       level: ERROR
     id: error
-  - platform: event
+  - trigger: event
     event_type: system_log_event
     event_data:
       level: WARNING
@@ -24,13 +24,13 @@ action:
         condition: trigger
         id: warning
       sequence:
-        service: counter.increment
+        action: counter.increment
         entity_id: counter.homeassistant_warnings
     - conditions:
         condition: trigger
         id: error
       sequence:
-        service: counter.increment
+        action: counter.increment
         entity_id: counter.homeassistant_errors
 
 mode: queued

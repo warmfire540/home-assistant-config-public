@@ -20,3 +20,5 @@
         {% else %}
           mdi:battery-alert
         {% endif %}
+      attributes:
+        navigation_path: /the-matrix/house?anchor=low-battery

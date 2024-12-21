@@ -13,3 +13,5 @@
         {% else %}
           mdi:package-up
         {% endif %}
+      attributes:
+        navigation_path: /the-matrix/network?anchor=updates
