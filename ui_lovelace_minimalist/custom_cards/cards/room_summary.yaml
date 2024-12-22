@@ -1,30 +1,50 @@
 ---
 room_summary:
-  template:
-    - card_room
-
-  name: '[[[ return variables.affix.split("_").map(x => x.charAt(0).toUpperCase() + x.slice(1)).join(" "); ]]]'
+  template: card_room
+  name: '[[[ return variables.area.split("_").map(x => x.charAt(0).toUpperCase() + x.slice(1)).join(" "); ]]]'
+  icon: "[[[ return hass.areas[variables.area].icon ]]]"
 
   variables:
-    affix: ""
+    area: ""
     humidity_threshold: 60
+    problem_entities: >
+      [[[
+        return Object
+          .keys(this._hass.entities)
+          .filter(k => {
+            var e = this._hass.entities[k];
+            var d = this._hass.devices[e.device_id];
+            return [e.area_id, d?.area_id].includes(variables.area) && e.labels.includes('problem');
+          });
+      ]]]
     temperature_threshold: 80
-    z_humidity_sensor: "[[[ return 'sensor.' + variables.affix + '_climate_humidity'; ]]]"
+    z_humidity_sensor: "[[[ return 'sensor.' + variables.area + '_climate_humidity'; ]]]"
     z_problem_exists: "[[[ return variables.problem_entities?.some(e => states[e].state == 'on' || states[e].state > 0); ]]]"
-    z_temperature_sensor: "[[[ return 'sensor.' + variables.affix + '_climate_air_temperature'; ]]]"
+    z_temperature_sensor: "[[[ return 'sensor.' + variables.area + '_climate_air_temperature'; ]]]"
     entity_1:
-      entity_id: "[[[ return 'light.' + variables.affix + '_light'; ]]]"
+      entity_id: "[[[ return 'light.' + variables.area + '_light'; ]]]"
       templates:
         - yellow_on
     entity_2:
-      entity_id: "[[[ return 'switch.' + variables.affix + '_fan'; ]]]"
+      entity_id: "[[[ return 'switch.' + variables.area + '_fan'; ]]]"
       templates:
         - blue_on
 
   #################
-  # CLIMATE
+  # CLIMATE & LABEL
   #################
-  label: '[[[ return states[variables.z_temperature_sensor].state + "°F - " + states[variables.z_humidity_sensor].state + "%"  ]]]'
+  label: >
+    [[[ 
+        const climate = `${states[variables.z_temperature_sensor].state}°F - ${states[variables.z_humidity_sensor].state}%`;
+        const counts = [
+            [Object.keys(hass.devices).filter(k => hass.devices[k].area_id === variables.area).length, 'devices'],
+            [Object.keys(hass.entities).filter(k => hass.entities[k].area_id === variables.area).length, 'entities']
+        ].filter(([count]) => count > 0)
+        .map(([count, type]) => `${count} ${type}`)
+        .join(' ');
+
+        return `${climate}${counts ? ' ' + `<br /><span style="font-size: 0.8em">${counts}</span>` : ''}`;
+    ]]]
   state:
     - operator: template
       value: >
@@ -38,12 +58,13 @@ room_summary:
   #################
   # ROOM ENTITY
   #################
-  entity: "[[[ return 'light.' + variables.affix + '_light'; ]]]"
+  entity: "[[[ return 'light.' + variables.area + '_light'; ]]]"
   styles:
     icon:
       - color: "[[[ if (entity?.state == 'on') return 'rgba(var(--color-yellow),1)'; else return 'rgba(var(--color-theme),0.2)'; ]]]"
     label:
       - color: "[[[ if (entity?.state == 'on') return 'rgba(var(--color-yellow-text),1)'; ]]]"
+      - text-align: left
     name:
       - color: "[[[ if (entity?.state == 'on') return 'rgba(var(--color-yellow-text),1)'; ]]]"
     img_cell:
@@ -58,8 +79,8 @@ room_summary:
       notification:
         - border-radius: "50%"
         - border: "2px solid var(--card-background-color)"
-        - width: "24.5px"
-        - height: "24.5px"
+        - width: "26px"
+        - height: "26px"
         - position: "absolute"
         - left: "50%"
         - top: "50%"
@@ -68,19 +89,17 @@ room_summary:
         - margin-left: "-35%"
         - line-height: 0
         - display: "grid"
-        - background-color: "[[[ return 'rgba(var(--color-red),1)'; ]]]"
+        - background-color: "[[[ if (variables.z_problem_exists) return 'rgba(var(--color-red),0.8)'; else return 'rgba(var(--color-green),0.8)'; ]]]"
 
   custom_fields:
     notification: >
       [[[
-        if (variables.z_problem_exists) {
-          return '<ha-icon icon="mdi:exclamation" style="width: 50%; height: 50%; color: var(--primary-background-color);"></ha-icon>';
-        }
+        return `<ha-icon icon="mdi:numeric-${variables.problem_entities.length}" style="color: var(--primary-background-color);"></ha-icon>`;
       ]]]
 
   tap_action:
     action: navigate
-    navigation_path: '[[[ return variables.affix.replace("_", "-"); ]]]'
+    navigation_path: '[[[ return variables.area.replace("_", "-"); ]]]'
 
   triggers_update:
     - "[[[ return variables.z_temperature_sensor; ]]]"

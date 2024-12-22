@@ -34,3 +34,4 @@ sensors:
     unique_id: 42fcc316-0ec8-472c-b8ad-979016188d6e
     device_class: problem
     icon_template: mdi:filter
+

@@ -1,0 +1,14 @@
+####
+# Groups related to cat feeder
+#
+#####
+
+
+platform: group
+name: Cat Food Status
+unique_id: 8661a781-9631-4f29-8488-7afbbe785e16
+entities:
+  - binary_sensor.cat_noms_food_level
+  - binary_sensor.cat_battery_problem
+  - binary_sensor.cat_desicant_problem
+  - binary_sensor.cat_noms_status_problem

@@ -3,15 +3,6 @@
 #
 #####
 
-cat_food_status:
-  name: "Cat Food Status"
-  icon: mdi:food
-  entities:
-    - binary_sensor.cat_noms_food_level
-    - binary_sensor.cat_battery_problem
-    - binary_sensor.cat_desicant_problem
-    - binary_sensor.cat_noms_status_problem
-
 cat_water_status:
   name: "Cat Water Status"
   icon: mdi:water
@@ -24,4 +15,4 @@ cat_device_status:
   icon: mdi:cat
   entities:
     - group.cat_water_status
-    - group.cat_food_status
+    - binary_sensor.cat_food_status

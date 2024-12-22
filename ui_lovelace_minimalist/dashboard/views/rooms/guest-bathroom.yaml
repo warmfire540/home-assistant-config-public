@@ -44,7 +44,7 @@ cards:
       cards:
         - type: "custom:button-card"
           template: chip_mdi_icon_state
-          entity: group.cat_food_status
+          entity: binary_sensor.cat_food_status
           icon: mdi:cat
           label: ""
           styles:
@@ -54,7 +54,7 @@ cards:
                         return "var(--red-color)" ;
                       else return "var(--green-color)"; ]]]
           variables:
-            ulm_chip_mdi_icon_state_entity: group.cat_food_status
+            ulm_chip_mdi_icon_state_entity: binary_sensor.cat_food_status
 
   #################
   # SENSORS

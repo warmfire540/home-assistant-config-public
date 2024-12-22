@@ -4,10 +4,25 @@ status_chips:
     card:
       - background: none
       - padding: 0px
+      - cursor: "default"
+      - "--mdc-ripple-press-opacity": 0 # prevent click animation
     grid:
-      - grid-template-areas: "'chips'"
-      - justify-items: center
+      - grid-template-areas: |
+          "title . ."
+          ". chips ."
+      - grid-template-columns: repeat(3, 1fr)
+    custom_fields:
+      title:
+        - justify-self: start
+      chips:
+        - justify-self: center
   custom_fields:
+    title:
+      card:
+        type: custom:button-card
+        template: card_title
+        label: Status Updates
+
     chips:
       card:
         type: custom:mod-card

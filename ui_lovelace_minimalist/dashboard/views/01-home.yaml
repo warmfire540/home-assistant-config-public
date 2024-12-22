@@ -43,16 +43,10 @@ cards:
   #################
   # STATUS CHIPS
   #################
-  - type: vertical-stack
+  - type: custom:button-card
+    template: status_chips
     view_layout:
       grid-area: status
-    cards:
-      - type: custom:button-card
-        template: card_title
-        label: Status Updates
-
-      - type: custom:button-card
-        template: status_chips
 
   #############
   # ROOM CARDS
@@ -66,7 +60,7 @@ cards:
       grid-template-areas: |
         "label label label label label label"
         "living dining office kitchen bedroom bath"
-        "guest spare garage attic shed ."
+        "guest spare garage attic shed server"
       mediaquery:
         # portrait monitor
         "only screen and (min-width: 769px) and (max-width: 1400px)":
@@ -75,7 +69,7 @@ cards:
             "label label label label"
             "living dining office kitchen "
             "bedroom bath guest spare"
-            "garage attic shed ."
+            "garage attic shed server"
         # Smartphones
         "only screen and (max-width: 768px)":
           grid-template-columns: 1fr 1fr
@@ -86,7 +80,7 @@ cards:
             "bedroom bath"
             "guest spare"
             "garage attic"
-            "shed ."
+            "shed server"
     view_layout:
       grid-area: rooms
     cards:
@@ -100,52 +94,35 @@ cards:
       # LIVING ROOM
       #################
       - type: custom:button-card
-        template:
-          - room_summary
-        icon: mdi:sofa
+        template: room_summary
         view_layout:
           grid-area: living
         variables:
-          affix: living_room
-          problem_entities:
-            - binary_sensor.rolo_error
-            - binary_sensor.living_room_smoke_sensor_smoke_detected
-            - binary_sensor.living_room_smoke_sensor_carbon_monoxide_detected
-            - input_boolean.air_filters_need_changed
+          area: living_room
           entity_3:
             entity_id: climate.living_room
             templates:
-              - yellow_on
               - climate_icon
 
       #################
       # DINING ROOM
       #################
       - type: custom:button-card
-        template:
-          - room_summary
-        icon: mdi:glass-cocktail
+        template: room_summary
         view_layout:
           grid-area: dining
         variables:
-          affix: dining_room
+          area: dining_room
 
       #################
       # OFFICE
       #################
       - type: custom:button-card
-        template:
-          - room_summary
-        icon: mdi:controller
+        template: room_summary
         view_layout:
           grid-area: office
         variables:
-          affix: office
-          problem_entities:
-            - binary_sensor.office_smoke_sensor_smoke_detected
-            - binary_sensor.office_smoke_sensor_carbon_monoxide_detected
-            - sensor.dead_z_wave_nodes
-            - sensor.printer_left_on
+          area: office
           entity_3:
             entity_id: binary_sensor.poat_rgb_connectivity
             templates:
@@ -157,27 +134,22 @@ cards:
       - type: custom:button-card
         template:
           - room_summary
-        icon: mdi:countertop-outline
         view_layout:
           grid-area: kitchen
         variables:
-          affix: kitchen
+          area: kitchen
           problem_entities:
             - group.cat_water_status
             - binary_sensor.dishwasher_leak_sensor
             - input_boolean.dishwasher_needs_cleaned
-          entity_2:
+          entity_3:
             entity_id: switch.under_cabinet_lights
             templates:
               - yellow_on
-          entity_3:
+          entity_4:
             entity_id: light.dinette_light
             templates:
               - yellow_on
-          entity_4:
-            entity_id: switch.dinette_fan
-            templates:
-              - blue_on
 
       #################
       # MASTER BEDROOM
@@ -185,11 +157,10 @@ cards:
       - type: custom:button-card
         template:
           - room_summary
-        icon: mdi:bed
         view_layout:
           grid-area: bedroom
         variables:
-          affix: master_bedroom
+          area: master_bedroom
 
       #################
       # MASTER BATHROOM
@@ -197,11 +168,10 @@ cards:
       - type: custom:button-card
         template:
           - room_summary
-        icon: mdi:shower-head
         view_layout:
           grid-area: bath
         variables:
-          affix: master_bath
+          area: master_bath
           entity_3:
             entity_id: switch.master_bath_shower_light
             templates:
@@ -213,25 +183,20 @@ cards:
       - type: custom:button-card
         template:
           - room_summary
-        icon: mdi:desk
         view_layout:
           grid-area: guest
         variables:
-          affix: guest_bedroom
+          area: guest_bedroom
 
       #################
       # GUEST BATHROOM
       #################
       - type: custom:button-card
-        template:
-          - room_summary
-        icon: mdi:shower
+        template: room_summary
         view_layout:
           grid-area: spare
         variables:
-          affix: guest_bath
-          problem_entities:
-            - group.cat_food_status
+          area: guest_bath
 
       #################
       # GARAGE
@@ -239,11 +204,10 @@ cards:
       - type: custom:button-card
         template:
           - room_summary
-        icon: mdi:garage
         view_layout:
           grid-area: garage
         variables:
-          affix: garage
+          area: garage
           temperature_threshold: 90
           problem_entities:
             - binary_sensor.water_heater_leak_sensor
@@ -280,11 +244,10 @@ cards:
       - type: custom:button-card
         template:
           - room_summary
-        icon: mdi:home-roof
         view_layout:
           grid-area: attic
         variables:
-          affix: attic
+          area: attic
           temperature_threshold: 100
           problem_entities:
             - binary_sensor.ac_pan_leak_sensor
@@ -300,14 +263,26 @@ cards:
       - type: custom:button-card
         template:
           - room_summary
-        icon: mdi:greenhouse
         view_layout:
           grid-area: shed
         variables:
-          affix: shed
+          area: shed
           temperature_threshold: 90
           humidity_threshold: 70
           entity_1:
             entity_id: binary_sensor.shed_door_sensor_window_door_is_open
             templates:
               - red_on
+
+      #################
+      # SERVER CLOSET
+      #################
+      - type: custom:button-card
+        template:
+          - room_summary
+        view_layout:
+          grid-area: server
+        variables:
+          area: server_closet
+          z_humidity_sensor: sensor.office_climate_humidity
+          z_temperature_sensor: sensor.office_climate_air_temperature
