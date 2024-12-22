@@ -6,7 +6,6 @@ room_summary:
 
   variables:
     area: ""
-    humidity_threshold: 60
     problem_entities: >
       [[[
         return Object
@@ -17,10 +16,9 @@ room_summary:
             return [e.area_id, d?.area_id].includes(variables.area) && e.labels.includes('problem');
           });
       ]]]
-    temperature_threshold: 80
-    z_humidity_sensor: "[[[ return 'sensor.' + variables.area + '_climate_humidity'; ]]]"
-    z_problem_exists: "[[[ return variables.problem_entities?.some(e => states[e].state == 'on' || states[e].state > 0); ]]]"
-    z_temperature_sensor: "[[[ return 'sensor.' + variables.area + '_climate_air_temperature'; ]]]"
+    humidity_sensor: "[[[ return 'sensor.' + variables.area + '_climate_humidity'; ]]]"
+    problem_exists: "[[[ return variables.problem_entities?.some(e => states[e].state == 'on' || states[e].state > 0); ]]]"
+    temperature_sensor: "[[[ return 'sensor.' + variables.area + '_climate_air_temperature'; ]]]"
     entity_1:
       entity_id: "[[[ return 'light.' + variables.area + '_light'; ]]]"
       templates:
@@ -35,7 +33,7 @@ room_summary:
   #################
   label: >
     [[[ 
-        const climate = `${states[variables.z_temperature_sensor].state}°F - ${states[variables.z_humidity_sensor].state}%`;
+        const climate = `${states[variables.temperature_sensor].state}°F - ${states[variables.humidity_sensor].state}%`;
         const counts = [
             [Object.keys(hass.devices).filter(k => hass.devices[k].area_id === variables.area).length, 'devices'],
             [Object.keys(hass.entities).filter(k => hass.entities[k].area_id === variables.area).length, 'entities']
@@ -48,7 +46,14 @@ room_summary:
   state:
     - operator: template
       value: >
-        [[[ return states[variables.z_temperature_sensor].state > variables.temperature_threshold ||  states[variables.z_humidity_sensor].state > variables.humidity_threshold ]]]
+        [[[ 
+          var temp_sensor = states[variables.temperature_sensor];
+          var humid_sensor = states[variables.humidity_sensor];
+          var temp_thresh = (temp_sensor.attributes.temperature_threshold || 80);
+          var humid_thresh = (temp_sensor.attributes.humidity_threshold || 60);
+
+          return temp_sensor.state > temp_thresh ||  humid_sensor.state > humid_thresh;
+        ]]]
       styles:
         label:
           - color: "rgba(var(--color-red-text),1)"
@@ -89,7 +94,7 @@ room_summary:
         - margin-left: "-35%"
         - line-height: 0
         - display: "grid"
-        - background-color: "[[[ if (variables.z_problem_exists) return 'rgba(var(--color-red),0.8)'; else return 'rgba(var(--color-green),0.8)'; ]]]"
+        - background-color: "[[[ if (variables.problem_exists) return 'rgba(var(--color-red),0.8)'; else return 'rgba(var(--color-green),0.8)'; ]]]"
 
   custom_fields:
     notification: >
@@ -102,6 +107,6 @@ room_summary:
     navigation_path: '[[[ return variables.area.replace("_", "-"); ]]]'
 
   triggers_update:
-    - "[[[ return variables.z_temperature_sensor; ]]]"
-    - "[[[ return variables.z_humidity_sensor; ]]]"
+    - "[[[ return variables.temperature_sensor; ]]]"
+    - "[[[ return variables.humidity_sensor; ]]]"
     - "[[[ this._entities.push(...variables.problem_entities); return null; ]]]"

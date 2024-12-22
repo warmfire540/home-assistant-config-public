@@ -13,6 +13,16 @@ sensor.pump_battery_level:
 sensor.sensor_battery_level:
   device_class: battery
 
+sensor.garage_climate_air_temperature:
+  temperature_threshold: 90
+
+sensor.shed_climate_air_temperature:
+  temperature_threshold: 90
+  humidity_threshold: 70
+
+sensor.attic_climate_air_temperature:
+  temperature_threshold: 100
+
 binary_sensor.rolo_error:
   navigation_path: /the-matrix/living-room
 
