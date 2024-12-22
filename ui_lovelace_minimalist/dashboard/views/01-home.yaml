@@ -132,16 +132,11 @@ cards:
       # KITCHEN
       #################
       - type: custom:button-card
-        template:
-          - room_summary
+        template: room_summary
         view_layout:
           grid-area: kitchen
         variables:
           area: kitchen
-          problem_entities:
-            - group.cat_water_status
-            - binary_sensor.dishwasher_leak_sensor
-            - input_boolean.dishwasher_needs_cleaned
           entity_3:
             entity_id: switch.under_cabinet_lights
             templates:
@@ -155,8 +150,7 @@ cards:
       # MASTER BEDROOM
       #################
       - type: custom:button-card
-        template:
-          - room_summary
+        template: room_summary
         view_layout:
           grid-area: bedroom
         variables:
@@ -166,8 +160,7 @@ cards:
       # MASTER BATHROOM
       #################
       - type: custom:button-card
-        template:
-          - room_summary
+        template: room_summary
         view_layout:
           grid-area: bath
         variables:
@@ -181,8 +174,7 @@ cards:
       # GUEST ROOM
       #################
       - type: custom:button-card
-        template:
-          - room_summary
+        template: room_summary
         view_layout:
           grid-area: guest
         variables:
@@ -202,18 +194,12 @@ cards:
       # GARAGE
       #################
       - type: custom:button-card
-        template:
-          - room_summary
+        template: room_summary
         view_layout:
           grid-area: garage
         variables:
           area: garage
           temperature_threshold: 90
-          problem_entities:
-            - binary_sensor.water_heater_leak_sensor
-            - binary_sensor.strong_boi_error
-            - binary_sensor.garage_door_tilt_window_door_is_open
-            - binary_sensor.dryer_door_sensor_window_door_is_open
           entity_1:
             entity_id: binary_sensor.garage_door_tilt_window_door_is_open
             templates:
@@ -242,15 +228,12 @@ cards:
       # ATTIC
       #################
       - type: custom:button-card
-        template:
-          - room_summary
+        template: room_summary
         view_layout:
           grid-area: attic
         variables:
           area: attic
           temperature_threshold: 100
-          problem_entities:
-            - binary_sensor.ac_pan_leak_sensor
           entity_1:
             entity_id: switch.water_softener_plug
             templates:
@@ -261,8 +244,7 @@ cards:
       # SHED
       #################
       - type: custom:button-card
-        template:
-          - room_summary
+        template: room_summary
         view_layout:
           grid-area: shed
         variables:
@@ -278,8 +260,7 @@ cards:
       # SERVER CLOSET
       #################
       - type: custom:button-card
-        template:
-          - room_summary
+        template: room_summary
         view_layout:
           grid-area: server
         variables:

@@ -1,8 +1,7 @@
 ####
-# Groups related to cat feeder
+# Sensors related to cat feeder
 #
 #####
-
 
 platform: group
 name: Cat Food Status

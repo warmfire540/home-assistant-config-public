@@ -169,7 +169,7 @@ cards:
       style: |
         ha-card {
           background: 
-            {% if is_state('group.cat_water_status', 'on') %}
+            {% if is_state('binary_sensor.cat_water_status', 'on') %}
               rgba(var(--color-background-red),var(--opacity-bg))
             {% endif %}
         }

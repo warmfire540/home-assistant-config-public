@@ -7,6 +7,6 @@
     - name: Cat device failure count
       unique_id: fd0af87b-3125-4b19-9e77-fc1ff14ef027
       icon: "mdi:cat"
-      state: "{{ expand('group.cat_device_status') | selectattr('state','eq','on') | list | count }}"
+      state: "{{ expand('binary_sensor.cat_device_status') | selectattr('state','eq','on') | list | count }}"
       attributes:
         navigation_path: /the-matrix/cats

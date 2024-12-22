@@ -1,0 +1,11 @@
+####
+# Sensors related to cat waterer
+#
+#####
+
+platform: group
+name: Cat Water Status
+unique_id: 522be190-7d79-482e-83a7-f10183f0de53
+entities:
+  - binary_sensor.pet_thirst_water_level
+  - binary_sensor.cat_filter_problem

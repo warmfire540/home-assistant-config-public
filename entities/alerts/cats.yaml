@@ -5,7 +5,7 @@
 
 cats:
   name: Cat device issue
-  entity_id: group.cat_device_status
+  entity_id: binary_sensor.cat_device_status
   title: 🐱 Cat device problem!
   message: >
     {% set sensors = {
