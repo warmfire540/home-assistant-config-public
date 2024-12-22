@@ -4,56 +4,32 @@ subview: true
 type: custom:grid-layout
 layout:
   grid-template-areas: |
-    "header status ."
+    "header header ."
     "devices vacuum health"
     "sensors . ."
   mediaquery:
     # portrait monitor
     "only screen and (min-width: 769px) and (max-width: 1400px)":
       grid-template-areas: |
-        "header status"
+        "header header"
         "devices vacuum"
         "health sensors"
     # Smartphones
     "only screen and (max-width: 768px)":
       grid-template-areas: |
         "header"
-        "status"
         "devices"
         "vacuum"
         "sensors"
         "health"
 cards:
-  - type: custom:decluttering-card
+  #################
+  # HEADER
+  #################
+  - type: custom:button-card
     template: room_header
     view_layout:
       grid-area: header
-    variables:
-      - sensor_prefix: living_room
-      - room_name: Living Room
-
-  #################
-  # STATUS CHIPS
-  #################
-  - type: custom:mod-card
-    view_layout:
-      grid-area: status
-    style:
-      hui-horizontal-stack-card$: |
-        #root { 
-          justify-content: center;
-        }
-    card:
-      type: horizontal-stack
-      cards:
-        - type: custom:button-card
-          template: chip_icon_state_if_value
-          variables:
-            entity: binary_sensor.rolo_error
-        - type: custom:button-card
-          template: chip_icon_state_if_value
-          variables:
-            entity: input_boolean.air_filters_need_changed
 
   #################
   # DEVICES

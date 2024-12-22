@@ -1,57 +1,33 @@
-title: "Garage"
-path: "garage"
+title: Garage
+path: garage
 subview: true
 type: custom:grid-layout
 layout:
   grid-template-areas: |
-    "header status ."
+    "header header ."
     "devices sensors health"
   mediaquery:
     # portrait monitor
     "only screen and (min-width: 769px) and (max-width: 1400px)":
       grid-template-areas: |
-        "header status"
+        "header header"
         "devices sensors"
         "health ."
     # Smartphones
     "only screen and (max-width: 768px)":
       grid-template-areas: |
         "header"
-        "status"
         "devices"
         "sensors"
         "health"
 cards:
-  - type: custom:decluttering-card
+  #################
+  # HEADER
+  #################
+  - type: custom:button-card
     template: room_header
     view_layout:
       grid-area: header
-    variables:
-      - sensor_prefix: garage
-      - room_name: Garage
-
-  #################
-  # STATUS CHIPS
-  #################
-  - type: custom:mod-card
-    view_layout:
-      grid-area: status
-    style:
-      hui-horizontal-stack-card$: |
-        #root { 
-          justify-content: center;
-        }
-    card:
-      type: horizontal-stack
-      cards:
-        - type: custom:button-card
-          template: chip_icon_state_if_value
-          variables:
-            entity: binary_sensor.garage_door_tilt_window_door_is_open
-        - type: custom:button-card
-          template: chip_icon_state_if_value
-          variables:
-            entity: binary_sensor.strong_boi_error
 
   #################
   # DEVICES
@@ -60,22 +36,22 @@ cards:
     view_layout:
       grid-area: devices
     cards:
-      - type: "custom:button-card"
+      - type: custom:button-card
         template: card_title
         label: Devices
 
-      - type: "custom:button-card"
-        template: card_light
+      - type: custom:button-card
+        template: card_binary_sensor_alert
         entity: binary_sensor.garage_door_tilt_window_door_is_open
         variables:
-          ulm_card_light_name: Garage Door
+          ulm_card_binary_sensor_alert_name: Garage Door
         tap_action:
           action: call-service
           service: switch.toggle
           service_data:
             entity_id: switch.garage_opener
 
-      - type: "custom:button-card"
+      - type: custom:button-card
         template: card_light
         entity: switch.garage_opener_plug
         variables:
@@ -108,18 +84,18 @@ cards:
     view_layout:
       grid-area: sensors
     cards:
-      - type: "custom:button-card"
+      - type: custom:button-card
         template: card_title
         label: Sensors
 
       - type: horizontal-stack
         cards:
-          - type: "custom:button-card"
+          - type: custom:button-card
             template: card_input_boolean
             entity: input_boolean.washing_machine_on
             variables:
               ulm_card_input_boolean_force_background_color: true
-          - type: "custom:button-card"
+          - type: custom:button-card
             template: card_input_boolean
             entity: input_boolean.dryer_on
             variables:
@@ -127,18 +103,18 @@ cards:
 
       - type: horizontal-stack
         cards:
-          - type: "custom:button-card"
+          - type: custom:button-card
             template: card_input_boolean
             entity: input_boolean.washing_machine_end
             variables:
               ulm_card_input_boolean_force_background_color: true
-          - type: "custom:button-card"
+          - type: custom:button-card
             template: card_input_boolean
             entity: input_boolean.dryer_end
             variables:
               ulm_card_input_boolean_force_background_color: true
 
-      - type: "custom:button-card"
+      - type: custom:button-card
         template: card_input_boolean
         entity: binary_sensor.dryer_door_sensor_window_door_is_open
         variables:
@@ -147,21 +123,21 @@ cards:
 
       - type: horizontal-stack
         cards:
-          - type: "custom:button-card"
+          - type: custom:button-card
             template: card_graph
             entity: sensor.clothes_washer_13_1min
             variables:
               ulm_card_graph_color: "var(--google-yellow)"
               ulm_card_graph_entity: sensor.clothes_washer_13_1min
               ulm_card_graph_name: Washer
-          - type: "custom:button-card"
+          - type: custom:button-card
             template: card_graph
             entity: sensor.dryer_1_1min
             variables:
               ulm_card_graph_color: "var(--google-yellow)"
               ulm_card_graph_entity: sensor.dryer_1_1min
               ulm_card_graph_name: Dryer
-      - type: "custom:button-card"
+      - type: custom:button-card
         template: card_graph
         entity: sensor.water_heater_5_1min
         variables:
@@ -176,7 +152,7 @@ cards:
     view_layout:
       grid-area: health
     cards:
-      - type: "custom:button-card"
+      - type: custom:button-card
         template: card_title
         label: Device Health
 

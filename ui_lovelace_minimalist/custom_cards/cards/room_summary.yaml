@@ -11,8 +11,8 @@ room_summary:
         return Object
           .keys(this._hass.entities)
           .filter(k => {
-            var e = this._hass.entities[k];
-            var d = this._hass.devices[e.device_id];
+            const e = this._hass.entities[k];
+            const d = this._hass.devices[e.device_id];
             return [e.area_id, d?.area_id].includes(variables.area) && e.labels.includes('problem');
           });
       ]]]
@@ -34,9 +34,12 @@ room_summary:
   label: >
     [[[ 
         const climate = `${states[variables.temperature_sensor].state}°F - ${states[variables.humidity_sensor].state}%`;
+        const d = Object.keys(hass.devices).filter(k => hass.devices[k].area_id === variables.area);
+        const e = Object.keys(hass.entities).filter(k => hass.entities[k].area_id === variables.area
+            || d.includes(hass.entities[k].device_id));
         const counts = [
-            [Object.keys(hass.devices).filter(k => hass.devices[k].area_id === variables.area).length, 'devices'],
-            [Object.keys(hass.entities).filter(k => hass.entities[k].area_id === variables.area).length, 'entities']
+            [d.length, 'devices'],
+            [e.length, 'entities']
         ].filter(([count]) => count > 0)
         .map(([count, type]) => `${count} ${type}`)
         .join(' ');
@@ -47,10 +50,10 @@ room_summary:
     - operator: template
       value: >
         [[[ 
-          var temp_sensor = states[variables.temperature_sensor];
-          var humid_sensor = states[variables.humidity_sensor];
-          var temp_thresh = (temp_sensor.attributes.temperature_threshold || 80);
-          var humid_thresh = (temp_sensor.attributes.humidity_threshold || 60);
+          const temp_sensor = states[variables.temperature_sensor];
+          const humid_sensor = states[variables.humidity_sensor];
+          const temp_thresh = (temp_sensor.attributes.temperature_threshold || 80);
+          const humid_thresh = (temp_sensor.attributes.humidity_threshold || 60);
 
           return temp_sensor.state > temp_thresh ||  humid_sensor.state > humid_thresh;
         ]]]
@@ -94,12 +97,14 @@ room_summary:
         - margin-left: "-35%"
         - line-height: 0
         - display: "grid"
-        - background-color: "[[[ if (variables.problem_exists) return 'rgba(var(--color-red),0.8)'; else return 'rgba(var(--color-green),0.8)'; ]]]"
+        - background-color: "[[[ if (variables.problem_exists) return 'rgba(var(--color-red),0.8)'; else return 'rgba(var(--color-green),0.6)'; ]]]"
 
   custom_fields:
     notification: >
       [[[
-        return `<ha-icon icon="mdi:numeric-${variables.problem_entities.length}" style="color: var(--primary-background-color);"></ha-icon>`;
+        if (variables.problem_entities.length) {
+          return `<ha-icon icon="mdi:numeric-${variables.problem_entities.length}" style="color: var(--primary-background-color);"></ha-icon>`;
+        }
       ]]]
 
   tap_action:

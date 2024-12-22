@@ -261,5 +261,5 @@ cards:
           grid-area: server
         variables:
           area: server_closet
-          z_humidity_sensor: sensor.office_climate_humidity
-          z_temperature_sensor: sensor.office_climate_air_temperature
+          humidity_sensor: sensor.office_climate_humidity
+          temperature_sensor: sensor.office_climate_air_temperature

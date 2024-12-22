@@ -4,55 +4,30 @@ subview: true
 type: custom:grid-layout
 layout:
   grid-template-areas: |
-    "header status ."
+    "header header ."
     "devices sensors health"
   mediaquery:
     # portrait monitor
     "only screen and (min-width: 769px) and (max-width: 1400px)":
       grid-template-areas: |
-        "header status"
+        "header header"
         "devices sensors"
         "health ."
     # Smartphones
     "only screen and (max-width: 768px)":
       grid-template-areas: |
         "header"
-        "status"
         "devices"
         "sensors"
         "health"
 cards:
-  - type: custom:decluttering-card
+  #################
+  # HEADER
+  #################
+  - type: custom:button-card
     template: room_header
     view_layout:
       grid-area: header
-    variables:
-      - sensor_prefix: kitchen
-      - room_name: Kitchen
-
-  #################
-  # STATUS CHIPS
-  #################
-  - type: custom:mod-card
-    view_layout:
-      grid-area: status
-    style:
-      hui-horizontal-stack-card$: |
-        #root { 
-          justify-content: center;
-        }
-    card:
-      type: horizontal-stack
-      cards:
-        - type: custom:button-card
-          template: chip_icon_state_if_value
-          variables:
-            entity: sensor.cat_device_failure_count
-            navigation_path: "/the-matrix/cats?anchor=status"
-        - type: custom:button-card
-          template: chip_icon_state_if_value
-          variables:
-            entity: input_boolean.dishwasher_needs_cleaned
 
   #################
   # DEVICES
@@ -72,7 +47,7 @@ cards:
       - type: "custom:button-card"
         template: card_light
         entity: switch.under_cabinet_lights
-          
+
       - type: horizontal-stack
         cards:
           - type: "custom:button-card"
@@ -83,7 +58,7 @@ cards:
               ulm_card_light_enable_collapse: true
           - type: "custom:button-card"
             template: card_light
-            entity: switch.dinette_fan
+            entity: switch.kitchen_fan
             variables:
               ulm_card_light_color: blue
 

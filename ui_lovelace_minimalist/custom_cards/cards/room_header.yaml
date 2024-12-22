@@ -1,0 +1,69 @@
+---
+room_header:
+  template: ulm_language_variables
+
+  variables:
+    area: >
+      [[[ 
+        const path = document.URL.split('?')[0].split('/').pop().replace('-', '_');
+        return path === 'home' ? '*' : path;
+      ]]]
+    mobile: "[[[ return window.matchMedia('only screen and (max-width: 768px)').matches ]]]"
+
+  styles:
+    card:
+      - background: none
+      - padding: 0px
+      - cursor: "default"
+      - "--mdc-ripple-press-opacity": 0 # prevent click animation
+    custom_fields:
+      status:
+        - margin-bottom: '[[[ if (variables.mobile) return "20px" ]]]'
+    grid:
+      - grid-template-areas: >
+          [[[
+            if (variables.mobile) {
+              return "'status' 'climate'";
+            }
+            return "'climate status'";
+          ]]]
+      - grid-template-columns: >
+          [[[
+            if (variables.mobile) {
+              return "1fr";
+            }
+            return "repeat(2, 1fr)";
+          ]]]
+
+  custom_fields:
+    #################
+    # CLIMATE GRAPHS
+    #################
+    climate:
+      card:
+        type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: "custom:button-card"
+                template: card_graph
+                entity: "[[[ return 'sensor.' + variables.area + '_climate_air_temperature'; ]]]"
+                variables:
+                  ulm_card_graph_color: "var(--google-red)"
+                  ulm_card_graph_name: Temperature
+                  ulm_card_graph_entity: "[[[ return 'sensor.' + variables.area + '_climate_air_temperature'; ]]]"
+              - type: "custom:button-card"
+                template: card_graph
+                entity: "[[[ return 'sensor.' + variables.area + '_climate_humidity'; ]]]"
+                variables:
+                  ulm_card_graph_color: "var(--google-blue)"
+                  ulm_card_graph_name: Humidity
+                  ulm_card_graph_entity: "[[[ return 'sensor.' + variables.area + '_climate_humidity'; ]]]"
+    
+    #################
+    # STATUS CHIPS
+    #################
+    status:
+      card:
+        type: custom:button-card
+        template: status_chips

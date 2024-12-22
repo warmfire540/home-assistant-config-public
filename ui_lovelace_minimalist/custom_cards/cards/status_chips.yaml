@@ -1,5 +1,13 @@
 status_chips:
   template: ulm_language_variables
+
+  variables:
+    area: >
+      [[[ 
+        const path = document.URL.split('?')[0].split('/').pop().replace('-', '_');
+        return path === 'home' ? '*' : path;
+      ]]]
+
   styles:
     card:
       - background: none
@@ -7,15 +15,34 @@ status_chips:
       - cursor: "default"
       - "--mdc-ripple-press-opacity": 0 # prevent click animation
     grid:
-      - grid-template-areas: |
-          "title . ."
-          ". chips ."
-      - grid-template-columns: repeat(3, 1fr)
+      - grid-template-areas: >
+          [[[
+            if(variables.area === "*"){
+              return "'title . .' '. chips .'";
+            }
+            return "'chips'";
+          ]]]
+      - grid-template-columns: >
+          [[[
+            if(variables.area === "*"){
+              return "repeat(3, 1fr)";
+            }
+            return "1fr";
+          ]]]
     custom_fields:
       title:
         - justify-self: start
       chips:
         - justify-self: center
+
+  state:
+    - operator: "template"
+      value: '[[[ return variables.area !== "*"; ]]]'
+      styles:
+        custom_fields:
+          title:
+            - display: none
+
   custom_fields:
     title:
       card:
@@ -43,7 +70,8 @@ status_chips:
                   type: custom:button-card
                   template: chip_icon_state_if_value
                   variables:
-                    optional: true
+                    optional: '[[[ return variables.area === "*"; ]]]'
+                area: '[[[ return variables.area; ]]]'
           sort:
             method: state
             numeric: true
