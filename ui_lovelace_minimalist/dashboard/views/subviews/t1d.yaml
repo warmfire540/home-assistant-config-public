@@ -2,10 +2,5 @@ title: "T1D"
 path: "t1d"
 subview: true
 cards:
-  - type: "custom:button-card"
-    template: chip_back
-    variables:
-      ulm_chip_back_path: home
-
   - type: picture
     image: /local/img/medtronic.png

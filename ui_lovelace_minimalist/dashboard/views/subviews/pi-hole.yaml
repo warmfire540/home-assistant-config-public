@@ -2,11 +2,6 @@ title: "Pi-Hole"
 path: "pi-hole"
 subview: true
 cards:
-  - type: "custom:button-card"
-    template: chip_back
-    variables:
-      ulm_chip_back_path: home
-
   - type: picture
     image: /local/img/pi-hole.png
 

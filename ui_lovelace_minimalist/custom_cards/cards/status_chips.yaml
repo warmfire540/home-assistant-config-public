@@ -2,6 +2,8 @@ status_chips:
   template: ulm_language_variables
 
   variables:
+    label: null
+    solo_label: null
     area: >
       [[[ 
         const path = document.URL.split('?')[0].split('/').pop().replace('-', '_');
@@ -72,6 +74,17 @@ status_chips:
                   variables:
                     optional: '[[[ return variables.area === "*"; ]]]'
                 area: '[[[ return variables.area; ]]]'
+              - label 1: '[[[ return variables.label; ]]]'
+                label 2: Status
+                options:
+                  type: custom:button-card
+                  template: chip_icon_state_if_value
+              - label: '[[[ return variables.solo_label; ]]]'
+                options:
+                  type: custom:button-card
+                  template: chip_icon_state_if_value
+                
+
           sort:
             method: state
             numeric: true

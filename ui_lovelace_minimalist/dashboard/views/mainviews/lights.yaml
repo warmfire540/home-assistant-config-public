@@ -7,7 +7,8 @@ layout:
   grid-template-rows: auto
   grid-template-areas: |
     "status status killswitch killswitch"
-    "lights-on switches-on lights-off switches-off"
+    "lights-on lights-on switches-on switches-on"
+    "lights-off lights-off switches-off switches-off"
   mediaquery:
     # portrait monitor
     "only screen and (min-width: 769px) and (max-width: 1400px)":
@@ -27,27 +28,12 @@ cards:
   #################
   # STATUS CHIPS
   #################
-  - type: custom:mod-card
+  - type: custom:button-card
+    template: status_chips
     view_layout:
       grid-area: status
-    style:
-      hui-horizontal-stack-card$: |
-        #root { 
-          justify-content: center;
-        }
-    card:
-      type: horizontal-stack
-      cards:
-        - type: custom:button-card
-          template: chip_icon_state_if_value
-          variables:
-            entity: sensor.lights_on
-            on_color: var(--amber-color)
-        - type: custom:button-card
-          template: chip_icon_state_if_value
-          variables:
-            entity: sensor.switches_on
-            on_color: var(--amber-color)
+    variables:
+      solo_label: Lights
 
   - type: "custom:button-card"
     template: chip_icon_label
@@ -61,7 +47,9 @@ cards:
     styles:
       icon:
         - color: >
-            [[[ if (states['sensor.lights_on'].state >= 1) 
+            [[[ if (Object.keys(states)
+                    .filter(key => key.startsWith('light.'))
+                    .some(key => states[key].state === 'on')) 
                   return "var(--green-color)" ;
                 else return "var(--red-color)"; ]]]
 
@@ -78,7 +66,12 @@ cards:
         <ha-alert alert-type="info">No lights on!</ha-alert>
     filter:
       include:
-        - group: group.all_lights
+        - domain: light
+          state: "on"
+          options:
+            tap_action:
+              action: toggle
+        - entity_id: "switch.*_light"
           state: "on"
           options:
             tap_action:
@@ -97,11 +90,13 @@ cards:
         <ha-alert alert-type="info">No switches on!</ha-alert>
     filter:
       include:
-        - group: group.all_light_switches
+        - domain: switch
           state: "on"
           options:
             tap_action:
               action: toggle
+      exclude:
+        - integration: eero
 
   - type: custom:auto-entities
     view_layout:
@@ -115,7 +110,12 @@ cards:
         <ha-alert alert-type="info">No lights off!</ha-alert>
     filter:
       include:
-        - group: group.all_lights
+        - domain: light
+          state: "off"
+          options:
+            tap_action:
+              action: toggle
+        - entity_id: "switch.*_light"
           state: "off"
           options:
             tap_action:
@@ -133,8 +133,10 @@ cards:
         <ha-alert alert-type="info">No switches off!</ha-alert>
     filter:
       include:
-        - group: group.all_light_switches
+        - domain: switch
           state: "off"
           options:
             tap_action:
               action: toggle
+      exclude:
+        - integration: eero

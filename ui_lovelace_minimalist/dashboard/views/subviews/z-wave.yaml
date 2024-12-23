@@ -4,51 +4,34 @@ subview: true
 type: custom:grid-layout
 layout:
   grid-template-areas: |
-    "nav logo status . . ."
+    ". logo status . . ."
     "seen nodes health . . ."
   mediaquery:
     # portrait monitor
     "only screen and (min-width: 769px) and (max-width: 1400px)":
       grid-template-areas: |
-        "nav logo status"
+        ". logo status"
         "health . ."
         "seen nodes ."
     # Smartphones
     "only screen and (max-width: 768px)":
       grid-template-areas: |
-        "nav"
-        "logo"
-        "status"
-        "nodes"
-        "seen"
-        "health"
+        ". status ."
+        "logo logo logo"
+        "nodes nodes nodes"
+        "seen seen seen"
+        "health health health"
+      grid-template-columns: repeat(3, 1fr)
 cards:
-  - type: custom:button-card
-    template: chip_back
-    view_layout:
-      grid-area: nav
-    variables:
-      ulm_chip_back_path: home
-
   #################
   # STATUS CHIPS
   #################
-  - type: custom:mod-card
+  - type: custom:button-card
+    template: status_chips
     view_layout:
       grid-area: status
-    style:
-      hui-horizontal-stack-card$: |
-        #root { 
-          justify-content: center;
-        }
-    card:
-      type: horizontal-stack
-      cards:
-        - type: custom:button-card
-          template: chip_icon_state_if_value
-          variables:
-            entity: sensor.dead_z_wave_nodes
-            navigation_path: "/the-matrix/z-wave"
+    variables:
+      label: Z-Wave
 
   - type: picture
     image: /local/img/z-wave.png
