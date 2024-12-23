@@ -1,0 +1,20 @@
+#####
+# Handles unmuting people after an hour
+#
+#####
+
+alias: Unmute People
+id: 3b28a43a-ba67-4578-b3e2-bafd18f90c15
+
+trigger:
+  - trigger: state
+    entity_id:
+      - input_boolean.gina_mute
+      - input_boolean.poat_mute
+    to: "on"
+    for: "01:00:00"
+
+action:
+  - action: input_boolean.turn_off
+    target:
+      entity_id: "{{ trigger.entity_id }}"
