@@ -1,35 +1,28 @@
 ---
 room_header:
-  template: ulm_language_variables
+  template: 
+    - responsive_variables
+    - discovery_variables
+    - no_click
 
   variables:
-    area: >
-      [[[ 
-        const path = document.URL.split('?')[0].split('/').pop().replace('-', '_');
-        return path === 'home' ? '*' : path;
-      ]]]
-    mobile: "[[[ return window.matchMedia('only screen and (max-width: 768px)').matches ]]]"
+    area: "[[[  return variables.slug === 'home' ? '*' : variables.slug; ]]]"
 
   styles:
-    card:
-      - background: none
-      - padding: 0px
-      - cursor: "default"
-      - "--mdc-ripple-press-opacity": 0 # prevent click animation
     custom_fields:
       status:
-        - margin-bottom: '[[[ if (variables.mobile) return "20px" ]]]'
+        - margin-bottom: '[[[ if (variables.is_mobile) return "20px" ]]]'
     grid:
       - grid-template-areas: >
           [[[
-            if (variables.mobile) {
+            if (variables.is_mobile) {
               return "'status' 'climate'";
             }
             return "'climate status'";
           ]]]
       - grid-template-columns: >
           [[[
-            if (variables.mobile) {
+            if (variables.is_mobile) {
               return "1fr";
             }
             return "repeat(2, 1fr)";

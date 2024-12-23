@@ -1,0 +1,8 @@
+---
+no_click:
+  styles:
+    card:
+      - background: none
+      - padding: 0px
+      - cursor: "default"
+      - "--mdc-ripple-press-opacity": 0 # prevent click animation

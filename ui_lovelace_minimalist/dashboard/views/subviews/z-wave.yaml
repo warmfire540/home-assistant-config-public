@@ -4,50 +4,39 @@ subview: true
 type: custom:grid-layout
 layout:
   grid-template-areas: |
-    ". logo status . . ."
-    "seen nodes health . . ."
+    ". header ."
+    "seen nodes health"
   mediaquery:
     # portrait monitor
     "only screen and (min-width: 769px) and (max-width: 1400px)":
       grid-template-areas: |
-        ". logo status"
+        ". header ."
         "health . ."
         "seen nodes ."
     # Smartphones
     "only screen and (max-width: 768px)":
       grid-template-areas: |
-        ". status ."
-        "logo logo logo"
-        "nodes nodes nodes"
-        "seen seen seen"
-        "health health health"
+        "header"
+        "logo"
+        "nodes"
+        "seen"
+        "health"
       grid-template-columns: repeat(3, 1fr)
 cards:
   #################
-  # STATUS CHIPS
+  # HEADER
   #################
   - type: custom:button-card
-    template: status_chips
+    template: subview_header
     view_layout:
-      grid-area: status
+      grid-area: header
     variables:
-      label: Z-Wave
+      image: /local/img/z-wave.png
+      image_nav: /config/integrations/integration/zwave_js
 
-  - type: picture
-    image: /local/img/z-wave.png
-    card_mod:
-      style: |
-        @media (min-width: 769px) {
-          ha-card {
-            max-width: 425px;
-          }
-        }
-    view_layout:
-      grid-area: logo
-    tap_action:
-      action: navigate
-      navigation_path : /config/integrations/integration/zwave_js
-
+  #################
+  # NODES
+  #################
   - type: vertical-stack
     view_layout:
       grid-area: nodes
@@ -67,6 +56,9 @@ cards:
           method: state
           reverse: true
 
+  #################
+  # LAST SEEN
+  #################
   - type: vertical-stack
     view_layout:
       grid-area: seen
