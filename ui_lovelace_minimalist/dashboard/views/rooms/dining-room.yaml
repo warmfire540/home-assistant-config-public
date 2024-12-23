@@ -21,6 +21,9 @@ layout:
         "sensors"
         "health"
 cards:
+  #################
+  # HEADER
+  #################
   - type: custom:decluttering-card
     template: room_header
     view_layout:

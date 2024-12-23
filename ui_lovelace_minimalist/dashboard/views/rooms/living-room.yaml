@@ -84,6 +84,14 @@ cards:
         label: Vacuum
 
       - type: custom:xiaomi-vacuum-map-card
+        card_mod:
+          style: |
+            ha-card {
+              background: 
+                {% if is_state('binary_sensor.rolo_error', 'on') %}
+                  rgba(var(--color-background-red),var(--opacity-bg))
+                {% endif %}
+            }
         entity: vacuum.rolo
         map_source:
           camera: camera.rolo_cleaning_map
