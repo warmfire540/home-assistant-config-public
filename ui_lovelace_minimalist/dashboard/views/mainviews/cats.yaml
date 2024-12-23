@@ -74,9 +74,7 @@ cards:
           variables:
             ulm_chip_mdi_icon_state_entity: sensor.cat_noms_desiccant_days_remaining
         - type: custom:button-card
-          template: status_chips
-          variables:
-            label: Cats
+          template: mainview_header
 
   - type: "custom:button-card"
     template: card_title

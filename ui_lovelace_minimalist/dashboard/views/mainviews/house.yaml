@@ -63,9 +63,9 @@ cards:
             action: navigate
             navigation_path: "/energy"
         - type: custom:button-card
-          template: status_chips
+          template: mainview_header
           variables:
-            area: Home
+            area: home
 
   #################
   # SENSORS

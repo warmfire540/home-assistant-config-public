@@ -1,0 +1,24 @@
+---
+mainview_header:
+  template:
+    - discovery_variables
+    - grid_two_columns
+    - no_click
+
+  variables:
+    area: null
+    solo_label: null
+    single_column: true
+
+  custom_fields:
+    #################
+    # STATUS CHIPS
+    #################
+    item1:
+      card:
+        type: custom:button-card
+        template: status_chips
+        variables:
+          area: "[[[ return variables.area; ]]]"
+          label: "[[[ return variables.slug; ]]]"
+          solo_label: "[[[ return variables.solo_label; ]]]"

@@ -4,11 +4,15 @@ grid_two_columns:
 
   variables:
     single_column: false
+    no_columns: false
 
   styles:
     grid:
       - grid-template-areas: >
           [[[
+            if (variables.no_columns) {
+              return null;
+            }
             if (variables.single_column || variables.is_mobile) {
               return "'item1' 'item2'";
             }
@@ -16,6 +20,9 @@ grid_two_columns:
           ]]]
       - grid-template-columns: >
           [[[
+            if (variables.no_columns) {
+              return null;
+            }
             if (variables.single_column || variables.is_mobile) {
               return "1fr";
             }

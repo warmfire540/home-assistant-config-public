@@ -4,7 +4,7 @@ subview: true
 type: custom:grid-layout
 layout:
   grid-template-areas: |
-    "nav status status"
+    "nav header header"
     "control shares printer"
     "status-title . ."
     "rpi-has rpi-hole rpi-share"
@@ -14,7 +14,7 @@ layout:
     # portrait monitor
     "only screen and (min-width: 769px) and (max-width: 1400px)":
       grid-template-areas: |
-        "nav status"
+        "nav header"
         "control shares"
         "status-title printer"
         "rpi-has rpi-hole"
@@ -25,7 +25,7 @@ layout:
     "only screen and (max-width: 768px)":
       grid-template-areas: |
         "nav"
-        "status"
+        "header"
         "shares"
         "control"
         "printer"
@@ -38,6 +38,16 @@ layout:
         "plex"
         "health"
 cards:
+  #################
+  # HEADER
+  #################
+  - type: custom:button-card
+    template: mainview_header
+    view_layout:
+      grid-area: header
+    variables:
+      area: server_closet
+
   #################
   # NAV
   #################
@@ -65,17 +75,6 @@ cards:
             ulm_chip_navigate_path: z-wave
             ulm_chip_navigate_icon: mdi:z-wave
 
-  
-  #################
-  # STATUS CHIPS
-  #################
-  - type: custom:button-card
-    template: status_chips
-    view_layout:
-      grid-area: status
-    variables:
-      area: server_closet
-      
   #################
   # SHARES
   #################

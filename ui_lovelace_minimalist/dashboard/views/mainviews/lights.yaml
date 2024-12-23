@@ -6,34 +6,35 @@ layout:
   grid-template-columns: auto
   grid-template-rows: auto
   grid-template-areas: |
-    "status status killswitch killswitch"
+    "header header killswitch killswitch"
     "lights-on lights-on switches-on switches-on"
     "lights-off lights-off switches-off switches-off"
   mediaquery:
     # portrait monitor
     "only screen and (min-width: 769px) and (max-width: 1400px)":
       grid-template-areas: |
-        "status killswitch"
+        "header killswitch"
         "lights-on switches-on"
         "lights-off switches-off"
     # Smartphones
     "only screen and (max-width: 768px)":
       grid-template-areas: |
-        "status killswitch"
+        "header killswitch"
         "lights-on lights-on"
         "switches-on switches-on"
         "lights-off lights-off"
         "switches-off switches-off"
 cards:
   #################
-  # STATUS CHIPS
+  # HEADER
   #################
   - type: custom:button-card
-    template: status_chips
+    template: mainview_header
     view_layout:
-      grid-area: status
+      grid-area: header
     variables:
-      solo_label: Lights
+      no_columns: true
+      solo_label: lights
 
   - type: "custom:button-card"
     template: chip_icon_label

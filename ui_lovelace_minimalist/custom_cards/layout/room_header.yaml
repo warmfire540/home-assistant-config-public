@@ -1,6 +1,6 @@
 ---
 room_header:
-  template: 
+  template:
     - responsive_variables
     - discovery_variables
     - grid_two_columns
@@ -11,7 +11,7 @@ room_header:
 
   styles:
     custom_fields:
-      status:
+      item2:
         - margin-bottom: '[[[ if (variables.is_mobile) return "20px" ]]]'
 
   custom_fields:
