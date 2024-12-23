@@ -63,11 +63,9 @@ cards:
             action: navigate
             navigation_path: "/energy"
         - type: custom:button-card
-          template: chip_icon_state_if_value
+          template: status_chips
           variables:
-            optional: true
-            entity: sensor.devices_with_low_battery
-            navigation_path: "/the-matrix/house?anchor=low-battery"
+            area: Home
 
   #################
   # SENSORS

@@ -38,6 +38,9 @@ layout:
         "plex"
         "health"
 cards:
+  #################
+  # NAV
+  #################
   - type: custom:mod-card
     view_layout:
       grid-area: nav
@@ -61,66 +64,18 @@ cards:
           variables:
             ulm_chip_navigate_path: z-wave
             ulm_chip_navigate_icon: mdi:z-wave
+
+  
   #################
   # STATUS CHIPS
   #################
-  - type: custom:mod-card
+  - type: custom:button-card
+    template: status_chips
     view_layout:
       grid-area: status
-    style:
-      hui-horizontal-stack-card$: |
-        #root { 
-          justify-content: center;
-        }
-    card:
-      type: horizontal-stack
-      cards:
-        - type: custom:button-card
-          template: chip_icon_state_if_value
-          variables:
-            entity: sensor.dead_z_wave_nodes
-            navigation_path: "/the-matrix/z-wave"
-        - type: custom:button-card
-          template: chip_icon_state_if_value
-          variables:
-            entity: binary_sensor.poat_hole_local
-            navigation_path: "/the-matrix/pi-hole"
-            on_state: "off"
-        - type: custom:button-card
-          template: chip_icon_state_if_value
-          variables:
-            entity: binary_sensor.poat_share_local
-            on_state: "off"
-        - type: custom:button-card
-          template: chip_icon_state_if_value
-          variables:
-            entity: binary_sensor.poat_seedbox_local
-            on_state: "off"
-        - type: custom:button-card
-          template: chip_icon_state_if_value
-          variables:
-            entity: binary_sensor.poat_plex_local
-            on_state: "off"
-        - type: custom:button-card
-          template: chip_icon_state_if_value
-          variables:
-            entity: sensor.mfc_7860dw_status
-            on_state: "unavailable"
-        - type: custom:button-card
-          template: chip_mdi_icon_only
-          variables:
-            ulm_chip_mdi_icon_only_entity: sensor.seedbox_vpn_on
-            ulm_chip_mdi_icon_only_icon: mdi:vpn
-          styles:
-            icon:
-              - color: >
-                  [[[ if (states["sensor.seedbox_vpn_on"].state == "False")
-                        return "var(--red-color)";
-                      else if (states["sensor.seedbox_vpn_on"].state == "Offline")
-                        return "var(--amber-color)";
-                      else
-                        return "var(--green-color)"; ]]]
-
+    variables:
+      area: server_closet
+      
   #################
   # SHARES
   #################

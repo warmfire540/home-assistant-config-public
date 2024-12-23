@@ -4,15 +4,6 @@
 # https://www.home-assistant.io/integrations/homeassistant/#manual-customization
 #####
 
-sensor.conduit_battery_level:
-  device_class: battery
-
-sensor.pump_battery_level:
-  device_class: battery
-
-sensor.sensor_battery_level:
-  device_class: battery
-
 sensor.garage_climate_air_temperature:
   temperature_threshold: 90
 
@@ -23,8 +14,14 @@ sensor.shed_climate_air_temperature:
 sensor.attic_climate_air_temperature:
   temperature_threshold: 100
 
+sensor.mfc_7860dw_status:
+  on_state: "unavailable"
+
 binary_sensor.rolo_error:
   navigation_path: /the-matrix/living-room
+
+binary_sensor.poat_hole_local:
+  navigation_path: /the-matrix/pi-hole
 
 input_boolean.air_filters_need_changed:
   navigation_path: /the-matrix/living-room

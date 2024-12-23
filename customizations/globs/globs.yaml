@@ -6,3 +6,9 @@
 
 "counter.homeassistant_*":
   navigation_path: /config/logs
+
+"binary_sensor.poat_*_local":
+  on_state: "off"
+
+"sensor.*_battery_level":
+  device_class: battery

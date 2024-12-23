@@ -73,22 +73,10 @@ cards:
                       else return "var(--red-color)"; ]]]
           variables:
             ulm_chip_mdi_icon_state_entity: sensor.cat_noms_desiccant_days_remaining
-        - type: "custom:button-card"
-          template: chip_icon_state_if_value
+        - type: custom:button-card
+          template: status_chips
           variables:
-            entity: binary_sensor.pet_thirst_water_level
-        - type: "custom:button-card"
-          template: chip_icon_state_if_value
-          variables:
-            entity: binary_sensor.cat_noms_status_problem
-        - type: "custom:button-card"
-          template: chip_icon_state_if_value
-          variables:
-            entity: binary_sensor.cat_battery_problem
-        - type: "custom:button-card"
-          template: chip_icon_state_if_value
-          variables:
-            entity: binary_sensor.cat_noms_food_level
+            label: Cats
 
   - type: "custom:button-card"
     template: card_title
