@@ -3,33 +3,22 @@ subview_header:
   template: 
     - responsive_variables
     - discovery_variables
+    - grid_two_columns
     - no_click
 
   variables:
     image: null
 
   styles:
-    grid:
-      - grid-template-areas: >
-          [[[
-            if (variables.is_mobile) {
-              return "'logo' 'status'";
-            }
-            return "'logo status'";
-          ]]]
-      - grid-template-columns: >
-          [[[
-            if (variables.is_mobile) {
-              return "1fr";
-            }
-            return "repeat(2, 1fr)";
-          ]]]
     custom_fields:
       logo:
         - margin-bottom: '[[[ if (variables.is_mobile) return "20px" ]]]'
       
   custom_fields:
-    logo:
+    #################
+    # LOGO
+    #################
+    item1:
       card:
         type: picture
         image: '[[[ return variables.image; ]]]'
@@ -47,7 +36,7 @@ subview_header:
     #################
     # STATUS CHIPS
     #################
-    status:
+    item2:
       card:
         type: custom:button-card
         template: status_chips

@@ -1,5 +1,5 @@
 status_chips:
-  template: ulm_language_variables
+  template: no_click
 
   variables:
     label: null
@@ -11,11 +11,6 @@ status_chips:
       ]]]
 
   styles:
-    card:
-      - background: none
-      - padding: 0px
-      - cursor: "default"
-      - "--mdc-ripple-press-opacity": 0 # prevent click animation
     grid:
       - grid-template-areas: >
           [[[

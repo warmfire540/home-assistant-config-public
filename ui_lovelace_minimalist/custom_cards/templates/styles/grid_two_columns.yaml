@@ -1,0 +1,23 @@
+---
+grid_two_columns:
+  template: responsive_variables
+
+  variables:
+    single_column: false
+
+  styles:
+    grid:
+      - grid-template-areas: >
+          [[[
+            if (variables.single_column || variables.is_mobile) {
+              return "'item1' 'item2'";
+            }
+            return "'item1 item2'";
+          ]]]
+      - grid-template-columns: >
+          [[[
+            if (variables.single_column || variables.is_mobile) {
+              return "1fr";
+            }
+            return "repeat(2, 1fr)";
+          ]]]

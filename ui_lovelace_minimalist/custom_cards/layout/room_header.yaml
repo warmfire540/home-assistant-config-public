@@ -3,6 +3,7 @@ room_header:
   template: 
     - responsive_variables
     - discovery_variables
+    - grid_two_columns
     - no_click
 
   variables:
@@ -12,27 +13,12 @@ room_header:
     custom_fields:
       status:
         - margin-bottom: '[[[ if (variables.is_mobile) return "20px" ]]]'
-    grid:
-      - grid-template-areas: >
-          [[[
-            if (variables.is_mobile) {
-              return "'status' 'climate'";
-            }
-            return "'climate status'";
-          ]]]
-      - grid-template-columns: >
-          [[[
-            if (variables.is_mobile) {
-              return "1fr";
-            }
-            return "repeat(2, 1fr)";
-          ]]]
 
   custom_fields:
     #################
     # CLIMATE GRAPHS
     #################
-    climate:
+    item1:
       card:
         type: vertical-stack
         cards:
@@ -56,7 +42,7 @@ room_header:
     #################
     # STATUS CHIPS
     #################
-    status:
+    item2:
       card:
         type: custom:button-card
         template: status_chips

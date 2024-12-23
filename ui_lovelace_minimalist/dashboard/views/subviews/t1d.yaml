@@ -2,5 +2,13 @@ title: "T1D"
 path: "t1d"
 subview: true
 cards:
-  - type: picture
-    image: /local/img/medtronic.png
+  #################
+  # HEADER
+  #################
+  - type: custom:button-card
+    template: subview_header
+    view_layout:
+      grid-area: header
+    variables:
+      image: /local/img/medtronic.png
+      single_column: true

@@ -2,8 +2,16 @@ title: "Pi-Hole"
 path: "pi-hole"
 subview: true
 cards:
-  - type: picture
-    image: /local/img/pi-hole.png
+  #################
+  # HEADER
+  #################
+  - type: custom:button-card
+    template: subview_header
+    view_layout:
+      grid-area: header
+    variables:
+      image: /local/img/pi-hole.png
+      single_column: true
 
   - type: "custom:button-card"
     entity: binary_sensor.pi_hole_status
