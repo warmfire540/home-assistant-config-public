@@ -13,7 +13,7 @@ subview_header:
     custom_fields:
       item1:
         - margin-bottom: '[[[ if (variables.is_mobile) return "20px" ]]]'
-      
+
   custom_fields:
     #################
     # LOGO
@@ -21,7 +21,7 @@ subview_header:
     item1:
       card:
         type: picture
-        image: '[[[ return variables.image; ]]]'
+        image: "[[[ return variables.image; ]]]"
         card_mod:
           style: |
             @media (min-width: 769px) {
@@ -31,7 +31,7 @@ subview_header:
             }
         tap_action:
           action: navigate
-          navigation_path : '[[[ return variables.image_nav; ]]]'
+          navigation_path: "[[[ return variables.image_nav; ]]]"
 
     #################
     # STATUS CHIPS
@@ -42,4 +42,4 @@ subview_header:
         template: status_chips
         variables:
           area: null
-          label: '[[[ return variables.slug; ]]]'
+          label: "[[[ return variables.anchor; ]]]"

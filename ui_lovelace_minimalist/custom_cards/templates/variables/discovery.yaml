@@ -1,4 +1,4 @@
 ---
 discovery_variables:
   variables:
-    slug: "[[[ return document.URL.split('?')[0].split('/').pop().replace('-', '_'); ]]]"
+    anchor: "[[[ return document.URL.split('?')[0].split('/').pop().replace('-', '_'); ]]]"

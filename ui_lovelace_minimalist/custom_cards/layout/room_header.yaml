@@ -7,7 +7,8 @@ room_header:
     - no_click
 
   variables:
-    area: "[[[  return variables.slug === 'home' ? '*' : variables.slug; ]]]"
+    area: "[[[  return variables.anchor === 'home' ? '*' : variables.anchor; ]]]"
+
 
   styles:
     custom_fields:
@@ -38,7 +39,7 @@ room_header:
                   ulm_card_graph_color: "var(--google-blue)"
                   ulm_card_graph_name: Humidity
                   ulm_card_graph_entity: "[[[ return 'sensor.' + variables.area + '_climate_humidity'; ]]]"
-    
+
     #################
     # STATUS CHIPS
     #################

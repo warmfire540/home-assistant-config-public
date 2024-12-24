@@ -22,13 +22,12 @@ cards:
   #################
   # HEADER
   #################
-  - type: custom:decluttering-card
+  - type: custom:button-card
     template: room_header
     view_layout:
       grid-area: header
     variables:
-      - sensor_prefix: shed
-      - room_name: Shed
+      single_column: true
       
   #################
   # SENSORS

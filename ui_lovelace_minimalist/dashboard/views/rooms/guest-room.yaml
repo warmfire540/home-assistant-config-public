@@ -24,13 +24,12 @@ cards:
   #################
   # HEADER
   #################
-  - type: custom:decluttering-card
+  - type: custom:button-card
     template: room_header
     view_layout:
       grid-area: header
     variables:
-      - sensor_prefix: guest_bedroom
-      - room_name: Guest Room
+      single_column: true
 
   #################
   # DEVICES

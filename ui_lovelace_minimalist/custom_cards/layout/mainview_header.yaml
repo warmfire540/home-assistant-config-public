@@ -20,5 +20,5 @@ mainview_header:
         template: status_chips
         variables:
           area: "[[[ return variables.area; ]]]"
-          label: "[[[ return variables.slug; ]]]"
+          label: "[[[ return variables.anchor; ]]]"
           solo_label: "[[[ return variables.solo_label; ]]]"

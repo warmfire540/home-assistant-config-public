@@ -24,13 +24,12 @@ cards:
   #################
   # HEADER
   #################
-  - type: custom:decluttering-card
+  - type: custom:button-card
     template: room_header
     view_layout:
       grid-area: header
     variables:
-      - sensor_prefix: attic
-      - room_name: Attic
+      single_column: true
 
   #################
   # DEVICES
