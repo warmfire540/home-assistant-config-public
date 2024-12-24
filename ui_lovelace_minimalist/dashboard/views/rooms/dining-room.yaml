@@ -4,7 +4,7 @@ subview: true
 type: custom:grid-layout
 layout:
   grid-template-areas: |
-    "header . ."
+    "header header ."
     "devices sensors health"
   mediaquery:
     # portrait monitor
@@ -28,8 +28,6 @@ cards:
     template: room_header
     view_layout:
       grid-area: header
-    variables:
-      single_column: true
 
   #################
   # DEVICES

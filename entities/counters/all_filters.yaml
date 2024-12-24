@@ -9,12 +9,6 @@ cat_filters:
   restore: true
   minimum: 0
 
-dumb_water_filters:
-  name: Dumb Water Filters
-  icon: mdi:air-filter
-  restore: true
-  minimum: 0
-
 large_air_filters:
   name: Large Air Filters
   icon: mdi:air-filter

@@ -8,7 +8,7 @@ layout:
     "chonk-title . ."
     "chonk chonk thicc"
     "feeder-title . ."
-    "water noms fountain"
+    "water1 water2 noms"
   mediaquery:
     # portrait monitor
     "only screen and (min-width: 769px) and (max-width: 1400px)":
@@ -17,8 +17,8 @@ layout:
         "chonk-title ."
         "chonk thicc"
         "feeder-title ."
-        "water noms"
-        "fountain ."
+        "water1 water2"
+        "noms ."
     # Smartphones
     "only screen and (max-width: 768px)":
       grid-template-areas: |
@@ -27,9 +27,9 @@ layout:
         "chonk"
         "thicc"
         "feeder-title"
-        "water"
+        "water1"
+        "water2"
         "noms"
-        "fountain"
 cards:
   #################
   # STATUS CHIPS
@@ -147,51 +147,21 @@ cards:
     view_layout:
       grid-area: feeder-title
 
-  - type: entities
-    title: Water Fountain
+  - type: custom:decluttering-card
+    template: water_fountain
     view_layout:
-      grid-area: water
-    card_mod:
-      style: |
-        ha-card {
-          background: 
-            {% if is_state('binary_sensor.cat_water_status', 'on') %}
-              rgba(var(--color-background-red),var(--opacity-bg))
-            {% endif %}
-        }
-    entities:
-      - entity: switch.pet_thirst_power
-        name: Power
-      - type: section
-        label: Sensors
-      - entity: binary_sensor.pet_thirst_water_level
-        name: Water Level
-      - entity: sensor.pet_thirst_filter
-        name: Filter %
+      grid-area: water1
+    variables:
+      - name: pet_thirst
+      - title: Pet Thirst
 
-      - type: section
-        label: Configuration
-      - entity: switch.pet_thirst_light
-        name: Light
-      - entity: switch.pet_thirst_do_not_disturb
-        name: Do not disturb
-      - entity: button.pet_thirst_reset_filter
-        name: Reset Filter
-      - entity: select.pet_thirst_mode
-        name: Mode
-      - entity: select.pet_thirst_light_brightness
-        name: Light brightness
-
-      - type: section
-        label: Diagnostic
-      - entity: sensor.pet_thirst_energy_usage
-        name: Energy usage
-      - entity: sensor.pet_thirst_last_data_update
-        name: Last updated
-      - entity: sensor.pet_thirst_purified_water_today
-        name: Purified today
-      - entity: counter.cat_filters
-        name: Spare filters
+  - type: custom:decluttering-card
+    template: water_fountain
+    view_layout:
+      grid-area: water2
+    variables:
+      - name: spare_licks
+      - title: Spare Licks
 
   - type: entities
     title: Cat Noms
@@ -235,15 +205,3 @@ cards:
         name: RSII
       - entity: sensor.cat_noms_status
         name: Status
-
-  - type: entities
-    title: Dumb Water Fountain
-    icon: mdi:fountain
-    view_layout:
-      grid-area: fountain
-    entities:
-      - entity: sensor.cat_dumb_water_filter
-        name: Filter Changed
-      - entity: counter.dumb_water_filters
-      - entity: script.reset_dumb_water_filter
-        name: Reset Filter
