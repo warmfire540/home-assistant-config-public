@@ -18,7 +18,7 @@ cards:
   # WELCOME
   #################
   - type: custom:button-card
-    template: poat_welcome
+    template: card_welcome
     view_layout:
       grid-area: welcome
 
@@ -30,12 +30,12 @@ cards:
       grid-area: people
     cards:
       - type: custom:button-card
-        template: poat_person_card
+        template: card_person
         variables:
           person: poat
           phone: iphone_14_pro_max
       - type: custom:button-card
-        template: poat_person_card
+        template: card_person
         variables:
           person: gina
           phone: iphone_13_mini

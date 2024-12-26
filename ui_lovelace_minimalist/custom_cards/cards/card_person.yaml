@@ -1,5 +1,5 @@
 ---
-poat_person_card:
+card_person:
   template: card_person
   styles:
     card:

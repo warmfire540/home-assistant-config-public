@@ -1,5 +1,5 @@
 ---
-poat_welcome:
+card_welcome:
   template: ulm_language_variables
   triggers_update:
     - input_boolean.welcome_toggle
