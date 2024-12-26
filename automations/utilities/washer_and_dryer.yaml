@@ -11,7 +11,8 @@ trigger:
     entity_id: sensor.clothes_washer_13_1min
     id: washer_on
     above: 20
-    for: "00:00:10"
+    for:
+      seconds: 10
     variables:
       input_entity: input_boolean.washing_machine_on
       end_entity: input_boolean.washing_machine_end
@@ -19,7 +20,8 @@ trigger:
   - trigger: numeric_state
     entity_id: sensor.clothes_washer_13_1min
     below: 2
-    for: "00:20:00" # handle pause in soak
+    for:
+      minutes: 20 # handle pause in soak
     id: washer_off
     variables:
       input_entity: input_boolean.washing_machine_on
@@ -28,7 +30,8 @@ trigger:
   - trigger: numeric_state
     entity_id: sensor.dryer_1_1min
     above: 500
-    for: "00:00:10"
+    for:
+      seconds: 10
     id: dryer_on
     variables:
       input_entity: input_boolean.dryer_on
@@ -37,7 +40,8 @@ trigger:
   - trigger: numeric_state
     entity_id: sensor.dryer_1_1min
     below: 5
-    for: "00:00:10"
+    for:
+      seconds: 10
     id: dryer_off
     variables:
       input_entity: input_boolean.dryer_on

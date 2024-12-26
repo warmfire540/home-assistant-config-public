@@ -1,0 +1,37 @@
+#####
+# Handles closing some low value alerts
+#
+#####
+
+alias: Auto Close Alerts
+id: 4180ff1a-4cab-4e5f-ab66-8361cad83f74
+
+trigger:
+  # cannot check state as of 2023.6, cannot check if in state of X time.. 
+  alias: Persistent notifiation added
+  trigger: persistent_notification
+  update_type:
+    - added
+
+conditions:
+  - and:
+      - alias: Certain notifications only
+        condition: template
+        value_template: >
+          {{ trigger.notification.notification_id in
+            [
+              'dishwasher_done',
+              'dryer_done',
+              'rolo_done'
+            ] 
+          }}
+
+action:
+  - alias: Wait 10 minutes
+    delay:
+      minutes: 10
+  
+  # logic is error prone, potentially we could be clearing a brand new alert..
+  - action: persistent_notification.dismiss
+    data:
+      notification_id: "{{ trigger.notification.notification_id }}"

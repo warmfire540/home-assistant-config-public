@@ -12,7 +12,8 @@ trigger:
       - input_boolean.gina_mute
       - input_boolean.poat_mute
     to: "on"
-    for: "01:00:00"
+    for:
+      hours: 1
 
 action:
   - action: input_boolean.turn_off

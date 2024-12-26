@@ -6,10 +6,11 @@ alias: Dishwasher done
 id: ff140942-ede2-46cf-a08d-7a44cb3ae6bf
 
 trigger:
-  platform: numeric_state
+  trigger: numeric_state
   entity_id: sensor.dishwasher_7_1min
   below: 2
-  for: "00:05:00"
+  for:
+    minutes: 5
 
 condition:
   condition: state
@@ -17,10 +18,10 @@ condition:
   state: "on"
 
 action:
-  - service: input_boolean.turn_off
+  - action: input_boolean.turn_off
     entity_id: input_boolean.dishwasher_on
 
-  - service: notify.family_ai
+  - action: notify.family_ai
     data:
       title: Dishwasher done!
       message: false
