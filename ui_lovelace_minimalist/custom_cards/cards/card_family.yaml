@@ -1,5 +1,5 @@
 ---
-card_person:
+card_family:
   template: card_person
   styles:
     card:

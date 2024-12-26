@@ -42,6 +42,16 @@ cards:
         template: card_title
         label: Devices
 
+      - type: entities
+        entities:
+          - type: custom:button-card
+            template: mqtt_control
+            variables:
+              device: poat_rgb
+              entity:
+                id: sensor.poat_rgb_uptime
+                name: uptime
+
       - type: horizontal-stack
         cards:
           - type: "custom:button-card"

@@ -30,12 +30,12 @@ cards:
       grid-area: people
     cards:
       - type: custom:button-card
-        template: card_person
+        template: card_family
         variables:
           person: poat
           phone: iphone_14_pro_max
       - type: custom:button-card
-        template: card_person
+        template: card_family
         variables:
           person: gina
           phone: iphone_13_mini

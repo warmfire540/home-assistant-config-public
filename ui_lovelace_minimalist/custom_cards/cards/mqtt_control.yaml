@@ -9,8 +9,34 @@ mqtt_control:
     name: "[[[ return variables.device.replace('_', '-'); ]]]"
     condition_entity: binary_sensor.homeassistant_wired_connected
     entity: null
+    restart_entity: > 
+      [[[ 
+        if (variables.device === 'homeassistant')
+          return 'script.reboot_home_assistant';
+        if (variables.device === 'poat_rgb')
+          return 'button.poat_rgb_power_reboot';
+        return `button.${variables.device}_rpi_reboot_${variables.device}_command`;
+      ]]]
+    shutdown_entity: >
+      [[[ 
+        if (variables.device === 'homeassistant')
+          return 'script.shutdown_home_assistant';
+        if (variables.device === 'poat_rgb')
+          return 'button.poat_rgb_power_shutdown';
+        return `button.${variables.device}_rpi_shutdown_${variables.device}_command`;
+      ]]]
+    restore_entity: >
+      [[[ 
+        if (variables.device === 'homeassistant')
+          return 'script.reboot_home_assistant';
+        if (variables.device === 'poat_rgb')
+          return 'button.poat_rgb_power_sleep';
+        return `button.${variables.device}_rpi_restart_service_${variables.device}_command`;
+      ]]]
 
   styles:
+    card:
+        - padding-right: 5px
     custom_fields:
       item1:
         - text-align: start
@@ -32,29 +58,41 @@ mqtt_control:
           entities:
             - entity: "[[[ return variables.entity.id; ]]]"
               name: "[[[ return variables.entity.name; ]]]"
-            - entity: >
-                [[[ 
-                  if (variables.device === 'homeassistant')
-                    return 'script.reboot_home_assistant';
-                  return `button.${variables.device}_rpi_reboot_${variables.device}_command`;
-                ]]]
+            - entity: "[[[ return variables.restart_entity; ]]]"
               icon: mdi:restart
               name: restart
               tap_action:
-                action: toggle
-            - entity: >
-                [[[ 
-                  if (variables.device === 'homeassistant')
-                    return 'script.shutdown_home_assistant';
-                  return `button.${variables.device}_rpi_shutdown_${variables.device}_command`;
-                ]]]
+                action: call-service
+                service: button.press
+                service_data:
+                  entity_id: "[[[ return variables.restart_entity; ]]]"
+            - entity: "[[[ return variables.shutdown_entity; ]]]"
               icon: mdi:power
               name: shutdown
-            - entity: >
+              tap_action:
+                action: call-service
+                service: button.press
+                service_data:
+                  entity_id: "[[[ return variables.shutdown_entity; ]]]"
+            - entity: "[[[ return variables.restore_entity; ]]]"
+              icon: >
                 [[[ 
                   if (variables.device === 'homeassistant')
-                    return 'script.reboot_home_assistant';
-                  return `button.${variables.device}_rpi_restart_service_${variables.device}_command`;
+                    return 'mdi:restart';
+                  if (variables.device === 'poat_rgb')
+                    return 'mdi:sleep';
+                  return 'mdi:restore-alert';
                 ]]]
-              icon: mdi:restore-alert
-              name: restore
+              name: >
+                [[[ 
+                  if (variables.device === 'homeassistant')
+                    return 'reboot';
+                  if (variables.device === 'poat_rgb')
+                    return 'sleep';
+                  return 'restore';
+                ]]]
+              tap_action:
+                action: call-service
+                service: button.press
+                service_data:
+                  entity_id: "[[[ return variables.restore_entity; ]]]"

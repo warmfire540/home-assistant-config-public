@@ -290,7 +290,7 @@ cards:
               port: "32400"
               libraryName: Watch Next
               entity:
-                - media_player.living_room_tv
+                - media_player.plex_plex_web_chrome_osx
 
   #################
   # DEVICE HEALTH
