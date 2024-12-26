@@ -27,6 +27,30 @@ room_summary:
       entity_id: "[[[ return 'switch.' + variables.area + '_fan'; ]]]"
       templates:
         - blue_on
+    z_border_1: >
+        [[[ 
+          const temp_sensor = states[variables.temperature_sensor];
+          const humid_sensor = states[variables.humidity_sensor];
+          const temp_thresh = (temp_sensor.attributes.temperature_threshold || 80);
+          const humid_thresh = (temp_sensor.attributes.humidity_threshold || 60);
+
+          if (temp_sensor.state > temp_thresh)
+            return "2px solid rgba(var(--color-red-text),1)";
+          if (humid_sensor.state > humid_thresh)
+            return "2px solid rgba(var(--color-blue-text),1)";
+        ]]]
+    z_border_2: >
+        [[[ 
+          const temp_sensor = states[variables.temperature_sensor];
+          const humid_sensor = states[variables.humidity_sensor];
+          const temp_thresh = (temp_sensor.attributes.temperature_threshold || 80);
+          const humid_thresh = (temp_sensor.attributes.humidity_threshold || 60);
+          
+          if (humid_sensor.state > humid_thresh)
+            return "2px solid rgba(var(--color-blue-text),1)";
+          if (temp_sensor.state > temp_thresh)
+            return "2px solid rgba(var(--color-red-text),1)";
+        ]]]
 
   #################
   # CLIMATE & LABEL
@@ -59,9 +83,24 @@ room_summary:
         ]]]
       styles:
         label:
-          - color: "rgba(var(--color-red-text),1)"
+          - color: >
+              [[[ 
+                const temp_sensor = states[variables.temperature_sensor];
+                const humid_sensor = states[variables.humidity_sensor];
+                const temp_thresh = (temp_sensor.attributes.temperature_threshold || 80);
+                const humid_thresh = (temp_sensor.attributes.humidity_threshold || 60);
+
+                if (temp_sensor.state > temp_thresh)
+                  return "rgba(var(--color-red-text),1)";
+                if (humid_sensor.state > humid_thresh)
+                  return "rgba(var(--color-blue-text),1)";
+              ]]]
         card:
-          - border: "2px solid rgba(var(--color-red-text),1)"
+          - border-left: "[[[ return variables.z_border_1; ]]]"
+          - border-top: "[[[ return variables.z_border_1; ]]]"
+          - border-right: "[[[ return variables.z_border_2; ]]]"
+          - border-bottom: "[[[ return variables.z_border_2; ]]]"
+
 
   #################
   # ROOM ENTITY
