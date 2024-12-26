@@ -4,5 +4,6 @@ no_click:
     card:
       - background: none
       - padding: 0px
-      - cursor: "default"
+      - cursor: default
+      - font-size: inherit
       - "--mdc-ripple-press-opacity": 0 # prevent click animation

@@ -1,5 +1,5 @@
 ---
-custom_card_mpse_wifisignal:
+card_wifi_signal:
   template:
     - "icon_info_bg"
   icon: |

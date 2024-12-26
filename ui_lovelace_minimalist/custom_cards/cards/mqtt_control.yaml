@@ -1,0 +1,60 @@
+---
+mqtt_control:
+  template:
+    - grid_single_column
+    - no_click
+
+  variables:
+    device: ""
+    name: "[[[ return variables.device.replace('_', '-'); ]]]"
+    condition_entity: binary_sensor.homeassistant_wired_connected
+    entity: null
+
+  styles:
+    custom_fields:
+      item1:
+        - text-align: start
+
+  custom_fields:
+    item1:
+      card:
+        type: conditional
+        conditions:
+          - entity: "[[[ return variables.condition_entity; ]]]"
+            state: "on"
+        card:
+          type: custom:multiple-entity-row
+          entity: "[[[ return `device_tracker.${variables.device}_wired`; ]]]"
+          name: "[[[ return variables.name; ]]]"
+          show_state: false
+          secondary_info:
+            attribute: ip
+          entities:
+            - entity: "[[[ return variables.entity.id; ]]]"
+              name: "[[[ return variables.entity.name; ]]]"
+            - entity: >
+                [[[ 
+                  if (variables.device === 'homeassistant')
+                    return 'script.reboot_home_assistant';
+                  return `button.${variables.device}_rpi_reboot_${variables.device}_command`;
+                ]]]
+              icon: mdi:restart
+              name: restart
+              tap_action:
+                action: toggle
+            - entity: >
+                [[[ 
+                  if (variables.device === 'homeassistant')
+                    return 'script.shutdown_home_assistant';
+                  return `button.${variables.device}_rpi_shutdown_${variables.device}_command`;
+                ]]]
+              icon: mdi:power
+              name: shutdown
+            - entity: >
+                [[[ 
+                  if (variables.device === 'homeassistant')
+                    return 'script.reboot_home_assistant';
+                  return `button.${variables.device}_rpi_restart_service_${variables.device}_command`;
+                ]]]
+              icon: mdi:restore-alert
+              name: restore

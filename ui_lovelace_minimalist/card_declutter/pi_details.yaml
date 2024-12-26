@@ -28,7 +28,7 @@ pi_details:
         cards:
           - type: custom:mini-graph-card
             entities:
-              - sensor.rpi_poat_[[pi_name]]_rpi_cpu_use_poat_[[pi_name]]
+              - sensor.poat_[[pi_name]]_rpi_cpu_use_poat_[[pi_name]]
             hours_to_show: 24
             points_per_hour: 2
             hour24: true
@@ -60,7 +60,7 @@ pi_details:
                 }
           - type: custom:mini-graph-card
             entities:
-              - sensor.rpi_poat_[[pi_name]]_rpi_temp_poat_[[pi_name]]
+              - sensor.poat_[[pi_name]]_rpi_temp_poat_[[pi_name]]
             hours_to_show: 24
             points_per_hour: 2
             hour24: true
@@ -95,7 +95,7 @@ pi_details:
         cards:
           - type: custom:mini-graph-card
             entities:
-              - sensor.rpi_poat_[[pi_name]]_rpi_mem_used_poat_[[pi_name]]
+              - sensor.poat_[[pi_name]]_rpi_mem_used_poat_[[pi_name]]
             hours_to_show: 24
             points_per_hour: 2
             hour24: true
@@ -127,7 +127,7 @@ pi_details:
                 }
           - type: custom:mini-graph-card
             entities:
-              - sensor.rpi_poat_[[pi_name]]_rpi_disk_used_poat_[[pi_name]]
+              - sensor.poat_[[pi_name]]_rpi_disk_used_poat_[[pi_name]]
             hours_to_show: 24
             points_per_hour: 2
             hour24: true
@@ -202,10 +202,10 @@ pi_details:
       # up / down
       - type: custom:mini-graph-card
         entities:
-          - entity: sensor.[[tracker]]_wired_download_rate
+          - entity: sensor.poat_[[pi_name]]_wired_download_rate
             color: '#91C0F8'
             name: Download
-          - entity: sensor.[[tracker]]_wired_upload_rate
+          - entity: sensor.poat_[[pi_name]]_wired_upload_rate
             color: '#ffa000'
             name: Upload
             show_state: true
@@ -229,12 +229,12 @@ pi_details:
       - type: entities
         entities:
           - type: attribute
-            entity: sensor.rpi_poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
+            entity: sensor.poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
             name: Uptime
             attribute: up_time
             icon: mdi:clock-outline
           - type: attribute
-            entity: sensor.rpi_poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
+            entity: sensor.poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
             name: Packages
             attribute: ux_updates
             icon: mdi:package-up
@@ -269,27 +269,27 @@ pi_details:
                     }
             entities:
               - type: attribute
-                entity: sensor.rpi_poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
+                entity: sensor.poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
                 name: Hostname
                 attribute: fqdn
               - type: attribute
-                entity: device_tracker.[[tracker]]_wired
+                entity: device_tracker.poat_[[pi_name]]_wired
                 name: IP Address
                 attribute: ip
               - type: attribute
-                entity: sensor.rpi_poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
+                entity: sensor.poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
                 name: Storage
                 attribute: fs_total_gb
               - type: attribute
-                entity: sensor.rpi_poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
+                entity: sensor.poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
                 name: OS
                 attribute: ux_release
               - type: attribute
-                entity: sensor.rpi_poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
+                entity: sensor.poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
                 name: OS Version
                 attribute: ux_version
               - type: attribute
-                entity: sensor.rpi_poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
+                entity: sensor.poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
                 name: Model
                 attribute: rpi_model
               - type: attribute
@@ -297,10 +297,10 @@ pi_details:
                 name: Arch
                 attribute: model
               - type: attribute
-                entity: sensor.rpi_poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
+                entity: sensor.poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
                 name: Last Updated
                 attribute: last_update
-              - entity: sensor.rpi_poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
+              - entity: sensor.poat_[[pi_name]]_rpi_monitor_poat_[[pi_name]]
                 name: Last Refresh
         card_mod:
           style:

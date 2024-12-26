@@ -105,111 +105,44 @@ cards:
 
       - type: entities
         entities:
-          - entity: device_tracker.pi_hole_wired
-            type: custom:multiple-entity-row
-            name: poat-hole
-            icon: mdi:pi-hole
-            show_state: false
-            secondary_info:
-              attribute: ip
-            entities:
-              - entity: sensor.pi_hole_server_last_backup
+          - type: custom:button-card
+            template: mqtt_control
+            variables:
+              device: poat_hole
+              entity:
+                id: sensor.pi_hole_server_last_backup
                 name: backup
-              - entity: button.rpi_poat_hole_rpi_reboot_poat_hole_command
-                icon: mdi:restart
-                name: restart
-                tap_action:
-                  action: toggle
-              - entity: button.rpi_poat_hole_rpi_shutdown_poat_hole_command
-                icon: mdi:power
-                name: shutdown
-              - entity: button.rpi_poat_hole_rpi_restart_service_poat_hole_command
-                icon: mdi:restore-alert
-                name: shutdown
-          - entity: device_tracker.poat_share_wired
-            type: custom:multiple-entity-row
-            name: poat-share
-            icon: mdi:folder-network-outline
-            show_state: false
-            secondary_info:
-              attribute: ip
-            entities:
-              - entity: button.rpi_poat_share_rpi_reboot_poat_share_command
-                icon: mdi:restart
-                name: restart
-              - entity: button.rpi_poat_share_rpi_shutdown_poat_share_command
-                icon: mdi:power
-                name: shutdown
-              - entity: button.rpi_poat_share_rpi_restart_service_poat_share_command
-                icon: mdi:restore-alert
-                name: restore
-          - type: conditional
-            conditions:
-              - entity: binary_sensor.poat_seedbox_local
-                state: "on"
-            row:
-              entity: device_tracker.poat_seedbox_wired
-              type: custom:multiple-entity-row
-              name: poat-seedbox
-              icon: mdi:seed
-              show_state: false
-              secondary_info:
-                attribute: ip
-              entities:
-                - entity: sensor.deluge_last_backup
-                  name: backup
-                - entity: button.poat_seedbox_rpi_reboot_poat_seedbox_command
-                  icon: mdi:restart
-                  name: restart
-                - entity: button.poat_seedbox_rpi_shutdown_poat_seedbox_command
-                  icon: mdi:power
-                  name: shutdown
-                - entity: button.poat_seedbox_rpi_restart_service_poat_seedbox_command
-                  icon: mdi:restore-alert
-                  name: restore
-          - type: conditional
-            conditions:
-              - entity: binary_sensor.poat_plex_local
-                state: "on"
-            row:
-              entity: device_tracker.poat_plex_wired
-              type: custom:multiple-entity-row
-              name: poat-plex
-              icon: mdi:plex
-              show_state: false
-              secondary_info:
-                attribute: ip
-              entities:
-                - entity: sensor.plex_server_last_backup
-                  name: backup
-                - entity: button.rpi_poat_plex_rpi_reboot_poat_plex_command
-                  icon: mdi:restart
-                  name: restart
-                - entity: button.rpi_poat_plex_rpi_shutdown_poat_plex_command
-                  icon: mdi:power
-                  name: shutdown
-                - entity: button.rpi_poat_plex_rpi_restart_service_poat_plex_command
-                  icon: mdi:restore-alert
-                  name: restore
-          - entity: device_tracker.homeassistant_wired
-            type: custom:multiple-entity-row
-            name: homeassistant
-            icon: mdi:home-assistant
-            show_state: false
-            secondary_info:
-              attribute: ip
-            entities:
-              - entity: sensor.home_assistant_last_backup
+          - type: custom:button-card
+            template: mqtt_control
+            variables:
+              device: poat_share
+              entity:
+                id: sensor.poat_share_wired_data_usage_day
+                name: usage
+          - type: custom:button-card
+            template: mqtt_control
+            variables:
+              device: poat_seedbox
+              condition_entity: binary_sensor.poat_seedbox_local
+              entity:
+                id: sensor.deluge_last_backup
                 name: backup
-              - entity: script.reboot_home_assistant
-                icon: mdi:restart
-                name: restart
-              - entity: script.shutdown_home_assistant
-                icon: mdi:power
-                name: shutdown
-              - entity: script.reboot_home_assistant
-                icon: mdi:restore-alert
-                name: restore
+          - type: custom:button-card
+            template: mqtt_control
+            variables:
+              device: poat_plex
+              condition_entity: binary_sensor.poat_plex_local
+              entity:
+                id: sensor.plex_server_last_backup
+                name: backup
+
+          - type: custom:button-card
+            template: mqtt_control
+            variables:
+              device: homeassistant
+              entity:
+                id: sensor.home_assistant_last_backup
+                name: backup
 
   #################
   # PRINTER
@@ -271,7 +204,6 @@ cards:
       - pi_name: hole
       - icon: mdi:pi-hole
       - name: Pi Hole
-      - tracker: pi_hole
 
   - type: custom:decluttering-card
     template: pi_details
@@ -281,14 +213,13 @@ cards:
       - pi_name: share
       - icon: mdi:folder-network-outline
       - name: Pi Share
-      - tracker: poat_share
 
   - type: conditional
     view_layout:
       grid-area: rpi-seed
     conditions:
       - condition: state
-        entity: sensor.rpi_poat_seedbox_rpi_monitor_poat_seedbox
+        entity: sensor.poat_seedbox_rpi_monitor_poat_seedbox
         state_not: "unavailable"
     card:
       type: custom:decluttering-card
@@ -297,14 +228,13 @@ cards:
         - pi_name: seedbox
         - icon: mdi:seed
         - name: Pi Seedbox
-        - tracker: poat_seedbox
 
   - type: conditional
     view_layout:
       grid-area: rpi-plex
     conditions:
       - condition: state
-        entity: sensor.rpi_poat_plex_rpi_monitor_poat_plex
+        entity: sensor.poat_plex_rpi_monitor_poat_plex
         state_not: "unavailable"
     card:
       type: custom:decluttering-card
@@ -313,7 +243,6 @@ cards:
         - pi_name: plex
         - icon: mdi:plex
         - name: Pi Plex
-        - tracker: poat_plex
 
   #################
   # PLEX
@@ -402,7 +331,7 @@ cards:
                 view_layout:
                   grid-area: firmware
               - type: custom:button-card
-                template: custom_card_mpse_wifisignal
+                template: card_wifi_signal
                 entity: sensor.tasmota_signal
                 name: '[[[ return states["sensor.tasmota_ssid"].state + " (" + states["sensor.tasmota_wifi_connect_count"].state + ")"]]]'
                 view_layout:
