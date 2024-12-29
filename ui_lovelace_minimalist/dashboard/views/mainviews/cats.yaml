@@ -154,6 +154,7 @@ cards:
     variables:
       - name: pet_thirst
       - title: Pet Thirst
+      - problem_entity: binary_sensor.cat_water_status
 
   - type: custom:decluttering-card
     template: water_fountain
@@ -162,6 +163,7 @@ cards:
     variables:
       - name: spare_licks
       - title: Spare Licks
+      - problem_entity: binary_sensor.cat_spare_licks_status
 
   - type: entities
     title: Cat Noms

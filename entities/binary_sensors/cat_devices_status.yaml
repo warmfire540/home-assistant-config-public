@@ -9,3 +9,4 @@ unique_id: 447240de-d253-41c1-8eb2-cb9ce4fa21ef
 entities:
   - binary_sensor.cat_water_status
   - binary_sensor.cat_food_status
+  - binary_sensor.cat_spare_licks_status

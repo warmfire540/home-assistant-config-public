@@ -1,0 +1,11 @@
+####
+# Sensors related to second cat waterer
+#
+#####
+
+platform: group
+name: Cat Spare Licks Status
+unique_id: 1ed68bb7-6f5b-4286-b77c-1bfb52aacb4e
+entities:
+  - binary_sensor.spare_licks_water_level
+  - binary_sensor.spare_licks_filter_problem

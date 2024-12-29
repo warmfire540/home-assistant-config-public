@@ -35,3 +35,9 @@ sensors:
     device_class: problem
     icon_template: mdi:filter
 
+  spare_licks_filter_problem:
+    friendly_name: "Cat Spare Licks Filter Problem"
+    value_template: "{{ states('sensor.spare_licks_filter', '0') in  ['0', 'unavailable'] }}"
+    unique_id: bddfa2e7-e389-4d94-8024-61502121c7f0
+    device_class: problem
+    icon_template: mdi:filter

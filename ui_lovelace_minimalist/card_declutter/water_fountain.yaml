@@ -8,7 +8,7 @@ water_fountain:
       style: |
         ha-card {
           background: 
-            {% if is_state('binary_sensor.cat_water_status', 'on') %}
+            {% if is_state('[[problem_entity]]', 'on') %}
               rgba(var(--color-background-red),var(--opacity-bg))
             {% endif %}
         }

@@ -12,3 +12,6 @@
 
 "sensor.*_battery_level":
   device_class: battery
+
+"binary_sensor.*_water_level":
+  navigation_path: /the-matrix/cats
