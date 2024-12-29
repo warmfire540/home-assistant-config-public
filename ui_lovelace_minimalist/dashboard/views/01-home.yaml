@@ -263,3 +263,4 @@ cards:
           area: server_closet
           humidity_sensor: sensor.office_climate_humidity
           temperature_sensor: sensor.office_climate_air_temperature
+          navigate: lab

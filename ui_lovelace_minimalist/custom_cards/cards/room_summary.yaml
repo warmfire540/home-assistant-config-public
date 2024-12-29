@@ -19,6 +19,7 @@ room_summary:
     humidity_sensor: "[[[ return 'sensor.' + variables.area + '_climate_humidity'; ]]]"
     problem_exists: "[[[ return variables.problem_entities?.some(e => states[e].state == 'on' || states[e].state > 0); ]]]"
     temperature_sensor: "[[[ return 'sensor.' + variables.area + '_climate_air_temperature'; ]]]"
+    navigate: null
     entity_1:
       entity_id: "[[[ return 'light.' + variables.area + '_light'; ]]]"
       templates:
@@ -28,29 +29,29 @@ room_summary:
       templates:
         - blue_on
     z_border_1: >
-        [[[ 
-          const temp_sensor = states[variables.temperature_sensor];
-          const humid_sensor = states[variables.humidity_sensor];
-          const temp_thresh = (temp_sensor.attributes.temperature_threshold || 80);
-          const humid_thresh = (temp_sensor.attributes.humidity_threshold || 60);
+      [[[ 
+        const temp_sensor = states[variables.temperature_sensor];
+        const humid_sensor = states[variables.humidity_sensor];
+        const temp_thresh = (temp_sensor.attributes.temperature_threshold || 80);
+        const humid_thresh = (temp_sensor.attributes.humidity_threshold || 60);
 
-          if (temp_sensor.state > temp_thresh)
-            return "2px solid rgba(var(--color-red-text),1)";
-          if (humid_sensor.state > humid_thresh)
-            return "2px solid rgba(var(--color-blue-text),1)";
-        ]]]
+        if (temp_sensor.state > temp_thresh)
+          return "2px solid rgba(var(--color-red-text),1)";
+        if (humid_sensor.state > humid_thresh)
+          return "2px solid rgba(var(--color-blue-text),1)";
+      ]]]
     z_border_2: >
-        [[[ 
-          const temp_sensor = states[variables.temperature_sensor];
-          const humid_sensor = states[variables.humidity_sensor];
-          const temp_thresh = (temp_sensor.attributes.temperature_threshold || 80);
-          const humid_thresh = (temp_sensor.attributes.humidity_threshold || 60);
-          
-          if (humid_sensor.state > humid_thresh)
-            return "2px solid rgba(var(--color-blue-text),1)";
-          if (temp_sensor.state > temp_thresh)
-            return "2px solid rgba(var(--color-red-text),1)";
-        ]]]
+      [[[ 
+        const temp_sensor = states[variables.temperature_sensor];
+        const humid_sensor = states[variables.humidity_sensor];
+        const temp_thresh = (temp_sensor.attributes.temperature_threshold || 80);
+        const humid_thresh = (temp_sensor.attributes.humidity_threshold || 60);
+        
+        if (humid_sensor.state > humid_thresh)
+          return "2px solid rgba(var(--color-blue-text),1)";
+        if (temp_sensor.state > temp_thresh)
+          return "2px solid rgba(var(--color-red-text),1)";
+      ]]]
 
   #################
   # CLIMATE & LABEL
@@ -101,7 +102,6 @@ room_summary:
           - border-right: "[[[ return variables.z_border_2; ]]]"
           - border-bottom: "[[[ return variables.z_border_2; ]]]"
 
-
   #################
   # ROOM ENTITY
   #################
@@ -148,7 +148,7 @@ room_summary:
 
   tap_action:
     action: navigate
-    navigation_path: '[[[ return variables.area.replace("_", "-"); ]]]'
+    navigation_path: '[[[ return variables.navigate || variables.area.replace("_", "-"); ]]]'
 
   triggers_update:
     - "[[[ return variables.temperature_sensor; ]]]"
