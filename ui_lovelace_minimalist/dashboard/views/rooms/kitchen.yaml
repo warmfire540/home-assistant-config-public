@@ -141,21 +141,21 @@ cards:
               template: "card_scenes_welcome"
               variables:
                 entity_1:
-                  entity_id: script.kitchen_bulbs_cool_bright
-                  color: red
-                  name: Cool Bright
+                  entity_id: scene.daylight_kitchen
+                  color: yellow
+                  name: Daylight
                 entity_2:
-                  entity_id: script.kitchen_bulbs_rest
-                  color: purple
-                  name: Rest
+                  entity_id: scene.bright_kitchen
+                  color: blue
+                  name: Bright
                 entity_3:
-                  entity_id: script.kitchen_bulbs_tokyo_dynamic
-                  color: pink
-                  name: Tokyo
+                  entity_id: scene.warm_kitchen
+                  color: red
+                  name: Warm
                 entity_4:
-                  entity_id: script.kitchen_bulbs_jolly_dynamic
+                  entity_id: scene.fun_kitchen
                   color: green
-                  name: Jolly
+                  name: Fun
 
       - type: custom:decluttering-card
         template: cover

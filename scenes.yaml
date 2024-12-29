@@ -146,3 +146,423 @@
       entity_only: true
     cover.dining_room_blinds:
       entity_only: true
+- id: '1735431948756'
+  name: Warm Kitchen
+  entities:
+    light.kitchen_bulb_1:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - color_temp
+      - hs
+      color_mode: color_temp
+      brightness: 255
+      color_temp_kelvin: 2000
+      color_temp: 500
+      hs_color:
+      - 30.601
+      - 94.547
+      rgb_color:
+      - 255
+      - 137
+      - 14
+      xy_color:
+      - 0.598
+      - 0.383
+      friendly_name: Kitchen Bulb 1
+      supported_features: 0
+      state: 'on'
+    light.kitchen_bulb_2:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - color_temp
+      - hs
+      color_mode: color_temp
+      brightness: 255
+      color_temp_kelvin: 2000
+      color_temp: 500
+      hs_color:
+      - 30.601
+      - 94.547
+      rgb_color:
+      - 255
+      - 137
+      - 14
+      xy_color:
+      - 0.598
+      - 0.383
+      friendly_name: Kitchen Bulb 2
+      supported_features: 0
+      state: 'on'
+    light.kitchen_bulb_3:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - color_temp
+      - hs
+      color_mode: color_temp
+      brightness: 255
+      color_temp_kelvin: 2000
+      color_temp: 500
+      hs_color:
+      - 30.601
+      - 94.547
+      rgb_color:
+      - 255
+      - 137
+      - 14
+      xy_color:
+      - 0.598
+      - 0.383
+      friendly_name: Kitchen Bulb 3
+      supported_features: 0
+      state: 'on'
+    light.kitchen_bulb_4:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - color_temp
+      - hs
+      color_mode: color_temp
+      brightness: 255
+      color_temp_kelvin: 2000
+      color_temp: 500
+      hs_color:
+      - 30.601
+      - 94.547
+      rgb_color:
+      - 255
+      - 137
+      - 14
+      xy_color:
+      - 0.598
+      - 0.383
+      friendly_name: Kitchen Bulb 4
+      supported_features: 0
+      state: 'on'
+  icon: mdi:lightbulb-variant-outline
+  metadata: {}
+- id: '1735432125206'
+  name: Bright Kitchen
+  entities:
+    light.kitchen_bulb_1:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - color_temp
+      - hs
+      color_mode: color_temp
+      brightness: 255
+      color_temp_kelvin: 3067
+      color_temp: 326
+      hs_color:
+      - 27.718
+      - 55.105
+      rgb_color:
+      - 255
+      - 179
+      - 114
+      xy_color:
+      - 0.49
+      - 0.382
+      friendly_name: Kitchen Bulb 1
+      supported_features: 0
+      state: 'on'
+    light.kitchen_bulb_2:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - color_temp
+      - hs
+      color_mode: color_temp
+      brightness: 255
+      color_temp_kelvin: 3067
+      color_temp: 326
+      hs_color:
+      - 27.718
+      - 55.105
+      rgb_color:
+      - 255
+      - 179
+      - 114
+      xy_color:
+      - 0.49
+      - 0.382
+      friendly_name: Kitchen Bulb 2
+      supported_features: 0
+      state: 'on'
+    light.kitchen_bulb_3:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - color_temp
+      - hs
+      color_mode: color_temp
+      brightness: 255
+      color_temp_kelvin: 3067
+      color_temp: 326
+      hs_color:
+      - 27.718
+      - 55.105
+      rgb_color:
+      - 255
+      - 179
+      - 114
+      xy_color:
+      - 0.49
+      - 0.382
+      friendly_name: Kitchen Bulb 3
+      supported_features: 0
+      state: 'on'
+    light.kitchen_bulb_4:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - color_temp
+      - hs
+      color_mode: color_temp
+      brightness: 255
+      color_temp_kelvin: 3067
+      color_temp: 326
+      hs_color:
+      - 27.718
+      - 55.105
+      rgb_color:
+      - 255
+      - 179
+      - 114
+      xy_color:
+      - 0.49
+      - 0.382
+      friendly_name: Kitchen Bulb 4
+      supported_features: 0
+      state: 'on'
+  icon: mdi:lightbulb-variant
+  metadata: {}
+- id: '1735432208640'
+  name: Daylight Kitchen
+  entities:
+    light.kitchen_bulb_1:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - color_temp
+      - hs
+      color_mode: color_temp
+      brightness: 255
+      color_temp_kelvin: 6535
+      color_temp: 153
+      hs_color:
+      - 54.768
+      - 1.6
+      rgb_color:
+      - 255
+      - 255
+      - 251
+      xy_color:
+      - 0.325
+      - 0.333
+      friendly_name: Kitchen Bulb 1
+      supported_features: 0
+      state: 'on'
+    light.kitchen_bulb_2:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - color_temp
+      - hs
+      color_mode: color_temp
+      brightness: 255
+      color_temp_kelvin: 6535
+      color_temp: 153
+      hs_color:
+      - 54.768
+      - 1.6
+      rgb_color:
+      - 255
+      - 255
+      - 251
+      xy_color:
+      - 0.325
+      - 0.333
+      friendly_name: Kitchen Bulb 2
+      supported_features: 0
+      state: 'on'
+    light.kitchen_bulb_3:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - color_temp
+      - hs
+      color_mode: color_temp
+      brightness: 255
+      color_temp_kelvin: 4854
+      color_temp: 206
+      hs_color:
+      - 26.874
+      - 21.263
+      rgb_color:
+      - 255
+      - 225
+      - 201
+      xy_color:
+      - 0.377
+      - 0.351
+      friendly_name: Kitchen Bulb 3
+      supported_features: 0
+      state: 'on'
+    light.kitchen_bulb_4:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - color_temp
+      - hs
+      color_mode: color_temp
+      brightness: 255
+      color_temp_kelvin: 6535
+      color_temp: 153
+      hs_color:
+      - 54.768
+      - 1.6
+      rgb_color:
+      - 255
+      - 255
+      - 251
+      xy_color:
+      - 0.325
+      - 0.333
+      friendly_name: Kitchen Bulb 4
+      supported_features: 0
+      state: 'on'
+  icon: mdi:sun-wireless
+  metadata: {}
+- id: '1735433537049'
+  name: Fun Kitchen
+  entities:
+    light.kitchen_bulb_1:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - color_temp
+      - hs
+      color_mode: hs
+      brightness: 255
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      - 5
+      - 57.6
+      rgb_color:
+      - 255
+      - 120
+      - 108
+      xy_color:
+      - 0.554
+      - 0.321
+      friendly_name: Kitchen Bulb 1
+      supported_features: 0
+      state: 'on'
+    light.kitchen_bulb_2:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - color_temp
+      - hs
+      color_mode: hs
+      brightness: 255
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      - 235
+      - 75.3
+      rgb_color:
+      - 63
+      - 79
+      - 255
+      xy_color:
+      - 0.158
+      - 0.087
+      friendly_name: Kitchen Bulb 2
+      supported_features: 0
+      state: 'on'
+    light.kitchen_bulb_3:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - color_temp
+      - hs
+      color_mode: hs
+      brightness: 255
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      - 215
+      - 76.1
+      rgb_color:
+      - 61
+      - 142
+      - 255
+      xy_color:
+      - 0.158
+      - 0.163
+      friendly_name: Kitchen Bulb 3
+      supported_features: 0
+      state: 'on'
+    light.kitchen_bulb_4:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      supported_color_modes:
+      - color_temp
+      - hs
+      color_mode: hs
+      brightness: 255
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      - 298
+      - 58.8
+      rgb_color:
+      - 250
+      - 105
+      - 255
+      xy_color:
+      - 0.367
+      - 0.186
+      friendly_name: Kitchen Bulb 4
+      supported_features: 0
+      state: 'on'
+  icon: mdi:party-popper
+  metadata: {}

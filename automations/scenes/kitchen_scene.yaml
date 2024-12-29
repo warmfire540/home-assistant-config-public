@@ -22,12 +22,12 @@ trigger:
     entity_id: event.kitchen_light_scene_002
     id: scene-two
 
-  - alias: Scene Two button pressed
+  - alias: Scene Three button pressed
     trigger: state
     entity_id: event.kitchen_light_scene_003
     id: scene-three
 
-  - alias: Scene Two button pressed
+  - alias: Scene Four button pressed
     trigger: state
     entity_id: event.kitchen_light_scene_004
     id: scene-four
@@ -71,25 +71,33 @@ action:
         condition: trigger
         id: scene-one
       sequence:
-        action: script.kitchen_bulbs_cool_bright
+        action: scene.turn_on
+        target:
+          entity_id: scene.daylight_kitchen
 
     - conditions:
         alias: Scene Two button pressed
         condition: trigger
         id: scene-two
       sequence:
-        action: script.kitchen_bulbs_rest
+        action: scene.turn_on
+        target:
+          entity_id: scene.bright_kitchen
 
     - conditions:
         alias: Scene Three button pressed
         condition: trigger
         id: scene-three
       sequence:
-        action: script.kitchen_bulbs_tokyo_dynamic
+        action: scene.turn_on
+        target:
+          entity_id: scene.warm_kitchen
 
     - conditions:
         alias: Scene Three button pressed
         condition: trigger
         id: scene-four
       sequence:
-        action: script.kitchen_bulbs_jolly_dynamic
+        action: scene.turn_on
+        target:
+          entity_id: scene.fun_kitchen
