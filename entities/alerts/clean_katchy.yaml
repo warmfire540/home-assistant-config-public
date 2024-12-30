@@ -1,0 +1,19 @@
+#####
+# Alert for Katchy cleaning.
+#
+#####
+
+clean_katchy:
+  name: Clean Katchy
+  entity_id: input_boolean.katchy_needs_cleaned
+  title: 🧼 Clean Katchy!
+  message: false
+  done_message: clear_notification
+  state: "on"
+  repeat: 300
+  data:
+    tag: clean_katchy
+    prompt: clean the bug catcher
+    backup: Clean Katchy!
+  notifiers:
+    - family_ai

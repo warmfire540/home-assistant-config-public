@@ -21,6 +21,8 @@ trigger:
     from: "on"
     to: "off"
     id: fan-off
+    variables:
+      switch: switch.master_bath_fan_relay
 
   - trigger: state
     entity_id: switch.master_bath_shower_light
@@ -36,6 +38,8 @@ trigger:
     from: "on"
     to: "off"
     id: light-off
+    variables:
+      switch: switch.master_bath_fan_relay_2
 
 action:
   choose:
@@ -59,7 +63,7 @@ action:
       sequence:
         action: switch.turn_off
         target:
-          entity_id: switch.master_bath_fan_relay
+          entity_id: "{{ switch }}"
 
     - conditions:
         - condition: trigger
@@ -80,6 +84,6 @@ action:
       sequence:
         action: switch.turn_off
         target:
-          entity_id: switch.master_bath_fan_relay_2
+          entity_id: "{{ switch }}"
 
 mode: single

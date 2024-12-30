@@ -1,0 +1,18 @@
+
+#####
+# Set boolean when time to clean Katchy bug light
+#####
+
+alias: Clean Katchy tracking
+id: ad48d2bb-7c1f-4c59-a748-5f5aff82bc86
+
+trigger:
+  trigger: calendar
+  event: start
+  entity_id: calendar.katchy
+
+action:
+  action: input_boolean.turn_on
+  target:
+    entity_id: input_boolean.katchy_needs_cleaned
+  
