@@ -4,10 +4,10 @@
 #####
 
 - sensor:
-  - name: Printer Left On
-    unique_id: b4081d9f-24f3-4083-9fa6-70c30a432c26
-    state: "{{ not is_state('sensor.mfc_7860dw_page_counter', 'unavailable') and (now() - states.sensor.mfc_7860dw_page_counter.last_updated) > timedelta(minutes=5) }}"
-    icon: mdi:printer-alert
-    attributes:
-      navigation_path: /the-matrix/network?anchor=updates
-      on_state: "True"
+    - name: Printer Left On
+      unique_id: b4081d9f-24f3-4083-9fa6-70c30a432c26
+      state: "{{ not is_state('sensor.mfc_7860dw_page_counter', 'unavailable') and (now() - states.sensor.mfc_7860dw_page_counter.last_updated) > timedelta(minutes=5) }}"
+      icon: mdi:printer-alert
+      attributes:
+        navigation_path: /the-matrix/network?anchor=updates
+        on_state: 'True'

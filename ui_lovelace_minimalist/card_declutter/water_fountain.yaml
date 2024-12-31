@@ -1,7 +1,7 @@
 water_fountain:
   card:
     type: entities
-    title: "[[title]]"
+    title: '[[title]]'
     view_layout:
       grid-area: water
     card_mod:

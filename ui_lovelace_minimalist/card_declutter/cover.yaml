@@ -4,7 +4,7 @@ cover:
     - show_details: true
     - compact: false
   card:
-    type: "custom:button-card"
+    type: 'custom:button-card'
     template:
       - card_cover
       - battery_info

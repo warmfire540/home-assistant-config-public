@@ -1,5 +1,5 @@
-title: "Lab"
-path: "lab"
+title: 'Lab'
+path: 'lab'
 subview: true
 type: custom:grid-layout
 layout:
@@ -12,7 +12,7 @@ layout:
     "health . ."
   mediaquery:
     # portrait monitor
-    "only screen and (min-width: 769px) and (max-width: 1400px)":
+    'only screen and (min-width: 769px) and (max-width: 1400px)':
       grid-template-areas: |
         "nav header"
         "control shares"
@@ -22,7 +22,7 @@ layout:
         "rpi-plex plex"
         "health . "
     # Smartphones
-    "only screen and (max-width: 768px)":
+    'only screen and (max-width: 768px)':
       grid-template-areas: |
         "nav"
         "header"
@@ -64,13 +64,13 @@ cards:
       cards:
         - type: custom:button-card
           template: chip_navigate
-          label: "Pi-Hole"
+          label: 'Pi-Hole'
           variables:
             ulm_chip_navigate_path: pi-hole
             ulm_chip_navigate_icon: mdi:pi-hole
         - type: custom:button-card
           template: chip_navigate
-          label: "Z-Wave"
+          label: 'Z-Wave'
           variables:
             ulm_chip_navigate_path: z-wave
             ulm_chip_navigate_icon: mdi:z-wave
@@ -85,7 +85,7 @@ cards:
       - type: custom:mini-graph-card
         name: Share(s) %
         icon: mdi:harddisk
-        unit: "%"
+        unit: '%'
         entities:
           - sensor.aristodemos
           - sensor.odysseus_used
@@ -220,7 +220,7 @@ cards:
     conditions:
       - condition: state
         entity: sensor.poat_seedbox_rpi_monitor_poat_seedbox
-        state_not: "unavailable"
+        state_not: 'unavailable'
     card:
       type: custom:decluttering-card
       template: pi_details
@@ -235,7 +235,7 @@ cards:
     conditions:
       - condition: state
         entity: sensor.poat_plex_rpi_monitor_poat_plex
-        state_not: "unavailable"
+        state_not: 'unavailable'
     card:
       type: custom:decluttering-card
       template: pi_details
@@ -253,7 +253,7 @@ cards:
     conditions:
       - condition: state
         entity: binary_sensor.poat_plex_local
-        state: "on"
+        state: 'on'
     card:
       type: vertical-stack
       cards:
@@ -287,7 +287,7 @@ cards:
               showSearch: true
               ip: poat-plex.local
               token: !secret plex_token
-              port: "32400"
+              port: '32400'
               libraryName: Watch Next
               entity:
                 - media_player.plex_plex_web_chrome_osx
@@ -327,7 +327,7 @@ cards:
                 entity: sensor.tasmota_firmware_version
                 variables:
                   ulm_card_generic_swap_name: Sonoff RF Bridge (Tasmota)
-                  ulm_card_generic_swap_icon: "mdi:broadcast"
+                  ulm_card_generic_swap_icon: 'mdi:broadcast'
                 view_layout:
                   grid-area: firmware
               - type: custom:button-card

@@ -9,7 +9,7 @@ garage:
   title: 🚘 Garage Open!
   message: false
   done_message: clear_notification
-  state: "on"
+  state: 'on'
   repeat: 15
   data:
     tag: garage_door

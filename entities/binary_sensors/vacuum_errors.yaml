@@ -6,7 +6,7 @@
 platform: template
 sensors:
   strong_boi_error:
-    friendly_name: "Strong Boi Problem"
+    friendly_name: 'Strong Boi Problem'
     value_template: "{{ states('vacuum.strongboi') in ['error', 'unavailable'] }}"
     unique_id: c6a6b37d-02f0-451d-9095-da10222a6a94
     device_class: problem
@@ -14,7 +14,7 @@ sensors:
       mdi:robot-vacuum{{'-alert' if is_state('vacuum.strongboi', 'error')}}
 
   rolo_error:
-    friendly_name: "Rolo Problem"
+    friendly_name: 'Rolo Problem'
     value_template: "{{ states('vacuum.rolo') in ['error', 'unavailable'] }}"
     unique_id: 05d593da-c57c-4aca-82cd-af9a88dda6e0
     device_class: problem

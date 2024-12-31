@@ -1,7 +1,7 @@
 ---
 card_wifi_signal:
   template:
-    - "icon_info_bg"
+    - 'icon_info_bg'
   icon: |
     [[[
       var icon = "mdi:wifi-strength-off";

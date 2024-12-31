@@ -11,11 +11,11 @@ trigger:
     entity_id:
       - input_boolean.gina_mute
       - input_boolean.poat_mute
-    to: "on"
+    to: 'on'
     for:
       hours: 1
 
 action:
   - action: input_boolean.turn_off
     target:
-      entity_id: "{{ trigger.entity_id }}"
+      entity_id: '{{ trigger.entity_id }}'

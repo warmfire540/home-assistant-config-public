@@ -10,16 +10,16 @@ trigger:
   - trigger: state
     entity_id: switch.master_bath_fan
     alias: Bath fan switch on
-    from: "off"
-    to: "on"
+    from: 'off'
+    to: 'on'
     id: fan-on
     variables:
       switch: switch.master_bath_fan_relay
   - trigger: state
     entity_id: switch.master_bath_fan
     alias: Bath fan switch off
-    from: "on"
-    to: "off"
+    from: 'on'
+    to: 'off'
     id: fan-off
     variables:
       switch: switch.master_bath_fan_relay
@@ -27,16 +27,16 @@ trigger:
   - trigger: state
     entity_id: switch.master_bath_shower_light
     alias: Bath light switch on
-    from: "off"
-    to: "on"
+    from: 'off'
+    to: 'on'
     id: light-on
     variables:
       switch: switch.master_bath_fan_relay_2
   - trigger: state
     entity_id: switch.master_bath_shower_light
     alias: Bath light switch off
-    from: "on"
-    to: "off"
+    from: 'on'
+    to: 'off'
     id: light-off
     variables:
       switch: switch.master_bath_fan_relay_2
@@ -51,7 +51,7 @@ action:
       sequence:
         action: switch.turn_on
         target:
-          entity_id: "{{ switch }}"
+          entity_id: '{{ switch }}'
 
     - conditions:
         - condition: trigger
@@ -63,7 +63,7 @@ action:
       sequence:
         action: switch.turn_off
         target:
-          entity_id: "{{ switch }}"
+          entity_id: '{{ switch }}'
 
     - conditions:
         - condition: trigger
@@ -84,6 +84,6 @@ action:
       sequence:
         action: switch.turn_off
         target:
-          entity_id: "{{ switch }}"
+          entity_id: '{{ switch }}'
 
 mode: single

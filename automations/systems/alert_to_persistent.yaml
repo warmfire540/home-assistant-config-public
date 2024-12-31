@@ -32,9 +32,9 @@ action:
       sequence:
         action: persistent_notification.create
         data:
-          message: "{{ trigger.event.data.service_data.message }}"
-          title: "{{ trigger.event.data.service_data.title }}"
-          notification_id: "{{ trigger.event.data.service_data.data.tag }}"
+          message: '{{ trigger.event.data.service_data.message }}'
+          title: '{{ trigger.event.data.service_data.title }}'
+          notification_id: '{{ trigger.event.data.service_data.data.tag }}'
 
     # if notify.family_ai is used - call ai then notify.family
     # not triggered if clear_notification used
@@ -47,10 +47,10 @@ action:
           or:
             - condition: state
               entity_id: input_boolean.gina_mute
-              state: "off"
+              state: 'off'
             - condition: state
               entity_id: input_boolean.poat_mute
-              state: "off"
+              state: 'off'
       sequence:
         - alias: Call Google Gemini AI to generate message
           action: google_generative_ai_conversation.generate_content
@@ -87,34 +87,34 @@ action:
           if:
             - condition: state
               entity_id: input_boolean.poat_mute
-              state: "off"
+              state: 'off'
           then:
             - alias: Notify Poat
               action: notify.mobile_app_poat_s_iphone_14_pro_max
               data:
-                message: "{{ message }}"
-                title: "{{ trigger.event.data.service_data.title }}"
+                message: '{{ message }}'
+                title: '{{ trigger.event.data.service_data.title }}'
                 data:
-                  tag: "{{ trigger.event.data.service_data.data.tag }}"
+                  tag: '{{ trigger.event.data.service_data.data.tag }}'
         - alias: See if Gina not muted
           if:
             - condition: state
               entity_id: input_boolean.gina_mute
-              state: "off"
+              state: 'off'
           then:
             - alias: Notify Gina
               action: notify.mobile_app_gina_s_iphone_13_mini
               data:
-                message: "{{ message }}"
-                title: "{{ trigger.event.data.service_data.title }}"
+                message: '{{ message }}'
+                title: '{{ trigger.event.data.service_data.title }}'
                 data:
-                  tag: "{{ trigger.event.data.service_data.data.tag }}"
+                  tag: '{{ trigger.event.data.service_data.data.tag }}'
         - alias: Create persistent notification
           action: persistent_notification.create
           data:
-            message: "{{ trigger.event.data.service_data.message }}"
-            title: "{{ trigger.event.data.service_data.title }}"
-            notification_id: "{{ trigger.event.data.service_data.data.tag }}"
+            message: '{{ trigger.event.data.service_data.message }}'
+            title: '{{ trigger.event.data.service_data.title }}'
+            notification_id: '{{ trigger.event.data.service_data.data.tag }}'
 
     # if notify.family_ai is used - call notify.family with clear_notification
     # triggered if clear_notification used
@@ -127,7 +127,7 @@ action:
         data:
           message: clear_notification
           data:
-            tag: "{{ trigger.event.data.service_data.data.tag }}"
+            tag: '{{ trigger.event.data.service_data.data.tag }}'
 
     # if notify.family is used - clear persistent notification
     # triggered if clear_notification used
@@ -136,6 +136,6 @@ action:
       sequence:
         action: persistent_notification.dismiss
         data:
-          notification_id: "{{ trigger.event.data.service_data.data.tag }}"
+          notification_id: '{{ trigger.event.data.service_data.data.tag }}'
 
 mode: queued

@@ -7,7 +7,7 @@ layout:
     "welcome status"
     "rooms rooms"
   mediaquery:
-    "(max-width: 768px)":
+    '(max-width: 768px)':
       grid-template-areas: |
         "welcome"
         "people"
@@ -63,7 +63,7 @@ cards:
         "guest spare garage attic shed server"
       mediaquery:
         # portrait monitor
-        "only screen and (min-width: 769px) and (max-width: 1400px)":
+        'only screen and (min-width: 769px) and (max-width: 1400px)':
           grid-template-columns: repeat(4, 1fr)
           grid-template-areas: |
             "label label label label"
@@ -71,7 +71,7 @@ cards:
             "bedroom bath guest spare"
             "garage attic shed server"
         # Smartphones
-        "only screen and (max-width: 768px)":
+        'only screen and (max-width: 768px)':
           grid-template-columns: 1fr 1fr
           grid-template-areas: |
             "label label"

@@ -10,10 +10,10 @@ clear_notification:
       data:
         message: clear_notification
         data:
-          tag: "{{ tag }}"
+          tag: '{{ tag }}'
 
     - service: persistent_notification.dismiss
       data:
-        notification_id: "{{ tag }}"
+        notification_id: '{{ tag }}'
   mode: single
   icon: mdi:bell-off

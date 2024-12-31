@@ -1,11 +1,11 @@
 poat_chip_double_state:
-  template: "chips"
+  template: 'chips'
   tap_action:
-    action: "navigate"
-    navigation_path: "[[[ return variables.ulm_chip_navigate_path; ]]]"
+    action: 'navigate'
+    navigation_path: '[[[ return variables.ulm_chip_navigate_path; ]]]'
   triggers_update:
-    - "[[[ return variables.ulm_chip_icon_double_state_entity_1 ]]]"
-    - "[[[ return variables.ulm_chip_icon_double_state_entity_2 ]]]"
+    - '[[[ return variables.ulm_chip_icon_double_state_entity_1 ]]]'
+    - '[[[ return variables.ulm_chip_icon_double_state_entity_2 ]]]'
   label: |
     [[[
       var label = '';

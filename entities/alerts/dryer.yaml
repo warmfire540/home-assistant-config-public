@@ -9,7 +9,7 @@ dryer:
   title: 🧦 Dryer done!
   message: false
   done_message: clear_notification
-  state: "on"
+  state: 'on'
   repeat: 240
   data:
     tag: dryer_done

@@ -9,7 +9,7 @@ air_filter:
   title: 💨 Change air filters!
   message: false
   done_message: clear_notification
-  state: "on"
+  state: 'on'
   repeat: 1440
   data:
     tag: air_filter

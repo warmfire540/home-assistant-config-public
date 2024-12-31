@@ -9,7 +9,7 @@ clean_dishwasher:
   title: 🧼 Clean Dishwasher!
   message: false
   done_message: clear_notification
-  state: "on"
+  state: 'on'
   repeat: 300
   data:
     tag: clean_dishwasher

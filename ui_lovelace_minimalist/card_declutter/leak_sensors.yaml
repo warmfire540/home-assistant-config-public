@@ -3,7 +3,7 @@ leak_sensors:
     type: custom:stack-in-card
     mode: vertical
     cards:
-      - type: "custom:button-card"
+      - type: 'custom:button-card'
         template:
           - card_binary_sensor_alert
           - battery_info

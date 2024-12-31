@@ -39,7 +39,7 @@ action:
         condition: trigger
         id: large-button
       sequence:
-        alias: "Choose an action based on the type of event"
+        alias: 'Choose an action based on the type of event'
         choose:
           - conditions:
               alias: Double pressed big button

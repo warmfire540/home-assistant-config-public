@@ -6,4 +6,4 @@ no_click:
       - padding: 0px
       - cursor: default
       - font-size: inherit
-      - "--mdc-ripple-press-opacity": 0 # prevent click animation
+      - '--mdc-ripple-press-opacity': 0 # prevent click animation

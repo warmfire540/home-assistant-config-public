@@ -33,7 +33,7 @@ status_chips:
         - justify-self: center
 
   state:
-    - operator: "template"
+    - operator: 'template'
       value: '[[[ return variables.area !== "*"; ]]]'
       styles:
         custom_fields:
@@ -68,13 +68,13 @@ status_chips:
                   template: chip_icon_state_if_value
                   variables:
                     optional: '[[[ return variables.area === "*"; ]]]'
-                area: "[[[ return variables.area; ]]]"
-              - label 1: "[[[ return variables.label; ]]]"
+                area: '[[[ return variables.area; ]]]'
+              - label 1: '[[[ return variables.label; ]]]'
                 label 2: Status
                 options:
                   type: custom:button-card
                   template: chip_icon_state_if_value
-              - label: "[[[ return variables.solo_label; ]]]"
+              - label: '[[[ return variables.solo_label; ]]]'
                 options:
                   type: custom:button-card
                   template: chip_icon_state_if_value

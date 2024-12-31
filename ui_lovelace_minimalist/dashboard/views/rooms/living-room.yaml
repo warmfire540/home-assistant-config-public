@@ -1,5 +1,5 @@
-title: "Living Room"
-path: "living-room"
+title: 'Living Room'
+path: 'living-room'
 subview: true
 type: custom:grid-layout
 layout:
@@ -9,13 +9,13 @@ layout:
     "sensors . ."
   mediaquery:
     # portrait monitor
-    "only screen and (min-width: 769px) and (max-width: 1400px)":
+    'only screen and (min-width: 769px) and (max-width: 1400px)':
       grid-template-areas: |
         "header header"
         "devices vacuum"
         "health sensors"
     # Smartphones
-    "only screen and (max-width: 768px)":
+    'only screen and (max-width: 768px)':
       grid-template-areas: |
         "header"
         "devices"
@@ -38,19 +38,19 @@ cards:
     view_layout:
       grid-area: devices
     cards:
-      - type: "custom:button-card"
+      - type: 'custom:button-card'
         template: card_title
         label: Devices
 
       - type: horizontal-stack
         cards:
-          - type: "custom:button-card"
+          - type: 'custom:button-card'
             template: card_light
             entity: light.living_room_light
             variables:
               ulm_card_light_enable_slider: true
               ulm_card_light_enable_collapse: true
-          - type: "custom:button-card"
+          - type: 'custom:button-card'
             template: card_light
             entity: switch.living_room_fan
             variables:
@@ -65,7 +65,7 @@ cards:
       - type: media-control
         entity: media_player.living_room_tv
 
-      - type: "custom:button-card"
+      - type: 'custom:button-card'
         template: card_thermostat
         entity: climate.living_room
         variables:
@@ -79,7 +79,7 @@ cards:
     view_layout:
       grid-area: vacuum
     cards:
-      - type: "custom:button-card"
+      - type: 'custom:button-card'
         template: card_title
         label: Vacuum
 
@@ -127,37 +127,37 @@ cards:
     view_layout:
       grid-area: sensors
     cards:
-      - type: "custom:button-card"
+      - type: 'custom:button-card'
         template: card_title
         label: Sensors
 
       - type: horizontal-stack
         cards:
-          - type: "custom:button-card"
+          - type: 'custom:button-card'
             template: card_binary_sensor
             variables:
               ulm_card_binary_sensor_alert: true
               ulm_card_binary_sensor_name: Smoke
             entity: binary_sensor.living_room_smoke_sensor_smoke_detected
-          - type: "custom:button-card"
+          - type: 'custom:button-card'
             template: card_binary_sensor
             variables:
               ulm_card_binary_sensor_alert: true
               ulm_card_binary_sensor_name: Carbon Monoxide
             entity: binary_sensor.living_room_smoke_sensor_carbon_monoxide_detected
 
-      - type: "custom:button-card"
+      - type: 'custom:button-card'
         template: card_input_boolean
         entity: input_boolean.air_filters_need_changed
         variables:
           ulm_card_input_boolean_force_background_color: true
           ulm_card_input_boolean_color: red
-          
-      - type: "custom:button-card"
+
+      - type: 'custom:button-card'
         template: card_graph
         entity: sensor.living_room_15_1min
         variables:
-          ulm_card_graph_color: "var(--google-yellow)"
+          ulm_card_graph_color: 'var(--google-yellow)'
           ulm_card_graph_entity: sensor.living_room_15_1min
           ulm_card_graph_name: Electricity 1 min
 
@@ -168,7 +168,7 @@ cards:
     view_layout:
       grid-area: health
     cards:
-      - type: "custom:button-card"
+      - type: 'custom:button-card'
         template: card_title
         label: Device Health
 

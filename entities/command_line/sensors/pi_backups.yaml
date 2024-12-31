@@ -1,6 +1,6 @@
 #####
 # Checks the latest backup on the share for pi
-# 
+#
 #####
 
 - sensor:
@@ -20,7 +20,7 @@
     unique_id: 1c005df5-6265-43cb-90f3-3c6ec76c66cf
     command: 'date -d "@$(find /media/pi_backups/plex-backup/MediaServer -type f -print0 | xargs -0 stat -c %Y | sort | tail -n 1)" "+%Y-%m-%dT%H:%M:%S%z"'
     value_template: "{{ as_timestamp(value, 0) | timestamp_custom('%b %d %H:%M')  }}"
-    
+
 - sensor:
     name: Pi-Hole Server Last Backup
     unique_id: 0bb2bb96-bcdf-4bd4-9311-c9693c3f5040

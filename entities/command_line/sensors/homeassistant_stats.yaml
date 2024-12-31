@@ -1,11 +1,11 @@
 #####
 # Gets info on the homeassistant pi
-# 
+#
 #####
 
 - sensor:
     name: CPU Temp
     unique_id: bf16d595-f867-4334-958d-8b7e81ea3907
-    command: "cat /sys/class/thermal/thermal_zone0/temp"
-    unit_of_measurement: "°F"
+    command: 'cat /sys/class/thermal/thermal_zone0/temp'
+    unit_of_measurement: '°F'
     value_template: '{{ ((value | multiply(0.0018)) + 32) | round(1)  }}'

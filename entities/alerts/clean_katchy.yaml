@@ -9,7 +9,7 @@ clean_katchy:
   title: 🧼 Clean Katchy!
   message: false
   done_message: clear_notification
-  state: "on"
+  state: 'on'
   repeat: 300
   data:
     tag: clean_katchy

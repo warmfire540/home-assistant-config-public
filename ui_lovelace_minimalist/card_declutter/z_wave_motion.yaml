@@ -15,19 +15,19 @@ z_wave_motion:
           card_margin: 0
         margin: 0px
         cards:
-          - type: "custom:button-card"
+          - type: 'custom:button-card'
             template:
               - card_generic_swap
               - battery_info
-            entity: "update.[[sensor_prefix]]_sensor_firmware"
+            entity: 'update.[[sensor_prefix]]_sensor_firmware'
             variables:
               ulm_card_generic_swap_name: Motion Sensor
               ulm_card_generic_swap_icon: mdi:z-wave
-              ulm_battery_entity: "sensor.[[sensor_prefix]]_sensor_battery_level"
+              ulm_battery_entity: 'sensor.[[sensor_prefix]]_sensor_battery_level'
             view_layout:
               grid-area: firmware
           - type: custom:mushroom-entity-card
-            entity: "binary_sensor.[[sensor_prefix]]_sensor_motion_detection"
+            entity: 'binary_sensor.[[sensor_prefix]]_sensor_motion_detection'
             name: Motion
             icon_type: none
             view_layout:
@@ -38,7 +38,7 @@ z_wave_motion:
                   text-align: center;
                 }
           - type: custom:mushroom-entity-card
-            entity: "binary_sensor.[[sensor_prefix]]_sensor_ac_mains_re_connected"
+            entity: 'binary_sensor.[[sensor_prefix]]_sensor_ac_mains_re_connected'
             name: Power
             icon_type: none
             view_layout:
@@ -49,7 +49,7 @@ z_wave_motion:
                   text-align: center;
                 }
           - type: custom:mushroom-entity-card
-            entity: "binary_sensor.[[sensor_prefix]]_sensor_tampering_product_cover_removed"
+            entity: 'binary_sensor.[[sensor_prefix]]_sensor_tampering_product_cover_removed'
             name: Tamper
             icon_type: none
             view_layout:
@@ -60,7 +60,7 @@ z_wave_motion:
                   text-align: center;
                 }
           - type: custom:mushroom-entity-card
-            entity: "binary_sensor.[[sensor_prefix]]_sensor_low_battery_level"
+            entity: 'binary_sensor.[[sensor_prefix]]_sensor_low_battery_level'
             name: Battery
             icon_type: none
             view_layout:
@@ -71,7 +71,7 @@ z_wave_motion:
                   text-align: center;
                 }
           - type: custom:mushroom-entity-card
-            entity: "sensor.node_[[node_number]]_node_status"
+            entity: 'sensor.node_[[node_number]]_node_status'
             name: Status
             icon_type: none
             view_layout:

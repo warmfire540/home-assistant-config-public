@@ -9,7 +9,6 @@ room_header:
   variables:
     area: "[[[  return variables.anchor === 'home' ? '*' : variables.anchor; ]]]"
 
-
   styles:
     custom_fields:
       item2:
@@ -25,18 +24,18 @@ room_header:
         cards:
           - type: horizontal-stack
             cards:
-              - type: "custom:button-card"
+              - type: 'custom:button-card'
                 template: card_graph
                 entity: "[[[ return 'sensor.' + variables.area + '_climate_air_temperature'; ]]]"
                 variables:
-                  ulm_card_graph_color: "var(--google-red)"
+                  ulm_card_graph_color: 'var(--google-red)'
                   ulm_card_graph_name: Temperature
                   ulm_card_graph_entity: "[[[ return 'sensor.' + variables.area + '_climate_air_temperature'; ]]]"
-              - type: "custom:button-card"
+              - type: 'custom:button-card'
                 template: card_graph
                 entity: "[[[ return 'sensor.' + variables.area + '_climate_humidity'; ]]]"
                 variables:
-                  ulm_card_graph_color: "var(--google-blue)"
+                  ulm_card_graph_color: 'var(--google-blue)'
                   ulm_card_graph_name: Humidity
                   ulm_card_graph_entity: "[[[ return 'sensor.' + variables.area + '_climate_humidity'; ]]]"
 

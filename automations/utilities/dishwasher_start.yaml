@@ -18,5 +18,5 @@ condition:
   state: 'off'
 
 action:
-- action: input_boolean.turn_on
-  entity_id: input_boolean.dishwasher_on
+  - action: input_boolean.turn_on
+    entity_id: input_boolean.dishwasher_on

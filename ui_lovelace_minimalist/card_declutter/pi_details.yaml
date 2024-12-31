@@ -241,7 +241,7 @@ pi_details:
           - type: conditional
             conditions:
               - entity: sensor.pi_[[pi_name]]_server_last_backup
-                state_not: "unavailable"
+                state_not: 'unavailable'
             row:
               entity: sensor.pi_[[pi_name]]_server_last_backup
               name: Last backup

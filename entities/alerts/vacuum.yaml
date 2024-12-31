@@ -10,7 +10,7 @@ vacuum:
   message: >
     Rolo has an issue..  {{ state_attr("vacuum.rolo", "status") }}
   done_message: clear_notification
-  state: "on"
+  state: 'on'
   repeat: 60
   data:
     tag: vacuum_issue

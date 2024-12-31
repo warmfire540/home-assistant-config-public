@@ -5,11 +5,11 @@ mqtt_control:
     - no_click
 
   variables:
-    device: ""
+    device: ''
     name: "[[[ return variables.device.replace('_', '-'); ]]]"
     condition_entity: binary_sensor.homeassistant_wired_connected
     entity: null
-    restart_entity: > 
+    restart_entity: >
       [[[ 
         if (variables.device === 'homeassistant')
           return 'script.reboot_home_assistant';
@@ -36,7 +36,7 @@ mqtt_control:
 
   styles:
     card:
-        - padding-right: 5px
+      - padding-right: 5px
     custom_fields:
       item1:
         - text-align: start
@@ -46,35 +46,35 @@ mqtt_control:
       card:
         type: conditional
         conditions:
-          - entity: "[[[ return variables.condition_entity; ]]]"
-            state: "on"
+          - entity: '[[[ return variables.condition_entity; ]]]'
+            state: 'on'
         card:
           type: custom:multiple-entity-row
-          entity: "[[[ return `device_tracker.${variables.device}_wired`; ]]]"
-          name: "[[[ return variables.name; ]]]"
+          entity: '[[[ return `device_tracker.${variables.device}_wired`; ]]]'
+          name: '[[[ return variables.name; ]]]'
           show_state: false
           secondary_info:
             attribute: ip
           entities:
-            - entity: "[[[ return variables.entity.id; ]]]"
-              name: "[[[ return variables.entity.name; ]]]"
-            - entity: "[[[ return variables.restart_entity; ]]]"
+            - entity: '[[[ return variables.entity.id; ]]]'
+              name: '[[[ return variables.entity.name; ]]]'
+            - entity: '[[[ return variables.restart_entity; ]]]'
               icon: mdi:restart
               name: restart
               tap_action:
                 action: call-service
                 service: button.press
                 service_data:
-                  entity_id: "[[[ return variables.restart_entity; ]]]"
-            - entity: "[[[ return variables.shutdown_entity; ]]]"
+                  entity_id: '[[[ return variables.restart_entity; ]]]'
+            - entity: '[[[ return variables.shutdown_entity; ]]]'
               icon: mdi:power
               name: shutdown
               tap_action:
                 action: call-service
                 service: button.press
                 service_data:
-                  entity_id: "[[[ return variables.shutdown_entity; ]]]"
-            - entity: "[[[ return variables.restore_entity; ]]]"
+                  entity_id: '[[[ return variables.shutdown_entity; ]]]'
+            - entity: '[[[ return variables.restore_entity; ]]]'
               icon: >
                 [[[ 
                   if (variables.device === 'homeassistant')
@@ -95,4 +95,4 @@ mqtt_control:
                 action: call-service
                 service: button.press
                 service_data:
-                  entity_id: "[[[ return variables.restore_entity; ]]]"
+                  entity_id: '[[[ return variables.restore_entity; ]]]'

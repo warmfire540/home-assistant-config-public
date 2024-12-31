@@ -13,13 +13,13 @@ trigger:
     to: Night
     id: lights-on
   - platform: time
-    at: "01:00:00"
+    at: '01:00:00'
     id: lights-off
 
 condition:
   - condition: state
     entity_id: input_boolean.on_vacation
-    state: "on"
+    state: 'on'
 
 action:
   choose:

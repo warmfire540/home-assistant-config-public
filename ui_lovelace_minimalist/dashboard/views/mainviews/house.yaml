@@ -1,5 +1,5 @@
-title: "House"
-path: "house"
+title: 'House'
+path: 'house'
 subview: true
 type: custom:grid-layout
 layout:
@@ -10,7 +10,7 @@ layout:
     "poat-phone gina-phone . ."
   mediaquery:
     # portrait monitor
-    "only screen and (min-width: 769px) and (max-width: 1400px)":
+    'only screen and (min-width: 769px) and (max-width: 1400px)':
       grid-template-areas: |
         "status status"
         "sensors climate"
@@ -19,7 +19,7 @@ layout:
         "tracking ."
         "poat-phone gina-phone"
     # Smartphones
-    "only screen and (max-width: 768px)":
+    'only screen and (max-width: 768px)':
       grid-template-areas: |
         "status"
         "sensors"
@@ -53,7 +53,7 @@ cards:
             ulm_chip_mdi_icon_state_icon: mdi:thermometer
           tap_action:
             action: navigate
-            navigation_path: "/the-matrix/house"
+            navigation_path: '/the-matrix/house'
         - type: custom:button-card
           template: chip_power_consumption
           variables:
@@ -61,7 +61,7 @@ cards:
             ulm_chip_electric_price: false
           tap_action:
             action: navigate
-            navigation_path: "/energy"
+            navigation_path: '/energy'
         - type: custom:button-card
           template: mainview_header
           variables:
@@ -82,33 +82,33 @@ cards:
         cards:
           - type: custom:auto-entities
             card:
-              type: "custom:mini-graph-card"
+              type: 'custom:mini-graph-card'
               name: Temperatures
               show:
                 legend: false
             filter:
               include:
-                - entity_id: "sensor.*_climate_air_temperature"
+                - entity_id: 'sensor.*_climate_air_temperature'
 
           - type: custom:auto-entities
             card:
-              type: "custom:mini-graph-card"
+              type: 'custom:mini-graph-card'
               name: Humidities
               show:
                 legend: false
             filter:
               include:
-                - entity_id: "sensor.*_climate_humidity"
+                - entity_id: 'sensor.*_climate_humidity'
 
       - type: custom:auto-entities
         card:
-          type: "custom:mini-graph-card"
+          type: 'custom:mini-graph-card'
           name: Electricity
           show:
             legend: false
         filter:
           include:
-            - entity_id: "sensor.*_1min"
+            - entity_id: 'sensor.*_1min'
 
   #################
   # CLIMATE
@@ -126,10 +126,10 @@ cards:
 
       - type: horizontal-stack
         cards:
-          - type: "custom:button-card"
+          - type: 'custom:button-card'
             template: card_generic
             entity: counter.large_air_filters
-          - type: "custom:button-card"
+          - type: 'custom:button-card'
             template: card_generic
             entity: counter.small_air_filters
 
@@ -195,13 +195,13 @@ cards:
 
       - type: horizontal-stack
         cards:
-          - type: "custom:button-card"
+          - type: 'custom:button-card'
             template: card_input_boolean
             entity: input_boolean.poat_mute
             variables:
               ulm_card_input_boolean_color: red
               ulm_card_input_boolean_force_background_color: true
-          - type: "custom:button-card"
+          - type: 'custom:button-card'
             template: card_input_boolean
             entity: input_boolean.gina_mute
             variables:
@@ -219,7 +219,7 @@ cards:
     view_layout:
       grid-area: batteries
     cards:
-      - type: "custom:anchor-card"
+      - type: 'custom:anchor-card'
         anchor_id: low-battery
         timeout: 300
         offset: -60
@@ -230,7 +230,7 @@ cards:
 
       - type: custom:auto-entities
         card:
-          type: "custom:mini-graph-card"
+          type: 'custom:mini-graph-card'
           name: Batteries
           show:
             legend: false
@@ -241,7 +241,7 @@ cards:
                 device_class: battery
           exclude:
             - domain: binary_sensor
-            - state: "100"
+            - state: '100'
 
       - type: custom:auto-entities
         card:

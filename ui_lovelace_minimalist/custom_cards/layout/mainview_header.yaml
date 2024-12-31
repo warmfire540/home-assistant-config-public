@@ -19,6 +19,6 @@ mainview_header:
         type: custom:button-card
         template: status_chips
         variables:
-          area: "[[[ return variables.area; ]]]"
-          label: "[[[ return variables.anchor; ]]]"
-          solo_label: "[[[ return variables.solo_label; ]]]"
+          area: '[[[ return variables.area; ]]]'
+          label: '[[[ return variables.anchor; ]]]'
+          solo_label: '[[[ return variables.solo_label; ]]]'

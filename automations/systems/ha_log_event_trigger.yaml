@@ -4,7 +4,7 @@
 #####
 
 alias: Count Home Assistant errors
-id: "c057ca2c-ab20-4fe0-a32b-5980c0990fb2"
+id: 'c057ca2c-ab20-4fe0-a32b-5980c0990fb2'
 
 trigger:
   - trigger: event

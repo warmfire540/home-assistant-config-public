@@ -39,11 +39,11 @@ home_assistant_details:
               extrema: true
             color_thresholds:
               - value: 100
-                color: "#d32f2f"
+                color: '#d32f2f'
               - value: 90
-                color: "#ffa000"
+                color: '#ffa000'
               - value: 75
-                color: "#388e3c"
+                color: '#388e3c'
             card_mod:
               style: |
                 ha-card .states.flex{
@@ -71,11 +71,11 @@ home_assistant_details:
               extrema: true
             color_thresholds:
               - value: 170
-                color: "#d32f2f"
+                color: '#d32f2f'
               - value: 150
-                color: "#ffa000"
+                color: '#ffa000'
               - value: 140
-                color: "#388e3c"
+                color: '#388e3c'
             card_mod:
               style: |
                 ha-card .states.flex{
@@ -106,11 +106,11 @@ home_assistant_details:
               extrema: true
             color_thresholds:
               - value: 100
-                color: "#d32f2f"
+                color: '#d32f2f'
               - value: 90
-                color: "#ffa000"
+                color: '#ffa000'
               - value: 75
-                color: "#388e3c"
+                color: '#388e3c'
             card_mod:
               style: |
                 ha-card .states.flex{
@@ -138,11 +138,11 @@ home_assistant_details:
               extrema: true
             color_thresholds:
               - value: 100
-                color: "#d32f2f"
+                color: '#d32f2f'
               - value: 90
-                color: "#ffa000"
+                color: '#ffa000'
               - value: 75
-                color: "#388e3c"
+                color: '#388e3c'
             card_mod:
               style: |
                 ha-card .states.flex{
@@ -174,17 +174,17 @@ home_assistant_details:
             stack: horizontal
             max: 4
             severity:
-              - color: "#d32f2f"
+              - color: '#d32f2f'
                 from: 2
                 to: 4
-              - color: "#ffa000"
+              - color: '#ffa000'
                 from: 1
                 to: 2
-              - color: "#388e3c"
+              - color: '#388e3c'
                 from: 0
                 to: 1
             positions:
-              icon: "off"
+              icon: 'off'
               name: inside
               value: inside
               indicator: inside
@@ -203,10 +203,10 @@ home_assistant_details:
       - type: custom:mini-graph-card
         entities:
           - entity: sensor.system_monitor_network_throughput_in_end0
-            color: "#91C0F8"
+            color: '#91C0F8'
             name: Download
           - entity: sensor.system_monitor_network_throughput_out_end0
-            color: "#ffa000"
+            color: '#ffa000'
             name: Upload
             show_state: true
         hours_to_show: 24

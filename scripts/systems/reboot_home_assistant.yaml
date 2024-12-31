@@ -1,11 +1,11 @@
 #####
 # Home Assistant - script to reboot down HA .
-# 
+#
 #####
 
 reboot_home_assistant:
   alias: Reboot Home Assistant
   sequence:
-  - service: hassio.host_reboot
+    - service: hassio.host_reboot
   mode: single
   icon: mdi:restart

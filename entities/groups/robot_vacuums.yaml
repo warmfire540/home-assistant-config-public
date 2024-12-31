@@ -4,7 +4,7 @@
 #####
 
 robot_vacuums_status:
-  name: "Robot Vacuums Status"
+  name: 'Robot Vacuums Status'
   icon: mdi:robot-vacuum
   entities:
     - binary_sensor.strong_boi_error

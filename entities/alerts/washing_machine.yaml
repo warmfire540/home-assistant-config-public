@@ -9,7 +9,7 @@ washing_machine:
   title: 🩲 Washer done!
   message: false
   done_message: clear_notification
-  state: "on"
+  state: 'on'
   repeat: 15
   data:
     tag: washer_done

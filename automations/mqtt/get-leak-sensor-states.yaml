@@ -12,5 +12,5 @@ trigger:
 action:
   service: python_script.rfbridge_demux
   data_template:
-    payload: "{{ trigger.payload_json.RfReceived.Data }}"
-    time: "{{ (trigger.payload_json.Time | as_datetime | as_local).isoformat() }}"
+    payload: '{{ trigger.payload_json.RfReceived.Data }}'
+    time: '{{ (trigger.payload_json.Time | as_datetime | as_local).isoformat() }}'

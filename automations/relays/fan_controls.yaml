@@ -41,9 +41,9 @@ condition:
   and:
     - not:
         condition: state
-        alias: "People home"
+        alias: 'People home'
         entity_id: zone.home
-        state: "0"
+        state: '0'
     - or:
         - and:
             - condition: trigger
@@ -70,7 +70,7 @@ action:
       sequence:
         action: switch.turn_on
         target:
-          entity_id: "{{ switch }}"
+          entity_id: '{{ switch }}'
     - conditions:
         condition: trigger
         id:
@@ -79,6 +79,6 @@ action:
       sequence:
         action: switch.turn_off
         target:
-          entity_id: "{{ switch }}"
+          entity_id: '{{ switch }}'
 
 mode: single

@@ -1,5 +1,5 @@
-title: "Z-Wave"
-path: "z-wave"
+title: 'Z-Wave'
+path: 'z-wave'
 subview: true
 type: custom:grid-layout
 layout:
@@ -8,13 +8,13 @@ layout:
     "seen nodes health"
   mediaquery:
     # portrait monitor
-    "only screen and (min-width: 769px) and (max-width: 1400px)":
+    'only screen and (min-width: 769px) and (max-width: 1400px)':
       grid-template-areas: |
         ". header ."
         "health . ."
         "seen nodes ."
     # Smartphones
-    "only screen and (max-width: 768px)":
+    'only screen and (max-width: 768px)':
       grid-template-areas: |
         "header"
         "logo"
@@ -51,7 +51,7 @@ cards:
         name:
         filter:
           include:
-            - entity_id: "sensor.*_node_status"
+            - entity_id: 'sensor.*_node_status'
         sort:
           method: state
           reverse: true
@@ -73,7 +73,7 @@ cards:
         name:
         filter:
           include:
-            - entity_id: "*last_seen"
+            - entity_id: '*last_seen'
         sort:
           method: state
           reverse: true

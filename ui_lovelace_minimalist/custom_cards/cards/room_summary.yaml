@@ -2,10 +2,10 @@
 room_summary:
   template: card_room
   name: '[[[ return variables.area.split("_").map(x => x.charAt(0).toUpperCase() + x.slice(1)).join(" "); ]]]'
-  icon: "[[[ return hass.areas[variables.area].icon ]]]"
+  icon: '[[[ return hass.areas[variables.area].icon ]]]'
 
   variables:
-    area: ""
+    area: ''
     problem_entities: >
       [[[
         return Object
@@ -97,10 +97,10 @@ room_summary:
                   return "rgba(var(--color-blue-text),1)";
               ]]]
         card:
-          - border-left: "[[[ return variables.z_border_1; ]]]"
-          - border-top: "[[[ return variables.z_border_1; ]]]"
-          - border-right: "[[[ return variables.z_border_2; ]]]"
-          - border-bottom: "[[[ return variables.z_border_2; ]]]"
+          - border-left: '[[[ return variables.z_border_1; ]]]'
+          - border-top: '[[[ return variables.z_border_1; ]]]'
+          - border-right: '[[[ return variables.z_border_2; ]]]'
+          - border-bottom: '[[[ return variables.z_border_2; ]]]'
 
   #################
   # ROOM ENTITY
@@ -124,18 +124,18 @@ room_summary:
     #################
     custom_fields:
       notification:
-        - border-radius: "50%"
-        - border: "2px solid var(--card-background-color)"
-        - width: "26px"
-        - height: "26px"
-        - position: "absolute"
-        - left: "50%"
-        - top: "50%"
-        - transform: "translate(-50%,-50%)"
-        - margin-top: "35%"
-        - margin-left: "-35%"
+        - border-radius: '50%'
+        - border: '2px solid var(--card-background-color)'
+        - width: '26px'
+        - height: '26px'
+        - position: 'absolute'
+        - left: '50%'
+        - top: '50%'
+        - transform: 'translate(-50%,-50%)'
+        - margin-top: '35%'
+        - margin-left: '-35%'
         - line-height: 0
-        - display: "grid"
+        - display: 'grid'
         - background-color: "[[[ if (variables.problem_exists) return 'rgba(var(--color-red),0.8)'; else return 'rgba(var(--color-green),0.6)'; ]]]"
 
   custom_fields:
@@ -151,6 +151,6 @@ room_summary:
     navigation_path: '[[[ return variables.navigate || variables.area.replace("_", "-"); ]]]'
 
   triggers_update:
-    - "[[[ return variables.temperature_sensor; ]]]"
-    - "[[[ return variables.humidity_sensor; ]]]"
-    - "[[[ this._entities.push(...variables.problem_entities); return null; ]]]"
+    - '[[[ return variables.temperature_sensor; ]]]'
+    - '[[[ return variables.humidity_sensor; ]]]'
+    - '[[[ this._entities.push(...variables.problem_entities); return null; ]]]'

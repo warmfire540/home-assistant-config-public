@@ -6,24 +6,24 @@
 alias: Update ping sensors
 id: d4a1dd58-5fed-4620-a2d1-50320ad0483e
 
-description: "Update different ping sensors at various intervals"
+description: 'Update different ping sensors at various intervals'
 
 trigger:
   - trigger: time_pattern
-    minutes: "/2"
-    id: "fast_ping"
+    minutes: '/2'
+    id: 'fast_ping'
   - trigger: time_pattern
-    minutes: "/5"
-    id: "medium_ping"
+    minutes: '/5'
+    id: 'medium_ping'
   - trigger: time_pattern
-    minutes: "/10"
-    id: "slow_ping"
+    minutes: '/10'
+    id: 'slow_ping'
 
 action:
   - choose:
       - conditions:
           - condition: trigger
-            id: "fast_ping"
+            id: 'fast_ping'
         sequence:
           - action: homeassistant.update_entity
             target:
@@ -33,7 +33,7 @@ action:
 
       - conditions:
           - condition: trigger
-            id: "medium_ping"
+            id: 'medium_ping'
         sequence:
           - action: homeassistant.update_entity
             target:
@@ -41,7 +41,7 @@ action:
 
       - conditions:
           - condition: trigger
-            id: "slow_ping"
+            id: 'slow_ping'
         sequence:
           - action: homeassistant.update_entity
             target:

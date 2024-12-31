@@ -1,8 +1,8 @@
-title: "Test"
-path: "test"
+title: 'Test'
+path: 'test'
 subview: true
 cards:
-  - type: "custom:button-card"
+  - type: 'custom:button-card'
     template: room_summary
     icon: mdi:shower
     variables:

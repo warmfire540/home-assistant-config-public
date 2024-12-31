@@ -16,6 +16,6 @@ card_family:
     action: call-service
     service: input_boolean.toggle
     service_data:
-      entity_id: "[[[ return variables.z_mute_entity; ]]]"
+      entity_id: '[[[ return variables.z_mute_entity; ]]]'
   triggers_update:
-    - "[[[ return variables.z_mute_entity; ]]]"
+    - '[[[ return variables.z_mute_entity; ]]]'

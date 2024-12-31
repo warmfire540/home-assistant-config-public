@@ -6,7 +6,7 @@
 platform: template
 sensors:
   cat_noms_status_problem:
-    friendly_name: "Cat Noms Status Problem"
+    friendly_name: 'Cat Noms Status Problem'
     value_template: "{{ not is_state('sensor.cat_noms_status', 'normal') }}"
     unique_id: 136f0df9-aa84-4978-a293-56af9e85a667
     device_class: problem
@@ -14,7 +14,7 @@ sensors:
       mdi:power-plug{{'-off' if not is_state('sensor.cat_noms_status','normal')}}
 
   cat_battery_problem:
-    friendly_name: "Cat Battery Problem"
+    friendly_name: 'Cat Battery Problem'
     value_template: "{{ states('sensor.cat_noms_battery_status') not in ['normal', 'unavailable'] }}"
     unique_id: d2734d50-f3a4-4aa6-84cc-87e8bb1ab28a
     device_class: problem
@@ -22,21 +22,21 @@ sensors:
       mdi:battery{{'-alert-variant' if states('sensor.cat_noms_battery_status') not in ['normal', 'unavailable']}}
 
   cat_desicant_problem:
-    friendly_name: "Cat Desicant Problem"
+    friendly_name: 'Cat Desicant Problem'
     value_template: "{{ is_state('sensor.cat_noms_desiccant_days_remaining', '0') }}"
     unique_id: ac8a5b14-08c3-4cd5-a754-403aa3f22b44
     device_class: problem
     icon_template: mdi:air-filter
 
   cat_filter_problem:
-    friendly_name: "Cat Filter Problem"
+    friendly_name: 'Cat Filter Problem'
     value_template: "{{ states('sensor.pet_thirst_filter', '0') in  ['0', 'unavailable'] }}"
     unique_id: 42fcc316-0ec8-472c-b8ad-979016188d6e
     device_class: problem
     icon_template: mdi:filter
 
   spare_licks_filter_problem:
-    friendly_name: "Cat Spare Licks Filter Problem"
+    friendly_name: 'Cat Spare Licks Filter Problem'
     value_template: "{{ states('sensor.spare_licks_filter', '0') in  ['0', 'unavailable'] }}"
     unique_id: bddfa2e7-e389-4d94-8024-61502121c7f0
     device_class: problem

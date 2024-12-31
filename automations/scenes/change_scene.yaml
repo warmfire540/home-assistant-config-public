@@ -8,27 +8,27 @@ id: 16dd549f-4061-4bf2-b37d-6157bdfa0715
 
 trigger:
   - trigger: state
-    alias: "People away"
+    alias: 'People away'
     entity_id: zone.home
-    to: "0"
+    to: '0'
     id: away
 
   - trigger: state
-    alias: "People home"
+    alias: 'People home'
     entity_id: zone.home
-    from: "0"
+    from: '0'
     id: home
 
   - trigger: state
     entity_id: input_boolean.on_vacation
-    from: "on"
-    to: "off"
+    from: 'on'
+    to: 'off'
     id: home
 
   - trigger: state
     entity_id: input_boolean.on_vacation
-    from: "off"
-    to: "on"
+    from: 'off'
+    to: 'on'
     id: vacation
 
   - trigger: numeric_state
@@ -124,7 +124,7 @@ action:
   # reactivate vaca scene?
   - condition: state
     entity_id: input_boolean.on_vacation
-    state: "on"
+    state: 'on'
   - delay: 00:00:05
   - action: scene.turn_on
     target:

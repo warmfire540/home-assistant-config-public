@@ -1,5 +1,5 @@
-title: "Shed"
-path: "shed"
+title: 'Shed'
+path: 'shed'
 subview: true
 type: custom:grid-layout
 layout:
@@ -8,12 +8,12 @@ layout:
     "sensors health"
   mediaquery:
     # portrait monitor
-    "only screen and (min-width: 769px) and (max-width: 1400px)":
+    'only screen and (min-width: 769px) and (max-width: 1400px)':
       grid-template-areas: |
         "header header"
         "sensors health"
     # Smartphones
-    "only screen and (max-width: 768px)":
+    'only screen and (max-width: 768px)':
       grid-template-areas: |
         "header"
         "sensors"
@@ -28,7 +28,7 @@ cards:
       grid-area: header
     variables:
       single_column: true
-      
+
   #################
   # SENSORS
   #################
@@ -36,11 +36,11 @@ cards:
     view_layout:
       grid-area: sensors
     cards:
-      - type: "custom:button-card"
+      - type: 'custom:button-card'
         template: card_title
         label: Sensors
 
-      - type: "custom:button-card"
+      - type: 'custom:button-card'
         template: card_generic_swap
         entity: binary_sensor.shed_door_sensor_window_door_is_open
 
@@ -51,7 +51,7 @@ cards:
     view_layout:
       grid-area: health
     cards:
-      - type: "custom:button-card"
+      - type: 'custom:button-card'
         template: card_title
         label: Device Health
 

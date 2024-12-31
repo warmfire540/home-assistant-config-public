@@ -28,7 +28,7 @@ cats:
       Problems.. {{ ns.issues | join(', ') }}
 
   done_message: clear_notification
-  state: "on"
+  state: 'on'
   repeat: 120
   data:
     tag: cat_issue

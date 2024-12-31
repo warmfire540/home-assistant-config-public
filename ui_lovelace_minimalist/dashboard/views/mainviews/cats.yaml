@@ -1,5 +1,5 @@
-title: "Cats"
-path: "cats"
+title: 'Cats'
+path: 'cats'
 subview: true
 type: custom:grid-layout
 layout:
@@ -11,7 +11,7 @@ layout:
     "water1 water2 noms"
   mediaquery:
     # portrait monitor
-    "only screen and (min-width: 769px) and (max-width: 1400px)":
+    'only screen and (min-width: 769px) and (max-width: 1400px)':
       grid-template-areas: |
         "status status"
         "chonk-title ."
@@ -20,7 +20,7 @@ layout:
         "water1 water2"
         "noms ."
     # Smartphones
-    "only screen and (max-width: 768px)":
+    'only screen and (max-width: 768px)':
       grid-template-areas: |
         "status"
         "chonk-title"
@@ -45,7 +45,7 @@ cards:
     card:
       type: horizontal-stack
       cards:
-        - type: "custom:button-card"
+        - type: 'custom:button-card'
           template: chip_mdi_icon_state
           entity: sensor.pet_thirst_filter
           label: "[[[ return entity.state + '%'; ]]]"
@@ -60,7 +60,7 @@ cards:
           variables:
             ulm_chip_mdi_icon_state_entity: sensor.pet_thirst_filter
             ulm_chip_mdi_icon_state_icon: mdi:thermometer
-        - type: "custom:button-card"
+        - type: 'custom:button-card'
           template: chip_mdi_icon_state
           entity: sensor.cat_noms_desiccant_days_remaining
           styles:
@@ -76,7 +76,7 @@ cards:
         - type: custom:button-card
           template: mainview_header
 
-  - type: "custom:button-card"
+  - type: 'custom:button-card'
     template: card_title
     label: Chonk
     view_layout:
@@ -88,14 +88,14 @@ cards:
     cards:
       - type: horizontal-stack
         cards:
-          - type: "custom:button-card"
+          - type: 'custom:button-card'
             name: Lags
             entity: number.lagertha_set_weight
             entity_picture: "[[[ return states['number.lagertha_set_weight'].attributes.entity_picture; ]]]"
             layout: name_state
             show_entity_picture: true
             show_state: true
-          - type: "custom:button-card"
+          - type: 'custom:button-card'
             name: Ellie
             entity: number.ellie_set_weight
             entity_picture: "[[[ return states['number.ellie_set_weight'].attributes.entity_picture; ]]]"
@@ -105,14 +105,14 @@ cards:
 
       - type: horizontal-stack
         cards:
-          - type: "custom:button-card"
+          - type: 'custom:button-card'
             name: TP
             entity: number.the_punisher_set_weight
             entity_picture: "[[[ return states['number.the_punisher_set_weight'].attributes.entity_picture; ]]]"
             layout: name_state
             show_entity_picture: true
             show_state: true
-          - type: "custom:button-card"
+          - type: 'custom:button-card'
             name: Marbles
             entity: number.marbles_set_weight
             entity_picture: "[[[ return states['number.marbles_set_weight'].attributes.entity_picture; ]]]"
@@ -126,7 +126,7 @@ cards:
     cards:
       - type: custom:mini-graph-card
         name: Thiccness
-        unit: "lb"
+        unit: 'lb'
         hours_to_show: 300
         points_per_hour: 0.05
         show_points: false
@@ -141,7 +141,7 @@ cards:
           - entity: number.marbles_set_weight
             name: Marbles
 
-  - type: "custom:button-card"
+  - type: 'custom:button-card'
     template: card_title
     label: Feeders
     view_layout:

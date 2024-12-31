@@ -8,12 +8,12 @@ layout:
     "sensors health"
   mediaquery:
     # portrait monitor
-    "only screen and (min-width: 769px) and (max-width: 1400px)":
+    'only screen and (min-width: 769px) and (max-width: 1400px)':
       grid-template-areas: |
         "header header"
         "sensors health"
     # Smartphones
-    "only screen and (max-width: 768px)":
+    'only screen and (max-width: 768px)':
       grid-template-areas: |
         "header"
         "sensors"
@@ -34,19 +34,19 @@ cards:
     view_layout:
       grid-area: sensors
     cards:
-      - type: "custom:button-card"
+      - type: 'custom:button-card'
         template: card_title
         label: Sensors
 
-      - type: "custom:button-card"
+      - type: 'custom:button-card'
         template: card_graph
         entity: sensor.office_g_bath_garage_3_1min
         variables:
-          ulm_card_graph_color: "var(--google-yellow)"
+          ulm_card_graph_color: 'var(--google-yellow)'
           ulm_card_graph_entity: sensor.office_g_bath_garage_3_1min
           ulm_card_graph_name: Electricity 1 min
 
-      - type: "custom:button-card"
+      - type: 'custom:button-card'
         template: card_input_boolean
         entity: binary_sensor.air_filter_door_sensor_window_door_is_open
         variables:
@@ -60,7 +60,7 @@ cards:
     view_layout:
       grid-area: health
     cards:
-      - type: "custom:button-card"
+      - type: 'custom:button-card'
         template: card_title
         label: Device Health
 

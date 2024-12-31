@@ -1,5 +1,5 @@
-title: "Network"
-path: "network"
+title: 'Network'
+path: 'network'
 subview: true
 type: custom:grid-layout
 layout:
@@ -9,7 +9,7 @@ layout:
     "network wifi connected"
   mediaquery:
     # portrait monitor
-    "only screen and (min-width: 769px) and (max-width: 1400px)":
+    'only screen and (min-width: 769px) and (max-width: 1400px)':
       grid-template-areas: |
         "header header"
         "network disconnected"
@@ -18,7 +18,7 @@ layout:
         "network ."
         "connected ."
     # Smartphones
-    "only screen and (max-width: 768px)":
+    'only screen and (max-width: 768px)':
       grid-template-areas: |
         "header"
         "network"
@@ -39,11 +39,11 @@ cards:
     view_layout:
       grid-area: network
     cards:
-      - type: "custom:button-card"
+      - type: 'custom:button-card'
         template: card_title
         label: Network Stats
 
-      - type: "custom:mini-graph-card"
+      - type: 'custom:mini-graph-card'
         name: Network
         show:
           extrema: true
@@ -69,8 +69,8 @@ cards:
             name: Ping
             color: yellow
         tap_action:
-          action: "call-service"
-          service: "homeassistant.update_entity"
+          action: 'call-service'
+          service: 'homeassistant.update_entity'
           service_data:
             entity_id:
               - sensor.speedtest_download
@@ -79,7 +79,7 @@ cards:
 
       - type: custom:auto-entities
         card:
-          type: "custom:mini-graph-card"
+          type: 'custom:mini-graph-card'
           name: Usage Per Day
           show:
             legend: false
@@ -87,11 +87,11 @@ cards:
             fill: false
         filter:
           include:
-            - entity_id: "sensor.*_data_usage_day"
+            - entity_id: 'sensor.*_data_usage_day'
 
       - type: custom:auto-entities
         card:
-          type: "custom:mini-graph-card"
+          type: 'custom:mini-graph-card'
           name: Upload Rate
           show:
             legend: false
@@ -99,11 +99,11 @@ cards:
             fill: false
         filter:
           include:
-            - entity_id: "sensor.*_upload_rate"
+            - entity_id: 'sensor.*_upload_rate'
 
       - type: custom:auto-entities
         card:
-          type: "custom:mini-graph-card"
+          type: 'custom:mini-graph-card'
           name: Download Rate
           show:
             legend: false
@@ -111,19 +111,19 @@ cards:
             fill: false
         filter:
           include:
-            - entity_id: "sensor.*_download_rate"
+            - entity_id: 'sensor.*_download_rate'
 
   - type: vertical-stack
     view_layout:
       grid-area: wifi
     cards:
-      - type: "custom:button-card"
+      - type: 'custom:button-card'
         template: card_title
         label: WiFi Strength
 
       - type: custom:auto-entities
         card:
-          type: "custom:mini-graph-card"
+          type: 'custom:mini-graph-card'
           name: Wifi
           show:
             legend: false
@@ -149,12 +149,12 @@ cards:
     view_layout:
       grid-area: disconnected
     cards:
-      - type: "custom:anchor-card"
+      - type: 'custom:anchor-card'
         anchor_id: disconnected
         timeout: 500
         offset: -50
 
-      - type: "custom:button-card"
+      - type: 'custom:button-card'
         template: card_title
         label: Disconnected Devices
 
@@ -167,19 +167,19 @@ cards:
             <ha-alert alert-type="info">Nothing disconnected!</ha-alert>
         filter:
           include:
-            - state: "unavailable"
+            - state: 'unavailable'
               options:
                 show_state: false
-            - state: "unknown"
+            - state: 'unknown'
               options:
                 show_state: false
           exclude:
-            - entity_id: "*poat_rgb*"
-            - entity_id: "*plex*"
-            - entity_id: "*seedbox*"
-            - entity_id: "*mfc_7860*"
-            - entity_id: "*poat_pi*"
-            - entity_id: "media_player.xbox*"
+            - entity_id: '*poat_rgb*'
+            - entity_id: '*plex*'
+            - entity_id: '*seedbox*'
+            - entity_id: '*mfc_7860*'
+            - entity_id: '*poat_pi*'
+            - entity_id: 'media_player.xbox*'
             - entity_id: select.cat_noms_manual_feed
             - entity_id: sensor.cat_noms_battery_status
             - entity_id: event.snack_station_notification
@@ -190,19 +190,19 @@ cards:
             - domain: script
             - domain: stt
             - domain: tts
-            - name: "Kitchen Bulb*"
+            - name: 'Kitchen Bulb*'
             - integration: cast
 
   - type: vertical-stack
     view_layout:
       grid-area: updates
     cards:
-      - type: "custom:anchor-card"
+      - type: 'custom:anchor-card'
         anchor_id: updates
         timeout: 500
         offset: -50
 
-      - type: "custom:button-card"
+      - type: 'custom:button-card'
         template: card_title
         label: Updates needed
 
@@ -216,13 +216,13 @@ cards:
         filter:
           include:
             - domain: update
-              state: "on"
+              state: 'on'
 
   - type: vertical-stack
     view_layout:
       grid-area: connected
     cards:
-      - type: "custom:button-card"
+      - type: 'custom:button-card'
         template: card_title
         label: Connected Devices
 
@@ -244,7 +244,7 @@ cards:
                       ''
                       )}}
                 state: '{{ state_attr(config.entity, "ip") }}'
-                type: "custom:template-entity-row"
+                type: 'custom:template-entity-row'
         sort:
           method: attribute
           attribute: ip

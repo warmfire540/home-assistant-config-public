@@ -4,12 +4,11 @@
 #####
 
 - sensor:
-  - name: Power in kW
-    unique_id: 446bb6ca-7fc9-4b10-99e3-87eaf66cf343
-    icon: 'mdi:flash'
-    state: "{{ (states('sensor.masters_vue_123_1min') | float / 1000) | round(1) }}"
-    attributes:
-      state_class: measurement
-      unit_of_measurement: kW
-      device_class: power
-
+    - name: Power in kW
+      unique_id: 446bb6ca-7fc9-4b10-99e3-87eaf66cf343
+      icon: 'mdi:flash'
+      state: "{{ (states('sensor.masters_vue_123_1min') | float / 1000) | round(1) }}"
+      attributes:
+        state_class: measurement
+        unit_of_measurement: kW
+        device_class: power

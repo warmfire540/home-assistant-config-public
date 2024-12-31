@@ -15,7 +15,7 @@ trigger:
 condition:
   condition: state
   entity_id: input_boolean.dishwasher_on
-  state: "on"
+  state: 'on'
 
 action:
   - action: input_boolean.turn_off

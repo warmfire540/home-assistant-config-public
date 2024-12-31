@@ -1,47 +1,47 @@
 ---
 climate_icon:
   state:
-    - value: "auto"
-      icon: "mdi:autorenew"
+    - value: 'auto'
+      icon: 'mdi:autorenew'
       styles:
         icon:
-          - color: "rgba(var(--color-green),1)"
+          - color: 'rgba(var(--color-green),1)'
         img_cell:
-          - background-color: "rgba(var(--color-green), 0.2)"
-    - value: "cool"
-      icon: "mdi:snowflake"
+          - background-color: 'rgba(var(--color-green), 0.2)'
+    - value: 'cool'
+      icon: 'mdi:snowflake'
       styles:
         icon:
-          - color: "rgba(var(--color-blue),1)"
+          - color: 'rgba(var(--color-blue),1)'
         img_cell:
-          - background-color: "rgba(var(--color-blue), 0.2)"
-    - value: "heat"
-      icon: "mdi:fire"
+          - background-color: 'rgba(var(--color-blue), 0.2)'
+    - value: 'heat'
+      icon: 'mdi:fire'
       styles:
         icon:
-          - color: "rgba(var(--color-red),1)"
+          - color: 'rgba(var(--color-red),1)'
         img_cell:
-          - background-color: "rgba(var(--color-red), 0.2)"
-    - value: "dry"
-      icon: "mdi:water"
+          - background-color: 'rgba(var(--color-red), 0.2)'
+    - value: 'dry'
+      icon: 'mdi:water'
       styles:
         icon:
-          - color: "rgba(var(--color-yellow),1)"
+          - color: 'rgba(var(--color-yellow),1)'
         img_cell:
-          - background-color: "rgba(var(--color-yellow), 0.2)"
-    - value: "heat_cool"
-      icon: "mdi:sun-snowflake"
+          - background-color: 'rgba(var(--color-yellow), 0.2)'
+    - value: 'heat_cool'
+      icon: 'mdi:sun-snowflake'
       styles:
         icon:
-          - color: "rgba(var(--color-purple),1)"
+          - color: 'rgba(var(--color-purple),1)'
         img_cell:
-          - background-color: "rgba(var(--color-purple), 0.2)"
-    - value: "fan_only"
-      icon: "mdi:fan"
+          - background-color: 'rgba(var(--color-purple), 0.2)'
+    - value: 'fan_only'
+      icon: 'mdi:fan'
       styles:
         icon:
-          - color: "rgba(var(--color-green),1)"
+          - color: 'rgba(var(--color-green),1)'
         img_cell:
-          - background-color: "rgba(var(--color-green), 0.2)"
-    - value: "off"
-      icon: "mdi:snowflake-off"
+          - background-color: 'rgba(var(--color-green), 0.2)'
+    - value: 'off'
+      icon: 'mdi:snowflake-off'
