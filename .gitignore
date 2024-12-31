@@ -7,8 +7,9 @@
 
 # You can whitelist files/folders with !, these will not be ignored.
 !*.yaml
-!.gitignore
 !*.md
+!.prettierrc
+!.gitignore
 !python_scripts/*
 !www/img/*
 
