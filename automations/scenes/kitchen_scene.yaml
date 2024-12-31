@@ -32,6 +32,11 @@ trigger:
     entity_id: event.kitchen_light_scene_004
     id: scene-four
 
+  - alias: Lights turned on or off
+    trigger: state
+    entity_id: light.kitchen_light
+    id: toggle-lights
+
 action:
   choose:
     - conditions:
@@ -94,10 +99,26 @@ action:
           entity_id: scene.warm_kitchen
 
     - conditions:
-        alias: Scene Three button pressed
+        alias: Scene Four button pressed
         condition: trigger
         id: scene-four
       sequence:
         action: scene.turn_on
         target:
           entity_id: scene.fun_kitchen
+
+    - conditions:
+        alias: Lights turned on or off
+        condition: trigger
+        id: toggle-lights
+      sequence:
+        action: >-
+          {% if trigger.to_state.state == 'on' %}
+            light.turn_on
+          {% else %}
+            light.turn_off
+          {% endif %}
+        target:
+          entity_id: light.kitchen_bulbs
+
+mode: parallel

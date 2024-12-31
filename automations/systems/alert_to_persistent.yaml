@@ -64,10 +64,14 @@ action:
                 'in spanish',
                 'in german',
                 'as samuel jackson',
-                'as jar jar binks'
+                'as jar jar binks',
                 'as eminem',
                 'as yoda',
-                'like a medieval herald'
+                'as Jeremy Clarkson',
+                'like a Targaryen',
+                'like a medieval herald',
+                'like a hyperactive and sarcastic teenager',
+                'like an anime character'
                 ] | random
               }}
           response_variable: generated_content
@@ -112,7 +116,7 @@ action:
         - alias: Create persistent notification
           action: persistent_notification.create
           data:
-            message: '{{ trigger.event.data.service_data.message }}'
+            message: '{{ message }}'
             title: '{{ trigger.event.data.service_data.title }}'
             notification_id: '{{ trigger.event.data.service_data.data.tag }}'
 

@@ -1,0 +1,22 @@
+#####
+# Notify when cat is shitting
+#####
+
+alias: Cat shit motion senor
+id: b88a9c56-b1b3-4594-91b3-4fb3782e135e
+
+trigger:
+  trigger: state
+  entity_id: binary_sensor.cat_shit_sensor_motion_detection
+  from: 'off'
+  to: 'on'
+
+action:
+  action: notify.family_ai
+  data:
+    title: Cat is shitting
+    message: false
+    data:
+      prompt: cat is taking a poop
+      backup: Some cat is shitting!
+      tag: cat_shit
