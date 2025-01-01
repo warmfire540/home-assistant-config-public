@@ -108,10 +108,18 @@ cards:
         variables:
           - sensor_prefix: dining_room
           - sensor_domain: light
-          - name: Ceiling Fan
+          - name: Ceiling Fan Switch
           - node_number: 47
           - switch1: light
           - switch2: switch.dining_room_fan
+
+      - type: custom:decluttering-card
+        template: z_wave_single_relay
+        variables:
+          - sensor_prefix: dining_room_fan_relay
+          - sensor_domain: switch
+          - name: Ceiling Fan Relay
+          - node_number: 55
 
       - type: custom:decluttering-card
         template: eero

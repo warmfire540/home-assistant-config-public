@@ -3,7 +3,7 @@
 #
 #####
 
-alias: Fan relay control
+alias: Fan climate based control
 id: 8ed38c2d-13df-49f0-b3a8-e643f22777ad
 
 trigger:

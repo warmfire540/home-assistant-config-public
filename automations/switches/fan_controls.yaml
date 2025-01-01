@@ -1,0 +1,38 @@
+#####
+# Controls a relay based on switch state.
+#
+#####
+
+alias: Fan control from switches
+id: d4b5014e-bfd7-4aa7-8735-a66b8902a3f5
+
+trigger:
+  alias: Switch turned on or off
+  trigger: state
+  entity_id:
+    - switch.master_bath_fan
+    - switch.master_bath_shower_light
+    - switch.kitchen_fan
+    - switch.dining_room_fan
+
+variables:
+  relay_mapping:
+    switch.master_bath_fan: switch.master_bath_fan_relay
+    switch.master_bath_shower_light: switch.master_bath_fan_relay_2
+    switch.kitchen_fan: switch.dinette_fan_relay
+    switch.dining_room_fan: switch.dining_room_fan_relay
+  target_relay: '{{ relay_mapping[trigger.entity_id] }}'
+
+action:
+  sequence:
+    alias: Turn on or off relevant relay
+    action: >-
+      {% if trigger.to_state.state == 'on' %}
+        switch.turn_on
+      {% else %}
+        switch.turn_off
+      {% endif %}
+    target:
+      entity_id: '{{ target_relay }}'
+
+mode: parallel

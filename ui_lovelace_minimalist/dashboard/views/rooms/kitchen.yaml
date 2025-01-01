@@ -287,7 +287,17 @@ cards:
         variables:
           - sensor_prefix: dinette
           - sensor_domain: light
-          - name: Ceiling Fan
+          - name: Ceiling Fan Switch
           - node_number: 51
           - switch1: light
-          - switch2: switch.dinette_fan
+          - switch2: switch.kitchen_fan
+
+      - type: custom:decluttering-card
+        template: z_wave_double_switch
+        variables:
+          - sensor_prefix: dinette_fan
+          - sensor_domain: relay
+          - name: Ceiling Fan Relay
+          - node_number: 54
+          - switch1: switch
+          - switch2: switch.dinette_fan_relay
