@@ -11,23 +11,11 @@ jobs:
     steps:
       - name: Checkout private repository
         uses: actions/checkout@v4
-
-      - name: Remove sensitive data
-        run: |
-          # remove sensitive files/data
-          rm -f secrets.yaml
+        with:
+          fetch-depth: 0
 
       - name: Push to public repository
-        run: |
-          # Configure git
-          git config --global user.name "Patrick Masters"
-          git config --global user.email "patrickwmasters@gmail.com"
-
-          # Add the public repo as a remote
-          git remote add public git@github.com:warmfire540/home-assistant-config-public.git
-
-          git add .
-          git commit -m "Sync with private repository"
-          git push
-        env:
-          PAT: ${{ secrets.PAT }}
+        uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url: git@github.com:warmfire540/home-assistant-config-public.git
+          ssh_private_key: ${{ secrets.PUBLIC_REPO_SSH_PRIVATE_KEY }}
