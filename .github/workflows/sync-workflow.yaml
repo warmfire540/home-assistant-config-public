@@ -30,4 +30,4 @@ jobs:
           git commit -m "Sync with private repository"
           git push
         env:
-          PAT: ${{ secrets.GITHUB_TOKEN }}
+          PAT: ${{ secrets.PAT }}
