@@ -7,12 +7,15 @@ alias: Count Home Assistant errors
 id: 'c057ca2c-ab20-4fe0-a32b-5980c0990fb2'
 
 trigger:
-  trigger: event
-  event_type: system_log_event
-  event_data:
-    level:
-      - ERROR
-      - WARNING
+  # event_data.level cannot accept a list of values
+  - trigger: event
+    event_type: system_log_event
+    event_data:
+      level: ERROR
+  - trigger: event
+    event_type: system_log_event
+    event_data:
+      level: WARNING
 
 action:
   - action: counter.increment

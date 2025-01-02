@@ -4,6 +4,10 @@
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
 ![YAML](https://img.shields.io/badge/yaml-%23ffffff.svg?style=for-the-badge&logo=yaml&logoColor=151515)
 
+![stars](https://img.shields.io/github/stars/warmfire540/home-assistant-config-public.svg?style=for-the-badge)
+![home](https://img.shields.io/github/last-commit/warmfire540/home-assistant-config-public.svg?style=for-the-badge)
+![commits](https://img.shields.io/github/commit-activity/y/warmfire540/home-assistant-config-public?style=for-the-badge)
+
 ## Table of Contents
 
 - [Overview](#overview)
@@ -11,6 +15,7 @@
 - [Integrations](#integrations)
 - [Configuration Layout](#configuration-layout)
 - [Missing Files](#missing-files)
+- [Screenshots](#screenshots)
 
 ## Overview
 
@@ -100,8 +105,10 @@ I'm using the README files as a way to keep track of areas that I'm revamping fo
 ### Structure
 
 ```
+.github/
 automations/
 └── systems/
+blueprints/
 themes/
 ui_lovelace_minimalist/
 └── custom_cards/
@@ -110,8 +117,10 @@ ui_lovelace_minimalist/
         └── variables/
 ```
 
+- [`.github/`](.github/) - GitHub workflows
 - [`automations/`](automations/) - automations of course
   - [`systems/`](automations/systems/) - automations related to core system functionality
+- [`blueprints/`](blueprints/) - HA Blueprints - I don't have a use for these
 - [`themes/`](themes/) - themes for the UI, I don't customize these
 - [`ui_lovelace_minimalist/`](ui_lovelace_minimalist/) - main dashboard framework
   - [`custom_cards/`](ui_lovelace_minimalist/custom_cards) - custom cards for the layout
@@ -141,3 +150,23 @@ For security reasons, the following files have been excluded from this repositor
 - `*.log` - Log files
 - `.ssh` - ssh related secrets
 - `custom_components` - HACS downloaded integrations
+
+## Screenshots
+
+Examples of some pages and where to find the code.
+
+> [!NOTE]  
+> The dashboard is highly evolving and thus these screenshots may not be an accurate representation of the current state.
+
+### Responsiveness
+
+- [ui_lovelace_minimalist/dashboard/views/01-home.yaml](ui_lovelace_minimalist/dashboard/views/01-home.yaml)
+
+Full Screen Dashboard
+![full screen](assets/views/home/the-matrix_full.png 'Full Screen Dashboard')
+
+Portrait Monitor Dashboard
+![portrait screen](assets/views/home/the-matrix_portrait.png 'Portrait Screen Dashboard')
+
+Mobile Dashboard
+![mobile screen](assets/views/home/the-matrix_mobile.png 'Mobile Screen Dashboard')

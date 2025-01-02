@@ -36,3 +36,5 @@ action:
   - action: persistent_notification.dismiss
     data:
       notification_id: '{{ trigger.notification.notification_id }}'
+
+mode: parallel

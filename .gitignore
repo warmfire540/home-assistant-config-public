@@ -12,6 +12,7 @@
 !.gitignore
 !python_scripts/*
 !www/img/*
+!assets/**
 
 # Ignore folders.
 .storage
