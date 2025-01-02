@@ -7,14 +7,16 @@ alias: Alert to Persistent
 id: 72676c87-8c72-4c0e-98e2-a5562a65dec9
 
 trigger:
-  - trigger: event
+  - alias: Notification to family triggered
+    trigger: event
     id: create
     event_type: call_service
     event_data:
       domain: notify
       service: family
 
-  - trigger: event
+  - alias: AI based notification requested
+    trigger: event
     id: create-ai
     event_type: call_service
     event_data:
@@ -26,10 +28,12 @@ action:
     # if notify.family is used - create a persistent notification as well
     # not triggered if clear_notification used
     - conditions:
-        - condition: trigger
+        - alias: notify.family is used - create a persistent notification as well
+          condition: trigger
           id: create
         - not: "{{ trigger.event.data.service_data.message == 'clear_notification' }}"
       sequence:
+        alias: Create a persistent notification to match the notify.family alert
         action: persistent_notification.create
         data:
           message: '{{ trigger.event.data.service_data.message }}'
@@ -40,7 +44,8 @@ action:
     # not triggered if clear_notification used
     # not triggered if everyone muted
     - conditions:
-        - condition: trigger
+        - alias: notify.family_ai is used - call gen ai then unmuted fam
+          condition: trigger
           id: create-ai
         - not: "{{ trigger.event.data.service_data.message == 'clear_notification' }}"
         - alias: Someone not muted
@@ -123,10 +128,12 @@ action:
     # if notify.family_ai is used - call notify.family with clear_notification
     # triggered if clear_notification used
     - conditions:
-        - condition: trigger
+        - alias: notify.family_ai is used - call notify.family with clear_notification
+          condition: trigger
           id: create-ai
         - "{{ trigger.event.data.service_data.message == 'clear_notification' }}"
       sequence:
+        alias: Clear the notification
         action: notify.family
         data:
           message: clear_notification
@@ -135,9 +142,9 @@ action:
 
     # if notify.family is used - clear persistent notification
     # triggered if clear_notification used
-    - conditions:
-        - "{{ trigger.event.data.service_data.message == 'clear_notification' }}"
+    - conditions: "{{ trigger.event.data.service_data.message == 'clear_notification' }}"
       sequence:
+        alias: Dismiss the persistent notification
         action: persistent_notification.dismiss
         data:
           notification_id: '{{ trigger.event.data.service_data.data.tag }}'

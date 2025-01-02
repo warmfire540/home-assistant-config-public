@@ -10,7 +10,7 @@ trigger:
   trigger: event
   event_type: system_log_event
   event_data:
-    level: !include
+    level:
       - ERROR
       - WARNING
 
