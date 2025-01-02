@@ -2,10 +2,6 @@
 
 Common variables and configurations for card templates.
 
-## Files
-
-- `common.yaml`: Shared variables and configurations used across multiple cards
-
 ## Available Variables
 
 ### Discovery

@@ -1,30 +1,36 @@
-## /automations folder
+# Automations
 
 This folder contains all of the automations I use.
 As with everything, some things could still be optimized, but that's work in progress.
 
 Each automation YAML file also contains a description, but here is a brief overview.
 
-### /automation/cats
+## Directory Structure
 
-Automations for cat devices.
+The automations are organized into the following subdirectories:
 
-### /automation/lab
+### 📁 systems/
 
-Automations for lab devices.
+Contains core system automations focusing on:
 
-### /automation/lights
+- System alerts and notifications
+- System monitoring and logging
+- User notification management
 
-Automations related to lights.
+For detailed information about the system automations, see the README in the ['systems/'](systems/) directory.
 
-### /automation/mqtt
+## Adding New Automations
 
-Automations related to MQTT platform.
+When adding new automations to this directory:
 
-### /automation/tags
+1. Place them in the appropriate subdirectory
+2. Follow the existing naming convention
+3. Update the corresponding README
+4. Test thoroughly before deploying
 
-NFC tag automations. Far from finished, more of proof of concept.
+## Best Practices
 
-### /automation/utilities
-
-Heating, electricity and similar automations
+- Keep automations organized by function
+- Use clear, descriptive filenames
+- Document any dependencies
+- Include comments in automation files

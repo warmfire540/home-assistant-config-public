@@ -9,6 +9,7 @@
 - [Overview](#overview)
 - [Hardware](#hardware)
 - [Integrations](#integrations)
+- [Configuration Layout](#configuration-layout)
 - [Missing Files](#missing-files)
 
 ## Overview
@@ -25,11 +26,11 @@ Core infrastructure:
 
 Connected devices:
 
-- Philips Hue Bridge with various bulbs
-- Aqara Temperature & Humidity Sensors
-- Shelly smart switches
-- Nest Thermostat
-- Ring Video Doorbell
+- Lots of Zooz Z-Wave Devices
+- LG (fridge, TVs, etc)
+- Petkit
+- Vacuums
+- Garage
 
 ## Integrations
 
@@ -37,12 +38,60 @@ Key integrations used in this configuration:
 
 - **Core Integrations**
 
+  - Alert
+  - Bluetooth
+  - Change device type of a switch
+  - Command Line
+  - Counter
+  - DLNA Digital Media Renderer
+  - Group
+  - Home Assistant Supervisor
+  - iBeacon Tracker
+  - Input Boolean
+  - Input Button
+  - Input Datetime
+  - Input Number
+  - Input Select
+  - Input Text
+  - Local Calendar
+  - Local To-do
+  - Meteorologisk institutt (Met.no)
+  - Mobile App
   - MQTT
-  - Z-Wave JS
-  - [Ui-Minimalist Theme](https://ui-lovelace-minimalist.github.io/UI/)
+  - Ping (ICMP)
+  - Python Scripts
+  - Raspberry Pi Power Supply Checker
+  - Schedule
+  - Shopping List
+  - Sun
+  - System Monitor
+  - Template
+  - Timer
+  - UPnP/IGD
+  - Xbox
+  - Z-Wave
 
 - **Device Integrations**
-  - tbd
+
+  - Brother Printer
+  - Browser mod
+  - eero
+  - Emporia Vue
+  - Google Generative AI
+  - Google Nest
+  - HACS
+  - LG ThinQ
+  - LG webOS Smart TV
+  - Motionblinds
+  - Neato Botvac
+  - PetKit
+  - Pi-hole
+  - Plex Media Server
+  - Speedtest.net
+  - Tasmota
+  - Tile
+  - Tuya
+  - UI Lovelace Minimalist
 
 ## Configuration Layout
 
@@ -51,6 +100,9 @@ I'm using the README files as a way to keep track of areas that I'm revamping fo
 ### Structure
 
 ```
+automations/
+└── systems/
+themes/
 ui_lovelace_minimalist/
 └── custom_cards/
     └── templates/
@@ -58,12 +110,14 @@ ui_lovelace_minimalist/
         └── variables/
 ```
 
-[`ui_lovelace_minimalist/`](ui_lovelace_minimalist/)
-
-- [`custom_cards/`](ui_lovelace_minimalist/custom_cards)
-  - [`templates/`](ui_lovelace_minimalist/custom_cards/templates)
-    - [`styles/`](ui_lovelace_minimalist/custom_cards/templates/styles)
-    - [`variables/`](ui_lovelace_minimalist/custom_cards/templates/variables)
+- [`automations/`](automations/) - automations of course
+  - [`systems/`](automations/systems/) - automations related to core system functionality
+- [`themes/`](themes/) - themes for the UI, I don't customize these
+- [`ui_lovelace_minimalist/`](ui_lovelace_minimalist/) - main dashboard framework
+  - [`custom_cards/`](ui_lovelace_minimalist/custom_cards) - custom cards for the layout
+    - [`templates/`](ui_lovelace_minimalist/custom_cards/templates) - templates for cards
+      - [`styles/`](ui_lovelace_minimalist/custom_cards/templates/styles) - templates for visual aspects
+      - [`variables/`](ui_lovelace_minimalist/custom_cards/templates/variables) - templates to handle common variables
 
 ## Missing Files
 

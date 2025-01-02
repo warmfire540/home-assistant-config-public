@@ -20,6 +20,7 @@ conditions:
         value_template: >
           {{ trigger.notification.notification_id in
             [
+              'cat_shit',
               'dishwasher_done',
               'dryer_done',
               'rolo_done'

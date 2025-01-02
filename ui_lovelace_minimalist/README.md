@@ -7,7 +7,7 @@ Configuration files for [UI Lovelace Minimalist](https://ui-lovelace-minimalist.
 ```
 ui_lovelace_minimalist/
 ├── custom_cards/       # Custom button-card configurations
-├── dashboard/       # Main dashboard configuration
+├── dashboard/          # Main dashboard configuration
 ├── README.md
 ```
 
