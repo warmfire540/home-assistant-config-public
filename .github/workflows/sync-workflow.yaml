@@ -20,7 +20,7 @@ jobs:
       - name: Push to public repository
         run: |
           # Add the public repo as a remote
-          git remote add origin git@github.com:warmfire540/home-assistant-config-public.git
+          git remote add public git@github.com:warmfire540/home-assistant-config-public.git
 
           git add .
           git commit -m "Sync with private repository"

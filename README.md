@@ -119,6 +119,16 @@ ui_lovelace_minimalist/
       - [`styles/`](ui_lovelace_minimalist/custom_cards/templates/styles) - templates for visual aspects
       - [`variables/`](ui_lovelace_minimalist/custom_cards/templates/variables) - templates to handle common variables
 
+### Automations
+
+The following automations I have created to for various reasons. See [`automations/`](automations/) for more info.
+
+- systems - Automations related to core system, notifications, and alerts.
+  - `alert_to_persistent.yaml` - Handles peristent alerts when alert entity is triggered
+  - `auto_close_alerts.yaml` - Handles closing some low value alerts
+  - `ha_log_event_trigger.yaml` - Triggers when there is new warning or error
+  - `unmute_people.yaml` - Handles unmuting people after an hour
+
 ## Missing Files
 
 For security reasons, the following files have been excluded from this repository:
@@ -129,3 +139,5 @@ For security reasons, the following files have been excluded from this repositor
 - `ip_bans.yaml` - IP ban list
 - `*.db` - Database files
 - `*.log` - Log files
+- `.ssh` - ssh related secrets
+- `custom_components` - HACS downloaded integrations
