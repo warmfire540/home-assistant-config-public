@@ -19,6 +19,10 @@ jobs:
 
       - name: Push to public repository
         run: |
+          # Configure git
+          git config --global user.name "Patrick Masters"
+          git config --global user.email "patrickwmasters@gmail.com"
+
           # Add the public repo as a remote
           git remote add public git@github.com:warmfire540/home-assistant-config-public.git
 
