@@ -59,6 +59,13 @@ cards:
         variables:
           - sensor_prefix: dining_room
 
+      - type: 'custom:button-card'
+        template: card_input_boolean
+        entity: input_boolean.katchy_needs_cleaned
+        variables:
+          ulm_card_input_boolean_color: red
+          ulm_card_input_boolean_force_background_color: true
+
   #################
   # SENSORS
   #################

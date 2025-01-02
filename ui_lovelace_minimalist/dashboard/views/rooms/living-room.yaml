@@ -75,6 +75,13 @@ cards:
           ulm_card_thermostat_enable_popup: true
           ulm_card_thermostat_enable_background_color: true
 
+      - type: 'custom:button-card'
+        template: card_input_boolean
+        entity: input_boolean.katchy_needs_cleaned
+        variables:
+          ulm_card_input_boolean_color: red
+          ulm_card_input_boolean_force_background_color: true
+
   - type: vertical-stack
     view_layout:
       grid-area: vacuum
