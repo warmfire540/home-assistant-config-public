@@ -1,0 +1,29 @@
+name: Sync to Public Repository
+
+on:
+  push:
+    branches:
+      - home # Adjust this if you use a different default branch
+
+jobs:
+  sync-public:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout private repository
+        uses: actions/checkout@v4
+
+      - name: Remove sensitive data
+        run: |
+          # remove sensitive files/data
+          rm -f secrets.yaml
+
+      - name: Push to public repository
+        run: |
+          # Add the public repo as a remote
+          git remote add origin git@github.com:warmfire540/home-assistant-config-public.git
+
+          git add .
+          git commit -m "Sync with private repository"
+          git push
+        env:
+          PAT: ${{ secrets.GITHUB_TOKEN }}
