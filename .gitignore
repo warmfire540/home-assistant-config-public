@@ -19,6 +19,7 @@
 .cloud
 .google.token
 .ssh
+.DS_Store
 custom_components
 
 # Ensure these YAML files are ignored, otherwise your secret data/credentials will leak.

@@ -140,7 +140,7 @@ scenes.yaml
 - [`python_scripts/`](python_scripts/) - python scripts to call in automations
 - [`scripts/`](scripts/) - HA script definitions
 
-- [`themes/`](themes/) - themes for the UI, I don't customize these
+- [`themes/`](themes/) - custom UI themes, minimalist desktop and mobile
 - [`ui_lovelace_minimalist/`](ui_lovelace_minimalist/) - main dashboard framework
   - [`custom_cards/`](ui_lovelace_minimalist/custom_cards) - custom cards for the layout
     - [`templates/`](ui_lovelace_minimalist/custom_cards/templates) - templates for cards
