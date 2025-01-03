@@ -5,7 +5,9 @@
 
 shutdown_home_assistant:
   alias: Shutdown Home Assistant
+
   sequence:
-    - service: hassio.host_shutdown
+    action: hassio.host_shutdown
+
   mode: single
   icon: mdi:power

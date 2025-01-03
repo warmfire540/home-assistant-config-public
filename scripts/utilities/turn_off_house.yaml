@@ -5,19 +5,14 @@
 
 turn_off_house:
   alias: Turn off House
+
   sequence:
     - parallel:
-        - action: light.turn_off
+        - alias: Kill the lights
+          action: light.turn_off
           target:
             entity_id:
-              - light.kitchen_bulbs
-              - light.kitchen_bulb_1
-              - light.kitchen_bulb_2
-              - light.kitchen_bulb_3
-              - light.kitchen_bulb_4
               - light.master_bedroom_light
-              - light.pretty_fly_for_a_wifi_garage_status_light
-              - light.pretty_fly_for_a_wifi_living_room_status_light
               - light.master_bath_light
               - light.living_room_light
               - light.dining_room_light
@@ -26,16 +21,19 @@ turn_off_house:
               - light.dinette_light
               - light.kitchn_light
 
-        - action: switch.turn_off
+        - alias: Kill the switches
+          action: switch.turn_off
           target:
             entity_id:
               - switch.under_cabinet_lights
               - switch.master_bath_shower_light
-              - switch.master_bath_fan_relay
-              - switch.master_bath_fan_relay_2
-              - switch.garage_opener_plug
               - switch.office_fan
               - switch.master_bath_fan
               - switch.guest_bedroom_fan
+              - switch.living_room_fan
+              - switch.master_bedroom_fan
+              - switch.dining_room_fan
+              - switch.kitchen_fan
+
   mode: single
   icon: mdi:power-plug-off

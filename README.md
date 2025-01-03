@@ -102,41 +102,84 @@ Key integrations used in this configuration:
 
 I'm using the README files as a way to keep track of areas that I'm revamping for 2025 to clean up my instance and make things more reusable and wife friendly.
 
+![wip](https://img.shields.io/badge/Work%20In%20Progress-yellow)
+
 ### Structure
 
 ```
 .github/
+assets/
 automations/
 └── systems/
 blueprints/
+entities/
+integrations/
+python_scripts/
+scripts/
 themes/
 ui_lovelace_minimalist/
 └── custom_cards/
     └── templates/
         ├── styles/
         └── variables/
+www/
+.gitignore
+.prettierrc
+configuration.yaml
+README.md
+scenes.yaml
 ```
 
 - [`.github/`](.github/) - GitHub workflows
+- [`assets/`](assets/) - screenshots and such for documentation
 - [`automations/`](automations/) - automations of course
   - [`systems/`](automations/systems/) - automations related to core system functionality
 - [`blueprints/`](blueprints/) - HA Blueprints - I don't have a use for these
+- [`entities/`](entities/) - entity definitions
+- [`integrations/`](integrations/) - split config to load folders
+- [`python_scripts/`](python_scripts/) - python scripts to call in automations
+- [`scripts/`](scripts/) - HA script definitions
+
 - [`themes/`](themes/) - themes for the UI, I don't customize these
 - [`ui_lovelace_minimalist/`](ui_lovelace_minimalist/) - main dashboard framework
   - [`custom_cards/`](ui_lovelace_minimalist/custom_cards) - custom cards for the layout
     - [`templates/`](ui_lovelace_minimalist/custom_cards/templates) - templates for cards
       - [`styles/`](ui_lovelace_minimalist/custom_cards/templates/styles) - templates for visual aspects
       - [`variables/`](ui_lovelace_minimalist/custom_cards/templates/variables) - templates to handle common variables
+- [`www/`](www/) - Website files and assets for front end
+- [`.gitignore`](.gitignore) - Git ignore rules
+- [`.prettierrc`](.prettierrc) - Prettier configuration
+- [`configuration.yaml`](configuration.yaml) - Main configuration file for HA
+- [`README.md`](README.md) - Project documentation
+- [`scenes.yaml`](scenes.yaml) - Scene definitions, HA controlled
 
 ### Automations
 
 The following automations I have created to for various reasons. See [`automations/`](automations/) for more info.
 
-- systems - Automations related to core system, notifications, and alerts.
+![wip](https://img.shields.io/badge/Work%20In%20Progress-yellow)
+
+- [`systems/`](automations/systems/) - Automations related to core system, notifications, and alerts.
   - `alert_to_persistent.yaml` - Handles peristent alerts when alert entity is triggered
   - `auto_close_alerts.yaml` - Handles closing some low value alerts
   - `ha_log_event_trigger.yaml` - Triggers when there is new warning or error
   - `unmute_people.yaml` - Handles unmuting people after an hour
+
+### Scripts
+
+A few scripts are made to ease some automations. See [`scripts/`](scripts/) for more info.
+
+- [`systems/`](scripts/systems/) - Scripts related to core system, notifications, and alerts.
+  - `reboot_home_assistant.yaml` - Restarts HAS
+  - `shutdown_home_assistant.yaml` - Shutsdown HAS
+- [`utilities/`](scripts/utilities/) - Scripts related to house utilities
+  - `turn_off_house.yaml` - Turns off all the lights and switches and stuff
+
+### Entities
+
+These are the domains I have scripted out entities to help automate or script situations.
+
+![wip](https://img.shields.io/badge/Work%20In%20Progress-yellow)
 
 ## Missing Files
 
@@ -157,6 +200,8 @@ Examples of some pages and where to find the code.
 
 > [!NOTE]  
 > The dashboard is highly evolving and thus these screenshots may not be an accurate representation of the current state.
+
+![wip](https://img.shields.io/badge/Work%20In%20Progress-yellow)
 
 ### Responsiveness
 
