@@ -2,6 +2,7 @@
 mqtt_control:
   template:
     - grid_single_column
+    - no_background
     - no_click
 
   variables:

@@ -4,6 +4,7 @@ room_header:
     - responsive_variables
     - discovery_variables
     - grid_two_columns
+    - no_background
     - no_click
 
   variables:

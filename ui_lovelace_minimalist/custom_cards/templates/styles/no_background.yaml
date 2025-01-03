@@ -1,0 +1,7 @@
+---
+no_background:
+  styles:
+    card:
+      - background: none
+      - padding: 0px
+      - font-size: inherit

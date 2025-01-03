@@ -1,8 +1,9 @@
 ---
 card_welcome:
-  template: ulm_language_variables
-  triggers_update:
-    - input_boolean.welcome_toggle
+  template:
+    - no_click
+    - ulm_language_variables
+
   variables:
     welcome_collapse: input_boolean.welcome_toggle
     ulm_current_scene: sensor.last_scene
@@ -36,9 +37,11 @@ card_welcome:
       nav: t1d
       icon: mdi:diabetes
       color: blue
+
   show_icon: false
   show_label: true
   show_name: false
+  
   styles:
     grid:
       - grid-template-areas: >
@@ -56,8 +59,6 @@ card_welcome:
       - border-radius: 'var(--border-radius)'
       - box-shadow: 'var(--box-shadow)'
       - padding: '10px'
-      - cursor: 'default'
-      - '--mdc-ripple-press-opacity': 0 # prevent click animation
     custom_fields:
       item3:
         - display: >
@@ -77,11 +78,12 @@ card_welcome:
                 return "block";
               }
             ]]]
+  
   custom_fields:
     item1:
       card:
         type: 'custom:button-card'
-        template: 'card_esh_welcome_topbar'
+        template: 'card_welcome_topbar'
         triggers_update: '[[[ return variables.ulm_current_scene]]]'
         variables:
           welcome_collapse: '[[[ return variables.welcome_collapse ]]]'
@@ -138,7 +140,7 @@ card_welcome:
     item3:
       card:
         type: 'custom:button-card'
-        template: 'card_esh_welcome_nav'
+        template: 'card_welcome_nav'
         styles:
           card:
             - border-radius: 'none'
@@ -155,7 +157,7 @@ card_welcome:
     item4:
       card:
         type: 'custom:button-card'
-        template: 'card_esh_sub_views_nav'
+        template: 'card_sub_views_nav'
         styles:
           card:
             - padding: '4px'
@@ -163,7 +165,7 @@ card_welcome:
           subview_1: '[[[ return variables.subview_1 ]]]'
           subview_2: '[[[ return variables.subview_2 ]]]'
 
-card_esh_welcome_title:
+card_welcome_title:
   tap_action:
     action: 'none'
   show_icon: false
@@ -194,7 +196,7 @@ card_esh_welcome_title:
       - cursor: 'default'
       - '--mdc-ripple-press-opacity': 0 # prevent click animation
 
-card_esh_welcome_nav:
+card_welcome_nav:
   show_icon: false
   show_name: true
   show_label: false
@@ -227,7 +229,7 @@ card_esh_welcome_nav:
     item1:
       card:
         type: 'custom:button-card'
-        template: 'card_esh_welcome_pill_nav'
+        template: 'card_welcome_pill_nav'
         variables:
           number_of_nav_pills: |
             [[[
@@ -241,7 +243,7 @@ card_esh_welcome_nav:
     item2:
       card:
         type: 'custom:button-card'
-        template: 'card_esh_welcome_pill_nav'
+        template: 'card_welcome_pill_nav'
         variables:
           number_of_nav_pills: |
             [[[
@@ -255,7 +257,7 @@ card_esh_welcome_nav:
     item3:
       card:
         type: 'custom:button-card'
-        template: 'card_esh_welcome_pill_nav'
+        template: 'card_welcome_pill_nav'
         variables:
           number_of_nav_pills: |
             [[[
@@ -269,7 +271,7 @@ card_esh_welcome_nav:
     item4:
       card:
         type: 'custom:button-card'
-        template: 'card_esh_welcome_pill_nav'
+        template: 'card_welcome_pill_nav'
         variables:
           number_of_nav_pills: |
             [[[
@@ -283,7 +285,7 @@ card_esh_welcome_nav:
     item5:
       card:
         type: 'custom:button-card'
-        template: 'card_esh_welcome_pill_nav'
+        template: 'card_welcome_pill_nav'
         variables:
           number_of_nav_pills: |
             [[[
@@ -295,7 +297,7 @@ card_esh_welcome_nav:
             ]]]
           entity: '[[[ return variables.entity_5; ]]]'
 
-card_esh_welcome_pill_nav:
+card_welcome_pill_nav:
   tap_action:
     action: 'navigate'
     navigation_path: '[[[ return variables.entity?.nav; ]]]'
@@ -393,7 +395,7 @@ card_esh_welcome_pill_nav:
             - margin-top: '-5px'
             - border-radius: '50px'
 
-card_esh_welcome_topbar:
+card_welcome_topbar:
   show_icon: false
   show_label: false
   show_name: true
@@ -516,7 +518,7 @@ card_esh_welcome_topbar:
                 ]]]
             - '--mdc-ripple-press-opacity': 0.12 # allow click animation
 
-card_esh_sub_views_nav:
+card_sub_views_nav:
   styles:
     grid:
       - grid-template-areas: |
@@ -564,3 +566,6 @@ card_esh_sub_views_nav:
         tap_action:
           action: 'navigate'
           navigation_path: '[[[ return variables.subview_2?.nav; ]]]'
+
+  triggers_update:
+    - input_boolean.welcome_toggle

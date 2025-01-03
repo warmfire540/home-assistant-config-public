@@ -1,5 +1,7 @@
 status_chips:
-  template: no_click
+  template: 
+    - no_background
+    - no_click
 
   variables:
     label: null
