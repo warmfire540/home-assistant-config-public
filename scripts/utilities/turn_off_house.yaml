@@ -35,5 +35,14 @@ turn_off_house:
               - switch.dining_room_fan
               - switch.kitchen_fan
 
+        - alias: Kill the media players
+          action: media_player.turn_off
+          target:
+            entity_id:
+              - media_player.living_room_tv
+              - media_player.office_tv
+              - media_player.xbox_360
+              - media_player.xbox_x
+
   mode: single
   icon: mdi:power-plug-off
