@@ -4,16 +4,20 @@ type: custom:grid-layout
 layout:
   grid-template-areas: |
     "welcome people"
-    "welcome status"
+    "welcome people"
     "rooms rooms"
   mediaquery:
     '(max-width: 768px)':
       grid-template-areas: |
         "welcome"
         "people"
-        "status"
         "rooms"
 cards:
+  #################
+  # STATUS CHIPS
+  #################
+  - type: custom:toolbar-status-chips
+
   #################
   # WELCOME
   #################
@@ -25,7 +29,7 @@ cards:
   #################
   # PEOPLE
   #################
-  - type: horizontal-stack
+  - type: vertical-stack
     view_layout:
       grid-area: people
     cards:
@@ -37,14 +41,6 @@ cards:
         template: card_family
         variables:
           person: gina
-
-  #################
-  # STATUS CHIPS
-  #################
-  - type: custom:button-card
-    template: status_chips
-    view_layout:
-      grid-area: status
 
   #############
   # ROOM CARDS

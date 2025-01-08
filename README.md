@@ -116,12 +116,15 @@ entities/
 integrations/
 python_scripts/
 scripts/
-themes/
 ui_lovelace_minimalist/
 └── custom_cards/
     └── templates/
         ├── styles/
         └── variables/
+└── dashboard/
+    └── views/
+        └── 01-home.yaml
+    └── home-dashboard.yaml
 www/
 .gitignore
 .prettierrc
@@ -140,12 +143,15 @@ scenes.yaml
 - [`python_scripts/`](python_scripts/) - python scripts to call in automations
 - [`scripts/`](scripts/) - HA script definitions
 
-- [`themes/`](themes/) - custom UI themes, minimalist desktop and mobile
 - [`ui_lovelace_minimalist/`](ui_lovelace_minimalist/) - main dashboard framework
   - [`custom_cards/`](ui_lovelace_minimalist/custom_cards) - custom cards for the layout
     - [`templates/`](ui_lovelace_minimalist/custom_cards/templates) - templates for cards
       - [`styles/`](ui_lovelace_minimalist/custom_cards/templates/styles) - templates for visual aspects
       - [`variables/`](ui_lovelace_minimalist/custom_cards/templates/variables) - templates to handle common variables
+  - [`dashboard/`](ui_lovelace_minimalist/dashboard) - main dashboard configuration
+    - [`views/`](ui_lovelace_minimalist/dashboard/views) - view configurations
+      - [`01-home.yaml`](ui_lovelace_minimalist/dashboard/views/01-home.yaml) - main dashboard configuration file
+    - [`home-dashboard.yaml`](ui_lovelace_minimalist/dashboard/home-dashboard.yaml) - dashboard layout entrypoint
 - [`www/`](www/) - Website files and assets for front end
 - [`.gitignore`](.gitignore) - Git ignore rules
 - [`.prettierrc`](.prettierrc) - Prettier configuration

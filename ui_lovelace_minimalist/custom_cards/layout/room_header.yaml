@@ -1,7 +1,6 @@
 ---
 room_header:
   template:
-    - responsive_variables
     - discovery_variables
     - grid_two_columns
     - no_background
@@ -9,11 +8,6 @@ room_header:
 
   variables:
     area: "[[[  return variables.anchor === 'home' ? '*' : variables.anchor; ]]]"
-
-  styles:
-    custom_fields:
-      item2:
-        - margin-bottom: '[[[ if (variables.is_mobile) return "20px" ]]]'
 
   custom_fields:
     #################
@@ -45,5 +39,4 @@ room_header:
     #################
     item2:
       card:
-        type: custom:button-card
-        template: status_chips
+        type: custom:toolbar-status-chips
