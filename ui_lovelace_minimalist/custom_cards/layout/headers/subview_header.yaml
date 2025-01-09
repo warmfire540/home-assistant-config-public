@@ -1,19 +1,13 @@
 ---
 subview_header:
   template:
-    - responsive_variables
     - discovery_variables
-    - grid_two_columns
+    - grid_single_column
     - no_background
     - no_click
 
   variables:
     image: null
-
-  styles:
-    custom_fields:
-      item1:
-        - margin-bottom: '[[[ if (variables.is_mobile) return "20px" ]]]'
 
   custom_fields:
     #################
@@ -31,16 +25,14 @@ subview_header:
               }
             }
         tap_action:
-          action: navigate
+          action: '[[[ return variables.image_nav.includes("http") ? "url" : "navigate" ]]]'
           navigation_path: '[[[ return variables.image_nav; ]]]'
+          url_path: '[[[ return variables.image_nav; ]]]'
 
     #################
     # STATUS CHIPS
     #################
     item2:
       card:
-        type: custom:button-card
-        template: status_chips
-        variables:
-          area: null
-          label: '[[[ return variables.anchor; ]]]'
+        type: custom:toolbar-status-chips
+        additional_label: '[[[ return variables.anchor; ]]]'

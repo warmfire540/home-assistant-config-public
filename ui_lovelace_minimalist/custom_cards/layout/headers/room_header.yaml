@@ -2,7 +2,7 @@
 room_header:
   template:
     - discovery_variables
-    - grid_two_columns
+    - grid_single_column
     - no_background
     - no_click
 

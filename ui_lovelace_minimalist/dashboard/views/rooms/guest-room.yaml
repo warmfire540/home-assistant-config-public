@@ -28,8 +28,6 @@ cards:
     template: room_header
     view_layout:
       grid-area: header
-    variables:
-      single_column: true
 
   #################
   # DEVICES

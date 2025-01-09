@@ -118,6 +118,8 @@ python_scripts/
 scripts/
 ui_lovelace_minimalist/
 └── custom_cards/
+    └── layouts/
+        └── headers/
     └── templates/
         ├── styles/
         └── variables/
@@ -145,6 +147,8 @@ scenes.yaml
 
 - [`ui_lovelace_minimalist/`](ui_lovelace_minimalist/) - main dashboard framework
   - [`custom_cards/`](ui_lovelace_minimalist/custom_cards) - custom cards for the layout
+    - [`layouts/`](ui_lovelace_minimalist/custom_cards/layouts) - templates for layouts
+      - [`headers/`](ui_lovelace_minimalist/custom_cards/layouts/headers) - templates for view headers
     - [`templates/`](ui_lovelace_minimalist/custom_cards/templates) - templates for cards
       - [`styles/`](ui_lovelace_minimalist/custom_cards/templates/styles) - templates for visual aspects
       - [`variables/`](ui_lovelace_minimalist/custom_cards/templates/variables) - templates to handle common variables

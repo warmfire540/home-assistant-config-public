@@ -33,6 +33,15 @@ layout:
         "gina-phone"
 cards:
   #################
+  # HEADER
+  #################
+  - type: custom:button-card
+    template: mainview_header
+    variables:
+      area: home
+      status_path: 'no'
+
+  #################
   # STATUS CHIPS
   #################
   - type: custom:mod-card
@@ -62,10 +71,6 @@ cards:
           tap_action:
             action: navigate
             navigation_path: '/energy'
-        - type: custom:button-card
-          template: mainview_header
-          variables:
-            area: home
 
   #################
   # SENSORS

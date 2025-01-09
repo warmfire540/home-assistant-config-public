@@ -2,11 +2,5 @@ title: 'Test'
 path: 'test'
 subview: true
 cards:
-  - type: 'custom:button-card'
-    template: room_summary
-    icon: mdi:shower
-    variables:
-      affix: office
-      problem_entities:
-        - light.master_bedroom_light
-        - light.dining_room_light
+  - type: custom:toolbar-status-chips
+    solo_label: lights

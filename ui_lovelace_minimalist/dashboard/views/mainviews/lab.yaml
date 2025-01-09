@@ -4,7 +4,7 @@ subview: true
 type: custom:grid-layout
 layout:
   grid-template-areas: |
-    "nav header header"
+    "nav . ."
     "control shares printer"
     "status-title . ."
     "rpi-has rpi-hole rpi-share"
@@ -14,7 +14,7 @@ layout:
     # portrait monitor
     'only screen and (min-width: 769px) and (max-width: 1400px)':
       grid-template-areas: |
-        "nav header"
+        "nav ."
         "control shares"
         "status-title printer"
         "rpi-has rpi-hole"
@@ -25,7 +25,6 @@ layout:
     'only screen and (max-width: 768px)':
       grid-template-areas: |
         "nav"
-        "header"
         "shares"
         "control"
         "printer"
@@ -43,8 +42,6 @@ cards:
   #################
   - type: custom:button-card
     template: mainview_header
-    view_layout:
-      grid-area: header
     variables:
       area: server_closet
 

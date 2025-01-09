@@ -1,0 +1,25 @@
+---
+mainview_header:
+  template:
+    - discovery_variables
+    - grid_single_column
+    - no_background
+    - no_click
+
+  variables:
+    area: null
+    solo_label: null
+    status_path: null
+
+  custom_fields:
+    #################
+    # STATUS CHIPS
+    #################
+    item1:
+      card:
+        type: custom:toolbar-status-chips
+        additional_label: '[[[ if (variables.area) return null; else return variables.anchor; ]]]'
+        optional: false
+        area: '[[[ return variables.area; ]]]'
+        status_path: '[[[ return variables.status_path; ]]]'
+        solo_label: '[[[ return variables.solo_label; ]]]'

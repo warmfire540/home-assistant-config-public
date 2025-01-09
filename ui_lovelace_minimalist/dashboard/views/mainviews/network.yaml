@@ -4,14 +4,12 @@ subview: true
 type: custom:grid-layout
 layout:
   grid-template-areas: |
-    ". header ."
     "network disconnected updates"
     "network wifi connected"
   mediaquery:
     # portrait monitor
     'only screen and (min-width: 769px) and (max-width: 1400px)':
       grid-template-areas: |
-        "header header"
         "network disconnected"
         "network updates"
         "network wifi"
@@ -20,7 +18,6 @@ layout:
     # Smartphones
     'only screen and (max-width: 768px)':
       grid-template-areas: |
-        "header"
         "network"
         "wifi"
         "disconnected"
@@ -32,8 +29,6 @@ cards:
   #################
   - type: custom:button-card
     template: mainview_header
-    view_layout:
-      grid-area: header
 
   - type: vertical-stack
     view_layout:
