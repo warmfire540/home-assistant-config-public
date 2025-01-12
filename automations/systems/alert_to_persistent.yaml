@@ -134,8 +134,9 @@ action:
         - "{{ trigger.event.data.service_data.message == 'clear_notification' }}"
       sequence:
         alias: Clear the notification
-        action: notify.family
+        action: notify.send_message
         data:
+          entity_id: notify.my_direct_message_notifier
           message: clear_notification
           data:
             tag: '{{ trigger.event.data.service_data.data.tag }}'

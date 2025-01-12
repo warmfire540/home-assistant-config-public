@@ -4,7 +4,6 @@ subview: true
 type: custom:grid-layout
 layout:
   grid-template-areas: |
-    "status status status ."
     "sensors climate covers alerts"
     "batteries schedules tracking ."
     "poat-phone gina-phone . ."
@@ -12,7 +11,6 @@ layout:
     # portrait monitor
     'only screen and (min-width: 769px) and (max-width: 1400px)':
       grid-template-areas: |
-        "status status"
         "sensors climate"
         "alerts covers"
         "batteries schedules"
@@ -21,7 +19,6 @@ layout:
     # Smartphones
     'only screen and (max-width: 768px)':
       grid-template-areas: |
-        "status"
         "sensors"
         "climate"
         "covers"
@@ -40,37 +37,6 @@ cards:
     variables:
       area: home
       status_path: 'no'
-
-  #################
-  # STATUS CHIPS
-  #################
-  - type: custom:mod-card
-    view_layout:
-      grid-area: status
-    style:
-      hui-horizontal-stack-card$: |
-        #root { 
-          justify-content: center;
-        }
-    card:
-      type: horizontal-stack
-      cards:
-        - type: custom:button-card
-          template: chip_mdi_icon_state
-          variables:
-            ulm_chip_mdi_icon_state_entity: sensor.living_room_climate_air_temperature
-            ulm_chip_mdi_icon_state_icon: mdi:thermometer
-          tap_action:
-            action: navigate
-            navigation_path: '/the-matrix/house'
-        - type: custom:button-card
-          template: chip_power_consumption
-          variables:
-            ulm_chip_electric_consumption: sensor.power_in_kw
-            ulm_chip_electric_price: false
-          tap_action:
-            action: navigate
-            navigation_path: '/energy'
 
   #################
   # SENSORS

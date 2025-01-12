@@ -3,7 +3,7 @@ button_card_templates: !include_dir_merge_named '../../custom_components/ui_love
 
 title: 'The Matrix'
 theme: 'minimalist-desktop'
-background: 'var(--background-image)'
+background: center / cover no-repeat fixed url('/local/img/backgrounds/black-blurry-gradient-bottom.jpg')
 views: !include_dir_list views
 
 decluttering_templates: !include_dir_merge_named ../card_declutter

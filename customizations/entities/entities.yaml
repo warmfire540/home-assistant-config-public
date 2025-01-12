@@ -17,6 +17,16 @@ sensor.attic_climate_air_temperature:
 sensor.mfc_7860dw_status:
   on_state: 'unavailable'
 
+sensor.cat_noms_desiccant_days_remaining:
+  navigation_path: /the-matrix/cats
+  numeric_state_pass_threshold: 10
+  numeric_state_warning_threshold: 5
+
+sensor.pet_thirst_filter:
+  navigation_path: /the-matrix/cats
+  numeric_state_pass_threshold: 30
+  numeric_state_warning_threshold: 10
+
 binary_sensor.rolo_error:
   navigation_path: /the-matrix/living-room
 

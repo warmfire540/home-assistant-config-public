@@ -11,7 +11,7 @@
 !.prettierrc
 !.gitignore
 !python_scripts/*
-!www/img/*
+!www/img/**
 !assets/**
 
 
