@@ -33,6 +33,12 @@ binary_sensor.rolo_error:
 binary_sensor.poat_hole_local:
   navigation_path: /the-matrix/pi-hole
 
+binary_sensor.poat_seedbox_local:
+  exclude_on_status_path: true
+
+binary_sensor.poat_plex_local:
+  exclude_on_status_path: true
+
 input_boolean.air_filters_need_changed:
   navigation_path: /the-matrix/living-room
 
