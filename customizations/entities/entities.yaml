@@ -4,6 +4,7 @@
 # https://www.home-assistant.io/integrations/homeassistant/#manual-customization
 #####
 
+# sensors
 sensor.garage_climate_air_temperature:
   temperature_threshold: 90
 
@@ -27,6 +28,7 @@ sensor.pet_thirst_filter:
   numeric_state_pass_threshold: 30
   numeric_state_warning_threshold: 10
 
+# binary sensors
 binary_sensor.rolo_error:
   navigation_path: /the-matrix/living-room
 
@@ -39,11 +41,39 @@ binary_sensor.poat_seedbox_local:
 binary_sensor.poat_plex_local:
   exclude_on_status_path: true
 
+binary_sensor.poat_rgb_connectivity:
+  on_color: blue
+
+binary_sensor.garage_door_tilt_window_door_is_open:
+  on_color: red
+  off_color: green
+
+binary_sensor.shed_door_sensor_window_door_is_open:
+  on_color: red
+  off_color: green
+
+# input booleans
 input_boolean.air_filters_need_changed:
   navigation_path: /the-matrix/living-room
 
 input_boolean.dishwasher_needs_cleaned:
   navigation_path: /the-matrix/kitchen
 
+input_boolean.dryer_on:
+  on_color: blue
+
+input_boolean.washing_machine_on:
+  on_color: blue
+
+# counters
 counter.homeassistant_warnings:
   on_color: yellow
+
+# switches
+switch.garage_opener_plug:
+  on_color: green
+  off_color: red
+
+switch.water_softener_plug:
+  on_color: green
+  off_color: red

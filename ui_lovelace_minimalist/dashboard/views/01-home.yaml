@@ -87,174 +87,121 @@ cards:
       #################
       # LIVING ROOM
       #################
-      - type: custom:button-card
-        template: room_summary
+      - type: custom:room-summary-card
         view_layout:
           grid-area: living
-        variables:
-          area: living_room
-          entity_3:
-            entity_id: climate.living_room
-            templates:
-              - climate_icon
+        area: living_room
+        entities:
+          - climate.living_room
 
       #################
       # DINING ROOM
       #################
-      - type: custom:button-card
-        template: room_summary
+      - type: custom:room-summary-card
         view_layout:
           grid-area: dining
-        variables:
-          area: dining_room
+        area: dining_room
 
       #################
       # OFFICE
       #################
-      - type: custom:button-card
-        template: room_summary
+      - type: custom:room-summary-card
         view_layout:
           grid-area: office
-        variables:
-          area: office
-          entity_3:
-            entity_id: binary_sensor.poat_rgb_connectivity
-            templates:
-              - blue_on
+        area: office
+        entities:
+          - binary_sensor.poat_rgb_connectivity
 
       #################
       # KITCHEN
       #################
-      - type: custom:button-card
-        template: room_summary
+      - type: custom:room-summary-card
         view_layout:
           grid-area: kitchen
-        variables:
-          area: kitchen
-          entity_3:
-            entity_id: switch.under_cabinet_lights
-            templates:
-              - yellow_on
-          entity_4:
-            entity_id: light.dinette_light
-            templates:
-              - yellow_on
+        area: kitchen
+        entities:
+          - switch.under_cabinet_lights
+          - light.dinette_light
 
       #################
       # MASTER BEDROOM
       #################
-      - type: custom:button-card
-        template: room_summary
+      - type: custom:room-summary-card
         view_layout:
           grid-area: bedroom
-        variables:
-          area: master_bedroom
+        area: master_bedroom
 
       #################
       # MASTER BATHROOM
       #################
-      - type: custom:button-card
-        template: room_summary
+      - type: custom:room-summary-card
         view_layout:
           grid-area: bath
-        variables:
-          area: master_bath
-          entity_3:
-            entity_id: switch.master_bath_shower_light
-            templates:
-              - yellow_on
+        area: master_bath
+        entities:
+          - switch.master_bath_shower_light
 
       #################
       # GUEST ROOM
       #################
-      - type: custom:button-card
-        template: room_summary
+      - type: custom:room-summary-card
         view_layout:
           grid-area: guest
-        variables:
-          area: guest_bedroom
+        area: guest_bedroom
 
       #################
       # GUEST BATHROOM
       #################
-      - type: custom:button-card
-        template: room_summary
+      - type: custom:room-summary-card
         view_layout:
           grid-area: spare
-        variables:
-          area: guest_bath
+        area: guest_bath
 
       #################
       # GARAGE
       #################
-      - type: custom:button-card
-        template: room_summary
+      - type: custom:room-summary-card
         view_layout:
           grid-area: garage
-        variables:
-          area: garage
-          entity_1:
-            entity_id: binary_sensor.garage_door_tilt_window_door_is_open
-            templates:
-              - red_on
-              - green_off
+        area: garage
+        entities:
+          - entity_id: binary_sensor.garage_door_tilt_window_door_is_open
             tap_action:
               action: call-service
               service: switch.toggle
               service_data:
                 entity_id: switch.garage_opener
-          entity_2:
-            entity_id: switch.garage_opener_plug
-            templates:
-              - green_on
-              - red_off
-          entity_3:
-            entity_id: input_boolean.washing_machine_on
-            templates:
-              - blue_on
-          entity_4:
-            entity_id: input_boolean.dryer_on
-            templates:
-              - blue_on
+          - switch.garage_opener_plug
+          - input_boolean.washing_machine_on
+          - input_boolean.dryer_on
 
       #################
       # ATTIC
       #################
-      - type: custom:button-card
-        template: room_summary
+      - type: custom:room-summary-card
         view_layout:
           grid-area: attic
-        variables:
-          area: attic
-          entity_1:
-            entity_id: switch.water_softener_plug
-            templates:
-              - green_on
-              - red_off
+        area: attic
+        entities:
+          - switch.water_softener_plug
 
       #################
       # SHED
       #################
-      - type: custom:button-card
-        template: room_summary
+      - type: custom:room-summary-card
         view_layout:
           grid-area: shed
-        variables:
-          area: shed
-          entity_1:
-            entity_id: binary_sensor.shed_door_sensor_window_door_is_open
-            templates:
-              - red_on
+        area: shed
+        entities:
+          - binary_sensor.shed_door_sensor_window_door_is_open
 
       #################
       # SERVER CLOSET
       #################
-      - type: custom:button-card
-        template: room_summary
+      - type: custom:room-summary-card
         view_layout:
           grid-area: server
-        variables:
-          area: server_closet
-          humidity_sensor: sensor.office_climate_humidity
-          temperature_sensor: sensor.office_climate_air_temperature
-          navigate: lab
+        area: server_closet
+        humidity_sensor: sensor.office_climate_humidity
+        temperature_sensor: sensor.office_climate_air_temperature
+        navigate: lab
