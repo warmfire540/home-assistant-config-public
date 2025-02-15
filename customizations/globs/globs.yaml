@@ -19,6 +19,3 @@
 'sensor.*_battery_level':
   device_class: battery
 
-# switches
-'switch.*_fan':
-  on_color: blue

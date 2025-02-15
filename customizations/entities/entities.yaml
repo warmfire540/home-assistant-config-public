@@ -41,9 +41,6 @@ binary_sensor.poat_seedbox_local:
 binary_sensor.poat_plex_local:
   exclude_on_status_path: true
 
-binary_sensor.poat_rgb_connectivity:
-  on_color: blue
-
 binary_sensor.garage_door_tilt_window_door_is_open:
   on_color: red
   off_color: green
@@ -58,12 +55,6 @@ input_boolean.air_filters_need_changed:
 
 input_boolean.dishwasher_needs_cleaned:
   navigation_path: /the-matrix/kitchen
-
-input_boolean.dryer_on:
-  on_color: blue
-
-input_boolean.washing_machine_on:
-  on_color: blue
 
 # counters
 counter.homeassistant_warnings:
