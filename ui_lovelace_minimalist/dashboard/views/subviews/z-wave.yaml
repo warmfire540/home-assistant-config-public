@@ -5,21 +5,19 @@ type: custom:grid-layout
 layout:
   grid-template-areas: |
     ". header ."
-    "seen nodes health"
+    "health nodes nodes"
   mediaquery:
     # portrait monitor
     'only screen and (min-width: 769px) and (max-width: 1400px)':
       grid-template-areas: |
-        ". header ."
-        "health . ."
-        "seen nodes ."
+        "header"
+        "health"
+        "nodes ."
     # Smartphones
     'only screen and (max-width: 768px)':
       grid-template-areas: |
         "header"
-        "logo"
         "nodes"
-        "seen"
         "health"
       grid-template-columns: repeat(3, 1fr)
 cards:
@@ -41,42 +39,9 @@ cards:
     view_layout:
       grid-area: nodes
     cards:
-      - type: custom:button-card
-        template: card_title
-        label: Node Status
-
-      - type: custom:auto-entities
-        card:
-          type: entities
-        name:
-        filter:
-          include:
-            - entity_id: 'sensor.*_node_status'
-        sort:
-          method: state
-          reverse: true
-
-  #################
-  # LAST SEEN
-  #################
-  - type: vertical-stack
-    view_layout:
-      grid-area: seen
-    cards:
-      - type: custom:button-card
-        template: card_title
-        label: Last Seen
-
-      - type: custom:auto-entities
-        card:
-          type: entities
-        name:
-        filter:
-          include:
-            - entity_id: '*last_seen'
-        sort:
-          method: state
-          reverse: true
+      - type: custom:zooz-nodes-status
+        features:
+          - compact
 
   #################
   # DEVICE HEALTH
@@ -85,13 +50,4 @@ cards:
     view_layout:
       grid-area: health
     cards:
-      - type: custom:button-card
-        template: card_title
-        label: Device Health
-
-      - type: entities
-        title: 800 Series Z-Wave LR USB Hub
-        icon: mdi:z-wave
-        entities:
-          - entity: sensor.800_series_long_range_usb_controller_status
-            name: Status
+      - type: custom:zooz-device-center

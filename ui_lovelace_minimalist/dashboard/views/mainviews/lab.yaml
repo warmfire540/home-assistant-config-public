@@ -48,29 +48,22 @@ cards:
   #################
   # NAV
   #################
-  - type: custom:mod-card
+  - type: horizontal-stack
     view_layout:
       grid-area: nav
-    style:
-      hui-horizontal-stack-card$: |
-        #root { 
-          justify-content: center;
-        }
-    card:
-      type: horizontal-stack
-      cards:
-        - type: custom:button-card
-          template: chip_navigate
-          label: 'Pi-Hole'
-          variables:
-            ulm_chip_navigate_path: pi-hole
-            ulm_chip_navigate_icon: mdi:pi-hole
-        - type: custom:button-card
-          template: chip_navigate
-          label: 'Z-Wave'
-          variables:
-            ulm_chip_navigate_path: z-wave
-            ulm_chip_navigate_icon: mdi:z-wave
+    cards:
+      - type: custom:button-card
+        template: chip_navigate
+        label: 'Pi-Hole'
+        variables:
+          ulm_chip_navigate_path: pi-hole
+          ulm_chip_navigate_icon: mdi:pi-hole
+      - type: custom:button-card
+        template: chip_navigate
+        label: 'Z-Wave'
+        variables:
+          ulm_chip_navigate_path: z-wave
+          ulm_chip_navigate_icon: mdi:z-wave
 
   #################
   # SHARES
