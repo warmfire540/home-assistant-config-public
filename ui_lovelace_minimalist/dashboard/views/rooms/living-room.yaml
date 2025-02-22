@@ -179,9 +179,6 @@ cards:
         template: card_title
         label: Device Health
 
-      - type: custom:dc-signal-sensor
-        device_id: 1b78cbf3d94473a12eec59a1d199c767
-
       - type: custom:decluttering-card
         template: z_wave_double_switch
         variables:
