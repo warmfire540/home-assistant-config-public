@@ -179,15 +179,8 @@ cards:
         template: card_title
         label: Device Health
 
-      - type: custom:decluttering-card
-        template: z_wave_double_switch
-        variables:
-          - sensor_prefix: living_room
-          - sensor_domain: light
-          - name: Ceiling Fan
-          - node_number: 48
-          - switch1: light
-          - switch2: switch.living_room_fan
+      - type: custom:zooz-device-center
+        area: living_room
 
       - type: custom:decluttering-card
         template: eero

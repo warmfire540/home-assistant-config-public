@@ -40,6 +40,7 @@ cards:
       grid-area: nodes
     cards:
       - type: custom:zooz-nodes-status
+        columns: 2
         features:
           - compact
 
