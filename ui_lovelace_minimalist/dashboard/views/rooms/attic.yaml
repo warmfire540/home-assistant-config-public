@@ -85,11 +85,8 @@ cards:
         template: card_title
         label: Device Health
 
-      - type: custom:decluttering-card
-        template: z_wave_plug
-        variables:
-          - sensor_prefix: water_softener
-          - node_number: 29
+      - type: custom:zooz-device-center
+        area: attic
 
       - type: custom:decluttering-card
         template: leak_sensors
