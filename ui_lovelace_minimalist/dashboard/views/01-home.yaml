@@ -92,6 +92,7 @@ cards:
           grid-area: living
         area: living_room
         entities:
+          - switch.sconce
           - climate.living_room
 
       #################

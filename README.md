@@ -45,7 +45,7 @@ Key integrations used in this configuration:
 
   - [Room Summary Card](https://github.com/homeassistant-extras/room-summary-card)
   - [Toolbar Status Chips](https://github.com/homeassistant-extras/toolbar-status-chips)
-  - [Zooz Card Set](https://github.com/homeassistant-extras/zooz-card-set)
+  - [Z-Wave Card Set](https://github.com/homeassistant-extras/zwave-card-set)
   - [UI Minimalist](https://ui-lovelace-minimalist.github.io/UI/)
 
 - **Core Integrations**

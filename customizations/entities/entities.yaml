@@ -68,3 +68,6 @@ switch.garage_opener_plug:
 switch.water_softener_plug:
   on_color: green
   off_color: red
+
+switch.sconce:
+  on_color: yellow

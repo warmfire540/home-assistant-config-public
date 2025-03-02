@@ -19,7 +19,6 @@ layout:
         "header"
         "nodes"
         "health"
-      grid-template-columns: repeat(3, 1fr)
 cards:
   #################
   # HEADER
@@ -39,7 +38,7 @@ cards:
     view_layout:
       grid-area: nodes
     cards:
-      - type: custom:zooz-nodes-status
+      - type: custom:zwave-nodes-status
         columns: 2
         features:
           - compact
@@ -51,4 +50,4 @@ cards:
     view_layout:
       grid-area: health
     cards:
-      - type: custom:zooz-device-center
+      - type: custom:zwave-device-center

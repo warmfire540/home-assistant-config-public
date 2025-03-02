@@ -19,3 +19,5 @@
 'sensor.*_battery_level':
   device_class: battery
 
+'sensor.*_air_temperature':
+  friendly_name: Temperature

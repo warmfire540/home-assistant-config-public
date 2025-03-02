@@ -56,6 +56,10 @@ cards:
             variables:
               ulm_card_light_color: blue
 
+      - type: 'custom:button-card'
+        template: card_light
+        entity: switch.sconce
+
       - type: custom:decluttering-card
         template: cover
         variables:
@@ -179,7 +183,7 @@ cards:
         template: card_title
         label: Device Health
 
-      - type: custom:zooz-device-center
+      - type: custom:zwave-device-center
         area: living_room
 
       - type: custom:decluttering-card
