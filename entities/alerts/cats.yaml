@@ -7,9 +7,11 @@ cats:
   name: Cat device issue
   entity_id: binary_sensor.cat_device_status
   title: 🐱 Cat device problem!
+
+  # todo - get sensors more dynamically - expand group?
   message: >
     {% set sensors = {
-          "kitchen water low": "binary_sensor.pet_thirst_water_level",
+          "kitchen water low": "binary_sensor.cat_thirst_water_level",
           "kitchen filter old": "binary_sensor.cat_filter_problem",
           "Marbs food low": "binary_sensor.cat_noms_food_level",
           "Marbs battery issue": "binary_sensor.cat_battery_problem",

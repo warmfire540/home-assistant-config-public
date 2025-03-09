@@ -21,3 +21,13 @@
 
 'sensor.*_air_temperature':
   friendly_name: Temperature
+
+'sensor.*_desiccant_left_days':
+  navigation_path: /the-matrix/cats
+  numeric_state_pass_threshold: 10
+  numeric_state_warning_threshold: 5
+
+'sensor.*_filter_remaining':
+  navigation_path: /the-matrix/cats
+  numeric_state_pass_threshold: 30
+  numeric_state_warning_threshold: 10

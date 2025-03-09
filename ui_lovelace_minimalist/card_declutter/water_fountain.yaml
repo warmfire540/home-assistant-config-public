@@ -13,35 +13,24 @@ water_fountain:
             {% endif %}
         }
     entities:
-      - entity: switch.[[name]]_power
-        name: Power
       - type: section
         label: Sensors
-      - entity: binary_sensor.[[name]]_water_level
+      - entity: binary_sensor.[[name]]_water_lack_warning
         name: Water Level
-      - entity: sensor.[[name]]_filter
+      - entity: binary_sensor.[[name]]_replace_filter
+        name: Filter Warning
+      - entity: sensor.[[name]]_filter_remaining
         name: Filter %
 
       - type: section
-        label: Configuration
-      - entity: switch.[[name]]_light
-        name: Light
-      - entity: switch.[[name]]_do_not_disturb
-        name: Do not disturb
-      - entity: button.[[name]]_reset_filter
-        name: Reset Filter
-      - entity: select.[[name]]_mode
-        name: Mode
-      - entity: select.[[name]]_light_brightness
-        name: Light brightness
-
-      - type: section
         label: Diagnostic
-      - entity: sensor.[[name]]_energy_usage
+      - entity: sensor.[[name]]_energy
         name: Energy usage
-      - entity: sensor.[[name]]_last_data_update
+      - entity: sensor.[[name]]_last_update
         name: Last updated
-      - entity: sensor.[[name]]_purified_water_today
+      - entity: sensor.[[name]]_purified_water
         name: Purified today
+      - entity: sensor.[[name]]_last_ble_connection
+        name: Last BLE Connection
       - entity: counter.cat_filters
         name: Spare filters

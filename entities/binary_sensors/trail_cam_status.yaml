@@ -1,0 +1,14 @@
+####
+# Sensors related to cat feeder Wild Trail Cam
+#
+#####
+
+platform: group
+name: Wild Trail Cam Status
+unique_id: ebdacc87-a38e-48fc-831e-24a0ef725762
+entities:
+  - binary_sensor.wild_trail_cam_camera_status
+  - binary_sensor.wild_trail_cam_status_problem
+  - binary_sensor.wild_trail_cam_battery_problem
+  - binary_sensor.wild_trail_cam_desicant_problem
+  - binary_sensor.wild_trail_cam_food_level

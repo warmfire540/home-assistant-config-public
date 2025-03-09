@@ -132,6 +132,11 @@ ui_lovelace_minimalist/
         └── variables/
 └── dashboard/
     └── views/
+        └── mainviews/
+            ├── lights.yaml
+            └── network.yaml
+        └── subviews/
+            └── z-wave.yaml
         └── 01-home.yaml
     └── home-dashboard.yaml
 www/
@@ -152,15 +157,20 @@ scenes.yaml
 - [`python_scripts/`](python_scripts/) - python scripts to call in automations
 - [`scripts/`](scripts/) - HA script definitions
 
-- [`ui_lovelace_minimalist/`](ui_lovelace_minimalist/) - main dashboard framework
-  - [`custom_cards/`](ui_lovelace_minimalist/custom_cards) - custom cards for the layout
-    - [`layouts/`](ui_lovelace_minimalist/custom_cards/layouts) - templates for layouts
-      - [`headers/`](ui_lovelace_minimalist/custom_cards/layouts/headers) - templates for view headers
-    - [`templates/`](ui_lovelace_minimalist/custom_cards/templates) - templates for cards
-      - [`styles/`](ui_lovelace_minimalist/custom_cards/templates/styles) - templates for visual aspects
-      - [`variables/`](ui_lovelace_minimalist/custom_cards/templates/variables) - templates to handle common variables
-  - [`dashboard/`](ui_lovelace_minimalist/dashboard) - main dashboard configuration
-    - [`views/`](ui_lovelace_minimalist/dashboard/views) - view configurations
+- [`ui_lovelace_minimalist/`](ui_lovelace_minimalist/README.md) - main dashboard framework
+  - [`custom_cards/`](ui_lovelace_minimalist/custom_cards/README.md) - custom cards for the layout
+    - [`layouts/`](ui_lovelace_minimalist/custom_cards/layout/README.md) - templates for layouts
+      - [`headers/`](ui_lovelace_minimalist/custom_cards/layout/headers/README.md) - templates for view headers
+    - [`templates/`](ui_lovelace_minimalist/custom_cards/templates/README.md) - templates for cards
+      - [`styles/`](ui_lovelace_minimalist/custom_cards/templates/styles/README.md) - templates for visual aspects
+      - [`variables/`](ui_lovelace_minimalist/custom_cards/templates/variables/README.md) - templates to handle common variables
+  - [`dashboard/`](ui_lovelace_minimalist/dashboard/README.md) - main dashboard configuration
+    - [`views/`](ui_lovelace_minimalist/dashboard/views/README.md) - view configurations
+      - [`mainviews/`](ui_lovelace_minimalist/dashboard/views/mainviews/README.md) - sub view configurations
+        - [`lights.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/lights.yaml) - Quick view of all lights / switches
+        - [`network.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/network.yaml) - Quick view of my network
+      - [`subviews/`](ui_lovelace_minimalist/dashboard/views/subviews/README.md) - sub view configurations
+        - [`z-wave.yaml`](ui_lovelace_minimalist/dashboard/views/subviews/z-wave.yaml) - Z-Wave status dashboard
       - [`01-home.yaml`](ui_lovelace_minimalist/dashboard/views/01-home.yaml) - main dashboard configuration file
     - [`home-dashboard.yaml`](ui_lovelace_minimalist/dashboard/home-dashboard.yaml) - dashboard layout entrypoint
 - [`www/`](www/) - Website files and assets for front end

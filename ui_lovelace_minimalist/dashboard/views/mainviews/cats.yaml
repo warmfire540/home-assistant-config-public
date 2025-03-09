@@ -4,28 +4,27 @@ subview: true
 type: custom:grid-layout
 layout:
   grid-template-areas: |
-    "chonk-title . ."
-    "chonk chonk thicc"
-    "feeder-title . ."
-    "water1 water2 noms"
+    "chonk-title . . ."
+    "chonk chonk water1 water2"
+    "trail trail noms noms"
   mediaquery:
     # portrait monitor
     'only screen and (min-width: 769px) and (max-width: 1400px)':
       grid-template-areas: |
         "chonk-title ."
-        "chonk thicc"
+        "chonk chonk"
         "feeder-title ."
         "water1 water2"
-        "noms ."
+        "trail noms"
     # Smartphones
     'only screen and (max-width: 768px)':
       grid-template-areas: |
         "chonk-title"
         "chonk"
-        "thicc"
         "feeder-title"
         "water1"
         "water2"
+        "trail"
         "noms"
 cards:
   #################
@@ -48,56 +47,35 @@ cards:
         cards:
           - type: 'custom:button-card'
             name: Lags
-            entity: number.lagertha_set_weight
-            entity_picture: "[[[ return states['number.lagertha_set_weight'].attributes.entity_picture; ]]]"
+            entity: sensor.lagertha_last_use_date
+            entity_picture: "[[[ return states['sensor.lagertha_last_use_date'].attributes.entity_picture; ]]]"
             layout: name_state
             show_entity_picture: true
-            show_state: true
+            show_state: false
           - type: 'custom:button-card'
             name: Ellie
-            entity: number.ellie_set_weight
-            entity_picture: "[[[ return states['number.ellie_set_weight'].attributes.entity_picture; ]]]"
+            entity: sensor.ellie_last_use_date
+            entity_picture: "[[[ return states['sensor.ellie_last_use_date'].attributes.entity_picture; ]]]"
             layout: name_state
             show_entity_picture: true
-            show_state: true
+            show_state: false
 
       - type: horizontal-stack
         cards:
           - type: 'custom:button-card'
             name: TP
-            entity: number.the_punisher_set_weight
-            entity_picture: "[[[ return states['number.the_punisher_set_weight'].attributes.entity_picture; ]]]"
+            entity: sensor.the_punisher_last_use_date
+            entity_picture: "[[[ return states['sensor.the_punisher_last_use_date'].attributes.entity_picture; ]]]"
             layout: name_state
             show_entity_picture: true
-            show_state: true
+            show_state: false
           - type: 'custom:button-card'
             name: Marbles
-            entity: number.marbles_set_weight
-            entity_picture: "[[[ return states['number.marbles_set_weight'].attributes.entity_picture; ]]]"
+            entity: sensor.marbles_last_use_date
+            entity_picture: "[[[ return states['sensor.marbles_last_use_date'].attributes.entity_picture; ]]]"
             layout: name_state
             show_entity_picture: true
-            show_state: true
-
-  - type: horizontal-stack
-    view_layout:
-      grid-area: thicc
-    cards:
-      - type: custom:mini-graph-card
-        name: Thiccness
-        unit: 'lb'
-        hours_to_show: 300
-        points_per_hour: 0.05
-        show_points: false
-        icon: mdi:weight-kilogram
-        entities:
-          - entity: number.lagertha_set_weight
-            name: Lags
-          - entity: number.ellie_set_weight
-            name: Ellie
-          - entity: number.the_punisher_set_weight
-            name: TP
-          - entity: number.marbles_set_weight
-            name: Marbles
+            show_state: false
 
   - type: 'custom:button-card'
     template: card_title
@@ -110,7 +88,7 @@ cards:
     view_layout:
       grid-area: water1
     variables:
-      - name: pet_thirst
+      - name: cat_thirst
       - title: Pet Thirst
       - problem_entity: binary_sensor.cat_water_status
 
@@ -123,6 +101,78 @@ cards:
       - title: Spare Licks
       - problem_entity: binary_sensor.cat_spare_licks_status
 
+
+  - type: entities
+    title: Wild Trail Cam
+    view_layout:
+      grid-area: trail
+    card_mod:
+      style: |
+        ha-card {
+          background: 
+            {% if is_state('binary_sensor.cat_noms_food_status', 'on') %}
+              rgba(var(--color-background-red),var(--opacity-bg))
+            {% endif %}
+        }
+    entities:
+      - type: section
+        label: Controls
+      - switch.wild_trail_cam_camera
+      - button.wild_trail_cam_cancel_manual_feed
+      - button.wild_trail_cam_food_replenished
+      - text.wild_trail_cam_manual_feed
+      - button.wild_trail_cam_reset_desiccant
+      - switch.wild_trail_cam_surplus_control
+      - select.wild_trail_cam_surplus_control_level
+
+      - type: section
+        label: Sensors
+      - binary_sensor.wild_trail_cam_camera_status
+      - sensor.wild_trail_cam_desiccant_left_days
+      - binary_sensor.wild_trail_cam_feeding
+      - sensor.wild_trail_cam_food_bowl_fill
+      - binary_sensor.wild_trail_cam_food_level
+      - image.wild_trail_cam_last_eat_event
+      - image.wild_trail_cam_last_feed_event
+      - image.wild_trail_cam_last_visit_event
+
+      - type: section
+        label: Configuration
+      - switch.wild_trail_cam_child_lock
+      - switch.wild_trail_cam_display_timestamp
+      - select.wild_trail_cam_ia_eat_detection_sensitivity
+      - select.wild_trail_cam_ia_pet_detection_sensitivity
+      - switch.wild_trail_cam_indicator_light
+      - switch.wild_trail_cam_microphone
+      - select.wild_trail_cam_move_detection_sensitivity
+      - switch.wild_trail_cam_night_vision
+      - switch.wild_trail_cam_notif_on_desiccant_change_need
+      - switch.wild_trail_cam_notif_on_dispense
+      - switch.wild_trail_cam_notif_on_low_battery
+      - switch.wild_trail_cam_notif_on_move
+      - switch.wild_trail_cam_notif_on_pet_eat
+      - switch.wild_trail_cam_notif_on_pet_visit
+      - switch.wild_trail_cam_notif_on_refill_need
+      - switch.wild_trail_cam_pet_tracking
+      - switch.wild_trail_cam_shortage_alarm
+      - switch.wild_trail_cam_system_sound
+      - switch.wild_trail_cam_voice_dispense
+      - number.wild_trail_cam_volume
+
+      - type: section
+        label: Diagnostic
+      - sensor.wild_trail_cam_average_eating_time
+      - binary_sensor.wild_trail_cam_battery_installed
+      - sensor.wild_trail_cam_battery_level
+      - sensor.wild_trail_cam_device_status
+      - sensor.wild_trail_cam_error
+      - sensor.wild_trail_cam_manual_dispensed
+      - sensor.wild_trail_cam_rssi
+      - sensor.wild_trail_cam_times_dispensed
+      - sensor.wild_trail_cam_times_eaten
+      - sensor.wild_trail_cam_total_dispensed
+      - sensor.wild_trail_cam_total_planned
+
   - type: entities
     title: Cat Noms
     view_layout:
@@ -131,20 +181,28 @@ cards:
       style: |
         ha-card {
           background: 
-            {% if is_state('binary_sensor.cat_food_status', 'on') %}
+            {% if is_state('binary_sensor.wild_trail_cam_food_status', 'on') %}
               rgba(var(--color-background-red),var(--opacity-bg))
             {% endif %}
         }
     entities:
-      - entity: select.cat_noms_manual_feed
-        name: Manual feed
+      - type: section
+        label: Controls
+      - entity: button.cat_noms_cancel_manual_feed
+        name: Cancel Feed
+      - entity: text.cat_noms_manual_feed
+        name: Manual Feed
+      - entity: button.cat_noms_reset_desiccant
+        name: Reset Dessicant
 
       - type: section
         label: Sensors
-      - entity: sensor.cat_noms_desiccant_days_remaining
+      - entity: sensor.cat_noms_desiccant_left_days
         name: Desicant remaining
       - entity: binary_sensor.cat_noms_food_level
         name: Food Level
+      - entity: binary_sensor.cat_noms_feeding
+        name: Feeding
 
       - type: section
         label: Configuration
@@ -152,16 +210,22 @@ cards:
         name: Light
       - entity: switch.cat_noms_child_lock
         name: Child Lock
-      - entity: button.cat_noms_reset_desiccant
-        name: Reset Desiccant
+      - entity:  switch.cat_noms_notif_on_desiccant_change_need
+        name: Notify Desiccant
+      - entity: switch.cat_noms_notif_on_dispense
+        name: Notify Dispense
+      - entity: switch.cat_noms_notif_on_refill_need
+        name: Notify Refill
 
       - type: section
         label: Diagnostic
-      - entity: sensor.cat_noms_battery_status
+      - entity: binary_sensor.cat_noms_battery_installed
+        name: Battery Installed
+      - entity: sensor.cat_noms_battery_level
         name: Battery
       - entity: sensor.cat_noms_error
         name: Error
       - entity: sensor.cat_noms_rssi
         name: RSII
-      - entity: sensor.cat_noms_status
+      - entity: sensor.cat_noms_device_status
         name: Status
