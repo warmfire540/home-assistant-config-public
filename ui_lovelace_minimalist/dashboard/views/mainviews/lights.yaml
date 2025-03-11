@@ -6,8 +6,9 @@ layout:
   grid-template-columns: auto
   grid-template-rows: auto
   grid-template-areas: |
-    ". . killswitch ."
-    "lights-on switches-on lights-off switches-off"
+    "killswitch killswitch"
+    "lights-on switches-on"
+    "lights-off switches-off"
   mediaquery:
     # portrait monitor
     'only screen and (min-width: 769px) and (max-width: 1400px)':
@@ -32,24 +33,32 @@ cards:
     variables:
       solo_label: lights
 
-  - type: 'custom:button-card'
-    template: chip_icon_label
-    label: Kill lights
-    icon: 'mdi:power-plug-off'
+  - type: vertical-stack
     view_layout:
       grid-area: killswitch
-    tap_action:
-      action: call-service
-      service: script.turn_off_house
-    styles:
-      icon:
-        - color: >
-            [[[ if (Object.keys(states)
-                    .filter(key => key.startsWith('light.'))
-                    .some(key => states[key].state === 'on')) 
-                  return "var(--green-color)" ;
-                else return "var(--red-color)";
-            ]]]
+    card_mod:
+      style: |
+        hui-card {
+          display: flex;
+          justify-content: space-around;
+        }
+    cards:
+      - type: 'custom:button-card'
+        template: chip_icon_label
+        label: Kill switch
+        icon: 'mdi:power-plug-off'
+        tap_action:
+          action: call-service
+          service: script.turn_off_house
+        styles:
+          icon:
+            - color: >
+                [[[ if (Object.keys(states)
+                        .filter(key => key.startsWith('light.'))
+                        .some(key => states[key].state === 'on')) 
+                      return "var(--green-color)" ;
+                    else return "var(--red-color)";
+                ]]]
 
   - type: custom:auto-entities
     view_layout:

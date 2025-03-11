@@ -4,50 +4,40 @@ subview: true
 type: custom:grid-layout
 layout:
   grid-template-areas: |
-    ". header ."
-    "health nodes nodes"
+    "nodes nodes health"
   mediaquery:
     # portrait monitor
     'only screen and (min-width: 769px) and (max-width: 1400px)':
       grid-template-areas: |
-        "header"
-        "health"
-        "nodes ."
+        "nodes health"
     # Smartphones
     'only screen and (max-width: 768px)':
       grid-template-areas: |
-        "header"
         "nodes"
         "health"
 cards:
   #################
-  # HEADER
+  # DEVICE HEALTH
   #################
-  - type: custom:button-card
-    template: subview_header
+  - type: custom:zwave-device-center
     view_layout:
-      grid-area: header
-    variables:
-      image: /local/img/z-wave.png
-      image_nav: /config/integrations/integration/zwave_js
+      grid-area: health
 
   #################
   # NODES
   #################
-  - type: vertical-stack
+  - type: custom:state-switch
+    entity: mediaquery
     view_layout:
       grid-area: nodes
-    cards:
-      - type: custom:zwave-nodes-status
+    states:
+      '(min-width: 1400px)':
+        type: custom:zwave-nodes-status
         columns: 2
         features:
           - compact
-
-  #################
-  # DEVICE HEALTH
-  #################
-  - type: vertical-stack
-    view_layout:
-      grid-area: health
-    cards:
-      - type: custom:zwave-device-center
+      'all':
+        type: custom:zwave-nodes-status
+        columns: 1
+        features:
+          - compact

@@ -4,14 +4,12 @@ subview: true
 type: custom:grid-layout
 layout:
   grid-template-areas: |
-    "chonk-title . . ."
-    ". chonk chonk ."
+    "chonk chonk chonk chonk"
     "water1 water2 trail noms"
   mediaquery:
     # portrait monitor
     'only screen and (min-width: 769px) and (max-width: 1400px)':
       grid-template-areas: |
-        "chonk-title ."
         "chonk chonk"
         "feeder-title ."
         "water1 water2"
@@ -19,7 +17,6 @@ layout:
     # Smartphones
     'only screen and (max-width: 768px)':
       grid-template-areas: |
-        "chonk-title"
         "chonk"
         "feeder-title"
         "water1"
@@ -33,49 +30,51 @@ cards:
   - type: custom:button-card
     template: mainview_header
 
-  - type: 'custom:button-card'
-    template: card_title
-    label: Chonk
-    view_layout:
-      grid-area: chonk-title
-
-  - type: vertical-stack
+  - type: custom:layout-card
+    layout_type: custom:grid-layout
+    layout:
+      # desktop screen
+      grid-template-columns: repeat(4, 1fr)
+      grid-template-areas: |
+        "laggy ellie tp marbs"
+      mediaquery:
+        # portrait monitor
+        'only screen and (min-width: 769px) and (max-width: 1400px)':
+          grid-template-areas: |
+            "laggy ellie tp marbs"
+        # Smartphones
+        'only screen and (max-width: 768px)':
+          grid-template-columns: repeat(2, 1fr)
+          grid-template-areas: |
+            "laggy ellie"
+            "tp marbs"
     view_layout:
       grid-area: chonk
     cards:
-      - type: horizontal-stack
-        cards:
-          - type: 'custom:button-card'
-            name: Lags
-            entity: sensor.lagertha_last_use_date
-            entity_picture: "[[[ return states['sensor.lagertha_last_use_date'].attributes.entity_picture; ]]]"
-            layout: name_state
-            show_entity_picture: true
-            show_state: false
-          - type: 'custom:button-card'
-            name: Ellie
-            entity: sensor.ellie_last_use_date
-            entity_picture: "[[[ return states['sensor.ellie_last_use_date'].attributes.entity_picture; ]]]"
-            layout: name_state
-            show_entity_picture: true
-            show_state: false
-
-      - type: horizontal-stack
-        cards:
-          - type: 'custom:button-card'
-            name: TP
-            entity: sensor.the_punisher_last_use_date
-            entity_picture: "[[[ return states['sensor.the_punisher_last_use_date'].attributes.entity_picture; ]]]"
-            layout: name_state
-            show_entity_picture: true
-            show_state: false
-          - type: 'custom:button-card'
-            name: Marbles
-            entity: sensor.marbles_last_use_date
-            entity_picture: "[[[ return states['sensor.marbles_last_use_date'].attributes.entity_picture; ]]]"
-            layout: name_state
-            show_entity_picture: true
-            show_state: false
+      - type: custom:petkit-device
+        device_id: 9c08f9a7ab71aed0e39a5a12c22faf5f
+        features:
+          - cute_lil_kitty
+        view_layout:
+          grid-area: laggy
+      - type: custom:petkit-device
+        device_id: ba65b4640b38764e0b6decefb4163ffd
+        features:
+          - cute_lil_kitty
+        view_layout:
+          grid-area: ellie
+      - type: custom:petkit-device
+        device_id: 2a3c1f7c07c687fe0b46fca7d42772bb
+        features:
+          - cute_lil_kitty
+        view_layout:
+          grid-area: tp
+      - type: custom:petkit-device
+        device_id: 65826b6406187cf819e9326412733d57
+        features:
+          - cute_lil_kitty
+        view_layout:
+          grid-area: marbs
 
   - type: 'custom:button-card'
     template: card_title
