@@ -46,6 +46,7 @@ Key integrations used in this configuration:
   - [Room Summary Card](https://github.com/homeassistant-extras/room-summary-card)
   - [Toolbar Status Chips](https://github.com/homeassistant-extras/toolbar-status-chips)
   - [Z-Wave Card Set](https://github.com/homeassistant-extras/zwave-card-set)
+  - [PetKit Device Card](https://github.com/homeassistant-extras/petkit-device-card)
   - [UI Minimalist](https://ui-lovelace-minimalist.github.io/UI/)
 
 - **Core Integrations**

@@ -10,24 +10,31 @@ cats:
 
   # todo - get sensors more dynamically - expand group?
   message: >
-    {% set sensors = {
-          "kitchen water low": "binary_sensor.cat_thirst_water_level",
-          "kitchen filter old": "binary_sensor.cat_filter_problem",
-          "Marbs food low": "binary_sensor.cat_noms_food_level",
-          "Marbs battery issue": "binary_sensor.cat_battery_problem",
-          "Marbs recharge desiccant": "binary_sensor.cat_desicant_problem",
-          "Marbs status issue": "binary_sensor.cat_noms_status_problem"
-      } %}
+    {% macro check_entity(entity_id) %}
+      {% if state_attr(entity_id, 'entity_id') is not none %}
+        {# This is a group - recursively expand it #}
+        {% for member in state_attr(entity_id, 'entity_id') %}
+          {{ check_entity(member) }}
+        {% endfor %}
+      {% elif states(entity_id) == "on" %}
+        {# Add the entity's friendly name to the list if it's "on" #}
+        {% set ns.issues = ns.issues + [(entity_id, state_attr(entity_id, 'friendly_name')|default(entity_id.split('.')[-1]|replace('_', ' ')|title))] %}
+      {% endif %}
+    {% endmacro %}
 
-      {% set ns = namespace(issues = []) %}
+    {% set ns = namespace(issues = []) %}
 
-      {% for issue, sensor in sensors.items() %}
-        {% if states(sensor) == "on" %}
-          {% set ns.issues = ns.issues + [issue] %}
-        {% endif %}
+    {# Start the recursive check with the main group #}
+    {{ check_entity('binary_sensor.cat_device_status') }}
+
+    {% if ns.issues|length > 0 %}
+      These are the cat device issues - fix them!
+      {% for entity_id, issue in ns.issues %}
+      • {{ issue }} - {{ states[entity_id].state }}{% if state_attr(entity_id, 'description') %} ({{ state_attr(entity_id, 'description') }}){% endif %}
       {% endfor %}
-
-      Problems.. {{ ns.issues | join(', ') }}
+    {% else %}
+      All cat devices are functioning properly.
+    {% endif %}
 
   done_message: clear_notification
   state: 'on'
@@ -37,4 +44,4 @@ cats:
     prompt: cat's feeder has an issue
     backup: Cat feeders have a prob..
   notifiers:
-    - family_ai
+    - family

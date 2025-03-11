@@ -5,8 +5,8 @@ type: custom:grid-layout
 layout:
   grid-template-areas: |
     "chonk-title . . ."
-    "chonk chonk water1 water2"
-    "trail trail noms noms"
+    ". chonk chonk ."
+    "water1 water2 trail noms"
   mediaquery:
     # portrait monitor
     'only screen and (min-width: 769px) and (max-width: 1400px)':
@@ -83,149 +83,22 @@ cards:
     view_layout:
       grid-area: feeder-title
 
-  - type: custom:decluttering-card
-    template: water_fountain
+  - type: custom:petkit-device
+    device_id: db3f2afaa7807e64861e138e222c3fd4
     view_layout:
       grid-area: water1
-    variables:
-      - name: cat_thirst
-      - title: Pet Thirst
-      - problem_entity: binary_sensor.cat_water_status
 
-  - type: custom:decluttering-card
-    template: water_fountain
+  - type: custom:petkit-device
+    device_id: ae4397233b426e4800920907d87b6a14
     view_layout:
       grid-area: water2
-    variables:
-      - name: spare_licks
-      - title: Spare Licks
-      - problem_entity: binary_sensor.cat_spare_licks_status
 
-
-  - type: entities
-    title: Wild Trail Cam
+  - type: custom:petkit-device
+    device_id: e9197877ed314b17e242e4aec2624ffe
     view_layout:
       grid-area: trail
-    card_mod:
-      style: |
-        ha-card {
-          background: 
-            {% if is_state('binary_sensor.cat_noms_food_status', 'on') %}
-              rgba(var(--color-background-red),var(--opacity-bg))
-            {% endif %}
-        }
-    entities:
-      - type: section
-        label: Controls
-      - switch.wild_trail_cam_camera
-      - button.wild_trail_cam_cancel_manual_feed
-      - button.wild_trail_cam_food_replenished
-      - text.wild_trail_cam_manual_feed
-      - button.wild_trail_cam_reset_desiccant
-      - switch.wild_trail_cam_surplus_control
-      - select.wild_trail_cam_surplus_control_level
 
-      - type: section
-        label: Sensors
-      - binary_sensor.wild_trail_cam_camera_status
-      - sensor.wild_trail_cam_desiccant_left_days
-      - binary_sensor.wild_trail_cam_feeding
-      - sensor.wild_trail_cam_food_bowl_fill
-      - binary_sensor.wild_trail_cam_food_level
-      - image.wild_trail_cam_last_eat_event
-      - image.wild_trail_cam_last_feed_event
-      - image.wild_trail_cam_last_visit_event
-
-      - type: section
-        label: Configuration
-      - switch.wild_trail_cam_child_lock
-      - switch.wild_trail_cam_display_timestamp
-      - select.wild_trail_cam_ia_eat_detection_sensitivity
-      - select.wild_trail_cam_ia_pet_detection_sensitivity
-      - switch.wild_trail_cam_indicator_light
-      - switch.wild_trail_cam_microphone
-      - select.wild_trail_cam_move_detection_sensitivity
-      - switch.wild_trail_cam_night_vision
-      - switch.wild_trail_cam_notif_on_desiccant_change_need
-      - switch.wild_trail_cam_notif_on_dispense
-      - switch.wild_trail_cam_notif_on_low_battery
-      - switch.wild_trail_cam_notif_on_move
-      - switch.wild_trail_cam_notif_on_pet_eat
-      - switch.wild_trail_cam_notif_on_pet_visit
-      - switch.wild_trail_cam_notif_on_refill_need
-      - switch.wild_trail_cam_pet_tracking
-      - switch.wild_trail_cam_shortage_alarm
-      - switch.wild_trail_cam_system_sound
-      - switch.wild_trail_cam_voice_dispense
-      - number.wild_trail_cam_volume
-
-      - type: section
-        label: Diagnostic
-      - sensor.wild_trail_cam_average_eating_time
-      - binary_sensor.wild_trail_cam_battery_installed
-      - sensor.wild_trail_cam_battery_level
-      - sensor.wild_trail_cam_device_status
-      - sensor.wild_trail_cam_error
-      - sensor.wild_trail_cam_manual_dispensed
-      - sensor.wild_trail_cam_rssi
-      - sensor.wild_trail_cam_times_dispensed
-      - sensor.wild_trail_cam_times_eaten
-      - sensor.wild_trail_cam_total_dispensed
-      - sensor.wild_trail_cam_total_planned
-
-  - type: entities
-    title: Cat Noms
+  - type: custom:petkit-device
+    device_id: 5e292fbf1ccd67f04a5468483bba2c76
     view_layout:
       grid-area: noms
-    card_mod:
-      style: |
-        ha-card {
-          background: 
-            {% if is_state('binary_sensor.wild_trail_cam_food_status', 'on') %}
-              rgba(var(--color-background-red),var(--opacity-bg))
-            {% endif %}
-        }
-    entities:
-      - type: section
-        label: Controls
-      - entity: button.cat_noms_cancel_manual_feed
-        name: Cancel Feed
-      - entity: text.cat_noms_manual_feed
-        name: Manual Feed
-      - entity: button.cat_noms_reset_desiccant
-        name: Reset Dessicant
-
-      - type: section
-        label: Sensors
-      - entity: sensor.cat_noms_desiccant_left_days
-        name: Desicant remaining
-      - entity: binary_sensor.cat_noms_food_level
-        name: Food Level
-      - entity: binary_sensor.cat_noms_feeding
-        name: Feeding
-
-      - type: section
-        label: Configuration
-      - entity: switch.cat_noms_indicator_light
-        name: Light
-      - entity: switch.cat_noms_child_lock
-        name: Child Lock
-      - entity:  switch.cat_noms_notif_on_desiccant_change_need
-        name: Notify Desiccant
-      - entity: switch.cat_noms_notif_on_dispense
-        name: Notify Dispense
-      - entity: switch.cat_noms_notif_on_refill_need
-        name: Notify Refill
-
-      - type: section
-        label: Diagnostic
-      - entity: binary_sensor.cat_noms_battery_installed
-        name: Battery Installed
-      - entity: sensor.cat_noms_battery_level
-        name: Battery
-      - entity: sensor.cat_noms_error
-        name: Error
-      - entity: sensor.cat_noms_rssi
-        name: RSII
-      - entity: sensor.cat_noms_device_status
-        name: Status
