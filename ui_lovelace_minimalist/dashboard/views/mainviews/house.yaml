@@ -5,8 +5,8 @@ type: custom:grid-layout
 layout:
   grid-template-areas: |
     "sensors climate covers alerts"
-    "batteries schedules tracking ."
-    "poat-phone gina-phone . ."
+    "batteries schedules tracking poat-phone"
+    "batteries schedules tracking gina-phone"
   mediaquery:
     # portrait monitor
     'only screen and (min-width: 769px) and (max-width: 1400px)':
@@ -246,8 +246,8 @@ cards:
             entities:
               - calendar.trash
             layout: vertical
-            next_days: 5
-            items_per_row: 4
+            next_days: 4
+            items_per_row: 3
             day_style: counter
             hide_time_range: true
             use_summary: false
@@ -311,13 +311,18 @@ cards:
   #################
   # PHONES
   #################
-  - type: custom:decluttering-card
-    template: iphone
+  - type: vertical-stack
     view_layout:
       grid-area: poat-phone
-    variables:
-      - name: Poat
-      - phone: poat_s_iphone_14_pro_max
+    cards:
+      - type: custom:button-card
+        template: card_title
+        label: Phones
+      - type: custom:decluttering-card
+        template: iphone
+        variables:
+          - name: Poat
+          - phone: poat_s_iphone_14_pro_max
 
   - type: custom:decluttering-card
     template: iphone

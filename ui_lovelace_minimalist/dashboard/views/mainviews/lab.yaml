@@ -68,10 +68,14 @@ cards:
   #################
   # SHARES
   #################
-  - type: horizontal-stack
+  - type: vertical-stack
     view_layout:
       grid-area: shares
     cards:
+      - type: custom:button-card
+        template: card_title
+        label: Share Space
+
       - type: custom:mini-graph-card
         name: Share(s) %
         icon: mdi:harddisk

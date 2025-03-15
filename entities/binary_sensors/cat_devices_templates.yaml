@@ -35,15 +35,7 @@ sensors:
     device_class: problem
     icon_template: >
       mdi:power-plug{{'-off' if not is_state('sensor.wild_trail_cam_device_status','Online')}}
-
-  wild_trail_cam_battery_problem:
-    friendly_name: 'Wild Trail Cam Battery Problem'
-    value_template: "{{ states('binary_sensor.wild_trail_cam_battery_installed') not in ['on'] }}"
-    unique_id: d9dfac8f-4293-43d1-9226-29cdd900f07a
-    device_class: problem
-    icon_template: >
-      mdi:battery{{'-alert-variant' if states('sensor.wild_trail_cam_battery_installed') not in ['on']}}
-
+      
   wild_trail_cam_desicant_problem:
     friendly_name: 'Wild Trail Cam Desicant Problem'
     value_template: "{{ is_state('sensor.wild_trail_cam_desiccant_left_days', '0') }}"

@@ -5,7 +5,8 @@ type: custom:grid-layout
 layout:
   grid-template-areas: |
     "network disconnected updates"
-    "network wifi connected"
+    "network disconnected connected"
+    "wifi disconnected connected"
   mediaquery:
     # portrait monitor
     'only screen and (min-width: 769px) and (max-width: 1400px)':
