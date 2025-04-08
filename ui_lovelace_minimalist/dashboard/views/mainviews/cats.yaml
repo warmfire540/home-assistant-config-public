@@ -51,28 +51,28 @@ cards:
     view_layout:
       grid-area: chonk
     cards:
-      - type: custom:petkit-device
+      - type: custom:device-card
         device_id: 9c08f9a7ab71aed0e39a5a12c22faf5f
         features:
-          - cute_lil_kitty
+          - entity_picture
         view_layout:
           grid-area: laggy
-      - type: custom:petkit-device
+      - type: custom:device-card
         device_id: ba65b4640b38764e0b6decefb4163ffd
         features:
-          - cute_lil_kitty
+          - entity_picture
         view_layout:
           grid-area: ellie
-      - type: custom:petkit-device
+      - type: custom:device-card
         device_id: 2a3c1f7c07c687fe0b46fca7d42772bb
         features:
-          - cute_lil_kitty
+          - entity_picture
         view_layout:
           grid-area: tp
-      - type: custom:petkit-device
+      - type: custom:device-card
         device_id: 65826b6406187cf819e9326412733d57
         features:
-          - cute_lil_kitty
+          - entity_picture
         view_layout:
           grid-area: marbs
 

@@ -174,7 +174,6 @@ cards:
                 entity_id: switch.garage_opener
           - switch.garage_opener_plug
           - input_boolean.washing_machine_on
-          - input_boolean.dryer_on
 
       #################
       # ATTIC
