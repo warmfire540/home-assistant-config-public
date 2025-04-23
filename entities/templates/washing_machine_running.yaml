@@ -1,0 +1,9 @@
+#####
+# Lists update entities that are on
+#
+#####
+
+- sensor:
+    - name: Washy running
+      unique_id: eadb56f0-cd8b-42b9-8f07-1a700b6c5821
+      state: "{{  states('sensor.washy_current_status') not in ['unavailable', 'dry'] }}"

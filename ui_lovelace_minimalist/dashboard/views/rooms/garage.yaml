@@ -58,6 +58,9 @@ cards:
           ulm_card_light_name: Garage Door Power
           ulm_card_light_color: green
 
+      - type: custom:device-card
+        device_id: 8fcd19d3e572dcb5a1ebf69380615300
+
       - type: 'custom:vacuum-card'
         entity: vacuum.strongboi
         image: default
@@ -86,20 +89,7 @@ cards:
     cards:
       - type: custom:button-card
         template: card_title
-        label: Sensors
-
-      - type: horizontal-stack
-        cards:
-          - type: custom:button-card
-            template: card_input_boolean
-            entity: input_boolean.washing_machine_on
-            variables:
-              ulm_card_input_boolean_force_background_color: true
-          - type: custom:button-card
-            template: card_input_boolean
-            entity: input_boolean.washing_machine_end
-            variables:
-              ulm_card_input_boolean_force_background_color: true
+        label: sensor
 
       - type: horizontal-stack
         cards:
@@ -138,7 +128,7 @@ cards:
 
       - type: custom:zwave-device-center
         area: garage
-        
+
       - type: custom:decluttering-card
         template: leak_sensors
         variables:

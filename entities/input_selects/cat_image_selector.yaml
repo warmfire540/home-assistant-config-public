@@ -1,0 +1,12 @@
+#####
+# Selector for cat images
+#####
+
+cat_image_selector:
+  name: 'Cat Images'
+  options:
+    - 'Pixar'
+    - 'Ghibli'
+    - 'PetKit'
+  initial: 'Ghibli'
+  icon: mdi:cat
