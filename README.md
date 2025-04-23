@@ -41,13 +41,17 @@ Connected devices:
 
 Key integrations used in this configuration:
 
-- ** UI Integrations**
+- **UI Integrations**
 
-  - [Room Summary Card](https://github.com/homeassistant-extras/room-summary-card)
-  - [Toolbar Status Chips](https://github.com/homeassistant-extras/toolbar-status-chips)
-  - [Z-Wave Card Set](https://github.com/homeassistant-extras/zwave-card-set)
-  - [PetKit Device Card](https://github.com/homeassistant-extras/petkit-device-card)
-  - [UI Minimalist](https://ui-lovelace-minimalist.github.io/UI/)
+  - Custom cards I made
+    - [Room Summary Card](https://github.com/homeassistant-extras/room-summary-card)
+    - [Toolbar Status Chips](https://github.com/homeassistant-extras/toolbar-status-chips)
+    - [Z-Wave Card Set](https://github.com/homeassistant-extras/zwave-card-set)
+    - [PetKit Device Card](https://github.com/homeassistant-extras/petkit-device-card)
+    - [Device Card](https://github.com/homeassistant-extras/device-card)
+  - Other custom themes / cards
+    - [UI Minimalist](https://ui-lovelace-minimalist.github.io/UI/)
+    - [Button Card](https://github.com/custom-cards/button-card)
 
 - **Core Integrations**
 
@@ -110,7 +114,7 @@ Key integrations used in this configuration:
 
 I'm using the README files as a way to keep track of areas that I'm revamping for 2025 to clean up my instance and make things more reusable and wife friendly.
 
-![wip](https://img.shields.io/badge/Work%20In%20Progress-yellow)
+![wip](https://img.shields.io/badge/Work%20In%20Progress-yellow?style=for-the-badge)
 
 ### Structure
 
@@ -134,9 +138,14 @@ ui_lovelace_minimalist/
 └── dashboard/
     └── views/
         └── mainviews/
+            ├── cats.yaml
+            ├── house.yaml
+            ├── lab.yaml
             ├── lights.yaml
             └── network.yaml
         └── subviews/
+            ├── pi-hole.yaml
+            ├── t1d.yaml
             └── z-wave.yaml
         └── 01-home.yaml
     └── home-dashboard.yaml
@@ -148,44 +157,51 @@ README.md
 scenes.yaml
 ```
 
-- [`.github/`](.github/) - GitHub workflows
-- [`assets/`](assets/) - screenshots and such for documentation
-- [`automations/`](automations/) - automations of course
-  - [`systems/`](automations/systems/) - automations related to core system functionality
-- [`blueprints/`](blueprints/) - HA Blueprints - I don't have a use for these
-- [`entities/`](entities/) - entity definitions
-- [`integrations/`](integrations/) - split config to load folders
-- [`python_scripts/`](python_scripts/) - python scripts to call in automations
-- [`scripts/`](scripts/) - HA script definitions
+Tracking sections I've reworked.
 
-- [`ui_lovelace_minimalist/`](ui_lovelace_minimalist/README.md) - main dashboard framework
-  - [`custom_cards/`](ui_lovelace_minimalist/custom_cards/README.md) - custom cards for the layout
-    - [`layouts/`](ui_lovelace_minimalist/custom_cards/layout/README.md) - templates for layouts
-      - [`headers/`](ui_lovelace_minimalist/custom_cards/layout/headers/README.md) - templates for view headers
+- [x] [`.github/`](.github/) - GitHub workflows
+- [x] [`assets/`](assets/) - screenshots and such for documentation
+- [ ] [`automations/`](automations/) - automations of course
+  - [ ] [`systems/`](automations/systems/) - automations related to core system functionality
+- [x] [`blueprints/`](blueprints/) - HA Blueprints - I don't have a use for these
+- [ ] [`entities/`](entities/) - entity definitions
+- [ ] [`integrations/`](integrations/) - split config to load folders
+- [ ] [`python_scripts/`](python_scripts/) - python scripts to call in automations
+- [ ] [`scripts/`](scripts/) - HA script definitions
+
+- [ ] [`ui_lovelace_minimalist/`](ui_lovelace_minimalist/README.md) - main dashboard framework
+  - [ ] [`custom_cards/`](ui_lovelace_minimalist/custom_cards/README.md) - custom cards for the layout
+    - [ ] [`layouts/`](ui_lovelace_minimalist/custom_cards/layout/README.md) - templates for layouts
+      - [ ] [`headers/`](ui_lovelace_minimalist/custom_cards/layout/headers/README.md) - templates for view headers
     - [`templates/`](ui_lovelace_minimalist/custom_cards/templates/README.md) - templates for cards
-      - [`styles/`](ui_lovelace_minimalist/custom_cards/templates/styles/README.md) - templates for visual aspects
-      - [`variables/`](ui_lovelace_minimalist/custom_cards/templates/variables/README.md) - templates to handle common variables
-  - [`dashboard/`](ui_lovelace_minimalist/dashboard/README.md) - main dashboard configuration
-    - [`views/`](ui_lovelace_minimalist/dashboard/views/README.md) - view configurations
-      - [`mainviews/`](ui_lovelace_minimalist/dashboard/views/mainviews/README.md) - sub view configurations
-        - [`lights.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/lights.yaml) - Quick view of all lights / switches
-        - [`network.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/network.yaml) - Quick view of my network
-      - [`subviews/`](ui_lovelace_minimalist/dashboard/views/subviews/README.md) - sub view configurations
-        - [`z-wave.yaml`](ui_lovelace_minimalist/dashboard/views/subviews/z-wave.yaml) - Z-Wave status dashboard
-      - [`01-home.yaml`](ui_lovelace_minimalist/dashboard/views/01-home.yaml) - main dashboard configuration file
-    - [`home-dashboard.yaml`](ui_lovelace_minimalist/dashboard/home-dashboard.yaml) - dashboard layout entrypoint
-- [`www/`](www/) - Website files and assets for front end
-- [`.gitignore`](.gitignore) - Git ignore rules
-- [`.prettierrc`](.prettierrc) - Prettier configuration
-- [`configuration.yaml`](configuration.yaml) - Main configuration file for HA
-- [`README.md`](README.md) - Project documentation
-- [`scenes.yaml`](scenes.yaml) - Scene definitions, HA controlled
+      - [ ] [`styles/`](ui_lovelace_minimalist/custom_cards/templates/styles/README.md) - templates for visual aspects
+      - [ ] [`variables/`](ui_lovelace_minimalist/custom_cards/templates/variables/README.md) - templates to handle common variables
+  - [ ] [`dashboard/`](ui_lovelace_minimalist/dashboard/README.md) - main dashboard configuration
+    - [ ] [`views/`](ui_lovelace_minimalist/dashboard/views/README.md) - view configurations
+      - [x] [`mainviews/`](ui_lovelace_minimalist/dashboard/views/mainviews/README.md) - sub view configurations
+        - [x] [`cats.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/cats.yaml) - Cat station
+        - [x] [`house.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/house.yaml) - House overview
+        - [x] [`lab.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/lab.yaml) - Quick view of the lab
+        - [x] [`lights.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/lights.yaml) - Quick view of all lights / switches
+        - [x] [`network.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/network.yaml) - Quick view of my network
+      - [ ] [`subviews/`](ui_lovelace_minimalist/dashboard/views/subviews/README.md) - sub view configurations
+        - [ ] [`pi-hole.yaml`](ui_lovelace_minimalist/dashboard/views/subviews/pi-hole.yaml) - Pi-Hole dashboard
+        - [ ] [`t1d.yaml`](ui_lovelace_minimalist/dashboard/views/subviews/t1d.yaml) - T1D dashboard
+        - [x] [`z-wave.yaml`](ui_lovelace_minimalist/dashboard/views/subviews/z-wave.yaml) - Z-Wave status dashboard
+      - [x] [`01-home.yaml`](ui_lovelace_minimalist/dashboard/views/01-home.yaml) - main dashboard configuration file
+    - [x] [`home-dashboard.yaml`](ui_lovelace_minimalist/dashboard/home-dashboard.yaml) - dashboard layout entrypoint
+- [x] [`www/`](www/) - Website files and assets for front end
+- [x] [`.gitignore`](.gitignore) - Git ignore rules
+- [x] [`.prettierrc`](.prettierrc) - Prettier configuration
+- [x] [`configuration.yaml`](configuration.yaml) - Main configuration file for HA
+- [ ] [`README.md`](README.md) - Project documentation
+- [ ] [`scenes.yaml`](scenes.yaml) - Scene definitions, HA controlled
 
 ### Automations
 
 The following automations I have created to for various reasons. See [`automations/`](automations/) for more info.
 
-![wip](https://img.shields.io/badge/Work%20In%20Progress-yellow)
+![wip](https://img.shields.io/badge/Work%20In%20Progress-yellow?style=for-the-badge)
 
 - [`systems/`](automations/systems/) - Automations related to core system, notifications, and alerts.
   - `alert_to_persistent.yaml` - Handles peristent alerts when alert entity is triggered
@@ -207,7 +223,7 @@ A few scripts are made to ease some automations. See [`scripts/`](scripts/) for 
 
 These are the domains I have scripted out entities to help automate or script situations.
 
-![wip](https://img.shields.io/badge/Work%20In%20Progress-yellow)
+![wip](https://img.shields.io/badge/Work%20In%20Progress-yellow?style=for-the-badge)
 
 ## Missing Files
 
@@ -229,7 +245,7 @@ Examples of some pages and where to find the code.
 > [!NOTE]  
 > The dashboard is highly evolving and thus these screenshots may not be an accurate representation of the current state.
 
-![wip](https://img.shields.io/badge/Work%20In%20Progress-yellow)
+![wip](https://img.shields.io/badge/Work%20In%20Progress-yellow?style=for-the-badge)
 
 ### Responsiveness
 
