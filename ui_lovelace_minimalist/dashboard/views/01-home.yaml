@@ -173,7 +173,6 @@ cards:
               service_data:
                 entity_id: switch.garage_opener
           - switch.garage_opener_plug
-          - sensor.washy_running
 
       #################
       # ATTIC

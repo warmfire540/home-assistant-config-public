@@ -14,18 +14,17 @@ trigger:
     - added
 
 conditions:
-  - and:
-      - alias: Certain notifications only
-        condition: template
-        value_template: >
-          {{ trigger.notification.notification_id in
-            [
-              'cat_shit',
-              'dishwasher_done',
-              'rolo_done'
-              'washy'
-            ] 
-          }}
+  alias: Certain notifications only
+  condition: template
+  value_template: >
+    {{ trigger.notification.notification_id in
+      [
+        'cat_shit',
+        'dishwasher_done',
+        'rolo_done',
+        'washy'
+      ] 
+    }}
 
 action:
   - alias: Wait 10 minutes

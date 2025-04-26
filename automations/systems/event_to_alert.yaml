@@ -1,0 +1,23 @@
+#####
+# Creates an alert from certain events
+#
+#####
+
+alias: Create alert from event
+id: a485f0be-6943-4615-a0c1-f6c893cccabb
+
+trigger:
+  trigger: event
+  event_type: 
+    - washing_is_complete
+    - error_during_washing
+
+action:
+  action: notify.family_ai
+  data:
+    title: '{{ trigger.event.event_type | replace("_", " ") | title }}'
+    message: false
+    data:
+      prompt: '{{ trigger.event.event_type | replace("_", " ") }}'
+      backup: '{{ trigger.event.event_type | replace("_", " ") | title }}!'
+      tag: '{{ trigger.event.event_type }}'
