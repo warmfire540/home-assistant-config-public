@@ -37,44 +37,69 @@ cards:
       grid-template-columns: repeat(4, 1fr)
       grid-template-areas: |
         "laggy ellie tp marbs"
+        ". selector selector ."
       mediaquery:
         # portrait monitor
         'only screen and (min-width: 769px) and (max-width: 1400px)':
           grid-template-areas: |
             "laggy ellie tp marbs"
+            ". selector selector ."
         # Smartphones
         'only screen and (max-width: 768px)':
           grid-template-columns: repeat(2, 1fr)
           grid-template-areas: |
             "laggy ellie"
             "tp marbs"
+            "selector selector"
     view_layout:
       grid-area: chonk
     cards:
-      - type: custom:device-card
-        device_id: 9c08f9a7ab71aed0e39a5a12c22faf5f
-        features:
-          - entity_picture
+      - type: custom:mushroom-select-card
+        entity: input_select.cat_image_selector
+        view_layout:
+          grid-area: selector
+
+      - type: picture-entity
+        entity: input_select.cat_image_selector
+        show_name: false
+        show_state: false
         view_layout:
           grid-area: laggy
-      - type: custom:device-card
-        device_id: ba65b4640b38764e0b6decefb4163ffd
-        features:
-          - entity_picture
+        state_image:
+          "Pixar": /local/img/cats/lagertha-pixar.PNG
+          "Ghibli": /local/img/cats/lagertha-ghibli.PNG
+          "PetKit": https://img5-us.petkit.cn/uavatar/2019/12/5/5de8716edb2f637de30d1bf73xcJG867z
+      - type: picture-entity
+        entity: input_select.cat_image_selector
+        show_name: false
+        show_state: false
         view_layout:
           grid-area: ellie
-      - type: custom:device-card
-        device_id: 2a3c1f7c07c687fe0b46fca7d42772bb
-        features:
-          - entity_picture
+        state_image:
+          "Pixar": /local/img/cats/ellie-pixar.PNG
+          "Ghibli": /local/img/cats/ellie-ghibli.PNG
+          "PetKit": https://img5-us.petkit.cn/uavatar/2019/12/5/5de8723898953a77f9f5f4acLV5JwbrUs
+      - type: picture-entity
+        entity: input_select.cat_image_selector
+        show_name: false
+        show_state: false
         view_layout:
           grid-area: tp
-      - type: custom:device-card
-        device_id: 65826b6406187cf819e9326412733d57
-        features:
-          - entity_picture
+        state_image:
+          "Pixar": /local/img/cats/thepunisher-pixar.PNG
+          "Ghibli": /local/img/cats/thepunisher-ghibli.PNG
+          "PetKit": https://img5-us.petkit.cn/uavatar/2019/12/5/5de86e1d340ebd641143fbcbg75Xh5b7f
+      - type: picture-entity
+        entity: input_select.cat_image_selector
+        show_name: false
+        show_state: false
         view_layout:
           grid-area: marbs
+        state_image:
+          "Pixar": /local/img/cats/marbles-pixar.PNG
+          "Ghibli": /local/img/cats/marbles-ghibli.PNG
+          "PetKit": https://img5-us.petkit.cn/uavatar/2023/10/20/6531cf2b8b048a000d041b04Xf2cMUw0z
+          
 
   - type: 'custom:button-card'
     template: card_title
