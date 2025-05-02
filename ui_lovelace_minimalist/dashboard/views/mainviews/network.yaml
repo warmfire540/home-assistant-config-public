@@ -177,6 +177,11 @@ cards:
             - entity_id: '*poat_pi*'
             - entity_id: 'media_player.xbox*'
             - entity_id: event.snack_station_notification
+            - entity_id: event.washy_error
+            - entity_id: sensor.washy_*_time
+            - entity_id: sensor.washy_delay_starts_in
+            - entity_id: select.washy_operation
+            - entity_id: binary_sensor.wild_trail_cam_battery_problem
             - domain: automation
             - domain: button
             - domain: number

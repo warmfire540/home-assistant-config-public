@@ -70,13 +70,13 @@ cards:
         show_status: true
         stats:
           default:
-            - entity_id: sensor.strongboi_filter
+            - entity_id: sensor.strongboi_filter_lifespan
               unit: '%'
               subtitle: Filter
-            - entity_id: sensor.strongboi_main_brush
+            - entity_id: sensor.strongboi_main_brush_lifespan
               unit: '%'
               subtitle: Main Brush
-            - entity_id: sensor.strongboi_side_brush
+            - entity_id: sensor.strongboi_side_brush_lifespan
               unit: '%'
               subtitle: Side Brush
 

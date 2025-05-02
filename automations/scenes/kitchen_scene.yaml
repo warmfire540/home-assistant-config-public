@@ -103,9 +103,9 @@ action:
         condition: trigger
         id: scene-four
       sequence:
-        action: scene.turn_on
+        action: switch.toggle
         target:
-          entity_id: scene.fun_kitchen
+          entity_id: switch.sconce
 
     - conditions:
         alias: Lights turned on or off
