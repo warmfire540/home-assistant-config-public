@@ -4,7 +4,8 @@ subview: true
 type: custom:grid-layout
 layout:
   grid-template-areas: |
-    "nav . ."
+    ". nav ."
+    "pi pi ."
     "control shares printer"
     "status-title . ."
     "rpi-has rpi-hole rpi-share"
@@ -15,6 +16,7 @@ layout:
     'only screen and (min-width: 769px) and (max-width: 1400px)':
       grid-template-areas: |
         "nav ."
+        "pi pi"
         "control shares"
         "status-title printer"
         "rpi-has rpi-hole"
@@ -25,6 +27,7 @@ layout:
     'only screen and (max-width: 768px)':
       grid-template-areas: |
         "nav"
+        "pi"
         "shares"
         "control"
         "printer"
@@ -54,16 +57,19 @@ cards:
     cards:
       - type: custom:button-card
         template: chip_navigate
-        label: 'Pi-Hole'
-        variables:
-          ulm_chip_navigate_path: pi-hole
-          ulm_chip_navigate_icon: mdi:pi-hole
-      - type: custom:button-card
-        template: chip_navigate
         label: 'Z-Wave'
         variables:
           ulm_chip_navigate_path: z-wave
           ulm_chip_navigate_icon: mdi:z-wave
+
+  #################
+  # PI CONTROL
+  #################
+  - type: custom:pi-hole
+    device_id: 71f75a06cb6f6be6f8640f281c2d30bc
+    url: http://poat-hole.local
+    view_layout:
+      grid-area: pi
 
   #################
   # SHARES

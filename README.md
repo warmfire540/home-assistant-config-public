@@ -43,15 +43,17 @@ Key integrations used in this configuration:
 
 - **UI Integrations**
 
-  - Custom cards I made
+  - Custom cards I maintain
     - [Room Summary Card](https://github.com/homeassistant-extras/room-summary-card)
     - [Toolbar Status Chips](https://github.com/homeassistant-extras/toolbar-status-chips)
     - [Z-Wave Card Set](https://github.com/homeassistant-extras/zwave-card-set)
-    - [PetKit Device Card](https://github.com/homeassistant-extras/petkit-device-card)
+    - [PetKit Device Card](https://github.com/homeassistant-extras/petkit-device-cards)
     - [Device Card](https://github.com/homeassistant-extras/device-card)
-  - Other custom themes / cards
+    - [Pi-hole Card](https://github.com/homeassistant-extras/pi-hole-card)
+  - Other custom themes / cards used
     - [UI Minimalist](https://ui-lovelace-minimalist.github.io/UI/)
     - [Button Card](https://github.com/custom-cards/button-card)
+    - [Auto Entities](https://github.com/thomasloven/lovelace-auto-entities)
 
 - **Core Integrations**
 
@@ -144,7 +146,6 @@ ui_lovelace_minimalist/
             ├── lights.yaml
             └── network.yaml
         └── subviews/
-            ├── pi-hole.yaml
             ├── t1d.yaml
             └── z-wave.yaml
         └── 01-home.yaml
@@ -185,7 +186,6 @@ Tracking sections I've reworked.
         - [x] [`lights.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/lights.yaml) - Quick view of all lights / switches
         - [x] [`network.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/network.yaml) - Quick view of my network
       - [ ] [`subviews/`](ui_lovelace_minimalist/dashboard/views/subviews/README.md) - sub view configurations
-        - [ ] [`pi-hole.yaml`](ui_lovelace_minimalist/dashboard/views/subviews/pi-hole.yaml) - Pi-Hole dashboard
         - [ ] [`t1d.yaml`](ui_lovelace_minimalist/dashboard/views/subviews/t1d.yaml) - T1D dashboard
         - [x] [`z-wave.yaml`](ui_lovelace_minimalist/dashboard/views/subviews/z-wave.yaml) - Z-Wave status dashboard
       - [x] [`01-home.yaml`](ui_lovelace_minimalist/dashboard/views/01-home.yaml) - main dashboard configuration file

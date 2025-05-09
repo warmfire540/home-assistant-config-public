@@ -4,7 +4,6 @@ The subviews directory contains specialized dashboard views that complement the 
 
 ## Components
 
-- `pi-hole.yaml` - Network-wide ad blocking status and controls
 - `t1d.yaml` - Type 1 Diabetes monitoring and alerts
 - `z-wave.yaml` - Z-Wave network management and device control
 
