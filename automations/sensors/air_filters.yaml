@@ -46,3 +46,12 @@ action:
         - action: input_boolean.turn_off
           target:
             entity_id: input_boolean.air_filters_need_changed
+
+        - action: notify.family_ai
+          data:
+            title: Filters Decremented
+            message: false
+            data:
+              prompt: air filterrs changed
+              backup: The air filters were changed!
+              tag: air_filters

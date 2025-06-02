@@ -19,6 +19,7 @@ conditions:
   value_template: >
     {{ trigger.notification.notification_id in
       [
+        'air_filters',
         'cat_shit',
         'dishwasher_done',
         'rolo_done',
