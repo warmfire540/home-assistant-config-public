@@ -165,6 +165,8 @@ cards:
         view_layout:
           grid-area: garage
         area: garage
+        thresholds:
+          temperature: 90
         entities:
           - entity_id: binary_sensor.garage_door_tilt_window_door_is_open
             tap_action:
@@ -181,6 +183,8 @@ cards:
         view_layout:
           grid-area: attic
         area: attic
+        thresholds:
+          temperature: 100
         entities:
           - switch.water_softener_plug
 
@@ -191,6 +195,9 @@ cards:
         view_layout:
           grid-area: shed
         area: shed
+        thresholds:
+          temperature: 90
+          humidity: 70
         entities:
           - binary_sensor.shed_door_sensor_window_door_is_open
 
