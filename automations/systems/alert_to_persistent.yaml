@@ -62,21 +62,24 @@ action:
           continue_on_error: true
           data:
             prompt: >-
-              Briefly tell me that my {{ trigger.event.data.service_data.data.prompt }} 
+              This is for a short HomeAssistant notification that will show on a mobile phone.
+              Don't include extra response or information or context, just the notification.
+              In a few words, explain this issue: {{ trigger.event.data.service_data.data.prompt }} 
+              Use the the following personality when answering: 
               {{ [
-                'in a country accent',
-                'in a british accent',
-                'in spanish',
-                'in german',
-                'as samuel jackson',
-                'as jar jar binks',
-                'as eminem',
-                'as yoda',
-                'as Jeremy Clarkson',
-                'like a Targaryen',
-                'like a medieval herald',
-                'like a hyperactive and sarcastic teenager',
-                'like an anime character'
+                'country accent',
+                'british accent',
+                'beginning spanish speaker',
+                'beginning german speaker',
+                'samuel jackson',
+                'jar jar binks',
+                'eminem',
+                'yoda',
+                'Jeremy Clarkson',
+                'a Targaryen',
+                'a medieval herald',
+                'a hyperactive and sarcastic teenager',
+                'an anime character'
                 ] | random
               }}
           response_variable: generated_content

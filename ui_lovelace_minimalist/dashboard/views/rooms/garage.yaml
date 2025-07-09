@@ -61,25 +61,6 @@ cards:
       - type: custom:device-card
         device_id: 8fcd19d3e572dcb5a1ebf69380615300
 
-      - type: 'custom:vacuum-card'
-        entity: vacuum.strongboi
-        image: default
-        compact_view: false
-        show_name: true
-        show_toolbar: true
-        show_status: true
-        stats:
-          default:
-            - entity_id: sensor.strongboi_filter_lifespan
-              unit: '%'
-              subtitle: Filter
-            - entity_id: sensor.strongboi_main_brush_lifespan
-              unit: '%'
-              subtitle: Main Brush
-            - entity_id: sensor.strongboi_side_brush_lifespan
-              unit: '%'
-              subtitle: Side Brush
-
   #################
   # SENSORS
   #################

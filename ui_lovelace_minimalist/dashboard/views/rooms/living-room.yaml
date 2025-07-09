@@ -93,8 +93,6 @@ cards:
       - type: 'custom:button-card'
         template: card_title
         label: Vacuum
-
-      - type: custom:xiaomi-vacuum-map-card
         card_mod:
           style: |
             ha-card {
