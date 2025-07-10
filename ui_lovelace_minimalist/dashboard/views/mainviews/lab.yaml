@@ -9,7 +9,7 @@ layout:
     "control shares printer"
     "status-title . ."
     "rpi-has rpi-hole rpi-share"
-    "rpi-seed rpi-plex plex"
+    "rpi-seed rpi-plex ."
     "health . ."
   mediaquery:
     # portrait monitor
@@ -21,7 +21,7 @@ layout:
         "status-title printer"
         "rpi-has rpi-hole"
         "rpi-share rpi-seed"
-        "rpi-plex plex"
+        "rpi-plex ."
         "health . "
     # Smartphones
     'only screen and (max-width: 768px)':
@@ -37,7 +37,6 @@ layout:
         "rpi-share"
         "rpi-seed"
         "rpi-plex"
-        "plex"
         "health"
 cards:
   #################
@@ -243,11 +242,6 @@ cards:
         - pi_name: plex
         - icon: mdi:plex
         - name: Pi Plex
-
-  #################
-  # PLEX
-  #################
-  - type: conditional
     view_layout:
       grid-area: plex
     conditions:

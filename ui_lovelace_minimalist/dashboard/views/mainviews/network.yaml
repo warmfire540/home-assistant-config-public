@@ -171,11 +171,9 @@ cards:
                 show_state: false
           exclude:
             - entity_id: '*poat_rgb*'
-            - entity_id: '*plex*'
             - entity_id: '*seedbox*'
             - entity_id: '*mfc_7860*'
             - entity_id: '*poat_pi*'
-            - entity_id: 'media_player.xbox*'
             - entity_id: event.snack_station_notification
             - entity_id: event.washy_error
             - entity_id: sensor.washy_*_time
