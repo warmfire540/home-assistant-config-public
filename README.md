@@ -146,7 +146,6 @@ ui_lovelace_minimalist/
             ├── lights.yaml
             └── network.yaml
         └── subviews/
-            ├── t1d.yaml
             └── z-wave.yaml
         └── 01-home.yaml
     └── home-dashboard.yaml
@@ -186,7 +185,6 @@ Tracking sections I've reworked.
         - [x] [`lights.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/lights.yaml) - Quick view of all lights / switches
         - [x] [`network.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/network.yaml) - Quick view of my network
       - [ ] [`subviews/`](ui_lovelace_minimalist/dashboard/views/subviews/README.md) - sub view configurations
-        - [ ] [`t1d.yaml`](ui_lovelace_minimalist/dashboard/views/subviews/t1d.yaml) - T1D dashboard
         - [x] [`z-wave.yaml`](ui_lovelace_minimalist/dashboard/views/subviews/z-wave.yaml) - Z-Wave status dashboard
       - [x] [`01-home.yaml`](ui_lovelace_minimalist/dashboard/views/01-home.yaml) - main dashboard configuration file
     - [x] [`home-dashboard.yaml`](ui_lovelace_minimalist/dashboard/home-dashboard.yaml) - dashboard layout entrypoint
