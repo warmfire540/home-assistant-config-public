@@ -1,0 +1,43 @@
+#####
+# Creates an alert from sensor state changes
+# Generic automation for when sensors switch to "on" state
+#####
+
+alias: Create alert from sensor state change
+id: 92445b68-5feb-4aae-9d0a-1396bf8f7bd6
+
+trigger:
+  - trigger: state
+    entity_id:
+      # Add sensor entities here that should trigger notifications when they turn "on"
+      # Examples:
+      # - binary_sensor.front_door_contact
+      # - binary_sensor.water_leak_sensor
+      # - binary_sensor.motion_detector
+      # - sensor.air_quality_status
+    to: 'on'
+
+    # Optional: Add a minimum duration to avoid rapid state changes
+    # for:
+    #   seconds: 30
+
+action:
+  action: notify.family_ai
+  data:
+    title: '{{ trigger.to_state.attributes.friendly_name or trigger.entity_id }} Alert'
+    message: false
+    data:
+      prompt: >-
+        The {{ trigger.to_state.attributes.friendly_name or trigger.entity_id }} sensor 
+        has changed from {{ trigger.from_state.state }} to {{ trigger.to_state.state }}.
+        {% if trigger.to_state.attributes.device_class %}
+          This is a {{ trigger.to_state.attributes.device_class }} sensor.
+        {% endif %}
+        {% if trigger.to_state.last_changed %}
+          The state changed at {{ trigger.to_state.last_changed.strftime('%I:%M %p') }}.
+        {% endif %}
+        {% if trigger.to_state.attributes.battery_level %}
+          The sensor battery level is {{ trigger.to_state.attributes.battery_level }}%.
+        {% endif %}
+      backup: '{{ trigger.to_state.attributes.friendly_name or trigger.entity_id }} is now {{ trigger.to_state.state }}!'
+      tag: 'sensor_{{ trigger.entity_id | replace(".", "_") }}'

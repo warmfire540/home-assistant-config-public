@@ -1,0 +1,33 @@
+#####
+# Combined calendar maintenance tracking
+# Handles all calendar-based maintenance tasks by mapping calendar events to input_boolean entities
+#####
+
+alias: Calendar Maintenance Tracker
+id: e93bbeb7-81e3-4fad-a0e8-70ecadb63540
+
+trigger:
+  - trigger: calendar
+    event: start
+    entity_id: calendar.katchy
+    id: katchy
+  - trigger: calendar
+    event: start
+    entity_id: calendar.air_filters
+    id: air_filters
+  - trigger: calendar
+    event: start
+    entity_id: calendar.dishwasher
+    id: dishwasher
+
+variables:
+  # Define the mapping between calendar events and input_boolean entities
+  calendar_mapping:
+    katchy: input_boolean.katchy_needs_cleaned
+    air_filters: input_boolean.air_filters_need_changed
+    dishwasher: input_boolean.dishwasher_needs_cleaned
+
+action:
+  action: input_boolean.turn_on
+  target:
+    entity_id: '{{ calendar_mapping[trigger.id] }}'

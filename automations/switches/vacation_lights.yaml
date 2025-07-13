@@ -7,12 +7,12 @@ alias: Vacation Light Control
 id: 4990a561-6634-43eb-8e6c-f5c080a90699
 
 trigger:
-  - platform: state
+  - trigger: state
     entity_id:
       - sensor.last_scene
     to: Night
     id: lights-on
-  - platform: time
+  - trigger: time
     at: '01:00:00'
     id: lights-off
 
@@ -27,15 +27,15 @@ action:
         condition: trigger
         id: lights-on
       sequence:
-        - service: light.turn_on
+        - action: light.turn_on
           entity_id: light.dinette_light
           data:
             brightness_pct: 80
-        - service: light.turn_on
+        - action: light.turn_on
           entity_id: light.dining_room_light
           data:
             brightness_pct: 80
-        - service: notify.persistent_notification
+        - action: notify.persistent_notification
           data:
             message: Vacation lights turned on.
             title: Vacation mode!
@@ -44,11 +44,11 @@ action:
         condition: trigger
         id: lights-off
       sequence:
-        - service: light.turn_off
+        - action: light.turn_off
           entity_id: light.dinette_light
-        - service: light.turn_off
+        - action: light.turn_off
           entity_id: light.dining_room_light
-        - service: notify.persistent_notification
+        - action: notify.persistent_notification
           data:
             message: Vacation lights turned off.
             title: Vacation mode!
