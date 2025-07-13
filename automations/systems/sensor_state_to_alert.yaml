@@ -15,6 +15,7 @@ trigger:
       # - binary_sensor.water_leak_sensor
       # - binary_sensor.motion_detector
       # - sensor.air_quality_status
+      - binary_sensor.shed_door_sensor_window_door_is_open
     to: 'on'
 
     # Optional: Add a minimum duration to avoid rapid state changes
