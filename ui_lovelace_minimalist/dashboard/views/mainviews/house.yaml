@@ -4,6 +4,7 @@ subview: true
 type: custom:grid-layout
 layout:
   grid-template-areas: |
+    "banner banner banner banner"
     "sensors climate covers alerts"
     "batteries schedules tracking poat-phone"
     "batteries schedules tracking gina-phone"
@@ -11,6 +12,7 @@ layout:
     # portrait monitor
     'only screen and (min-width: 769px) and (max-width: 1400px)':
       grid-template-areas: |
+        "banner banner"
         "sensors climate"
         "alerts covers"
         "batteries schedules"
@@ -19,6 +21,7 @@ layout:
     # Smartphones
     'only screen and (max-width: 768px)':
       grid-template-areas: |
+        "banner"
         "sensors"
         "climate"
         "covers"
@@ -29,6 +32,35 @@ layout:
         "poat-phone"
         "gina-phone"
 cards:
+  #################
+  # VACATION MODE BANNER
+  #################
+  - type: conditional
+    conditions:
+      - entity: input_boolean.on_vacation
+        state: 'on'
+    card:
+      type: custom:button-card
+      view_layout:
+        grid-area: banner
+      name: '🏖️ VACATION MODE ACTIVE'
+      styles:
+        card:
+          - background-color: 'rgba(255, 193, 7, 0.2)'
+          - border: '2px solid #ffc107'
+          - border-radius: '10px'
+          - padding: '10px'
+        name:
+          - color: '#ff6b35'
+          - font-size: '18px'
+          - font-weight: 'bold'
+          - text-transform: 'uppercase'
+      tap_action:
+        action: call-service
+        service: input_boolean.toggle
+        service_data:
+          entity_id: input_boolean.on_vacation
+
   #################
   # HEADER
   #################

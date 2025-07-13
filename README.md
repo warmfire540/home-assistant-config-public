@@ -181,7 +181,7 @@ Tracking sections I've reworked.
       - [x] [`mainviews/`](ui_lovelace_minimalist/dashboard/views/mainviews/README.md) - sub view configurations
         - [x] [`cats.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/cats.yaml) - Cat station
         - [x] [`house.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/house.yaml) - House overview
-        - [x] [`lab.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/lab.yaml) - Quick view of the lab
+        - [ ] [`lab.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/lab.yaml) - Quick view of the lab
         - [x] [`lights.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/lights.yaml) - Quick view of all lights / switches
         - [x] [`network.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/network.yaml) - Quick view of my network
       - [ ] [`subviews/`](ui_lovelace_minimalist/dashboard/views/subviews/README.md) - sub view configurations

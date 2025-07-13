@@ -3,16 +3,46 @@ path: home
 type: custom:grid-layout
 layout:
   grid-template-areas: |
-    "welcome people"
+    "banner banner"
     "welcome people"
     "rooms rooms"
   mediaquery:
     '(max-width: 768px)':
       grid-template-areas: |
+        "banner"
         "welcome"
         "people"
         "rooms"
 cards:
+  #################
+  # VACATION MODE BANNER
+  #################
+  - type: conditional
+    conditions:
+      - entity: input_boolean.on_vacation
+        state: 'on'
+    card:
+      type: custom:button-card
+      view_layout:
+        grid-area: banner
+      name: '🏖️ VACATION MODE ACTIVE'
+      styles:
+        card:
+          - background-color: 'rgba(255, 193, 7, 0.2)'
+          - border: '2px solid #ffc107'
+          - border-radius: '10px'
+          - padding: '10px'
+        name:
+          - color: '#ff6b35'
+          - font-size: '18px'
+          - font-weight: 'bold'
+          - text-transform: 'uppercase'
+      tap_action:
+        action: call-service
+        service: input_boolean.toggle
+        service_data:
+          entity_id: input_boolean.on_vacation
+
   #################
   # STATUS CHIPS
   #################
