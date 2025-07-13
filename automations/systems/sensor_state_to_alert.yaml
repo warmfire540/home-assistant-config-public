@@ -25,7 +25,7 @@ trigger:
 action:
   action: notify.family_ai
   data:
-    title: '{{ trigger.to_state.attributes.friendly_name or trigger.entity_id }} Alert'
+    title: '{{ trigger.to_state.attributes.friendly_name or trigger.entity_id }} alert'
     message: false
     data:
       prompt: >-
@@ -33,9 +33,6 @@ action:
         has changed from {{ trigger.from_state.state }} to {{ trigger.to_state.state }}.
         {% if trigger.to_state.attributes.device_class %}
           This is a {{ trigger.to_state.attributes.device_class }} sensor.
-        {% endif %}
-        {% if trigger.to_state.last_changed %}
-          The state changed at {{ trigger.to_state.last_changed.strftime('%I:%M %p') }}.
         {% endif %}
         {% if trigger.to_state.attributes.battery_level %}
           The sensor battery level is {{ trigger.to_state.attributes.battery_level }}%.
