@@ -165,6 +165,9 @@ cards:
       - type: custom:device-card
         device_id: 75376456755137575411dd1b1c39567f
 
+      - type: custom:device-card
+        device_id: b77b9ded2d2433042874ccff80ce74b7
+
   #################
   # SENSORS
   #################

@@ -1,0 +1,23 @@
+#####
+# Counting number for gerbil alert thresholds
+#
+#####
+
+alert_cooldown_binary_sensor_queso_gerbil_motion_detected:
+  name: Alert Cooldown Binary Sensor Queso Gerbil Motion Detected
+  icon: mdi:rodent
+  restore: true
+  minimum: 0
+
+alert_cooldown_binary_sensor_guava_gerbil_motion_detected:
+  name: Alert Cooldown Binary Sensor Guava Gerbil Motion Detected
+  icon: mdi:rodent
+  restore: true
+  minimum: 0
+
+alert_cooldown_binary_sensor_espresso_or_bean_gerbil_motion_detected:
+  name: Alert Cooldown Binary Sensor Espresso Or Bean Gerbil Motion Detected
+  icon: mdi:rodent
+  restore: true
+  step: 2
+  minimum: 0

@@ -31,3 +31,6 @@
   navigation_path: /the-matrix/cats
   numeric_state_pass_threshold: 30
   numeric_state_warning_threshold: 10
+
+'binary_sensor.*_gerbil_motion_detected':
+  alert_threshold_minutes: 30
