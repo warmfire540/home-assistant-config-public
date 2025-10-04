@@ -124,6 +124,11 @@ cards:
         entities:
           - switch.sconce
           - climate.living_room
+        features:
+          - multi_light_background
+        lights:
+          - light.living_room_light
+          - switch.sconce
 
       #################
       # DINING ROOM
@@ -153,6 +158,12 @@ cards:
         entities:
           - switch.under_cabinet_lights
           - light.dinette_light
+        features:
+          - multi_light_background
+        lights:
+          - light.kitchen_light
+          - switch.under_cabinet_lights
+          - light.dinette_light
 
       #################
       # MASTER BEDROOM
@@ -179,6 +190,8 @@ cards:
         view_layout:
           grid-area: guest
         area: guest_bedroom
+        entities:
+          - switch.water_softener_plug
 
       #################
       # GUEST BATHROOM
@@ -215,8 +228,6 @@ cards:
         area: attic
         thresholds:
           temperature: 100
-        entities:
-          - switch.water_softener_plug
 
       #################
       # SHED

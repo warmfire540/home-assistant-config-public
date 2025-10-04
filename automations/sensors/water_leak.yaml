@@ -1,0 +1,19 @@
+#####
+# Close valves if a water leake
+#####
+
+alias: Water Leak
+id: 4fad704e-78ae-472f-a84d-c20a520e23da
+
+trigger:
+  - trigger: state
+    entity_id:
+      - binary_sensor.leak_sensors
+    from: 'off'
+    to: 'on'
+
+actions:
+  - alias: Turn off water valve
+    action: switch.turn_off
+    target:
+      entity_id:  switch.water_valve

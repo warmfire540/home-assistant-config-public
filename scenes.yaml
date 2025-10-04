@@ -13,6 +13,9 @@
     switch.garage_opener_plug:
       friendly_name: 'Garage Opener Plug '
       state: 'on'
+    switch.water_valve:
+      friendly_name: 'Water Valve'
+      state: 'on'
     climate.living_room:
       hvac_modes:
         - heat
@@ -67,10 +70,13 @@
       state: cool
     switch.water_softener_plug:
       icon: mdi:water-boiler
-      friendly_name: 'Water Softener Plug '
+      friendly_name: 'Water Softener Plug'
       state: 'off'
     switch.garage_opener_plug:
-      friendly_name: 'Garage Opener Plug '
+      friendly_name: 'Garage Opener Plug'
+      state: 'off'
+    switch.water_valve:
+      friendly_name: 'Water Valve'
       state: 'off'
   icon: mdi:plane-car
   metadata: {}

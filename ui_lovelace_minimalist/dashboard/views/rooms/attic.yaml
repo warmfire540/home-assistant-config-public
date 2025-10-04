@@ -30,23 +30,6 @@ cards:
       grid-area: header
 
   #################
-  # DEVICES
-  #################
-  - type: vertical-stack
-    view_layout:
-      grid-area: devices
-    cards:
-      - type: 'custom:button-card'
-        template: card_title
-        label: Devices
-      - type: 'custom:button-card'
-        template: card_light
-        entity: switch.water_softener_plug
-        variables:
-          ulm_card_light_name: Water Softener
-          ulm_card_light_color: green
-
-  #################
   # SENSORS
   #################
   - type: vertical-stack

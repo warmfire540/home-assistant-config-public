@@ -10,3 +10,7 @@ entities:
   - binary_sensor.water_heater_leak_sensor
   - binary_sensor.dishwasher_leak_sensor
   - binary_sensor.ac_pan_leak_sensor
+  - binary_sensor.water_valve_water_leak_detected
+  - binary_sensor.washy_water_leak_sensor_water_leak_detected
+  - binary_sensor.kitchen_sink_water_leak_sensor_water_leak_detected
+  - binary_sensor.master_bath_sink_water_leak_sensor_water_leak_detected
