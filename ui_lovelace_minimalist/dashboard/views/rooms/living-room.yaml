@@ -90,44 +90,8 @@ cards:
     view_layout:
       grid-area: vacuum
     cards:
-      - type: 'custom:button-card'
-        template: card_title
-        label: Vacuum
-        card_mod:
-          style: |
-            ha-card {
-              background: 
-                {% if is_state('binary_sensor.rolo_error', 'on') %}
-                  rgba(var(--color-background-red),var(--opacity-bg))
-                {% endif %}
-            }
-        entity: vacuum.rolo
-        map_source:
-          camera: camera.rolo_cleaning_map
-        calibration_source:
-          platform: Neato
-        vacuum_platform: Neato
-        map_locked: true
-        append_tiles: true
-        append_icons: true
-        tiles:
-          - tile_id: state
-            entity: vacuum.rolo
-            label: State
-            icon: mdi:map-marker
-          - tile_id: schedule
-            entity: switch.rolo_schedule
-            label: Schedule
-            icon: mdi:book-variant
-        icons:
-          - icon_id: dismiss-alert
-            entity: button.rolo_dismiss_alert
-            icon: mdi:button-pointer
-            tooltip: Dismiss alert
-          - icon_id: dismiss-alert
-            entity: switch.rolo_schedule
-            icon: mdi:book-variant
-            tooltip: Rolo schedule
+      - type: custom:device-card
+        device_id: 6076b6376fe98f5a6c43622822502fdd
 
   #################
   # SENSORS
@@ -162,13 +126,14 @@ cards:
           ulm_card_input_boolean_force_background_color: true
           ulm_card_input_boolean_color: red
 
-      - type: 'custom:button-card'
-        template: card_graph
-        entity: sensor.living_room_15_1min
-        variables:
-          ulm_card_graph_color: 'var(--google-yellow)'
-          ulm_card_graph_entity: sensor.living_room_15_1min
-          ulm_card_graph_name: Electricity 1 min
+      - type: custom:area-energy-card
+        area: living_room
+        features:
+          - hide_name
+        chart:
+          axis_style: none
+          line_type: gradient_no_fill
+
 
   #################
   # DEVICE HEALTH

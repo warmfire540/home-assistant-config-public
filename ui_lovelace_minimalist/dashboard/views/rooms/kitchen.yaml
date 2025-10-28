@@ -186,38 +186,13 @@ cards:
           ulm_card_input_boolean_force_background_color: true
           ulm_card_input_boolean_color: red
 
-      - type: horizontal-stack
-        cards:
-          - type: 'custom:button-card'
-            template: card_graph
-            entity: sensor.kitchen_outlets_1_9_1min
-            variables:
-              ulm_card_graph_color: 'var(--google-yellow)'
-              ulm_card_graph_entity: sensor.kitchen_outlets_1_9_1min
-              ulm_card_graph_name: Outlets 1
-          - type: 'custom:button-card'
-            template: card_graph
-            entity: sensor.kitchen_outlets_2_fridge_11_1min
-            variables:
-              ulm_card_graph_color: 'var(--google-yellow)'
-              ulm_card_graph_entity: sensor.kitchen_outlets_2_fridge_11_1min
-              ulm_card_graph_name: Outlets 2
-      - type: horizontal-stack
-        cards:
-          - type: 'custom:button-card'
-            template: card_graph
-            entity: sensor.kitchen_outlets_3_10_1min
-            variables:
-              ulm_card_graph_color: 'var(--google-yellow)'
-              ulm_card_graph_entity: sensor.kitchen_outlets_3_10_1min
-              ulm_card_graph_name: Outlets 3
-          - type: 'custom:button-card'
-            template: card_graph
-            entity: sensor.range_6_1min
-            variables:
-              ulm_card_graph_color: 'var(--google-yellow)'
-              ulm_card_graph_entity: sensor.range_6_1min
-              ulm_card_graph_name: Range
+      - type: custom:area-energy-card
+        area: kitchen
+        features:
+          - hide_name
+        chart:
+          axis_style: none
+          line_type: gradient_no_fill
 
   #################
   # DEVICE HEALTH

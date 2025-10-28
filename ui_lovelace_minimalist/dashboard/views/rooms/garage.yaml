@@ -71,30 +71,14 @@ cards:
       - type: custom:button-card
         template: card_title
         label: sensor
-
-      - type: horizontal-stack
-        cards:
-          - type: custom:button-card
-            template: card_graph
-            entity: sensor.clothes_washer_13_1min
-            variables:
-              ulm_card_graph_color: 'var(--google-yellow)'
-              ulm_card_graph_entity: sensor.clothes_washer_13_1min
-              ulm_card_graph_name: Washer
-          - type: custom:button-card
-            template: card_graph
-            entity: sensor.dryer_1_1min
-            variables:
-              ulm_card_graph_color: 'var(--google-yellow)'
-              ulm_card_graph_entity: sensor.dryer_1_1min
-              ulm_card_graph_name: Dryer
-      - type: custom:button-card
-        template: card_graph
-        entity: sensor.water_heater_5_1min
-        variables:
-          ulm_card_graph_color: 'var(--google-yellow)'
-          ulm_card_graph_entity: sensor.water_heater_5_1min
-          ulm_card_graph_name: Water Heater
+        
+      - type: custom:area-energy-card
+        area: garage
+        features:
+          - hide_name
+        chart:
+          axis_style: none
+          line_type: gradient_no_fill
 
   #################
   # DEVICE HEALTH

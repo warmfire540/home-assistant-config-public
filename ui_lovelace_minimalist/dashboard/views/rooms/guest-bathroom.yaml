@@ -38,13 +38,15 @@ cards:
         template: card_title
         label: Sensors
 
-      - type: 'custom:button-card'
-        template: card_graph
-        entity: sensor.office_g_bath_garage_3_1min
-        variables:
-          ulm_card_graph_color: 'var(--google-yellow)'
-          ulm_card_graph_entity: sensor.office_g_bath_garage_3_1min
-          ulm_card_graph_name: Electricity 1 min
+      - type: custom:area-energy-card
+        area: guest_bath
+        entities:
+          - sensor.office_g_bath_garage_3_1min
+        features:
+          - hide_name
+        chart:
+          axis_style: none
+          line_type: gradient_no_fill
 
       - type: 'custom:button-card'
         template: card_input_boolean

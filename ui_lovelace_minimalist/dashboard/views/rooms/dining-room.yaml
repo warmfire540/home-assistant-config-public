@@ -65,6 +65,9 @@ cards:
         variables:
           ulm_card_input_boolean_color: red
           ulm_card_input_boolean_force_background_color: true
+      
+      - type: custom:device-card
+        device_id: 543bb059f4db559c3d1a9b63dbf9d6c6
 
   #################
   # SENSORS
