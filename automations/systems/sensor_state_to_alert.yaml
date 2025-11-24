@@ -22,7 +22,15 @@ trigger:
       - binary_sensor.guava_gerbil_motion_detected
       - binary_sensor.espresso_or_bean_gerbile_motion_detected
       - binary_sensor.shed_door_sensor_window_door_is_open
+      - binary_sensor.office_door_window_door_is_open
     to: 'on'
+
+  
+  - trigger: state
+    entity_id:
+      # Add sensor entities here that should trigger notifications when they turn "on"
+      - switch.water_valve
+    to: 'off'
 
 condition:
   # Only proceed if no threshold is set, or if enough time has passed since last alert

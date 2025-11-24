@@ -85,6 +85,7 @@ cards:
         "label label label label label label"
         "living dining office kitchen bedroom bath"
         "guest spare garage attic shed server"
+        "patio . . . . ."
       mediaquery:
         # portrait monitor
         'only screen and (min-width: 769px) and (max-width: 1400px)':
@@ -94,6 +95,7 @@ cards:
             "living dining office kitchen "
             "bedroom bath guest spare"
             "garage attic shed server"
+            "patio . . ."
         # Smartphones
         'only screen and (max-width: 768px)':
           grid-template-columns: 1fr 1fr
@@ -105,6 +107,7 @@ cards:
             "guest spare"
             "garage attic"
             "shed server"
+            "patio ."
     view_layout:
       grid-area: rooms
     cards:
@@ -145,8 +148,20 @@ cards:
         view_layout:
           grid-area: office
         area: office
+        features:
+          - multi_light_background
+        lights:
+          - light.office_light
+        entity:
+          entity_id: camera.gerbil
+          styles:
+            "--opacity-icon-fill-inactive": 1
         entities:
+          - entity_id: binary_sensor.office_door_window_door_is_open
+            off_color: green
+            on_color: red
           - binary_sensor.poat_rgb_connectivity
+
 
       #################
       # KITCHEN
@@ -208,6 +223,10 @@ cards:
         view_layout:
           grid-area: garage
         area: garage
+        entity:
+          entity_id: camera.garage
+          styles:
+            "--opacity-icon-fill-inactive": 1
         thresholds:
           temperature: 90
         entities:
@@ -252,3 +271,15 @@ cards:
         humidity_sensor: sensor.office_climate_humidity
         temperature_sensor: sensor.office_climate_air_temperature
         navigate: lab
+
+      #################
+      # Patio
+      #################
+      - type: custom:room-summary-card
+        view_layout:
+          grid-area: patio
+        area: patio
+        entity:
+          entity_id: camera.patio
+          styles:
+            "--opacity-icon-fill-inactive": 1

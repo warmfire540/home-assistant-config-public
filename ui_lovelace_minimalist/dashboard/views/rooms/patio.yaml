@@ -1,0 +1,42 @@
+title: 'Patio'
+path: 'patio'
+subview: true
+type: custom:grid-layout
+layout:
+  grid-template-areas: |
+    "header ."
+    "devices ."
+  mediaquery:
+    # portrait monitor
+    'only screen and (min-width: 769px) and (max-width: 1400px)':
+      grid-template-areas: |
+        "header header"
+        "devices devices"
+    # Smartphones
+    'only screen and (max-width: 768px)':
+      grid-template-areas: |
+        "header"
+        "devices"
+cards:
+  #################
+  # HEADER
+  #################
+  - type: custom:button-card
+    template: room_header
+    view_layout:
+      grid-area: header
+
+  #################
+  # DEVICES
+  #################
+  - type: vertical-stack
+    view_layout:
+      grid-area: devices
+    cards:
+      - type: 'custom:button-card'
+        template: card_title
+        label: Devices
+
+      - type: custom:advanced-camera-card
+        cameras:
+          - camera_entity: camera.patio

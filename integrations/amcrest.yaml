@@ -1,0 +1,21 @@
+#####
+# Configures the Amcrest integration
+#
+# https://www.home-assistant.io/integrations/amcrest/
+#####
+
+amcrest:
+  - host: 192.168.4.193
+    username: admin
+    password: 2ecxJNs5
+    name: Patio
+
+  - host: 192.168.4.194
+    username: admin
+    password: 2ecxJNs5
+    name: Gerbil
+
+  - host: 192.168.4.199
+    username: admin
+    password: 2ecxJNs5
+    name: Garage

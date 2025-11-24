@@ -40,6 +40,10 @@ cards:
         template: card_title
         label: Devices
 
+      - type: custom:advanced-camera-card
+        cameras:
+          - camera_entity: camera.gerbil
+
       - type: entities
         entities:
           - type: custom:button-card
