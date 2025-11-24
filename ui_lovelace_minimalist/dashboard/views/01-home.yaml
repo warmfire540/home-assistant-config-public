@@ -124,6 +124,10 @@ cards:
         view_layout:
           grid-area: living
         area: living_room
+        entity:
+          entity_id: camera.living_room
+          styles:
+            "--opacity-icon-fill-inactive": 1
         entities:
           - switch.sconce
           - climate.living_room
@@ -247,6 +251,10 @@ cards:
         area: attic
         thresholds:
           temperature: 100
+        entity:
+          entity_id: camera.front
+          styles:
+            "--opacity-icon-fill-inactive": 1
 
       #################
       # SHED

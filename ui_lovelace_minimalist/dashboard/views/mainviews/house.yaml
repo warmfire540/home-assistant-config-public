@@ -86,6 +86,8 @@ cards:
           - camera_entity: camera.patio
           - camera_entity: camera.gerbil
           - camera_entity: camera.garage
+          - camera_entity: camera.front
+          - camera_entity: camera.living_room
         live:
           display:
             mode: grid

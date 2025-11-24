@@ -146,6 +146,10 @@ cards:
         template: card_title
         label: Device Health
 
+      - type: custom:advanced-camera-card
+        cameras:
+          - camera_entity: camera.living_room
+
       - type: custom:zwave-device-center
         area: living_room
 

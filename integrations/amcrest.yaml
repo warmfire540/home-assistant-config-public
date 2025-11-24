@@ -19,3 +19,13 @@ amcrest:
     username: admin
     password: 2ecxJNs5
     name: Garage
+
+  - host: 192.168.4.200
+    username: admin
+    password: 2ecxJNs5
+    name: Front
+
+  - host: 192.168.4.202
+    username: admin
+    password: 2ecxJNs5
+    name: Living Room
