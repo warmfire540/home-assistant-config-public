@@ -57,15 +57,16 @@ action:
               entity_id: input_boolean.poat_mute
               state: 'off'
       sequence:
-        - alias: Call Google Gemini AI to generate message
-          action: google_generative_ai_conversation.generate_content
+        - alias: Call AI to generate message
+          action: ai_task.generate_data
           continue_on_error: true
           data:
-            prompt: >-
+            task_name: "home alert notification"
+            instructions: >-
               This is for a short HomeAssistant notification that will show on a mobile phone.
               Don't include extra response or information or context, just the notification.
-              In a few words, explain this issue: {{ trigger.event.data.service_data.data.prompt }} 
-              Use the the following personality when answering: 
+              In a few words, explain this issue: {{ trigger.event.data.service_data.data.prompt }}
+              Use the the following personality when answering:
               {{ [
                 'country accent',
                 'british accent',
@@ -86,7 +87,7 @@ action:
         - alias: Set variable for message
           variables:
             message: >-
-              {% set ai_response = generated_content['text'] if (generated_content is defined) else trigger.event.data.service_data.data.backup %}
+              {% set ai_response = generated_content.data if (generated_content is defined and generated_content.data is defined) else trigger.event.data.service_data.data.backup %}
 
               {% if (trigger.event.data.service_data.message != 'False' and trigger.event.data.service_data.message != false) %}
                 {{ ai_response }}
