@@ -232,7 +232,8 @@ cards:
           styles:
             "--opacity-icon-fill-inactive": 1
         thresholds:
-          temperature: 90
+          temperature:
+            - value: 90
         entities:
           - entity_id: binary_sensor.garage_door_tilt_window_door_is_open
             tap_action:
@@ -250,7 +251,8 @@ cards:
           grid-area: attic
         area: attic
         thresholds:
-          temperature: 100
+          temperature: 
+            - value: 100
         entity:
           entity_id: camera.front
           styles:
@@ -264,8 +266,10 @@ cards:
           grid-area: shed
         area: shed
         thresholds:
-          temperature: 90
-          humidity: 70
+          temperature: 
+            - value: 90
+          humidity: 
+            - value: 70
         entities:
           - binary_sensor.shed_door_sensor_window_door_is_open
 

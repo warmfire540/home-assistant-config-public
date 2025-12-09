@@ -60,6 +60,12 @@ cards:
         variables:
           ulm_chip_navigate_path: z-wave
           ulm_chip_navigate_icon: mdi:z-wave
+      - type: custom:button-card
+        template: chip_navigate
+        label: 'Cameras'
+        variables:
+          ulm_chip_navigate_path: cameras
+          ulm_chip_navigate_icon: mdi:cctv
 
   #################
   # PI CONTROL

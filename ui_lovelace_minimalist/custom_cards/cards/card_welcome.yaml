@@ -33,6 +33,9 @@ card_welcome:
       icon: mdi:network
       name: Net
       color: red
+    subview_1:
+      nav: cameras
+      icon: mdi:cctv
 
   show_icon: false
   show_label: true
@@ -150,16 +153,16 @@ card_welcome:
           entity_3: '[[[ return variables.entity_3 ]]]'
           entity_4: '[[[ return variables.entity_4 ]]]'
           entity_5: '[[[ return variables.entity_5 ]]]'
-    # item4:
-    #   card:
-    #     type: 'custom:button-card'
-    #     template: 'card_sub_views_nav'
-    #     styles:
-    #       card:
-    #         - padding: '4px'
-    #     variables:
-    #       subview_1: '[[[ return variables.subview_1 ]]]'
-    #       subview_2: '[[[ return variables.subview_2 ]]]'
+    item4:
+      card:
+        type: 'custom:button-card'
+        template: 'card_sub_views_nav'
+        styles:
+          card:
+            - padding: '4px'
+        variables:
+          subview_1: '[[[ return variables.subview_1 ]]]'
+          subview_2: '[[[ return variables.subview_2 ]]]'
 
 card_welcome_title:
   tap_action:
