@@ -71,6 +71,13 @@ cards:
       - type: custom:button-card
         template: card_title
         label: sensor
+
+      - type: 'custom:button-card'
+        template: card_input_boolean
+        entity: input_boolean.litter_robots_needs_cleaned
+        variables:
+          ulm_card_input_boolean_force_background_color: true
+          ulm_card_input_boolean_color: red
         
       - type: custom:area-energy-card
         area: garage

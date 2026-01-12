@@ -19,6 +19,10 @@ trigger:
     event: start
     entity_id: calendar.dishwasher
     id: dishwasher
+  - trigger: calendar
+    event: start
+    entity_id: calendar.litter_robots
+    id: litter_robots
 
 variables:
   # Define the mapping between calendar events and input_boolean entities
@@ -26,6 +30,7 @@ variables:
     katchy: input_boolean.katchy_needs_cleaned
     air_filters: input_boolean.air_filters_need_changed
     dishwasher: input_boolean.dishwasher_needs_cleaned
+    litter_robots: input_boolean.litter_robots_needs_cleaned
 
 action:
   action: input_boolean.turn_on

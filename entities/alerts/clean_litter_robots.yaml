@@ -1,0 +1,19 @@
+#####
+# Alert for litter robot cleaning.
+#
+#####
+
+clean_litter_robots:
+  name: Clean Litter Robots
+  entity_id: input_boolean.litter_robots_needs_cleaned
+  title: 🐱 Clean Litter Robots!
+  message: false
+  done_message: clear_notification
+  state: 'on'
+  repeat: 300
+  data:
+    tag: clean_litter_robots
+    prompt: clean the litter robots
+    backup: Clean the litter robots.
+  notifiers:
+    - family_ai

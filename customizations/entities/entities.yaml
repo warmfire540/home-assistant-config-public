@@ -39,6 +39,9 @@ input_boolean.air_filters_need_changed:
 input_boolean.dishwasher_needs_cleaned:
   navigation_path: /the-matrix/kitchen
 
+input_boolean.litter_robots_needs_cleaned:
+  navigation_path: /the-matrix/garage
+
 # counters
 counter.homeassistant_warnings:
   on_color: yellow

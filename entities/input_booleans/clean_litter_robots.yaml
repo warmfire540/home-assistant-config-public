@@ -1,0 +1,8 @@
+#####
+# If litter robots need cleaned
+#
+#####
+
+litter_robots_needs_cleaned:
+  name: Clean Litter Robots
+  icon: mdi:cat
