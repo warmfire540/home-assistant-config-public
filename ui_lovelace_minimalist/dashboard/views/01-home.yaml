@@ -164,7 +164,7 @@ cards:
           - entity_id: binary_sensor.office_door_window_door_is_open
             off_color: green
             on_color: red
-          - binary_sensor.poat_rgb_connectivity
+          - sensor.poat_rgb_session_state
 
 
       #################

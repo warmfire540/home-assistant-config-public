@@ -15,7 +15,7 @@ mqtt_control:
         if (variables.device === 'homeassistant')
           return 'script.reboot_home_assistant';
         if (variables.device === 'poat_rgb')
-          return 'button.poat_rgb_power_reboot';
+          return 'button.poat_rgb_reboot';
         return `button.${variables.device}_rpi_reboot_${variables.device}_command`;
       ]]]
     shutdown_entity: >
@@ -23,7 +23,7 @@ mqtt_control:
         if (variables.device === 'homeassistant')
           return 'script.shutdown_home_assistant';
         if (variables.device === 'poat_rgb')
-          return 'button.poat_rgb_power_shutdown';
+          return 'button.poat_rgb_shutdown';
         return `button.${variables.device}_rpi_shutdown_${variables.device}_command`;
       ]]]
     restore_entity: >
@@ -31,7 +31,7 @@ mqtt_control:
         if (variables.device === 'homeassistant')
           return 'script.reboot_home_assistant';
         if (variables.device === 'poat_rgb')
-          return 'button.poat_rgb_power_sleep';
+          return 'button.poat_rgb_sleep';
         return `button.${variables.device}_rpi_restart_service_${variables.device}_command`;
       ]]]
 

@@ -54,3 +54,8 @@ switch.water_softener_plug:
 
 switch.sconce:
   on_color: pink
+
+# sensors
+sensor.seedbox_vpn_on:
+  on_color: green
+  off_color: red

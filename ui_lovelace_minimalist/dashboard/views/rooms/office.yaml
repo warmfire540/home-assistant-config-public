@@ -51,8 +51,8 @@ cards:
             variables:
               device: poat_rgb
               entity:
-                id: sensor.poat_rgb_uptime
-                name: uptime
+                id: sensor.poat_rgb_cpu_load
+                name: load
 
       - type: horizontal-stack
         cards:

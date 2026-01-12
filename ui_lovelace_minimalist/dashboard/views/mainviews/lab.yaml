@@ -113,6 +113,13 @@ cards:
           - type: custom:button-card
             template: mqtt_control
             variables:
+              device: poat_rgb
+              entity:
+                id: sensor.poat_rgb_cpu_load
+                name: load
+          - type: custom:button-card
+            template: mqtt_control
+            variables:
               device: poat_hole
               entity:
                 id: sensor.pi_hole_server_last_backup
