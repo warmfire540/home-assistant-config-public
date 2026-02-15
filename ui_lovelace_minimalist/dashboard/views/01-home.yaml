@@ -144,6 +144,8 @@ cards:
         view_layout:
           grid-area: dining
         area: dining_room
+        entities:
+          - media_player.living_room_tv
 
       #################
       # OFFICE
@@ -164,7 +166,7 @@ cards:
           - entity_id: binary_sensor.office_door_window_door_is_open
             off_color: green
             on_color: red
-          - sensor.poat_rgb_session_state
+          - media_player.office_tv
 
 
       #################
