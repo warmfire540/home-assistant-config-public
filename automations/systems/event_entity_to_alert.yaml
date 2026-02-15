@@ -1,0 +1,32 @@
+#####
+# Creates an alert from event entity state changes
+# Event entities (e.g. event.washy_error) use timestamps as state - any state change
+# means the event fired. See: https://home-assistant.io/integrations/event/
+#####
+
+alias: Create alert from event entity
+id: b5e8f2c1-7a3d-4b9e-8c2f-1d6a4e9b3c7f
+
+trigger:
+  - trigger: state
+    entity_id:
+      # Add event entities here - triggers notification on any state change (event fired)
+      - event.washy_error
+      - event.washy_notification
+    not_from:
+      - unavailable
+    not_to:
+      - unavailable
+      - unknown
+
+action:
+  - action: notify.family_ai
+    data:
+      title: '{{ trigger.to_state.attributes.friendly_name or trigger.entity_id | replace("_", " ") | replace(".", " ") | title }}'
+      message: false
+      data:
+        prompt: >-
+          The {{ trigger.to_state.attributes.friendly_name or trigger.entity_id }} event
+          has fired. Event type: {{ trigger.to_state.attributes.event_type | default('unknown') }}.
+        backup: '{{ trigger.to_state.attributes.friendly_name or trigger.entity_id | replace(".", " ") | replace("_", " ") | title }}!'
+        tag: 'event_{{ trigger.entity_id | replace(".", "_") }}'

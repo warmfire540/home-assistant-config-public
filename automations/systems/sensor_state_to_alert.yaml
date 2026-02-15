@@ -13,6 +13,10 @@ variables:
   threshold_minutes: "{{ state_attr(trigger.entity_id, 'alert_threshold_minutes') }}"
   # Create the counter entity name for this sensor
   counter_entity: "counter.alert_cooldown_{{ trigger.entity_id | replace('.', '_') | replace('-', '_') }}"
+  # Escalate to critical when shed opens late at night (12am–6am)
+  is_critical: >-
+    {{ trigger.entity_id == 'binary_sensor.shed_door_sensor_window_door_is_open'
+       and (now().hour >= 0 or now().hour < 6) }}
 
 trigger:
   - trigger: state
@@ -22,10 +26,9 @@ trigger:
       # - binary_sensor.guava_gerbil_motion_detected
       # - binary_sensor.espresso_or_bean_gerbil_motion_detected
       - binary_sensor.shed_door_sensor_window_door_is_open
-      #- binary_sensor.office_door_window_door_is_open
+      - binary_sensor.office_door_window_door_is_open
     to: 'on'
 
-  
   - trigger: state
     entity_id:
       # Add sensor entities here that should trigger notifications when they turn "on"
@@ -82,3 +85,8 @@ action:
           {% endif %}
         backup: '{{ trigger.to_state.attributes.friendly_name or trigger.entity_id }} is now {{ trigger.to_state.state }}!'
         tag: 'sensor_{{ trigger.entity_id | replace(".", "_") }}'
+        push:
+          sound:
+            name: default
+            critical: '{{ 1 if is_critical else 0 }}'
+            volume: 1.0

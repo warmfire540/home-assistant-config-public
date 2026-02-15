@@ -66,6 +66,23 @@ Monitors Home Assistant logs for important events.
 - Triggers notifications for system issues
 - Enables proactive system maintenance
 
+### event_entity_to_alert.yaml
+
+Creates AI-generated alerts from event entity state changes.
+
+**Purpose:**
+
+- Monitors event entities (e.g. event.washy_error) for state changes
+- Event entities use timestamps as state—any change means the event fired
+- Generates notifications when configured event entities trigger
+
+**Key Features:**
+
+- Triggers on any state change (excludes unavailable/unknown)
+- Uses notify.family_ai for consistent alert delivery
+- Add event entities to the entity_id list to enable notifications
+- See: https://home-assistant.io/integrations/event/
+
 ### sensor_state_to_alert.yaml
 
 Creates AI-generated alerts from sensor state changes.
