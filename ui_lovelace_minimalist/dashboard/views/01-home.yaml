@@ -37,11 +37,6 @@ cards:
           - font-size: '18px'
           - font-weight: 'bold'
           - text-transform: 'uppercase'
-      tap_action:
-        action: call-service
-        service: input_boolean.toggle
-        service_data:
-          entity_id: input_boolean.on_vacation
 
   #################
   # STATUS CHIPS
@@ -213,6 +208,10 @@ cards:
         area: guest_bedroom
         entities:
           - switch.water_softener_plug
+        background:
+          image_entity: person.gina
+          options:
+            - icon_background
 
       #################
       # GUEST BATHROOM
@@ -244,6 +243,7 @@ cards:
               service_data:
                 entity_id: switch.garage_opener
           - switch.garage_opener_plug
+          - switch.water_valve
 
       #################
       # ATTIC
@@ -285,6 +285,9 @@ cards:
         humidity_sensor: sensor.office_climate_humidity
         temperature_sensor: sensor.office_climate_air_temperature
         navigate: lab
+        background:
+          options:
+            - icon_background
 
       #################
       # Patio

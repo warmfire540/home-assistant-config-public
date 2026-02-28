@@ -55,6 +55,10 @@ switch.water_softener_plug:
   on_color: green
   off_color: red
 
+switch.water_valve:
+  on_color: green
+  off_color: red
+
 switch.sconce:
   on_color: pink
 

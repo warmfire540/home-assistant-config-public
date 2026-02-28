@@ -14,14 +14,16 @@
   - name: Devices Offline
     unique_id: e9f2af25-7bab-4ad2-8cd0-47f2b3cae058
     icon: 'mdi:cloud-off-outline'
-    state: "{{ states
-| rejectattr('domain','in',['button', 'tts', 'stt', 'number', 'conversation', 'automation', 'script'])
-| selectattr('state','in', ['unknown', 'unavailable'])
-| rejectattr('entity_id','search', 'poat_rgb|mfc_7860|seedbox|poat_pi|washy_error|washy_delay_starts_in|washy_operation|washy_remaining_time|washy_total_time|wild_trail_cam_battery_problem')
-| rejectattr('entity_id','in', ['event.snack_station_notification', 'media_player.lg_webos_tv_oled42c4pua'])
-| rejectattr('entity_id', 'in', integration_entities('cast'))
-| rejectattr('name','search', 'Kitchen Bulb')
-| list
-| count }}"
+    state: |
+      {{ states
+        | rejectattr('domain','in',['button', 'tts', 'stt', 'number', 'conversation', 'automation', 'script'])
+        | selectattr('state','in', ['unknown', 'unavailable'])
+        | rejectattr('entity_id','search', 'poat_rgb|mfc_7860|seedbox|poat_pi|washy_error|washy_delay_starts_in|washy_operation|washy_remaining_time|washy_total_time|wild_trail_cam_battery_problem|ipad')
+        | rejectattr('entity_id','in', ['event.snack_station_notification', 'media_player.lg_webos_tv_oled42c4pua'])
+        | rejectattr('entity_id', 'in', integration_entities('cast'))
+        | rejectattr('name','search', 'Kitchen Bulb')
+        | list
+        | count 
+      }}
     attributes:
       navigation_path: /the-matrix/network?anchor=disconnected

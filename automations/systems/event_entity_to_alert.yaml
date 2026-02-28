@@ -13,6 +13,8 @@ trigger:
       # Add event entities here - triggers notification on any state change (event fired)
       - event.washy_error
       - event.washy_notification
+      - event.charmander_notification
+      - event.snack_station_notification
     not_from:
       - unavailable
     not_to:

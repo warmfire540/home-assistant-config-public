@@ -111,6 +111,11 @@
       friendly_name: Kitchen Blinds
       supported_features: 15
       state: open
+    cover.office_blinds:
+      current_position: 80
+      device_class: shade
+      friendly_name: Office Blinds
+      supported_features: 15
   icon: mdi:weather-sunset-up
   metadata: {}
 - id: '1719334006665'
@@ -487,7 +492,6 @@
       color_mode: hs
       brightness: 255
       color_temp_kelvin:
-      color_temp:
       hs_color:
         - 5
         - 57.6
@@ -512,7 +516,6 @@
       color_mode: hs
       brightness: 255
       color_temp_kelvin:
-      color_temp:
       hs_color:
         - 235
         - 75.3
@@ -537,7 +540,6 @@
       color_mode: hs
       brightness: 255
       color_temp_kelvin:
-      color_temp:
       hs_color:
         - 215
         - 76.1
@@ -562,7 +564,6 @@
       color_mode: hs
       brightness: 255
       color_temp_kelvin:
-      color_temp:
       hs_color:
         - 298
         - 58.8
