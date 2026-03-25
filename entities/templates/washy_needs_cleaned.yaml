@@ -1,0 +1,10 @@
+####
+# On when washer cycle count is above the cleaning threshold
+#
+#####
+
+- binary_sensor:
+    - name: Washy Needs Cleaned
+      unique_id: c7e2a91b-4f3d-4e1a-9c88-b2a5f7d3e1c0
+      state: "{{ states('sensor.washy_cycles') | float(0) > 30 }}"
+      icon: mdi:washing-machine-alert

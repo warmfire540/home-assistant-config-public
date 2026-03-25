@@ -5,7 +5,7 @@ type: custom:grid-layout
 layout:
   grid-template-areas: |
     ". nav ."
-    "pi pi ."
+    "pi . ."
     "control shares printer"
     "status-title . ."
     "rpi-has rpi-hole rpi-share"
@@ -16,7 +16,7 @@ layout:
     'only screen and (min-width: 769px) and (max-width: 1400px)':
       grid-template-areas: |
         "nav ."
-        "pi pi"
+        "pi ."
         "control shares"
         "status-title printer"
         "rpi-has rpi-hole"

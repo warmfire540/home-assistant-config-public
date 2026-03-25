@@ -116,6 +116,7 @@
       device_class: shade
       friendly_name: Office Blinds
       supported_features: 15
+      state: open
   icon: mdi:weather-sunset-up
   metadata: {}
 - id: '1719334006665'

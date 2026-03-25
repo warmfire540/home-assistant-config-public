@@ -1,0 +1,39 @@
+#####
+# Notifies when blinds battery reaches 100% from below (charging complete)
+#####
+
+alias: Blinds battery charged notification
+id: a10afa5e-b05d-4308-b14b-ec5d0ada026e
+
+trigger:
+  - trigger: state
+    entity_id:
+      - sensor.bedroom_blinds_battery
+      - sensor.dining_room_blinds_battery
+      - sensor.guest_bedroom_blinds_battery
+      - sensor.kitchen_blinds_battery
+      - sensor.living_room_blinds_battery
+      - sensor.office_blinds_battery
+    to:
+      - '100'
+      - '100.0'
+    for:
+      seconds: 15
+
+condition:
+  - condition: template
+    value_template: >-
+      {{ trigger.from_state.state not in ['unknown', 'unavailable']
+         and trigger.from_state.state | int(0) < 100 }}
+
+action:
+  - action: notify.family_ai
+    data:
+      title: '{{ trigger.to_state.attributes.friendly_name }} fully charged'
+      message: false
+      data:
+        prompt: >-
+          The {{ trigger.to_state.attributes.friendly_name }} has reached 100% battery.
+          Charging is complete - you can unplug it.
+        backup: '{{ trigger.to_state.attributes.friendly_name }} is fully charged!'
+        tag: 'blinds_charged_{{ trigger.entity_id | replace(".", "_") }}'
