@@ -1,0 +1,178 @@
+---
+title: Vacation
+path: vacation
+icon: mdi:beach
+subview: true
+type: custom:grid-layout
+layout:
+  grid-template-areas: |
+    "header header"
+    "cameras cameras"
+    "people map"
+    "security security"
+    "vacation vacation"
+  mediaquery:
+    'only screen and (min-width: 769px) and (max-width: 1400px)':
+      grid-template-areas: |
+        "header header"
+        "cameras cameras"
+        "people map"
+        "security security"
+        "vacation vacation"
+    'only screen and (max-width: 768px)':
+      grid-template-areas: |
+        "header"
+        "cameras"
+        "people"
+        "map"
+        "security"
+        "vacation"
+cards:
+  #################
+  # HEADER
+  #################
+  - type: custom:button-card
+    template: mainview_header
+    view_layout:
+      grid-area: header
+    variables:
+      area: home
+      status_path: 'no'
+
+  #################
+  # CAMERAS (same set as House view)
+  #################
+  - type: vertical-stack
+    view_layout:
+      grid-area: cameras
+    cards:
+      - type: custom:button-card
+        template: card_title
+        label: Cameras
+
+      - type: custom:advanced-camera-card
+        cameras:
+          - camera_entity: camera.patio
+          - camera_entity: camera.gerbil
+          - camera_entity: camera.garage
+          - camera_entity: camera.front
+          - camera_entity: camera.living_room
+        live:
+          display:
+            mode: grid
+            grid_columns: 2
+        status_bar:
+          style: hover-card
+
+  #################
+  # PEOPLE
+  #################
+  - type: vertical-stack
+    view_layout:
+      grid-area: people
+    cards:
+      - type: custom:button-card
+        template: card_title
+        label: People
+
+      - type: custom:button-card
+        template: card_family
+        variables:
+          person: poat
+
+      - type: custom:button-card
+        template: card_family
+        variables:
+          person: gina
+
+  #################
+  # TRACKERS (map + GPS entities, same as House)
+  #################
+  - type: vertical-stack
+    view_layout:
+      grid-area: map
+    cards:
+      - type: custom:button-card
+        template: card_title
+        label: Trackers
+
+      - type: map
+        aspect_ratio: 16:9
+        auto_fit: true
+        entities:
+          - device_tracker.house_keys
+          - device_tracker.spare_house_key
+          - device_tracker.spare_wires
+          - device_tracker.ginas_iphone_13_mini
+          - device_tracker.poat_s_iphone_14_pro_max
+          - device_tracker.poat_s_iphone_14_pro_max_2
+          - zone.home
+
+      - type: custom:auto-entities
+        card:
+          type: entities
+        filter:
+          include:
+            - attributes:
+                source_type: gps
+
+  #################
+  # AWAY CHECKS — water off, doors, leak
+  #################
+  - type: vertical-stack
+    view_layout:
+      grid-area: security
+    cards:
+      - type: custom:button-card
+        template: card_title
+        label: Away checks
+
+      - type: entities
+        title: Water & doors
+        show_header_toggle: false
+        entities:
+          - entity: switch.water_valve
+            name: Main water valve
+          - entity: binary_sensor.water_valve_water_leak_detected
+            name: Valve leak sensor
+          - entity: binary_sensor.office_door_window_door_is_open
+            name: Office door open
+          - entity: binary_sensor.garage_door_tilt_window_door_is_open
+            name: Garage door open
+
+  #################
+  # VACATION MODE — toggle, scene, automations, lights they touch
+  #################
+  - type: vertical-stack
+    view_layout:
+      grid-area: vacation
+    cards:
+      - type: custom:button-card
+        template: card_title
+        label: Vacation mode
+
+      - type: custom:button-card
+        template: card_input_boolean
+        entity: input_boolean.on_vacation
+        variables:
+          ulm_card_input_boolean_name: On vacation
+
+      - type: entities
+        title: Scene & automations
+        show_header_toggle: false
+        entities:
+          - entity: scene.vacation
+            name: Vacation scene
+          - entity: sensor.last_scene
+            name: Last scene (vacation lights trigger)
+          - entity: automation.vacation_light_control
+            name: Vacation light control
+          - entity: automation.change_scenes
+            name: Change scenes (vacation / home)
+
+      - type: entities
+        title: Lights used by vacation automation
+        show_header_toggle: false
+        entities:
+          - entity: light.dinette_light
+          - entity: light.dining_room_light

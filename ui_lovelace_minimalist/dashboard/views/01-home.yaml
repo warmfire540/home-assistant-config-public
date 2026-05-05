@@ -122,7 +122,7 @@ cards:
         entity:
           entity_id: camera.living_room
           styles:
-            "--opacity-icon-fill-inactive": 1
+            '--opacity-icon-fill-inactive': 1
         entities:
           - switch.sconce
           - climate.living_room
@@ -156,13 +156,12 @@ cards:
         entity:
           entity_id: camera.gerbil
           styles:
-            "--opacity-icon-fill-inactive": 1
+            '--opacity-icon-fill-inactive': 1
         entities:
           - entity_id: binary_sensor.office_door_window_door_is_open
             off_color: green
             on_color: red
           - media_player.office_tv
-
 
       #################
       # KITCHEN
@@ -231,7 +230,7 @@ cards:
         entity:
           entity_id: camera.garage
           styles:
-            "--opacity-icon-fill-inactive": 1
+            '--opacity-icon-fill-inactive': 1
         thresholds:
           temperature:
             - value: 90
@@ -253,12 +252,12 @@ cards:
           grid-area: attic
         area: attic
         thresholds:
-          temperature: 
+          temperature:
             - value: 100
         entity:
           entity_id: camera.front
           styles:
-            "--opacity-icon-fill-inactive": 1
+            '--opacity-icon-fill-inactive': 1
 
       #################
       # SHED
@@ -268,12 +267,12 @@ cards:
           grid-area: shed
         area: shed
         thresholds:
-          temperature: 
+          temperature:
             - value: 90
-          humidity: 
+          humidity:
             - value: 70
         entities:
-          - binary_sensor.shed_door_sensor_window_door_is_open
+          - binary_sensor.shed_door_sensor_open
 
       #################
       # SERVER CLOSET
@@ -299,4 +298,4 @@ cards:
         entity:
           entity_id: camera.patio
           styles:
-            "--opacity-icon-fill-inactive": 1
+            '--opacity-icon-fill-inactive': 1

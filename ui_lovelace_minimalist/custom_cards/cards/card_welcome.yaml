@@ -36,6 +36,11 @@ card_welcome:
     subview_1:
       nav: cameras
       icon: mdi:cctv
+      color: grey
+    subview_2:
+      nav: vacation
+      icon: mdi:beach
+      color: yellow
 
   show_icon: false
   show_label: true

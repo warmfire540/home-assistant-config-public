@@ -15,7 +15,7 @@ variables:
   counter_entity: "counter.alert_cooldown_{{ trigger.entity_id | replace('.', '_') | replace('-', '_') }}"
   # Escalate to critical when shed opens late at night (12am–6am)
   is_critical: >-
-    {{ trigger.entity_id == 'binary_sensor.shed_door_sensor_window_door_is_open'
+    {{ trigger.entity_id == 'binary_sensor.shed_door_sensor_open'
        and (now().hour >= 0 and now().hour < 6) }}
 
 trigger:
@@ -25,7 +25,7 @@ trigger:
       # - binary_sensor.queso_gerbil_motion_detected
       # - binary_sensor.guava_gerbil_motion_detected
       # - binary_sensor.espresso_or_bean_gerbil_motion_detected
-      - binary_sensor.shed_door_sensor_window_door_is_open
+      - binary_sensor.shed_door_sensor_open
       # - binary_sensor.office_door_window_door_is_open
     to: 'on'
 

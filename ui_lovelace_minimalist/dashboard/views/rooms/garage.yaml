@@ -57,15 +57,15 @@ cards:
         variables:
           ulm_card_light_name: Garage Door Power
           ulm_card_light_color: green
-
-      - type: custom:device-card
-        device_id: 8fcd19d3e572dcb5a1ebf69380615300
-
-      - type: custom:device-card
+        
+      - type: custom:whisker-card
+        device_id: 3ac374b8219b337705bfdfb7f1c2348e
+      
+      - type: custom:whisker-card
         device_id: 0f9a1f4a28d1bde6135d70a6595275b4
 
       - type: custom:device-card
-        device_id: 3ac374b8219b337705bfdfb7f1c2348e
+        device_id: 8fcd19d3e572dcb5a1ebf69380615300
 
   #################
   # SENSORS

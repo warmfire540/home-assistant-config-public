@@ -25,7 +25,7 @@ binary_sensor.garage_door_tilt_window_door_is_open:
   on_color: red
   off_color: green
 
-binary_sensor.shed_door_sensor_window_door_is_open:
+binary_sensor.shed_door_sensor_open:
   on_color: red
   off_color: green
 

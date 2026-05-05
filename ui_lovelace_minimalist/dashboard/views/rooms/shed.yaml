@@ -40,7 +40,7 @@ cards:
 
       - type: 'custom:button-card'
         template: card_generic_swap
-        entity: binary_sensor.shed_door_sensor_window_door_is_open
+        entity: binary_sensor.shed_door_sensor_open
 
   #################
   # DEVICE HEALTH

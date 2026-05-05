@@ -3,10 +3,24 @@ path: 'cameras'
 subview: true
 type: custom:grid-layout
 cards:
-  - type: custom:advanced-camera-card
-    cameras:
-      - camera_entity: camera.patio
-      - camera_entity: camera.gerbil
-      - camera_entity: camera.garage
-      - camera_entity: camera.front
-      - camera_entity: camera.living_room
+  - type: custom:auto-entities
+    show_empty: false
+    card:
+      type: grid
+      columns: 2
+      square: false
+    card_param: cards
+    filter:
+      include:
+        - domain: camera
+          options:
+            type: custom:advanced-camera-card
+            cameras:
+              - camera_entity: this.entity_id
+            status_bar:
+              style: hover-card
+      exclude:
+        - entity_category: config
+        - entity_category: diagnostic
+    sort:
+      method: name

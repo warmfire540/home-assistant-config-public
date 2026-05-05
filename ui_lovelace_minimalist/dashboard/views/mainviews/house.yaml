@@ -247,21 +247,6 @@ cards:
 
       - type: custom:auto-entities
         card:
-          type: 'custom:mini-graph-card'
-          name: Batteries
-          show:
-            legend: false
-            fill: false
-        filter:
-          include:
-            - attributes:
-                device_class: battery
-          exclude:
-            - domain: binary_sensor
-            - state: '100'
-
-      - type: custom:auto-entities
-        card:
           type: entities
         filter:
           include:
