@@ -6,6 +6,7 @@ layout:
   grid-template-areas: |
     "chonk chonk chonk chonk"
     "water1 water2 trail noms"
+    ". shit1 shit2 ."
   mediaquery:
     # portrait monitor
     'only screen and (min-width: 769px) and (max-width: 1400px)':
@@ -14,6 +15,7 @@ layout:
         "feeder-title ."
         "water1 water2"
         "trail noms"
+        "shit1 shit2"
     # Smartphones
     'only screen and (max-width: 768px)':
       grid-template-areas: |
@@ -23,6 +25,8 @@ layout:
         "water2"
         "trail"
         "noms"
+        "shit1"
+        "shit2"
 cards:
   #################
   # HEADER
@@ -126,3 +130,13 @@ cards:
     device_id: 5e292fbf1ccd67f04a5468483bba2c76
     view_layout:
       grid-area: noms
+
+  - type: custom:whisker-card
+    device_id: 3ac374b8219b337705bfdfb7f1c2348e
+    view_layout:
+      grid-area: shit1
+      
+  - type: custom:whisker-card
+    device_id: 59879713413a5ca5a75f9453eee8e75e
+    view_layout:
+      grid-area: shit2

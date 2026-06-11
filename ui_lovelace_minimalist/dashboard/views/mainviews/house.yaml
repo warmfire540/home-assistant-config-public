@@ -89,6 +89,9 @@ cards:
           - camera_entity: camera.front
           - camera_entity: camera.living_room
         live:
+          controls:
+            ptz:
+              mode: auto
           display:
             mode: grid
             grid_columns: 2

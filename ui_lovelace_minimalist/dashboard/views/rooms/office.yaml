@@ -43,6 +43,10 @@ cards:
       - type: custom:advanced-camera-card
         cameras:
           - camera_entity: camera.gerbil
+        live:
+          controls:
+            ptz:
+              mode: 'on'
 
       - type: entities
         entities:

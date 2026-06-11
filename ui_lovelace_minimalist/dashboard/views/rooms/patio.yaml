@@ -40,3 +40,7 @@ cards:
       - type: custom:advanced-camera-card
         cameras:
           - camera_entity: camera.patio
+        live:
+          controls:
+            ptz:
+              mode: 'on'

@@ -10,4 +10,4 @@ frontend:
 
   # @see https://github.com/thomasloven/lovelace-card-mod?tab=readme-ov-file#performance-improvements
   extra_module_url:
-    - /hacsfiles/lovelace-card-mod/card-mod.js
+    - /hacsfiles/lovelace-card-mod/card-mod.js?hacstag=190927524421

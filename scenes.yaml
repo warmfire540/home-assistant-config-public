@@ -100,7 +100,7 @@
       supported_features: 15
       state: open
     cover.dining_room_blinds:
-      current_position: 30
+      current_position: 100
       device_class: shade
       friendly_name: Dining Room Blinds
       supported_features: 15

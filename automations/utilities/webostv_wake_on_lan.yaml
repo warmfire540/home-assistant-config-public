@@ -1,0 +1,28 @@
+#####
+# Turn on webOS TVs
+# The webostv integration can't power on a TV by itself, so it fires
+# this trigger when a turn_on is requested and we send a WoL magic packet.
+# https://www.home-assistant.io/integrations/webostv#turning-on-the-tv-from-home-assistant
+#
+# (Settings -> Devices & Services -> the TV's device page shows the MAC,
+# or on the TV: Settings -> Support -> IT Information)
+#####
+
+alias: webOS TV wake on LAN
+id: ee606194-7ab0-43cf-b6cc-665f3d310ec8
+mode: queued
+
+trigger:
+  trigger: webostv.turn_on
+  device_id:
+    - 2bc3ceaa353a223677ef3afc9e83d352 # Living Room TV
+    - 2108def8318db8e1b8aa20a500c699d0
+
+action:
+  - action: wake_on_lan.send_magic_packet
+    data:
+      mac: >-
+        {{ {
+          '2bc3ceaa353a223677ef3afc9e83d352': '44:27:45:28:99:68',
+          '2108def8318db8e1b8aa20a500c699d0': '44:27:45:81:d3:e8',
+        }[trigger.device_id] }}

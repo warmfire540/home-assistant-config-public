@@ -1,0 +1,8 @@
+#####
+# Wake on LAN
+# Provides the wake_on_lan.send_magic_packet action,
+# used to power on the webOS TVs
+# https://www.home-assistant.io/integrations/wake_on_lan/
+#####
+
+wake_on_lan:

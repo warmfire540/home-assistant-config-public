@@ -62,7 +62,7 @@ cards:
         device_id: 3ac374b8219b337705bfdfb7f1c2348e
       
       - type: custom:whisker-card
-        device_id: 0f9a1f4a28d1bde6135d70a6595275b4
+        device_id: 59879713413a5ca5a75f9453eee8e75e
 
       - type: custom:device-card
         device_id: 8fcd19d3e572dcb5a1ebf69380615300

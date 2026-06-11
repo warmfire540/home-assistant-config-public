@@ -16,12 +16,11 @@
     icon: 'mdi:cloud-off-outline'
     state: |
       {{ states
-        | rejectattr('domain','in',['button', 'tts', 'stt', 'number', 'conversation', 'automation', 'script'])
+        | rejectattr('domain','in',['button', 'tts', 'stt', 'number', 'conversation', 'automation', 'script', 'select'])
         | selectattr('state','in', ['unknown', 'unavailable'])
-        | rejectattr('entity_id','search', 'poat_rgb|mfc_7860|seedbox|poat_pi|poat-plex|xbox_x|washy_error|washy_delay_starts_in|washy_operation|washy_remaining_time|washy_total_time|wild_trail_cam_battery_problem|ipad')
-        | rejectattr('entity_id','in', ['event.snack_station_notification', 'media_player.lg_webos_tv_oled42c4pua'])
+        | rejectattr('entity_id', 'in', label_entities('offline'))
+        | rejectattr('entity_id','search', 'mfc_7860|seedbox|poat_plex||ipad')
         | rejectattr('entity_id', 'in', integration_entities('cast'))
-        | rejectattr('name','search', 'Kitchen Bulb')
         | list
         | count 
       }}

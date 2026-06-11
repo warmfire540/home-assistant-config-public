@@ -141,6 +141,8 @@ cards:
         area: dining_room
         entities:
           - media_player.living_room_tv
+        background:
+          image_entity: person.gina
 
       #################
       # OFFICE
@@ -219,6 +221,11 @@ cards:
         view_layout:
           grid-area: spare
         area: guest_bath
+        background:
+          image_entity: person.gina
+          options:
+            - icon_background
+            - hide_icon_only
 
       #################
       # GARAGE

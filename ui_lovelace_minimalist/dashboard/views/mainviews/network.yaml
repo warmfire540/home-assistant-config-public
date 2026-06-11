@@ -170,28 +170,21 @@ cards:
               options:
                 show_state: false
           exclude:
-            - entity_id: '*poat_rgb*'
             - entity_id: '*seedbox*'
             - entity_id: '*mfc_7860*'
-            - entity_id: '*poat_pi*'
-            - entity_id: '*poat-plex*'
+            - entity_id: '*poat_plex*'
             - entity_id: '*xbox_x*'
             - entity_id: '*ipad*'
-            - entity_id: event.snack_station_notification
-            - entity_id: event.washy_error
-            - entity_id: sensor.washy_*_time
-            - entity_id: sensor.washy_delay_starts_in
-            - entity_id: select.washy_operation
-            - entity_id: binary_sensor.wild_trail_cam_battery_problem
             - domain: automation
             - domain: button
             - domain: number
             - domain: conversation
             - domain: script
+            - domain: select
             - domain: stt
             - domain: tts
-            - name: 'Kitchen Bulb*'
             - integration: cast
+            - label: offline
 
   - type: vertical-stack
     view_layout:

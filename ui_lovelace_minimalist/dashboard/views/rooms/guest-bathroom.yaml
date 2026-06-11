@@ -50,7 +50,7 @@ cards:
 
       - type: 'custom:button-card'
         template: card_input_boolean
-        entity: binary_sensor.air_filter_door_sensor_window_door_is_open
+        entity: binary_sensor.air_filter_door_sensor_open
         variables:
           ulm_card_input_boolean_force_background_color: true
           ulm_card_input_boolean_name: Air Filter Door
