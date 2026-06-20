@@ -1,0 +1,12 @@
+####
+# On when either Litter Robot waste drawer is above 70%
+#
+#####
+
+- binary_sensor:
+    - name: Litter Robots Waste Full
+      unique_id: f8a3c2e1-9b4d-4f6a-8e7c-1d2b3a4c5e6f
+      device_class: problem
+      icon: mdi:delete-variant
+      state: >
+        {{ states('sensor.puss_bidet_waste_drawer') | float(0) > 70 or states('sensor.pink_eye_waste_drawer') | float(0) > 70 }}

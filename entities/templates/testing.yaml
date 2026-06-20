@@ -1,0 +1,17 @@
+####
+# Fixed-state helper entities for automations and conditions.
+# Always-on/off values that never change — useful as placeholders in
+# choose blocks, alert filters, and other logic that needs a constant.
+#
+#####
+
+- binary_sensor:
+    - name: Test Always On
+      unique_id: a1b2c3d4-e5f6-7890-abcd-ef1234567801
+      state: "{{ true }}"
+      icon: mdi:toggle-switch
+
+    - name: Test Always Off
+      unique_id: a1b2c3d4-e5f6-7890-abcd-ef1234567804
+      state: "{{ false }}"
+      icon: mdi:toggle-switch-off

@@ -13,3 +13,33 @@ lovelace:
       icon: mdi:home
       show_in_sidebar: true
       filename: ui_lovelace_minimalist/dashboard/home-dashboard.yaml
+
+    # room-summary-card
+    rsc-background-image-test:
+      mode: yaml
+      title: Room Summary Card - Background Image Test
+      icon: mdi:image-multiple
+      show_in_sidebar: false
+      filename: dashboards/room-summary-card/background-image-test.yaml
+
+    rsc-background-opacity-test:
+      mode: yaml
+      title: Room Summary Card - Background Opacity Test
+      icon: mdi:opacity
+      show_in_sidebar: false
+      filename: dashboards/room-summary-card/background-opacity-test.yaml
+
+    rsc-action-handling-test:
+      mode: yaml
+      title: Room Summary Card -  Action Handling
+      icon: mdi:gesture-tap
+      show_in_sidebar: false
+      filename: dashboards/room-summary-card/action-handling-test.yaml
+      
+    rsc-entity-wrap-test:
+      mode: yaml
+      title: Room Summary Card - Entity Wrap Test
+      icon: mdi:wrap
+      show_in_sidebar: false
+      filename: dashboards/room-summary-card/entity-wrap-test.yaml
+

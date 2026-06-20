@@ -135,8 +135,26 @@ cards:
     device_id: 3ac374b8219b337705bfdfb7f1c2348e
     view_layout:
       grid-area: shit1
+    cleaning_entity: input_boolean.litter_robots_needs_cleaned
+    chonk:
+      kities:
+        - sensor.ellie_weight
+        - sensor.the_punisher_weight
+        - sensor.marbles_weight
+        - sensor.gnar_weight
+        - sensor.murderbot_weight
+      hide_names: true
       
   - type: custom:whisker-card
     device_id: 59879713413a5ca5a75f9453eee8e75e
     view_layout:
       grid-area: shit2
+    cleaning_entity: input_boolean.litter_robots_needs_cleaned
+    chonk:
+      kities:
+        - sensor.ellie_weight
+        - sensor.the_punisher_weight
+        - sensor.marbles_weight
+        - sensor.gnar_weight
+        - sensor.murderbot_weight
+      hide_names: true

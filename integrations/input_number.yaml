@@ -1,0 +1,9 @@
+#####
+# The input_number component allows the user to define numeric values that
+# can be controlled via the frontend and can be used within conditions of
+# automation.
+#
+# https://www.home-assistant.io/integrations/input_number/
+#####
+
+input_number: !include_dir_merge_named ../entities/input_numbers

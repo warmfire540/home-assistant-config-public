@@ -1,0 +1,8 @@
+#####
+# Togglable boolean helper for automations and conditions.
+#
+#####
+
+test_toggle:
+  name: Test Toggle
+  icon: mdi:toggle-switch

@@ -126,6 +126,7 @@ cards:
         entities:
           - switch.sconce
           - climate.living_room
+          - media_player.living_room_tv
         features:
           - multi_light_background
         lights:
@@ -139,8 +140,6 @@ cards:
         view_layout:
           grid-area: dining
         area: dining_room
-        entities:
-          - media_player.living_room_tv
         background:
           image_entity: person.gina
 
