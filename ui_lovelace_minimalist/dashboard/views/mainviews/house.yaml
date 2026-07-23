@@ -234,6 +234,20 @@ cards:
         filter:
           include:
             - domain: alert
+        
+      - type: 'custom:button-card'
+        template: card_input_boolean
+        entity: input_boolean.dishwasher_needs_cleaned
+        variables:
+          ulm_card_input_boolean_force_background_color: true
+          ulm_card_input_boolean_color: red
+
+      - type: 'custom:button-card'
+        template: card_input_boolean
+        entity: input_boolean.air_filters_need_changed
+        variables:
+          ulm_card_input_boolean_force_background_color: true
+          ulm_card_input_boolean_color: red
 
   - type: vertical-stack
     view_layout:
