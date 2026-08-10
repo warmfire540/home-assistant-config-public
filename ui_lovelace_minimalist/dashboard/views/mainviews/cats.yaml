@@ -144,6 +144,14 @@ cards:
         - sensor.gnar_weight
         - sensor.murderbot_weight
       hide_names: true
+    visits:
+      kities:
+        - sensor.ellie_visits_today
+        - sensor.the_punisher_visits_today
+        - sensor.marbles_visits_today
+        - sensor.gnar_visits_today
+        - sensor.murderbot_visits_today
+      hide_names: true
       
   - type: custom:whisker-card
     device_id: 59879713413a5ca5a75f9453eee8e75e
@@ -157,4 +165,12 @@ cards:
         - sensor.marbles_weight
         - sensor.gnar_weight
         - sensor.murderbot_weight
+      hide_names: true
+    visits:
+      kities:
+        - sensor.ellie_visits_today
+        - sensor.the_punisher_visits_today
+        - sensor.marbles_visits_today
+        - sensor.gnar_visits_today
+        - sensor.murderbot_visits_today
       hide_names: true

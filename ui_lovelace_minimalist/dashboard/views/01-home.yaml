@@ -123,6 +123,8 @@ cards:
           entity_id: camera.living_room
           double_tap_action:
             action: more-info
+          styles:
+            '--opacity-icon-fill-inactive': 1
         entities:
           - switch.sconce
           - climate.living_room
@@ -158,6 +160,8 @@ cards:
           entity_id: camera.gerbil
           double_tap_action:
             action: more-info
+          styles:
+            '--opacity-icon-fill-inactive': 1
         entities:
           - entity_id: binary_sensor.office_door_window_door_is_open
             off_color: green
@@ -237,6 +241,8 @@ cards:
           entity_id: camera.garage
           double_tap_action:
             action: more-info
+          styles:
+            '--opacity-icon-fill-inactive': 1
         thresholds:
           temperature:
             - value: 90
@@ -264,6 +270,8 @@ cards:
           entity_id: camera.front
           double_tap_action:
             action: more-info
+          styles:
+            '--opacity-icon-fill-inactive': 1
 
       #################
       # SHED
@@ -305,3 +313,5 @@ cards:
           entity_id: camera.patio
           double_tap_action:
             action: more-info
+          styles:
+            '--opacity-icon-fill-inactive': 1
