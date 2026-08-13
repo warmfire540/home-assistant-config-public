@@ -66,6 +66,34 @@ cards:
         variables:
           ulm_chip_navigate_path: cameras
           ulm_chip_navigate_icon: mdi:cctv
+      # jack-sparrow lives on its own YAML dashboard, so this needs an absolute
+      # navigation_path rather than the chip_navigate template (which resolves
+      # relative to the current dashboard).
+      - type: custom:button-card
+        icon: mdi:nas
+        label: 'jack-sparrow'
+        show_icon: true
+        show_label: true
+        show_name: false
+        tap_action:
+          action: navigate
+          navigation_path: /jack-sparrow/nas
+        styles:
+          card:
+            - border-radius: 24px
+            - height: 42px
+            - padding: 0 12px
+          grid:
+            - grid-template-areas: '"i l"'
+            - grid-template-columns: min-content auto
+            - column-gap: 8px
+            - align-items: center
+          icon:
+            - width: 20px
+          label:
+            - font-size: 12px
+            - font-weight: 500
+            - justify-self: start
 
   #################
   # PI CONTROL

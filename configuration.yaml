@@ -6,8 +6,3 @@
 
 homeassistant:
   packages: !include_dir_named integrations # package setup/config split
-
-# for local development
-http:
-  cors_allowed_origins:
-    - http://localhost:8124

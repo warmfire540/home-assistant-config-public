@@ -14,6 +14,16 @@ lovelace:
       show_in_sidebar: true
       filename: ui_lovelace_minimalist/dashboard/home-dashboard.yaml
 
+    # jack-sparrow (UGREEN NASync DXP4800 Pro)
+    # Standalone: needs its own button_card_templates: block for the
+    # ugreen_nas_template, which can't live in UML's HACS-managed template dir.
+    jack-sparrow:
+      mode: yaml
+      title: jack-sparrow
+      icon: mdi:nas
+      show_in_sidebar: true
+      filename: dashboards/jack-sparrow.yaml
+
     # room-summary-card
     rsc-background-image-test:
       mode: yaml
