@@ -1,0 +1,212 @@
+---
+#####
+# Uptime Kuma — lab availability rollups
+#
+# The core `uptime_kuma` integration (HA 2025.8+, no HACS) creates one HA
+# device per monitor on the Kuma instance running on jack-sparrow, each with
+# up to 14 entities: Status, Response time, Certificate expiry, Monitor type,
+# Monitored hostname / port / URL, Uptime 1/30/365d, Response time avg
+# 1/30/365d. Sixteen monitors visible today is 178 entities (verified
+# 2026-08-13). Nobody watches that. These two are what a card or an automation
+# should read.
+#
+# Note the entity set is not uniform: only HTTP monitors get Monitored URL and
+# Certificate expiry, only port/ping/dns monitors get Monitored hostname, and
+# group monitors get neither. Anything matching on a suffix other than
+# `_status` or `_monitor_type` has to tolerate the sensor being absent.
+#
+# WHY THE ENTITY LIST IS DERIVED, NOT HARDCODED
+#
+# Same reasoning as scrutiny.yaml: `integration_entities('uptime_kuma')`
+# returns whatever the config entry currently owns, so adding, renaming or
+# deleting a monitor in Kuma needs no edit here. That matters more than usual
+# because the monitor set is expected to move — the §2.4 push monitors do not
+# exist yet, `poat-share - SMB` gets dropped after the Phase 4 cutover, and
+# Portainer / Plex / Deluge go green as those hosts come back.
+#
+# ⚠️ GROUP MONITORS ARE EXCLUDED, AND THIS IS THE WHOLE TRICK.
+#
+# Kuma group monitors surface in HA as ordinary devices with their own Status
+# sensor, and a group goes DOWN when any child does. Counting them alongside
+# leaves double-counts every outage: one down service reads as two problems,
+# and `Network` shows up in the notification next to the thing that actually
+# broke. Groups are filtered out by reading the `Monitor type` sensor on the
+# same device — type `group` — rather than by listing the four group names,
+# which would go stale the first time a group is added.
+#
+# Verified against the live instance 2026-08-13: 16 monitors visible, of which
+# 3 are groups (`sensor.network_status`, `sensor.services_status`,
+# `sensor.jack_sparrow_status` — all reading `group` on their `_monitor_type`
+# sibling) leaving 13 leaves. Without the filter the current outage reads as
+# 6 problems instead of 4.
+#
+# ⚠️ PAUSED MONITORS ARE INVISIBLE. The Kuma API does not expose them, so HA
+# cannot tell paused from deleted. The `Backups` group is paused right now,
+# which is why it is absent entirely rather than showing as a fourth group.
+# Pausing a monitor also leaves its HA device behind as stale — it has to be
+# removed by hand.
+#
+# ⚠️ `sensor.jack_sparrow_status` IS THE GROUP, not the NAS. The host's own
+# checks are `jack_sparrow_ugos_status` and `jack_sparrow_smb_status`. Reading
+# the bare one as "is the NAS up" would be wrong twice over: it is a rollup,
+# and it is red right now because Portainer is not deployed.
+#
+# ⚠️ ENTITY IDS ARE SLUGGED FROM MONITOR NAMES, so `jack-sparrow - UGOS`
+# becomes `sensor.jack_sparrow_ugos_status` and shares a prefix with the
+# UGREEN integration's `sensor.jack_sparrow_*` entities. No collision today —
+# the suffixes differ — but if HA ever appends a `_2` to one of these because
+# of a genuine collision, the `_status$` match below stops seeing it. Re-run
+# this after adding monitors:
+#
+#   {{ integration_entities('uptime_kuma') | select('search', '_status$') | list }}
+#
+# Consumed by:
+#   - dashboards/lab/views/01-uptime.yaml
+#   - automations/lab/uptime_kuma_monitor_down.yaml
+#
+# Deploy steps and the monitor table live in the **servers** repo at
+# hosts/jack-sparrow/uptime-kuma-runbook.md.
+#
+# Upstream: https://www.home-assistant.io/integrations/uptime_kuma/
+#####
+
+- sensor:
+    #################
+    # LAB AVAILABILITY
+    #################
+    # One OK / Problem for the whole lab, over leaf monitors only.
+    #
+    # Deliberately NOT "count of things down" as the state — a count is a
+    # number you have to interpret, and 0 vs 1 is the only distinction that
+    # changes behaviour. The count rides along as an attribute for the card.
+    - name: Lab Availability
+      unique_id: 3b8f6c41-7d02-4e5a-9f1b-2c6a48d0e7b3
+      # `this` = this entity's own state object. A state_attr() call against
+      # itself would deadlock the template.
+      icon: "{{ 'mdi:lan-connect' if this.state == 'OK' else 'mdi:lan-disconnect' }}"
+      # Unavailable if the integration is gone or Kuma is unreachable, rather
+      # than a confident "OK" derived from an empty list. This is the failure
+      # mode that matters here: the monitoring being down looks exactly like
+      # nothing being wrong.
+      availability: >
+        {{ integration_entities('uptime_kuma')
+           | select('search', '_status$') | list | count > 0 }}
+      state: >
+        {% set ns = namespace(bad=0) %}
+        {% for e in integration_entities('uptime_kuma')
+             | select('search', '_status$') %}
+          {% set t = device_entities(device_id(e))
+               | select('search', '_monitor_type$') | list %}
+          {% if not (t and states(t[0]) == 'group')
+                and states(e) == 'down' %}
+            {% set ns.bad = ns.bad + 1 %}
+          {% endif %}
+        {% endfor %}
+        {{ 'Problem' if ns.bad > 0 else 'OK' }}
+      attributes:
+        # Joined string, not a raw list repr — this drops straight into the
+        # notification in automations/lab/uptime_kuma_monitor_down.yaml and
+        # into the more-info dialog.
+        down: >
+          {% set ns = namespace(bad=[]) %}
+          {% for e in integration_entities('uptime_kuma')
+               | select('search', '_status$') %}
+            {% set t = device_entities(device_id(e))
+                 | select('search', '_monitor_type$') | list %}
+            {% if not (t and states(t[0]) == 'group')
+                  and states(e) == 'down' %}
+              {% set ns.bad = ns.bad
+                   + [state_attr(e, 'friendly_name')
+                      | default(e, true) | replace(' Status', '')] %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.bad | join(', ') if ns.bad else 'nothing down' }}
+        down_count: >
+          {% set ns = namespace(n=0) %}
+          {% for e in integration_entities('uptime_kuma')
+               | select('search', '_status$') %}
+            {% set t = device_entities(device_id(e))
+                 | select('search', '_monitor_type$') | list %}
+            {% if not (t and states(t[0]) == 'group')
+                  and states(e) == 'down' %}
+              {% set ns.n = ns.n + 1 %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.n }}
+        up_count: >
+          {% set ns = namespace(n=0) %}
+          {% for e in integration_entities('uptime_kuma')
+               | select('search', '_status$') %}
+            {% set t = device_entities(device_id(e))
+                 | select('search', '_monitor_type$') | list %}
+            {% if not (t and states(t[0]) == 'group')
+                  and states(e) == 'up' %}
+              {% set ns.n = ns.n + 1 %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.n }}
+        # Sanity check for the card. Thirteen leaf monitors as built on
+        # 2026-08-13. If this drops, a monitor was deleted or paused — which
+        # the Problem rollup above cannot see, because a monitor that is gone
+        # has no status to be down. A monitoring system quietly monitoring
+        # less than you think is the failure this number exists to catch.
+        monitor_count: >
+          {% set ns = namespace(n=0) %}
+          {% for e in integration_entities('uptime_kuma')
+               | select('search', '_status$') %}
+            {% set t = device_entities(device_id(e))
+                 | select('search', '_monitor_type$') | list %}
+            {% if not (t and states(t[0]) == 'group') %}
+              {% set ns.n = ns.n + 1 %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.n }}
+        navigation_path: /lab/uptime
+
+- binary_sensor:
+    #################
+    # WAN DOWN — the storm-suppression gate
+    #################
+    # On when the internet or the gateway is down, which is the state in which
+    # every other monitor is about to go red for a reason that has nothing to
+    # do with the service it is watching.
+    #
+    # This exists because Uptime Kuma CANNOT do this itself. Groups are
+    # organisational only — they suppress nothing, and pausing a group displays
+    # children as paused while they keep running and keep notifying
+    # (louislam/uptime-kuma#7242). Conditional alerting has to live in HA, and
+    # this is the condition.
+    #
+    # ⚠️ Matched on monitor NAME, unavoidably — `Internet` and `Gateway` are
+    # the only two monitors whose identity is semantic rather than derivable.
+    # Renaming either one in Kuma silently turns storm suppression off: the
+    # sensor goes unavailable, the automation's condition stops matching, and
+    # you get the alert storm this was built to prevent, with no error
+    # anywhere. The `availability` block below is what turns that from silent
+    # into visible — an unavailable gate shows up on the card.
+    - name: Lab WAN Down
+      unique_id: 7e14a9d5-05bb-4c88-8a37-91d3f6b2ac10
+      device_class: problem
+      icon: "{{ 'mdi:wan' if this.state == 'off' else 'mdi:web-off' }}"
+      availability: >
+        {{ integration_entities('uptime_kuma')
+           | select('search', '(internet|gateway)_status$')
+           | list | count == 2 }}
+      state: >
+        {{ integration_entities('uptime_kuma')
+           | select('search', '(internet|gateway)_status$')
+           | select('is_state', 'down') | list | count > 0 }}
+      attributes:
+        # Which half broke. Gateway down is the router or the switch; internet
+        # down with the gateway up is the ISP. Different phone call.
+        cause: >
+          {% set ns = namespace(bad=[]) %}
+          {% for e in integration_entities('uptime_kuma')
+               | select('search', '(internet|gateway)_status$') %}
+            {% if states(e) == 'down' %}
+              {% set ns.bad = ns.bad
+                   + [state_attr(e, 'friendly_name')
+                      | default(e, true) | replace(' Status', '')] %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.bad | join(' + ') if ns.bad else 'WAN healthy' }}

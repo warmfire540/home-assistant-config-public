@@ -26,6 +26,21 @@ lovelace:
       show_in_sidebar: true
       filename: dashboards/jack-sparrow.yaml
 
+    # lab (lab-wide monitoring — Uptime Kuma)
+    # Standalone rather than a jack-sparrow view: Kuma watches the whole lab
+    # and only the container happens to run on the NAS. The entry file is a
+    # stub; views are !include'd from the sibling dashboards/lab/ directory.
+    #
+    # ⚠️ This `filename:` key is only read at startup — adding it needs a Home
+    # Assistant restart, not a page refresh. Adding views under dashboards/lab/
+    # afterwards is just a refresh.
+    lab:
+      mode: yaml
+      title: Lab
+      icon: mdi:lan-check
+      show_in_sidebar: true
+      filename: dashboards/lab.yaml
+
     # room-summary-card
     rsc-background-image-test:
       mode: yaml

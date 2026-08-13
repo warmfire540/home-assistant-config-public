@@ -91,9 +91,21 @@ sections:
           # parses as `var(--info-color,` and silently drops the fallback.
           accent: 'var(--info-color, #039be5)'
 
+      # `grid_options.columns: full` is load-bearing, and for a different
+      # reason than the one on the auto-entities card below. Without it this
+      # grid takes its default half-width and PACKS ONTO THE PORTAL ROW — the
+      # two 4-column buttons plus this card all fit inside the section's
+      # 12-column grid, so the three tiles ended up inline beside the buttons
+      # instead of under them. `full` makes it claim a whole row of its own.
+      #
+      # 01-nas.yaml does not need this only because its equivalent tile block
+      # is wrapped in `ugreen_tpl_host`, which already carries `columns: full`.
       - type: grid
         square: false
         columns: 3
+        grid_options:
+          columns: full
+          rows: auto
         cards:
           # Rolled up in entities/templates/scrutiny.yaml. The `problems`
           # attribute names which drive, which is what the more-info dialog is

@@ -1,0 +1,129 @@
+#####
+# Alert when an Uptime Kuma monitor goes down — with storm suppression
+#
+# WHY THIS IS TRIGGERED ON AN ATTRIBUTE AND NOT ON A LIST OF ENTITIES
+#
+# The obvious form is a state trigger listing every `*_status` sensor. That
+# list would have to be edited every time a monitor is added in Kuma, and the
+# failure mode is silent: a monitor missing from the list is simply never
+# alerted on, which looks exactly like a monitor that never fails.
+#
+# Instead this watches the `down` attribute of sensor.lab_availability, which
+# is itself derived from `integration_entities('uptime_kuma')`. The attribute
+# changes whenever the *set* of down monitors changes, so a new monitor is
+# covered the moment Kuma reports it, with no edit here.
+#
+# It also coalesces: five services dying together change the attribute once
+# and produce one notification naming all five, rather than five pushes.
+#
+# `for: 2 minutes` is the flap guard, on top of Kuma's own retries. It also
+# rides out a Home Assistant restart — the rollup is unavailable while the
+# integration reloads, and without the delay a routine restart would page you.
+#
+# WHY STORM SUPPRESSION LIVES HERE AND NOT IN KUMA
+#
+# It cannot live in Kuma. Groups there are organisational only: they suppress
+# nothing, and pausing a group displays its children as paused while they keep
+# running and keep notifying (louislam/uptime-kuma#7242, #5643, #4696). Only a
+# `Group` monitor can be a parent, so the "make services children of the
+# gateway monitor" arrangement is not constructible either.
+#
+# So the gate is binary_sensor.lab_wan_down. When the internet or the gateway
+# is down, every other monitor is about to go red for a reason that has
+# nothing to do with the service it watches, and this declines to fire.
+#
+# ⚠️ THE THREE MONITORS THIS AUTOMATION DOES NOT COVER are Internet, Gateway
+# and homeassistant — deliberately. Those are alerted out-of-band by Kuma's
+# own ntfy channel, because Home Assistant cannot report that Home Assistant
+# is down, and cannot report an outage it is on the far side of. See Part 3 of
+# hosts/jack-sparrow/uptime-kuma-runbook.md in the servers repo. If that
+# channel is not set up yet, those three outages are currently unalerted.
+#
+# ⚠️ The runbook refers to an `input_boolean.mute_alerts`. It does not exist —
+# this repo has per-person mutes (`input_boolean.poat_mute`, `gina_mute`),
+# which is what the push below is gated on. The persistent notification always
+# fires, matching automations/lab/scrutiny_drive_failed.yaml.
+#
+# Reads: entities/templates/uptime_kuma.yaml
+#####
+
+alias: Uptime Kuma monitor down
+id: 0c9a4e6b-3f21-4d77-b0a5-8e5c1f9d2a64
+
+description: >-
+  Notify when one or more Kuma monitors go down, naming only the newly-down
+  ones, and only when the WAN is healthy.
+
+trigger:
+  - trigger: state
+    entity_id: sensor.lab_availability
+    attribute: down
+    for:
+      minutes: 2
+
+variables:
+  # The attribute is a joined string rather than a list so it can drop
+  # straight into a message. Splitting it back here is the cost of that, and
+  # is why the separator has to stay ', ' in the template sensor.
+  #
+  # `from_state` can be None on a restart, hence the guards.
+  now_down: >-
+    {% set v = trigger.to_state.attributes.get('down', '') %}
+    {{ v.split(', ') | reject('eq', 'nothing down') | reject('eq', '') | list }}
+  was_down: >-
+    {% set v = trigger.from_state.attributes.get('down', '')
+         if trigger.from_state else '' %}
+    {{ v.split(', ') | reject('eq', 'nothing down') | reject('eq', '') | list }}
+  # Only what is NEWLY down. Without this, a second service failing while the
+  # first is still down re-announces both, and the repeated name reads as a
+  # second outage of the same thing.
+  newly_down: >-
+    {{ now_down | reject('in', was_down) | list }}
+
+condition:
+  # Recoveries change the attribute too. Nothing new down, nothing to say.
+  - condition: template
+    value_template: '{{ newly_down | count > 0 }}'
+
+  # STORM SUPPRESSION. `unavailable` is treated as "do not suppress": if the
+  # gate itself is broken, an over-notification is the safer failure than
+  # silence. See the Lab WAN Down sensor's header for how that can happen.
+  - condition: template
+    value_template: "{{ not is_state('binary_sensor.lab_wan_down', 'on') }}"
+
+action:
+  - variables:
+      body: >-
+        {{ newly_down | join(', ') }} {{ 'is' if newly_down | count == 1
+        else 'are' }} down.
+      others: >-
+        {% set n = now_down | count - newly_down | count %}
+        {{ ' ' ~ n ~ ' other monitor' ~ ('s' if n != 1 else '')
+           ~ ' still down.' if n > 0 else '' }}
+
+  - action: notify.persistent_notification
+    data:
+      title: '🔴 Lab monitor down'
+      message: '{{ body }}{{ others }}'
+
+  - choose:
+      - conditions:
+          - condition: state
+            entity_id: input_boolean.poat_mute
+            state: 'off'
+        sequence:
+          - action: notify.mobile_app_poat_s_iphone_14_pro_max
+            data:
+              title: '🔴 Lab monitor down'
+              message: '{{ body }}{{ others }}'
+              data:
+                # Same tag on every firing so a follow-on outage replaces the
+                # notification rather than stacking a second one.
+                tag: uptime_kuma_monitor_down
+                url: /lab/uptime
+                push:
+                  sound:
+                    name: 'default'
+
+mode: queued
+max: 5

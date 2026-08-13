@@ -13,6 +13,7 @@ top-level `- sensor:` / `- binary_sensor:`, not a bare mapping.
 | --- | --- | --- |
 | `jack_sparrow.yaml` | ✅ polished — 2026-08-13 | NAS volume-used %, plus a rolled-up health sensor. Watched entities are matched by regex, not hardcoded. |
 | `scrutiny.yaml` | ✅ polished — 2026-08-13 | Per-drive SMART rollups from ha_scrutiny: health, hottest drive, reallocated-sector total. Entity list derived via `integration_entities('scrutiny')` + `expand()`, so an RMA'd drive needs no edit. **The `realloc.*_raw` / `pending.*_raw` regexes are unverified against the live instance** — see the header. |
+| `uptime_kuma.yaml` | ✅ polished — 2026-08-13 | `sensor.lab_availability` + `binary_sensor.lab_wan_down` from the core `uptime_kuma` integration. Entity list derived via `integration_entities('uptime_kuma')`. **Group monitors are filtered out** by reading each device's `_monitor_type` sibling — without it every outage double-counts. Verified against the live instance: 16 monitors, 3 groups, 13 leaves. |
 | `battery_low_devices.yaml` | ⬜ not reviewed | |
 | `cat_devices_problems.yaml` | ⬜ not reviewed | |
 | `dead_zwave_nodes.yaml` | ⬜ not reviewed | |

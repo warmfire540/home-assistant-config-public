@@ -66,9 +66,13 @@ cards:
         variables:
           ulm_chip_navigate_path: cameras
           ulm_chip_navigate_icon: mdi:cctv
-      # jack-sparrow lives on its own YAML dashboard, so this needs an absolute
-      # navigation_path rather than the chip_navigate template (which resolves
-      # relative to the current dashboard).
+      # jack-sparrow and lab live on their own YAML dashboards, so these need
+      # absolute navigation_paths rather than the chip_navigate template
+      # (which resolves relative to the current dashboard).
+      #
+      # The shared styles are anchored rather than repeated. Anchors do not
+      # cross an !include boundary, so both chips have to stay in this file —
+      # which they do, since both are nav for this view.
       - type: custom:button-card
         icon: mdi:nas
         label: 'jack-sparrow'
@@ -78,7 +82,7 @@ cards:
         tap_action:
           action: navigate
           navigation_path: /jack-sparrow/nas
-        styles:
+        styles: &nav_chip_styles
           card:
             - border-radius: 24px
             - height: 42px
@@ -94,6 +98,40 @@ cards:
             - font-size: 12px
             - font-weight: 500
             - justify-self: start
+
+      # Uptime Kuma availability board. The icon carries the state so the chip
+      # is worth glancing at from this view without opening it — the whole
+      # point of a rollup sensor is that one colour answers "do I need to look".
+      - type: custom:button-card
+        entity: sensor.lab_availability
+        label: 'Uptime'
+        show_icon: true
+        show_label: true
+        show_name: false
+        show_state: false
+        icon: |
+          [[[
+            return states['sensor.lab_availability']?.state === 'Problem'
+              ? 'mdi:lan-disconnect' : 'mdi:lan-check';
+          ]]]
+        tap_action:
+          action: navigate
+          navigation_path: /lab/uptime
+        styles:
+          <<: *nav_chip_styles
+          # Merged into the anchored block rather than replacing it, so the
+          # chip keeps the shared shape and only adds the state colour.
+          # `unavailable` reads as a warning, not as healthy: the integration
+          # being down looks exactly like nothing being wrong.
+          icon:
+            - width: 20px
+            - color: |
+                [[[
+                  const s = states['sensor.lab_availability']?.state;
+                  if (s === 'Problem') return 'var(--error-color)';
+                  if (s === 'OK') return 'var(--success-color)';
+                  return 'var(--warning-color)';
+                ]]]
 
   #################
   # PI CONTROL

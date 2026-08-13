@@ -1,0 +1,438 @@
+---
+#####
+# UPTIME — the availability board
+#
+# Every Uptime Kuma monitor, red first. This is the "is the thing actually up"
+# surface; Scrutiny's /jack-sparrow/drives answers "is the hardware dying",
+# which is a different question with a different failure mode.
+#
+# NOTHING ON THIS PAGE NAMES A MONITOR.
+#
+# Every card is an `auto-entities` template over
+# `integration_entities('uptime_kuma')`. Add a monitor in Kuma and it appears
+# here within one 30-second poll; rename one and the label follows; delete one
+# and the row goes. There is deliberately no list to keep in sync, because a
+# dashboard that has to be edited every time monitoring changes is a dashboard
+# that quietly stops matching reality.
+#
+# HOW THE DERIVATION WORKS, since it is repeated on every card
+#
+# Each Kuma monitor is one HA device carrying a `_status` sensor and a
+# `_monitor_type` sensor (plus response time, uptime windows, and — only for
+# the check types that have them — hostname, port, URL, cert expiry). So:
+#
+#   status entities   integration_entities('uptime_kuma') | select('search', '_status$')
+#   its siblings      device_entities(device_id(e))
+#   is it a group     states(<the _monitor_type sibling>) == 'group'
+#
+# ⚠️ GROUPS ARE FILTERED OUT OF THE LEAF CARDS AND GIVEN THEIR OWN SECTION.
+# A Kuma group's status goes down when any child does, so mixing them in
+# double-counts every outage — one dead service renders as two red tiles, one
+# of which is named after a category rather than a thing. Filtered by reading
+# the type sensor, never by listing group names, so a new group in Kuma lands
+# in the Groups section on its own.
+#
+# ⚠️ PAUSED MONITORS DO NOT EXIST HERE. The Kuma API does not expose them, so
+# a paused monitor vanishes from this page entirely rather than showing as
+# paused. The `Backups` group is paused today and is therefore absent. If
+# something you expect is simply not on the board, check Kuma for a pause
+# before assuming the template is broken — an absent row looks identical to a
+# monitor that was never created.
+#
+# WHY MUSHROOM TEMPLATE CARDS AND NOT `tile`
+#
+# `tile` cannot template its colour, and colour is the entire point of this
+# page — red has to be visible from across the room without reading labels.
+# The colour is computed in Jinja at render time rather than as a nested
+# template inside the card, which keeps it to one level of templating and
+# makes it re-render on every state change like any other Jinja card.
+#
+# Reads: entities/templates/uptime_kuma.yaml
+# Alerts: automations/lab/uptime_kuma_monitor_down.yaml
+#####
+
+title: Uptime
+path: uptime
+icon: mdi:lan-check
+type: sections
+max_columns: 3
+dense_section_placement: true
+cards: []
+sections:
+  ####################################################################
+  # HEADLINE — the three numbers worth reading before anything else
+  ####################################################################
+  - type: grid
+    column_span: 3
+    cards:
+      - type: heading
+        heading: Lab availability
+        heading_style: title
+        icon: mdi:lan-check
+
+      # sensor.lab_availability already excludes groups, so `down_count` is a
+      # count of actual broken things, not of tiles that happen to be red.
+      - type: markdown
+        grid_options:
+          columns: full
+          rows: auto
+        # Literal block (`|`), not folded (`>-`) — folding joins consecutive
+        # lines with spaces and collapses a Markdown table into one row.
+        content: |
+          {% set s = 'sensor.lab_availability' %}
+          {% set down = state_attr(s, 'down_count') | int(0) %}
+          {% set total = state_attr(s, 'monitor_count') | int(0) %}
+          {% if states(s) in ['unknown', 'unavailable'] %}
+          ## ⚠️ Uptime Kuma is not reporting
+
+          The integration is unavailable, which is **not** the same as
+          everything being up. Check the container on jack-sparrow at
+          <http://192.168.5.8:3001>.
+          {% elif down == 0 %}
+          ## ✅ All {{ total }} monitors up
+          {% else %}
+          ## 🔴 {{ down }} of {{ total }} down
+
+          {{ state_attr(s, 'down') }}
+          {% endif %}
+
+      - type: entities
+        grid_options:
+          columns: full
+          rows: auto
+        entities:
+          - entity: sensor.lab_availability
+            name: Lab availability
+          # The storm-suppression gate. Worth surfacing because when this is
+          # unavailable the per-service alerts have quietly lost their guard —
+          # see the header of entities/templates/uptime_kuma.yaml.
+          - entity: binary_sensor.lab_wan_down
+            name: WAN
+          - type: attribute
+            entity: sensor.lab_availability
+            attribute: monitor_count
+            name: Monitors reporting
+            icon: mdi:counter
+
+      # Its own card rather than a row in the one above, because auto-entities
+      # is a card and cannot be nested in an `entities:` list.
+      #
+      # Derived rather than named: the update entity is slugged from the Kuma
+      # host address (`update.192_168_5_8_uptime_kuma_version`), so it renames
+      # itself if the NAS is ever readdressed. Worth having on the page —
+      # v2.x is where the monitor IDs the whole dashboard depends on live, and
+      # a major-version jump is the one upgrade to read release notes for.
+      - type: custom:auto-entities
+        show_empty: false
+        grid_options:
+          columns: full
+          rows: auto
+        card:
+          type: entities
+        card_param: entities
+        filter:
+          template: >
+            {% for e in integration_entities('uptime_kuma')
+                 | select('search', '^update') %}
+              {{ {'entity': e, 'name': 'Uptime Kuma version'} }},
+            {% endfor %}
+
+  ####################################################################
+  # PROBLEMS — only rendered when something is actually down
+  ####################################################################
+  # `show_empty: false` removes the whole card when nothing matches, so a
+  # healthy lab shows no empty "Problems" heading. The heading has the same
+  # visibility condition for the same reason.
+  - type: grid
+    column_span: 3
+    cards:
+      - type: heading
+        heading: Problems
+        heading_style: title
+        icon: mdi:alert-circle
+        visibility:
+          - condition: numeric_state
+            entity: sensor.lab_availability
+            attribute: down_count
+            above: 0
+
+      - type: custom:auto-entities
+        show_empty: false
+        grid_options:
+          columns: full
+          rows: auto
+        card:
+          type: grid
+          columns: 2
+          square: false
+        card_param: cards
+        filter:
+          template: >
+            {% set icons = {
+                 'ping': 'mdi:access-point-network',
+                 'port': 'mdi:ethernet-cable',
+                 'dns': 'mdi:dns',
+                 'http': 'mdi:web',
+                 'keyword': 'mdi:web-check',
+                 'json-query': 'mdi:code-json',
+                 'push': 'mdi:cloud-upload-outline',
+                 'docker': 'mdi:docker' } %}
+            {% for e in integration_entities('uptime_kuma')
+                 | select('search', '_status$') %}
+              {% set sibs = device_entities(device_id(e)) %}
+              {% set t = sibs | select('search', '_monitor_type$') | list %}
+              {% set kind = states(t[0]) if t else 'unknown' %}
+              {% if kind != 'group' and states(e) == 'down' %}
+                {% set nm = state_attr(e, 'friendly_name')
+                     | default(e, true) | replace(' Status', '') %}
+                {# Target, where the check type exposes one. Down monitors are
+                   the only place this is worth the space: knowing it is
+                   192.168.4.161:32400 is what tells you host-vs-service. #}
+                {% set h = sibs | select('search', '_monitored_hostname$') | list %}
+                {% set p = sibs | select('search', '_monitored_port$') | list %}
+                {% set u = sibs | select('search', '_monitored_url$') | list %}
+                {% if u %}
+                  {% set tgt = states(u[0]) %}
+                {% elif h and p %}
+                  {% set tgt = states(h[0]) ~ ':' ~ states(p[0]) %}
+                {% elif h %}
+                  {% set tgt = states(h[0]) %}
+                {% else %}
+                  {% set tgt = kind %}
+                {% endif %}
+                {{ {
+                     'type': 'custom:mushroom-template-card',
+                     'entity': e,
+                     'primary': nm,
+                     'secondary': tgt,
+                     'icon': icons.get(kind, 'mdi:help-network'),
+                     'icon_color': 'red',
+                     'multiline_secondary': true,
+                     'tap_action': {'action': 'more-info'}
+                   } }},
+              {% endif %}
+            {% endfor %}
+
+  ####################################################################
+  # ALL MONITORS — the board
+  ####################################################################
+  - type: grid
+    column_span: 2
+    cards:
+      - type: heading
+        heading: Monitors
+        heading_style: title
+        icon: mdi:format-list-checks
+
+      - type: custom:auto-entities
+        show_empty: false
+        grid_options:
+          columns: full
+          rows: auto
+        card:
+          type: grid
+          columns: 2
+          square: false
+        card_param: cards
+        filter:
+          template: >
+            {% set icons = {
+                 'ping': 'mdi:access-point-network',
+                 'port': 'mdi:ethernet-cable',
+                 'dns': 'mdi:dns',
+                 'http': 'mdi:web',
+                 'keyword': 'mdi:web-check',
+                 'json-query': 'mdi:code-json',
+                 'push': 'mdi:cloud-upload-outline',
+                 'docker': 'mdi:docker' } %}
+            {% set colors = {
+                 'down': 'red',
+                 'up': 'green',
+                 'pending': 'orange',
+                 'maintenance': 'blue' } %}
+            {% set ns = namespace(rows=[]) %}
+            {% for e in integration_entities('uptime_kuma')
+                 | select('search', '_status$') %}
+              {% set sibs = device_entities(device_id(e)) %}
+              {% set t = sibs | select('search', '_monitor_type$') | list %}
+              {% set kind = states(t[0]) if t else 'unknown' %}
+              {% if kind != 'group' %}
+                {% set st = states(e) %}
+                {% set nm = state_attr(e, 'friendly_name')
+                     | default(e, true) | replace(' Status', '') %}
+                {# Sort key, not a display value. Down floats to the top, then
+                   the transient states, then healthy, then anything the
+                   integration could not report — alphabetical within each
+                   band. Prefixing the name with a rank digit sorts both at
+                   once, which Jinja cannot do with a multi-key sort. #}
+                {% set rank = '0' if st == 'down'
+                     else ('1' if st in ['pending', 'maintenance']
+                     else ('2' if st == 'up' else '3')) %}
+                {% set u1 = sibs | select('search', '_uptime_1_day$') | list %}
+                {% set pct = (states(u1[0]) | float(-1)) if u1 else -1 %}
+                {% set sec = st ~ (' · ' ~ (pct | round(1)) ~ '% 24h'
+                     if pct >= 0 else '') %}
+                {% set ns.rows = ns.rows + [(rank ~ nm | lower, {
+                     'type': 'custom:mushroom-template-card',
+                     'entity': e,
+                     'primary': nm,
+                     'secondary': sec,
+                     'icon': icons.get(kind, 'mdi:help-network'),
+                     'icon_color': colors.get(st, 'grey'),
+                     'tap_action': {'action': 'more-info'}
+                   })] %}
+              {% endif %}
+            {% endfor %}
+            {% for row in ns.rows | sort(attribute='0') %}
+              {{ row[1] }},
+            {% endfor %}
+
+  ####################################################################
+  # GROUPS — Kuma's own rollups
+  ####################################################################
+  # Display-only in Kuma: a group suppresses nothing and notifies nothing
+  # (louislam/uptime-kuma#7242). What it is good for is exactly this — one row
+  # per area of the lab, so the *shape* of an outage is readable without
+  # scanning thirteen tiles. Gateway down looks different from Plex down.
+  - type: grid
+    column_span: 1
+    cards:
+      - type: heading
+        heading: Groups
+        heading_style: title
+        icon: mdi:folder-network
+
+      - type: custom:auto-entities
+        show_empty: false
+        grid_options:
+          columns: full
+          rows: auto
+        card:
+          type: grid
+          columns: 1
+          square: false
+        card_param: cards
+        filter:
+          template: >
+            {% set colors = {
+                 'down': 'red',
+                 'up': 'green',
+                 'pending': 'orange',
+                 'maintenance': 'blue' } %}
+            {% for e in integration_entities('uptime_kuma')
+                 | select('search', '_status$') | sort %}
+              {% set t = device_entities(device_id(e))
+                   | select('search', '_monitor_type$') | list %}
+              {% if t and states(t[0]) == 'group' %}
+                {% set st = states(e) %}
+                {{ {
+                     'type': 'custom:mushroom-template-card',
+                     'entity': e,
+                     'primary': state_attr(e, 'friendly_name')
+                       | default(e, true) | replace(' Status', ''),
+                     'secondary': st,
+                     'icon': 'mdi:folder-network',
+                     'icon_color': colors.get(st, 'grey'),
+                     'tap_action': {'action': 'more-info'}
+                   } }},
+              {% endif %}
+            {% endfor %}
+
+  ####################################################################
+  # RESPONSE TIME
+  ####################################################################
+  # Only monitors that are up. A down monitor reports 0 ms, and a flat line at
+  # zero on the same axis as a 20 ms service makes the healthy ones unreadable
+  # while telling you nothing the red tile above did not already say.
+  - type: grid
+    column_span: 3
+    cards:
+      - type: heading
+        heading: Response time
+        heading_style: title
+        icon: mdi:timer-outline
+
+      - type: custom:auto-entities
+        show_empty: false
+        grid_options:
+          columns: full
+          rows: auto
+        card:
+          type: custom:mini-graph-card
+          name: Response time (ms)
+          hours_to_show: 24
+          points_per_hour: 4
+          line_width: 2
+          show:
+            labels: true
+            fill: false
+        card_param: entities
+        filter:
+          template: >
+            {% for e in integration_entities('uptime_kuma')
+                 | select('search', '_status$') | sort %}
+              {% set sibs = device_entities(device_id(e)) %}
+              {% set t = sibs | select('search', '_monitor_type$') | list %}
+              {% set r = sibs
+                   | select('search', '_response_time$') | list %}
+              {% if t and states(t[0]) != 'group'
+                    and states(e) == 'up' and r %}
+                {{ {
+                     'entity': r[0],
+                     'name': state_attr(e, 'friendly_name')
+                       | default(e, true) | replace(' Status', '')
+                   } }},
+              {% endif %}
+            {% endfor %}
+
+  ####################################################################
+  # UPTIME — 30 days, worst first
+  ####################################################################
+  # The counterpart to the tiles above: those answer "what is broken now",
+  # this answers "what has been quietly flapping". A service that is up every
+  # time you look at it and reads 96% over 30 days is the interesting case,
+  # and it is invisible on a status board.
+  #
+  # Groups are excluded here too — a group's uptime is a function of its
+  # children's and belongs to no host.
+  - type: grid
+    column_span: 3
+    cards:
+      - type: heading
+        heading: Uptime — 30 days
+        heading_style: title
+        icon: mdi:chart-timeline-variant
+
+      - type: custom:auto-entities
+        show_empty: false
+        grid_options:
+          columns: full
+          rows: auto
+        card:
+          type: entities
+        card_param: entities
+        filter:
+          template: >
+            {% set ns = namespace(rows=[]) %}
+            {% for e in integration_entities('uptime_kuma')
+                 | select('search', '_status$') %}
+              {% set sibs = device_entities(device_id(e)) %}
+              {% set t = sibs | select('search', '_monitor_type$') | list %}
+              {% set u = sibs | select('search', '_uptime_30_days$') | list %}
+              {% if t and states(t[0]) != 'group' and u %}
+                {# Sort key is the percentage zero-padded to a fixed width, so
+                   it orders as text. `9.9` and `99.9` would otherwise sort
+                   the wrong way round and put a badly flapping service in the
+                   middle of the list. #}
+                {% set pct = states(u[0]) | float(-1) %}
+                {% set key = '%08.3f' | format(pct) %}
+                {% set ns.rows = ns.rows + [(key, {
+                     'entity': u[0],
+                     'name': state_attr(e, 'friendly_name')
+                       | default(e, true) | replace(' Status', '')
+                   })] %}
+              {% endif %}
+            {% endfor %}
+            {% for row in ns.rows | sort(attribute='0') %}
+              {{ row[1] }},
+            {% endfor %}

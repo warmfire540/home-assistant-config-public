@@ -1,0 +1,58 @@
+---
+#####
+# lab — lab-wide monitoring
+#
+# Entry point only, split the same way jack-sparrow and the-matrix are:
+#
+#   lab.yaml                 this file — title, theme, includes
+#   lab/views/NN-*.yaml      one view per file, ordered by filename
+#
+# `!include_dir_list` sorts by filename, hence the NN- prefixes.
+#
+# WHY THIS IS ITS OWN DASHBOARD AND NOT A jack-sparrow VIEW
+#
+# Uptime Kuma watches the whole lab — the gateway, the ISP, four Pis, Home
+# Assistant itself. Only the *container* happens to run on the NAS. Filing the
+# board under jack-sparrow would put "is the internet up" behind a page named
+# after one host, and would have to move the day Kuma is migrated off it.
+#
+# The same reasoning applies to what comes next: the §2.4 backup-freshness
+# push monitors, and anything else that is about the lab rather than about one
+# box. This dashboard is the place for those.
+#
+# NO `button_card_templates:` BLOCK — DELIBERATELY
+#
+# jack-sparrow needs one, which is the whole reason it lives outside
+# the-matrix. This dashboard does not: every card here is core Lovelace plus
+# auto-entities and mushroom, so there are no `[[[ ... ]]]` JS templates and
+# none of the bracket-counting that goes with them. Templates here are
+# ordinary Jinja, evaluated by Home Assistant.
+#
+# Keep it that way if you can. If a card ever does need button-card templates,
+# add the block here rather than reaching into UML's HACS-managed template
+# dir, which is overwritten on update.
+#
+# EVERYTHING IS DERIVED, NOTHING IS LISTED
+#
+# No monitor name appears anywhere in lab/views/. The board is built from
+# `integration_entities('uptime_kuma')` at render time, so adding, renaming,
+# regrouping or deleting a monitor in Kuma changes the page with no edit here.
+# That is load-bearing, not tidiness — the monitor set is expected to move:
+# push monitors do not exist yet, `poat-share - SMB` gets dropped after the
+# Phase 4 cutover, and Portainer / Plex / Deluge go green as those hosts come
+# back.
+#
+# The two exceptions are named and explained in
+# entities/templates/uptime_kuma.yaml: `Internet` and `Gateway`, which back
+# `binary_sensor.lab_wan_down`.
+#
+# Requires HACS cards: `auto-entities`, plus mushroom for the status tiles.
+#
+# Deploy steps, the monitor table and the alerting decisions live in the
+# **servers** repo at hosts/jack-sparrow/uptime-kuma-runbook.md.
+#####
+
+title: 'Lab'
+theme: 'minimalist-desktop'
+
+views: !include_dir_list lab/views
