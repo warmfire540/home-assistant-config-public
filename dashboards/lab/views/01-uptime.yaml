@@ -127,77 +127,15 @@ sections:
         icon: mdi:lan-check
 
       # ---- Portals ----
+      # One shared card: dashboards/cards/portal-row.yaml. Four buttons, the
+      # same four in the same order with the same look on every page of every
+      # dashboard. Was three hand-maintained copies plus a divergent core-tile
+      # version on the lab board until 2026-08-13.
       #
-      # The same escape-hatch row as the top of jack-sparrow's 01-nas.yaml and
-      # 04-drives.yaml, in the same order, so the way out of HA is in the same
-      # place on every page that has one.
-      #
-      # ⚠️ NOT `custom:button-card`. Those two pages use the shared
-      # `ugreen_portal_button` template, which is defined in
-      # dashboards/jack-sparrow/templates/ and reachable only from that
-      # dashboard's own `button_card_templates:` block — templates do not
-      # cross dashboards. lab.yaml deliberately has no such block (see its
-      # header), so this row is core `tile` cards styled to read as the same
-      # class of object: an icon, a name, a subtitle, and a tap that leaves.
-      #
-      # Kuma first here and last there, because on this page it is the subject
-      # rather than one more tool on the NAS.
-      #
-      # Hosts are hardcoded for the same reason as on the other two pages: the
-      # Kuma integration keeps its URL in the config entry rather than in a
-      # state, and neither of the others has an HA entry at all. All three are
-      # the same DHCP reservation on jack-sparrow — if that address moves, it
-      # moves in three files.
-      - type: grid
-        square: false
-        columns: 3
-        grid_options:
-          columns: full
-          rows: auto
-        cards:
-          # `entity:` is the version sensor rather than a status one so the
-          # tile has something real to show a state for, but the tap goes to
-          # Kuma's own UI — the more-info dialog for a version number is not
-          # what anyone wants from a button labelled "Uptime Kuma".
-          - type: tile
-            entity: sensor.lab_availability
-            name: Uptime Kuma
-            icon: mdi:lan-check
-            hide_state: true
-            vertical: false
-            tap_action:
-              action: url
-              url_path: http://192.168.5.8:3001
-            icon_tap_action:
-              action: url
-              url_path: http://192.168.5.8:3001
-
-          - type: tile
-            entity: sensor.scrutiny_drive_health
-            name: Drive health
-            icon: mdi:harddisk
-            hide_state: true
-            # In-HA navigation, not a URL — the Scrutiny drill-down that is
-            # worth having from this page is the HA page, which is already
-            # built. Scrutiny's own web UI is one more hop from there.
-            tap_action:
-              action: navigate
-              navigation_path: /jack-sparrow/drives
-            icon_tap_action:
-              action: navigate
-              navigation_path: /jack-sparrow/drives
-
-          - type: tile
-            entity: sensor.jack_sparrow_health
-            name: jack-sparrow
-            icon: mdi:nas
-            hide_state: true
-            tap_action:
-              action: navigate
-              navigation_path: /jack-sparrow/nas
-            icon_tap_action:
-              action: navigate
-              navigation_path: /jack-sparrow/nas
+      # `!include` resolves relative to THIS file, hence ../../ from
+      # dashboards/<dash>/views/. Hosts, ports, order, colours and the
+      # four-across layout all live in that one file now.
+      - !include ../../cards/portal-row.yaml
 
       # sensor.lab_availability already excludes groups, so `down_count` is a
       # count of actual broken things, not of tiles that happen to be red.

@@ -51,61 +51,16 @@ sections:
         heading_style: title
         icon: mdi:pirate
 
-      # ---- Portals: the three web UIs behind this dashboard ----
+      # ---- Portals ----
+      # One shared card: dashboards/cards/portal-row.yaml. Four buttons, the
+      # same four in the same order with the same look on every page of every
+      # dashboard. Was three hand-maintained copies plus a divergent core-tile
+      # version on the lab board until 2026-08-13.
       #
-      # Same trio, same order, same template as the top of 04-drives.yaml and
-      # of lab/views/01-uptime.yaml — the way out of HA is in the same place
-      # with the same look on every page that has one. `columns: 4` of the
-      # 12-column section grid puts them across one full-width row and lets
-      # them stack on a phone.
-      #
-      # Hosts are hardcoded because none is templatable from an entity: the
-      # UGREEN integration is UI-configured so its host is not in this repo,
-      # Scrutiny has no HA config entry at all, and the Kuma integration
-      # stores its URL in the config entry rather than exposing it as state.
-      # All three are the same DHCP reservation on jack-sparrow; if that
-      # address moves, it moves in three files.
-      - type: custom:button-card
-        template: ugreen_portal_button
-        name: UGOS Portal
-        icon: mdi:nas
-        grid_options:
-          columns: 4
-          rows: auto
-        variables:
-          url: http://192.168.5.8:9999
-          subtitle: 192.168.5.8:9999
-          accent: var(--primary-color)
-
-      - type: custom:button-card
-        template: ugreen_portal_button
-        name: Scrutiny
-        icon: mdi:harddisk
-        grid_options:
-          columns: 4
-          rows: auto
-        variables:
-          url: http://192.168.5.8:8080
-          subtitle: 192.168.5.8:8080
-          # Quoted: an unquoted `#` starts a YAML comment, so the bare form
-          # parses as `var(--info-color,` and silently drops the fallback.
-          accent: 'var(--info-color, #039be5)'
-
-      # Uptime Kuma runs on this NAS but watches the whole lab, which is why
-      # its dashboard is /home-lab rather than a view here. The button is on
-      # this page anyway: the container is jack-sparrow's to restart, so
-      # "Kuma itself is unreachable" is a NAS problem before it is a lab one.
-      - type: custom:button-card
-        template: ugreen_portal_button
-        name: Uptime Kuma
-        icon: mdi:lan-check
-        grid_options:
-          columns: 4
-          rows: auto
-        variables:
-          url: http://192.168.5.8:3001
-          subtitle: 192.168.5.8:3001
-          accent: 'var(--success-color, #0da035)'
+      # `!include` resolves relative to THIS file, hence ../../ from
+      # dashboards/<dash>/views/. Hosts, ports, order, colours and the
+      # four-across layout all live in that one file now.
+      - !include ../../cards/portal-row.yaml
 
       # Native tile cards, wrapped only so their entity_ids can be templated
       # off the selected NAS. rows: auto — a fixed row count is what used to

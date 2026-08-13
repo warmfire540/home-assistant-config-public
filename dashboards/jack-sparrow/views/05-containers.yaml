@@ -58,8 +58,9 @@
 # auto-entities sits at view level. Unlike 04-drives.yaml, no `[[[ ... ]]]`
 # button-card template appears inside an auto-entities `options:` block either
 # — every derived card is a mushroom-template-card built in Jinja, the way the
-# lab uptime board does it. The only button-cards on the page are the three
-# portal buttons, which are plain call sites at card level. Keep it that way if
+# lab uptime board does it. The only button-cards on the page live inside the
+# `!include`d shared portal row, and their call sites are plain YAML variables.
+# Keep it that way if
 # you extend this: the bracket-depth rule is the single most expensive thing to
 # get wrong in this dashboard.
 #
@@ -118,52 +119,15 @@ sections:
         icon: mdi:docker
 
       # ---- Portals ----
-      # Same `ugreen_portal_button` trio, same order, as 01-nas.yaml and
-      # 04-drives.yaml — the way out of HA is in the same place with the same
-      # look on every page that has one. Portainer takes Scrutiny's middle slot
-      # here because on this page it is the subject rather than one more tool.
+      # One shared card: dashboards/cards/portal-row.yaml. Four buttons, the
+      # same four in the same order with the same look on every page of every
+      # dashboard. Was three hand-maintained copies plus a divergent core-tile
+      # version on the lab board until 2026-08-13.
       #
-      # ⚠️ https, and port 9444 not 9443. Portainer's default HTTPS port is
-      # exactly what UGOS serves its own UI on, so the compose file remaps it.
-      # The certificate is self-signed — the browser warning on first visit is
-      # expected and is not a broken link.
-      - type: custom:button-card
-        template: ugreen_portal_button
-        name: UGOS Portal
-        icon: mdi:nas
-        grid_options:
-          columns: 4
-          rows: auto
-        variables:
-          url: http://192.168.5.8:9999
-          subtitle: 192.168.5.8:9999
-          accent: var(--primary-color)
-
-      - type: custom:button-card
-        template: ugreen_portal_button
-        name: Portainer
-        icon: mdi:docker
-        grid_options:
-          columns: 4
-          rows: auto
-        variables:
-          url: https://192.168.5.8:9444
-          subtitle: 192.168.5.8:9444
-          # Quoted: an unquoted `#` starts a YAML comment, so the bare form
-          # parses as `var(--info-color,` and silently drops the fallback.
-          accent: 'var(--info-color, #039be5)'
-
-      - type: custom:button-card
-        template: ugreen_portal_button
-        name: Uptime Kuma
-        icon: mdi:lan-check
-        grid_options:
-          columns: 4
-          rows: auto
-        variables:
-          url: http://192.168.5.8:3001
-          subtitle: 192.168.5.8:3001
-          accent: 'var(--success-color, #0da035)'
+      # `!include` resolves relative to THIS file, hence ../../ from
+      # dashboards/<dash>/views/. Hosts, ports, order, colours and the
+      # four-across layout all live in that one file now.
+      - !include ../../cards/portal-row.yaml
 
       # `grid_options.columns: full` is load-bearing here for the same reason
       # as on 04-drives.yaml: without it this grid takes its default half width

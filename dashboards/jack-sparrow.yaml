@@ -5,9 +5,12 @@
 # Entry point only. The dashboard is split the same way the-matrix is:
 #
 #   jack-sparrow.yaml                 this file — title, theme, includes
-#   jack-sparrow/templates/*.yaml     one button_card_template per file,
-#                                     merged into one dict by filename
+#   templates/*.yaml                  one button_card_template per file,
+#                                     merged into one dict by filename.
+#                                     ⚠️ SHARED WITH lab.yaml — see below.
 #   jack-sparrow/views/NN-*.yaml      one view per file, ordered by filename
+#   cards/portal-row.yaml             the shared portal row, `!include`d as a
+#                                     single card by every view here
 #
 # `!include` paths resolve relative to the file doing the including, and
 # `!include_dir_list` sorts by filename — hence the NN- prefixes.
@@ -68,7 +71,20 @@
 # dashboard YAML, so template/page changes have to be merged by hand.
 #####
 
-button_card_templates: !include_dir_merge_named jack-sparrow/templates
+# ⚠️ `templates`, NOT `jack-sparrow/templates`. Moved up a level on
+# 2026-08-13 so lab.yaml could load the same directory and share
+# `portal_button`. Button-card templates are per-dashboard config and do NOT
+# cross dashboards, so a shared *directory* that only one dashboard includes
+# shares nothing — both stubs have to include this same one, and now do.
+#
+# The three `ugreen_*` templates in there are jack-sparrow's alone and are
+# named so. lab.yaml loads them too and never calls them, which costs nothing:
+# an uncalled button_card_template is an inert dict entry.
+#
+# ⚠️ `!include_dir_merge_named` RECURSES — it walks the tree with os.walk, so
+# a subdirectory under templates/ gets merged in silently rather than ignored.
+# Keep it flat.
+button_card_templates: !include_dir_merge_named templates
 
 title: 'jack-sparrow'
 theme: 'minimalist-desktop'

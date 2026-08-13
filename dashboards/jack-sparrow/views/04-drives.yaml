@@ -27,9 +27,10 @@
 #   row 1   Health       span 3      (portal buttons + the three tiles)
 #   row 2   Drives       span 2      Trends (1)
 #
-# The two portal buttons at the top are the same `ugreen_portal_button` pair,
-# in the same order, as the top of 01-nas.yaml — the way out to UGOS and
-# Scrutiny is in the same place with the same look on every page that has one.
+# The portal row at the top is `!include`d from dashboards/cards/portal-row.yaml
+# — the same one card on every page of both dashboards, so the way out of HA is
+# in the same place with the same look everywhere. It used to be a hand-copied
+# trio here; adding Portainer is what finally made that untenable.
 #
 # WHY NO ugreen_tpl_host WRAPPER
 #
@@ -60,48 +61,15 @@ sections:
         icon: mdi:harddisk
 
       # ---- Portals ----
-      # Identical block to the top of 01-nas.yaml, deliberately: same template,
-      # same trio, same order, so the way out of HA is in the same place with
-      # the same look on every page. This replaced a markdown text link that
-      # sat below the disk list and read as a footnote. See the longer note on
-      # hardcoded hosts there.
-      - type: custom:button-card
-        template: ugreen_portal_button
-        name: UGOS Portal
-        icon: mdi:nas
-        grid_options:
-          columns: 4
-          rows: auto
-        variables:
-          url: http://192.168.5.8:9999
-          subtitle: 192.168.5.8:9999
-          accent: var(--primary-color)
-
-      - type: custom:button-card
-        template: ugreen_portal_button
-        name: Scrutiny
-        icon: mdi:harddisk
-        grid_options:
-          columns: 4
-          rows: auto
-        variables:
-          url: http://192.168.5.8:8080
-          subtitle: 192.168.5.8:8080
-          # Quoted: an unquoted `#` starts a YAML comment, so the bare form
-          # parses as `var(--info-color,` and silently drops the fallback.
-          accent: 'var(--info-color, #039be5)'
-
-      - type: custom:button-card
-        template: ugreen_portal_button
-        name: Uptime Kuma
-        icon: mdi:lan-check
-        grid_options:
-          columns: 4
-          rows: auto
-        variables:
-          url: http://192.168.5.8:3001
-          subtitle: 192.168.5.8:3001
-          accent: 'var(--success-color, #0da035)'
+      # One shared card: dashboards/cards/portal-row.yaml. Four buttons, the
+      # same four in the same order with the same look on every page of every
+      # dashboard. Was three hand-maintained copies plus a divergent core-tile
+      # version on the lab board until 2026-08-13.
+      #
+      # `!include` resolves relative to THIS file, hence ../../ from
+      # dashboards/<dash>/views/. Hosts, ports, order, colours and the
+      # four-across layout all live in that one file now.
+      - !include ../../cards/portal-row.yaml
 
       # `grid_options.columns: full` is load-bearing, and for a different
       # reason than the one on the auto-entities card below. Without it this

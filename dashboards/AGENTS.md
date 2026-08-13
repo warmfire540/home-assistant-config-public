@@ -13,12 +13,13 @@ explaining anything non-obvious. Treat them as reference for style.
 | File | Status | Notes |
 | --- | --- | --- |
 | `jack-sparrow.yaml` | ✅ polished — 2026-08-13 | UGREEN NASync DXP4800 Pro. Entry stub only; header comment explains the split, the button-card wrapper pattern, the two `selected_slug` fallbacks, and why the anchors live in the view file. |
-| `jack-sparrow/templates/*.yaml` | ✅ polished — 2026-08-13 | One `button_card_template` per file, merged by `!include_dir_merge_named`. |
+| `templates/*.yaml` | ✅ polished — 2026-08-13 | One `button_card_template` per file, merged by `!include_dir_merge_named`. **Shared by BOTH dashboards** — moved up from `jack-sparrow/templates/` on 2026-08-13 so `lab.yaml` could reach `portal_button`. Templates are per-dashboard config and do not cross dashboards, so both stubs include this same directory; lab loads the three `ugreen_*` entries and never calls them, which is free. |
+| `cards/portal-row.yaml` | ✅ polished — 2026-08-13 | The portal row, as ONE card `!include`d by every view in every dashboard. Four buttons — UGOS, Portainer, Scrutiny, Uptime Kuma, in that order — so hosts, ports, colours and the four-across layout live in one file instead of four. |
 | `jack-sparrow/views/*.yaml` | ✅ polished — 2026-08-13 | One view per file, ordered by the `NN-` prefix. |
 | `jack-sparrow/views/04-drives.yaml` | ✅ polished — 2026-08-13 | Scrutiny SMART health per disk. **The one view with no `ugreen_tpl_host` wrapper** — nothing on it is keyed to the NAS selector, so `auto-entities` sits at view level and its `options:` templates use THREE brackets, not four. |
-| `jack-sparrow/views/05-containers.yaml` | ⚠️ written, unverified — 2026-08-13 | Portainer container board. **Names no container anywhere** — every card is an `auto-entities` Jinja template over `integration_entities('portainer')`, keyed on `binary_sensor` being the integration's container-only platform. Mushroom + core cards, so no `[[[ ]]]` and no bracket counting anywhere except the three portal buttons. **Every entity-ID suffix is predicted from the integration's `strings.json`, not observed** — see the header of `entities/templates/portainer.yaml`. Controls isolated in their own bottom section; `Recreate` and `Kill` deliberately omitted. |
-| `lab.yaml` | ✅ polished — 2026-08-13 | Lab-wide monitoring. Entry stub only; header explains why it is not a jack-sparrow view and why it deliberately has **no** `button_card_templates:` block. |
-| `lab/views/01-uptime.yaml` | ✅ polished — 2026-08-13 | Uptime Kuma availability board. **Names no monitor anywhere** — every card is an `auto-entities` Jinja template over `integration_entities('uptime_kuma')`, so the page tracks Kuma with no edits. Core cards + mushroom, so no `[[[ ]]]` and no bracket counting. |
+| `jack-sparrow/views/05-containers.yaml` | ⚠️ written, unverified — 2026-08-13 | Portainer container board. **Names no container anywhere** — every card is an `auto-entities` Jinja template over `integration_entities('portainer')`, keyed on `binary_sensor` being the integration's container-only platform. Mushroom + core cards, so no `[[[ ]]]` and no bracket counting in the view file itself. **Every entity-ID suffix is predicted from the integration's `strings.json`, not observed** — see the header of `entities/templates/portainer.yaml`. Controls isolated in their own bottom section; `Recreate` and `Kill` deliberately omitted. |
+| `lab.yaml` | ✅ polished — 2026-08-13 | Lab-wide monitoring. Entry stub only; header explains why it is not a jack-sparrow view. **It now DOES carry a `button_card_templates:` block** (added 2026-08-13, pointing at the shared `templates/` dir) — the old "deliberately none" note is superseded, and the header says why: the portal row could not look consistent without it. |
+| `lab/views/01-uptime.yaml` | ✅ polished — 2026-08-13 | Uptime Kuma availability board. **Names no monitor anywhere** — every card is an `auto-entities` Jinja template over `integration_entities('uptime_kuma')`, so the page tracks Kuma with no edits. Core cards + mushroom, so no `[[[ ]]]` and no bracket counting in the view file itself — the only JS templates reachable from this page are inside the shared `portal_button`. |
 | `room-summary-card/*.yaml` | ⬜ not reviewed | Scratch dashboards for testing the custom card. Hidden from sidebar. Candidates for pruning. |
 
 ## Splitting a dashboard
@@ -74,6 +75,20 @@ foo/views/NN-*.yaml      one view per file
   Anchors (`&percent_thresholds`) cannot parameterize, so anything varying
   by more than nothing wants a `button_card_templates` entry with
   `variables:` instead.
+- **Button-card templates do NOT cross dashboards.** A `button_card_template`
+  is only reachable from the dashboard whose own `button_card_templates:` block
+  loaded it. Putting a template in a shared *directory* shares nothing on its
+  own — every dashboard that calls it has to include that directory. This is
+  what kept `lab.yaml` on hand-rolled `tile` portal buttons until 2026-08-13.
+- **`!include_dir_merge_named` / `_list` RECURSE.** They walk the tree with
+  `os.walk`, so a subdirectory under `templates/` or under a `views/` dir is
+  merged in silently rather than ignored. Keep both flat. (`!include` itself
+  resolves relative to the *including* file, which is what makes
+  `../../cards/portal-row.yaml` work identically from either dashboard.)
+- **`!include` substitutes ONE node.** A file containing a list of cards is
+  inserted as a single list item that happens to be a list, and Lovelace
+  rejects it. A shared multi-card block has to be wrapped in one container
+  card — see `cards/portal-row.yaml`.
 - **`/local/community/...` assets are gitignored.** They ship with the HACS
   integration and exist on the live instance only. Do not "fix" those paths.
 - **`device_id` values are opaque.** The comment above each card is the only

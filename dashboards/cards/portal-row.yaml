@@ -1,0 +1,112 @@
+---
+#####
+# portal-row — the way out of Home Assistant, on every page
+#
+# ⚠️ THIS FILE IS ONE CARD, SHARED BY EVERY VIEW IN EVERY YAML DASHBOARD.
+# Edit it once and all five pages change. That is the entire reason it exists:
+# before 2026-08-13 this row was copy-pasted into three jack-sparrow views
+# with three buttons each, and hand-rolled a fourth time in
+# lab/views/01-uptime.yaml out of core `tile` cards because that dashboard had
+# no button-card templates block. Four copies, two of them already divergent,
+# and every new tool meant editing all of them.
+#
+# Included as a single list item:
+#
+#   cards:
+#     - type: heading
+#       ...
+#     - !include ../../cards/portal-row.yaml
+#
+# ⚠️ `!include` RESOLVES RELATIVE TO THE INCLUDING FILE, so the `../../` is
+# counted from `dashboards/<dash>/views/NN-*.yaml`. A view moved to a different
+# depth has to have its path adjusted, and the failure is a hard config error
+# at reload rather than a missing card — which is the good kind.
+#
+# ⚠️ ONE CARD, NOT A LIST OF FOUR. `!include` substitutes a single YAML node,
+# so a file containing a list of four cards would be inserted as ONE list item
+# that happens to be a list, and Lovelace rejects it. Hence the wrapper `grid`.
+# That is also why the wrapper carries `grid_options: columns: full` — without
+# it a card in a sections view claims half the section's 12-column grid, and
+# this row would pack itself into the left half of the page.
+#
+# ⚠️ THE WRAPPER GRID DOES NOT REFLOW. `columns: 4` is four across at every
+# width, including a phone. That is the one knob worth knowing about on this
+# file: drop it to 2 for a 2×2 block if four-up ever reads as cramped, and
+# every page follows. Do not fix it by shrinking the font in
+# templates/portal_button.yaml — that trades a legible subtitle for a layout
+# problem that belongs here.
+#
+# ORDER: the box first, then its tools alphabetically.
+#
+# UGOS is the NAS itself and everything else runs on it, so it leads. Then
+# Portainer, Scrutiny, Uptime Kuma. An explicit rule rather than a habit,
+# because the previous order was "whatever existed when the page was written"
+# and that is how the pages diverged in the first place.
+#
+# HOSTS ARE HARDCODED, and there is no way around it: the UGREEN integration
+# is UI-configured so its host is not in this repo, Scrutiny has no HA config
+# entry at all, Portainer and Kuma both keep their URLs in the config entry
+# rather than exposing them as state. All four are the same DHCP reservation
+# on jack-sparrow — and now, if that address moves, it moves in ONE file
+# instead of four.
+#
+# ⚠️ PORTAINER IS https AND ON 9444, not the 9443 Portainer defaults to —
+# UGOS serves its own HTTPS UI on 9443, so the compose file remaps it. The
+# certificate is self-signed; the browser warning on first visit is expected
+# and is not a broken link.
+#
+# Uses: templates/portal_button.yaml, which BOTH dashboards must load via
+# `button_card_templates: !include_dir_merge_named templates`. A dashboard
+# that includes this row without that block renders four cards reading
+# "Custom element doesn't exist" — the template is not found, not the card.
+#####
+
+type: grid
+square: false
+columns: 4
+grid_options:
+  columns: full
+  rows: auto
+cards:
+  - type: custom:button-card
+    template: portal_button
+    name: UGOS
+    icon: mdi:nas
+    variables:
+      url: http://192.168.5.8:9999
+      subtitle: 192.168.5.8:9999
+      accent: var(--primary-color)
+
+  - type: custom:button-card
+    template: portal_button
+    name: Portainer
+    icon: mdi:docker
+    variables:
+      url: https://192.168.5.8:9444
+      subtitle: 192.168.5.8:9444
+      # Quoted: an unquoted `#` starts a YAML comment, so the bare form
+      # parses as `var(--info-color,` and silently drops the fallback.
+      accent: 'var(--info-color, #039be5)'
+
+  - type: custom:button-card
+    template: portal_button
+    name: Scrutiny
+    icon: mdi:harddisk
+    variables:
+      url: http://192.168.5.8:8080
+      subtitle: 192.168.5.8:8080
+      # Scrutiny held `--info-color` until Portainer joined the row and the
+      # two blues became indistinguishable at this size. `--accent-color` is
+      # the only remaining theme var that is reliably distinct from primary,
+      # info and success; the fallback is set because several themes leave it
+      # equal to `--primary-color`, which would undo the whole point.
+      accent: 'var(--accent-color, #7e57c2)'
+
+  - type: custom:button-card
+    template: portal_button
+    name: Uptime Kuma
+    icon: mdi:lan-check
+    variables:
+      url: http://192.168.5.8:3001
+      subtitle: 192.168.5.8:3001
+      accent: 'var(--success-color, #0da035)'

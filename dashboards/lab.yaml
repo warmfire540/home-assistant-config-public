@@ -6,6 +6,8 @@
 #
 #   lab.yaml                 this file — title, theme, includes
 #   lab/views/NN-*.yaml      one view per file, ordered by filename
+#   templates/*.yaml         button_card_templates, SHARED with jack-sparrow
+#   cards/portal-row.yaml    the shared portal row, `!include`d as one card
 #
 # `!include_dir_list` sorts by filename, hence the NN- prefixes.
 #
@@ -20,17 +22,30 @@
 # push monitors, and anything else that is about the lab rather than about one
 # box. This dashboard is the place for those.
 #
-# NO `button_card_templates:` BLOCK — DELIBERATELY
+# THE `button_card_templates:` BLOCK — ADDED 2026-08-13, AND WHY
 #
-# jack-sparrow needs one, which is the whole reason it lives outside
-# the-matrix. This dashboard does not: every card here is core Lovelace plus
-# auto-entities and mushroom, so there are no `[[[ ... ]]]` JS templates and
-# none of the bracket-counting that goes with them. Templates here are
-# ordinary Jinja, evaluated by Home Assistant.
+# This file used to carry a long note explaining that it deliberately had NO
+# such block: every card here is core Lovelace plus auto-entities and mushroom,
+# so there were no `[[[ ... ]]]` JS templates and none of the bracket-counting
+# that goes with them.
 #
-# Keep it that way if you can. If a card ever does need button-card templates,
-# add the block here rather than reaching into UML's HACS-managed template
-# dir, which is overwritten on update.
+# That held until the portal row. The way out of Home Assistant is supposed to
+# look identical on every page, and this dashboard could not use the shared
+# `portal_button` template — button-card templates are per-dashboard config and
+# do not cross dashboards — so 01-uptime.yaml hand-rolled the row out of core
+# `tile` cards instead. Four buttons that looked like four different classes of
+# object depending on which page you were on, which is the exact problem the
+# template exists to prevent.
+#
+# The tradeoff is smaller than the old note implies. `[[[ ... ]]]` now exists
+# on this dashboard, but ONLY inside templates/portal_button.yaml — every call
+# site is plain YAML variables, and nothing in lab/views/ counts a bracket.
+# The rule worth keeping is the narrower one: no JS templates in the view
+# files. Jinja, evaluated by Home Assistant, everywhere else.
+#
+# ⚠️ `templates` RESOLVES TO dashboards/templates/, the SAME directory
+# jack-sparrow.yaml loads. It is not a lab-specific copy. Editing a file in
+# there changes both dashboards, and that is the intent.
 #
 # EVERYTHING IS DERIVED, NOTHING IS LISTED
 #
@@ -51,6 +66,8 @@
 # Deploy steps, the monitor table and the alerting decisions live in the
 # **servers** repo at hosts/jack-sparrow/uptime-kuma-runbook.md.
 #####
+
+button_card_templates: !include_dir_merge_named templates
 
 title: 'Lab'
 theme: 'minimalist-desktop'
