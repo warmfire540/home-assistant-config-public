@@ -80,7 +80,7 @@ cards:
         "label label label label label label"
         "living dining office kitchen bedroom bath"
         "guest spare garage attic shed server"
-        "patio . . . . ."
+        "patio nas . . . ."
       mediaquery:
         # portrait monitor
         'only screen and (min-width: 769px) and (max-width: 1400px)':
@@ -90,7 +90,7 @@ cards:
             "living dining office kitchen "
             "bedroom bath guest spare"
             "garage attic shed server"
-            "patio . . ."
+            "patio nas . ."
         # Smartphones
         'only screen and (max-width: 768px)':
           grid-template-columns: 1fr 1fr
@@ -102,7 +102,7 @@ cards:
             "guest spare"
             "garage attic"
             "shed server"
-            "patio ."
+            "patio nas"
     view_layout:
       grid-area: rooms
     cards:
@@ -298,6 +298,47 @@ cards:
         humidity_sensor: sensor.office_climate_humidity
         temperature_sensor: sensor.office_climate_air_temperature
         navigate: lab
+        background:
+          options:
+            - icon_background
+
+      #################
+      # JACK-SPARROW (NAS)
+      #################
+      # Taps anywhere on the card -> the standalone jack-sparrow dashboard.
+      # `full_card_actions` is what makes the whole card (not just the title)
+      # honour tap_action; root-level `navigate:` is deprecated on this card.
+      - type: custom:room-summary-card
+        view_layout:
+          grid-area: nas
+        area: server_closet
+        area_name: jack-sparrow
+        features:
+          - full_card_actions
+        actions:
+          tap_action:
+            action: navigate
+            navigation_path: /jack-sparrow/nas
+        # Rolled-up health drives the icon colour: red if ANY pool, volume or
+        # disk is not "Normal". Defined in entities/templates/jack_sparrow.yaml.
+        entity:
+          entity_id: sensor.jack_sparrow_health
+          off_color: green
+          on_color: red
+          hold_action:
+            action: more-info
+        temperature_sensor: sensor.jack_sparrow_cpu_temperature
+        entities:
+          # Pool 1 = RAID 5 bulk, single-drive tolerance. The one that matters.
+          - entity_id: sensor.jack_sparrow_pool_1_status
+            off_color: green
+            on_color: red
+          # Capacity trend on the bulk array.
+          - entity_id: sensor.jack_sparrow_pool_1_volume_1_used
+          # Pool 2 = NVMe mirror holding container/DB state.
+          - entity_id: sensor.jack_sparrow_pool_2_status
+            off_color: green
+            on_color: red
         background:
           options:
             - icon_background

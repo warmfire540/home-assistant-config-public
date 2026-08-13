@@ -1,0 +1,99 @@
+#####
+# jack-sparrow (UGREEN NASync DXP4800 Pro) — derived sensors
+#
+# The ugreen integration exposes used/total as formatted strings ("1.2 TB")
+# plus matching `*_raw` sensors in bytes. It does NOT expose a used percentage,
+# which is the number you actually want on a summary card and the only sane
+# thing to threshold an alert against.
+#
+# Volume 1 on pool 1 = the RAID 5 bulk array (32.6 TiB).
+# Volume 1 on pool 2 = the RAID 1 NVMe app/VM pool (1.8 TiB).
+#####
+
+- sensor:
+    #################
+    # VOLUME USED %
+    #################
+    - name: jack-sparrow Pool 1 Volume 1 Used
+      unique_id: 777b3b55-f859-4542-a373-320195e0b9e1
+      icon: 'mdi:harddisk'
+      unit_of_measurement: '%'
+      state_class: measurement
+      availability: >
+        {{ states('sensor.jack_sparrow_pool_1_volume_1_total_size_raw')
+           | float(0) > 0 }}
+      state: >
+        {{ (states('sensor.jack_sparrow_pool_1_volume_1_used_size_raw') | float(0)
+            / states('sensor.jack_sparrow_pool_1_volume_1_total_size_raw') | float(1)
+            * 100) | round(1) }}
+      attributes:
+        used: "{{ states('sensor.jack_sparrow_pool_1_volume_1_used_size') }}"
+        available: "{{ states('sensor.jack_sparrow_pool_1_volume_1_available_size') }}"
+        pool: 'Pool 1 — RAID 5, 4x 12TB'
+
+    - name: jack-sparrow Pool 2 Volume 1 Used
+      unique_id: 303275c6-8893-4479-a952-506c431b6c4c
+      icon: 'mdi:chip'
+      unit_of_measurement: '%'
+      state_class: measurement
+      availability: >
+        {{ states('sensor.jack_sparrow_pool_2_volume_1_total_size_raw')
+           | float(0) > 0 }}
+      state: >
+        {{ (states('sensor.jack_sparrow_pool_2_volume_1_used_size_raw') | float(0)
+            / states('sensor.jack_sparrow_pool_2_volume_1_total_size_raw') | float(1)
+            * 100) | round(1) }}
+      attributes:
+        used: "{{ states('sensor.jack_sparrow_pool_2_volume_1_used_size') }}"
+        available: "{{ states('sensor.jack_sparrow_pool_2_volume_1_available_size') }}"
+        pool: 'Pool 2 — RAID 1, 2x 2TB NVMe'
+
+    #################
+    # ROLLED-UP HEALTH
+    #################
+    # One entity to alert on / colour the home card with, instead of watching
+    # eleven separate status sensors. Any pool, volume or disk not reporting
+    # "Normal" makes this Problem, and lists what is wrong in an attribute.
+    - name: jack-sparrow Health
+      unique_id: 2d4a6b22-a261-43d3-80c8-e18d2e7d9e73
+      # `this` = this entity's own state object. Avoids a self-referencing
+      # state_attr() call, which would deadlock the template.
+      icon: "{{ 'mdi:nas' if this.state == 'OK' else 'mdi:alert' }}"
+      state: >
+        {% set ns = namespace(bad=0) %}
+        {% for e in [
+            'sensor.jack_sparrow_pool_1_status',
+            'sensor.jack_sparrow_pool_2_status',
+            'sensor.jack_sparrow_pool_1_volume_1_status',
+            'sensor.jack_sparrow_pool_2_volume_1_status',
+            'sensor.jack_sparrow_pool_1_disk_1_status',
+            'sensor.jack_sparrow_pool_1_disk_2_status',
+            'sensor.jack_sparrow_pool_1_disk_3_status',
+            'sensor.jack_sparrow_pool_1_disk_4_status',
+            'sensor.jack_sparrow_pool_2_disk_1_status',
+            'sensor.jack_sparrow_pool_2_disk_2_status' ] %}
+          {% if states(e) not in ['Normal', 'unknown', 'unavailable'] %}
+            {% set ns.bad = ns.bad + 1 %}
+          {% endif %}
+        {% endfor %}
+        {{ 'Problem' if ns.bad > 0 else 'OK' }}
+      attributes:
+        problems: >
+          {% set ns = namespace(bad=[]) %}
+          {% for e in [
+              'sensor.jack_sparrow_pool_1_status',
+              'sensor.jack_sparrow_pool_2_status',
+              'sensor.jack_sparrow_pool_1_volume_1_status',
+              'sensor.jack_sparrow_pool_2_volume_1_status',
+              'sensor.jack_sparrow_pool_1_disk_1_status',
+              'sensor.jack_sparrow_pool_1_disk_2_status',
+              'sensor.jack_sparrow_pool_1_disk_3_status',
+              'sensor.jack_sparrow_pool_1_disk_4_status',
+              'sensor.jack_sparrow_pool_2_disk_1_status',
+              'sensor.jack_sparrow_pool_2_disk_2_status' ] %}
+            {% if states(e) not in ['Normal', 'unknown', 'unavailable'] %}
+              {% set ns.bad = ns.bad + [
+                   state_attr(e, 'friendly_name') ~ ': ' ~ states(e) ] %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.bad }}

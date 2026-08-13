@@ -10,11 +10,17 @@
 # Adapted from:
 #   https://github.com/Tom-Bom-badil/home-assistant_ugreen-nas/wiki/05-The-premade-dashboard-page
 #
-# Deviations from upstream (deliberate):
-#   - dropped the picture-elements NAS photo + background image
-#   - dropped the heavy card_mod styling on the select dropdowns
-#   - kept the select.ugreen_nas_lovelace_device_select slug indirection, so the
-#     page keeps working regardless of the entity prefix set in the integration
+# TWO THINGS TO KNOW IF YOU EDIT THIS:
+#
+# 1. `[[[ ... ]]]` JS templates ONLY work inside custom:button-card. Any
+#    mini-graph-card / entities card that needs a templated entity_id must be
+#    nested under a button-card `custom_fields:` wrapper, or the template is
+#    passed through as a literal string and the card breaks. That is why the
+#    wrappers below look redundant — they are not.
+#
+# 2. Upstream hardcodes `color: white` because its page sits on a dark
+#    background image. This version uses theme vars instead so it works on
+#    light and dark themes.
 #
 # On integration updates: re-check the upstream wiki page. HACS cannot update
 # dashboard YAML, so template/page changes have to be merged by hand.
@@ -62,26 +68,30 @@ button_card_templates:
               }
             ]]]
         - border-radius: 10px
-        - min-height: 13vh
-        - height: 13vh
+        - min-height: 120px
+        - height: 120px
         - padding: 0px
         - display: grid
         - grid-template-rows: auto 1fr auto
         - grid-template-columns: 1fr
         - position: relative
         - overflow: hidden
+        - border: none
+        - box-shadow: none
       name:
-        - font-size: 0.8em
+        - font-size: 0.75em
         - color: white
         - z-index: 2
         - justify-self: stretch
         - align-self: start
         - width: 100%
         - background-color: rgba(0, 0, 0, 0.2)
-        - padding: 0.2em 0.8em
+        - padding: 0.25em 0.7em
         - box-sizing: border-box
         - text-align: left
-        - margin-top: 0px
+        - white-space: nowrap
+        - overflow: hidden
+        - text-overflow: ellipsis
       state:
         - display: grid
         - place-items: center
@@ -92,37 +102,35 @@ button_card_templates:
         - white-space: normal
         - word-break: break-word
         - overflow-wrap: break-word
-        - margin-top: '-1.75vh'
         - width: 100%
-        - padding: 0 4px
-        - height: 7vh
+        - padding: 0 6px
+        - height: 60px
         - overflow: hidden
-        - text-overflow: ellipsis
         - font-size: |
             [[[
               const len = entity.state.length;
-              if (len <= 6) return '2em';
-              if (len <= 10) return '1.5em';
+              if (len <= 6) return '1.8em';
+              if (len <= 10) return '1.3em';
               if (len <= 20) return '1em';
               return '0.8em';
             ]]]
       custom_fields:
         icon_bg:
           - position: absolute
-          - top: 10px
+          - top: 12px
           - right: 0px
-          - width: 6em
+          - width: 5em
           - opacity: 0.15
           - z-index: 1
         footer:
           - background-color: rgba(0, 0, 0, 0.2)
           - color: white
-          - font-size: 0.8em
+          - font-size: 0.7em
           - display: grid
           - grid-template-columns: 1fr auto
           - align-items: center
-          - padding: 0 0.8em
-          - height: 1.5em
+          - padding: 0 0.7em
+          - height: 1.6em
           - width: 100%
           - box-sizing: border-box
           - z-index: 2
@@ -149,7 +157,7 @@ button_card_templates:
             const date = new Date(entity.last_changed);
             return `
               <div style="display: contents;">
-                <span style="justify-self: start; padding-top: 2px;">
+                <span style="justify-self: start; padding-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                   ${entity.attributes.UGNAS_part_category || ''}
                 </span>
                 <span style="justify-self: end; padding-top: 2px;">
@@ -169,10 +177,36 @@ button_card_templates:
           `;
         ]]]
 
+  # Transparent, borderless shell used purely so nested cards get JS templating.
+  ugreen_tpl_host:
+    entity: none
+    show_icon: false
+    show_name: false
+    show_state: false
+    show_label: false
+    tap_action:
+      action: none
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+    triggers_update:
+      - select.ugreen_nas_lovelace_device_select
+    styles:
+      card:
+        - background: none
+        - box-shadow: none
+        - border: none
+        - padding: 0
+        - margin: 0
+
 title: 'jack-sparrow'
 theme: 'minimalist-desktop'
 
 views:
+  #####################################################################
+  # NAS — overview, storage, control
+  #####################################################################
   - title: NAS
     path: nas
     icon: mdi:nas
@@ -196,128 +230,162 @@ views:
             content: >-
               {% set slug =
               state_attr('select.ugreen_nas_lovelace_device_select',
-              'selected_slug') or 'ugreen_nas' %} **{{
-              states('sensor.' ~ slug ~ '_nas_model') }}** · UGOS {{
+              'selected_slug') or 'ugreen_nas' %} ### {{
+              states('sensor.' ~ slug ~ '_nas_name') }}
+
+              **{{ states('sensor.' ~ slug ~ '_nas_model') }}** · UGOS {{
               states('sensor.' ~ slug ~ '_nas_ugos_version') }}
 
               {{ states('sensor.' ~ slug ~ '_cpu_model') }} — {{
               states('sensor.' ~ slug ~ '_cpu_cores') }}C / {{
-              states('sensor.' ~ slug ~ '_cpu_threads') }}T
+              states('sensor.' ~ slug ~ '_cpu_threads') }}T · {{
+              states('sensor.' ~ slug ~ '_ram_usage_used_gb') | round(0) }} /
+              {{ states('sensor.' ~ slug ~ '_ram_total_size') }} RAM
 
               {{ states('sensor.' ~ slug ~ '_system_message') }}
-
               {{ states('sensor.' ~ slug ~ '_temperature_message') }}
 
-          - type: horizontal-stack
-            cards:
-              - type: custom:mini-graph-card
-                name: CPU Load
-                icon: mdi:chip
-                hours_to_show: 24
-                points_per_hour: 10
-                min_bound_range: 10
-                animate: true
-                hour24: true
-                height: 180
-                decimals: 0
-                state_adaptive_color: true
-                show_state: true
-                line_width: 5
-                entities:
-                  - entity: |
-                      [[[
-                        const slug =
-                          states['select.ugreen_nas_lovelace_device_select']?.attributes?.selected_slug || 'ugreen_nas';
-                        return `sensor.${slug}_cpu_usage`;
-                      ]]]
-                color_thresholds:
-                  - value: 20
-                    color: '#388e3c'
-                  - value: 50
-                    color: '#ddff00'
-                  - value: 60
-                    color: '#ffa000'
-                  - value: 80
-                    color: '#ff5900'
-                  - value: 90
-                    color: '#d32f2f'
-                show:
-                  extrema: true
-                  name_adaptive_color: true
-                  icon_adaptive_color: true
+          # NAS product photo, from the integration's HACS assets in
+          # /config/www/community/ugreen/. Pinned to 4-bay-picture-square.png
+          # rather than the `selected_image_file` attribute, which picks a
+          # worse image. Base image is a 1px transparent spacer; the real
+          # picture is a card_mod background.
+          - type: picture-elements
+            image: /local/community/ugreen/1px_transparent.png
+            grid_options:
+              columns: full
+              rows: 4
+            elements: []
+            card_mod:
+              style: |
+                ha-card {
+                  border: 0;
+                  box-shadow: none;
+                  background: transparent;
+                  background-image: url("/local/community/ugreen/4-bay-picture-square.png");
+                  background-repeat: no-repeat;
+                  background-position: center;
+                  background-size: contain;
+                  min-height: 220px;
+                }
 
-              - type: custom:mini-graph-card
-                name: CPU Temp
-                hours_to_show: 24
-                points_per_hour: 10
-                min_bound_range: 20
-                animate: true
-                hour24: true
-                height: 180
-                state_adaptive_color: true
-                show_state: true
-                line_width: 5
-                entities:
-                  - entity: |
-                      [[[
-                        const slug =
-                          states['select.ugreen_nas_lovelace_device_select']?.attributes?.selected_slug || 'ugreen_nas';
-                        return `sensor.${slug}_cpu_temperature`;
-                      ]]]
-                color_thresholds:
-                  - value: 20
-                    color: '#388e3c'
-                  - value: 50
-                    color: '#ddff00'
-                  - value: 60
-                    color: '#ffa000'
-                  - value: 80
-                    color: '#ff5900'
-                  - value: 90
-                    color: '#d32f2f'
-                show:
-                  extrema: true
-                  name_adaptive_color: true
-                  icon_adaptive_color: true
+          # button-card wrapper: mini-graph-card cannot evaluate [[[ ]]] itself
+          - type: custom:button-card
+            template: ugreen_tpl_host
+            grid_options:
+              columns: full
+              rows: 4
+            styles:
+              grid:
+                - grid-template-areas: '"plots"'
+                - grid-template-columns: 1fr
+              custom_fields:
+                plots:
+                  - display: block
+            custom_fields:
+              plots:
+                card:
+                  type: horizontal-stack
+                  cards:
+                    - type: custom:mini-graph-card
+                      name: CPU Load
+                      icon: mdi:chip
+                      hours_to_show: 24
+                      points_per_hour: 10
+                      min_bound_range: 10
+                      animate: true
+                      hour24: true
+                      height: 160
+                      decimals: 0
+                      show_state: true
+                      line_width: 5
+                      entities:
+                        - entity: |
+                            [[[
+                              const slug =
+                                states['select.ugreen_nas_lovelace_device_select']?.attributes?.selected_slug || 'ugreen_nas';
+                              return `sensor.${slug}_cpu_usage`;
+                            ]]]
+                      color_thresholds:
+                        - value: 20
+                          color: '#388e3c'
+                        - value: 50
+                          color: '#ddff00'
+                        - value: 60
+                          color: '#ffa000'
+                        - value: 80
+                          color: '#ff5900'
+                        - value: 90
+                          color: '#d32f2f'
+                      show:
+                        extrema: true
 
-              - type: custom:mini-graph-card
-                name: RAM
-                icon: mdi:memory
-                hours_to_show: 24
-                points_per_hour: 10
-                min_bound_range: 50
-                animate: true
-                hour24: true
-                height: 180
-                decimals: 0
-                state_adaptive_color: true
-                show_state: true
-                line_width: 5
-                entities:
-                  - entity: |
-                      [[[
-                        const slug =
-                          states['select.ugreen_nas_lovelace_device_select']?.attributes?.selected_slug || 'ugreen_nas';
-                        return `sensor.${slug}_ram_usage`;
-                      ]]]
-                color_thresholds:
-                  - value: 20
-                    color: '#388e3c'
-                  - value: 50
-                    color: '#ddff00'
-                  - value: 60
-                    color: '#ffa000'
-                  - value: 80
-                    color: '#ff5900'
-                  - value: 90
-                    color: '#d32f2f'
-                show:
-                  extrema: true
-                  name_adaptive_color: true
-                  icon_adaptive_color: true
+                    - type: custom:mini-graph-card
+                      name: CPU Temp
+                      hours_to_show: 24
+                      points_per_hour: 10
+                      min_bound_range: 20
+                      animate: true
+                      hour24: true
+                      height: 160
+                      show_state: true
+                      line_width: 5
+                      entities:
+                        - entity: |
+                            [[[
+                              const slug =
+                                states['select.ugreen_nas_lovelace_device_select']?.attributes?.selected_slug || 'ugreen_nas';
+                              return `sensor.${slug}_cpu_temperature`;
+                            ]]]
+                      color_thresholds:
+                        - value: 100
+                          color: '#388e3c'
+                        - value: 120
+                          color: '#ddff00'
+                        - value: 140
+                          color: '#ffa000'
+                        - value: 160
+                          color: '#ff5900'
+                        - value: 180
+                          color: '#d32f2f'
+                      show:
+                        extrema: true
+
+                    - type: custom:mini-graph-card
+                      name: RAM
+                      icon: mdi:memory
+                      hours_to_show: 24
+                      points_per_hour: 10
+                      min_bound_range: 50
+                      animate: true
+                      hour24: true
+                      height: 160
+                      decimals: 0
+                      show_state: true
+                      line_width: 5
+                      entities:
+                        - entity: |
+                            [[[
+                              const slug =
+                                states['select.ugreen_nas_lovelace_device_select']?.attributes?.selected_slug || 'ugreen_nas';
+                              return `sensor.${slug}_ram_usage`;
+                            ]]]
+                      color_thresholds:
+                        - value: 20
+                          color: '#388e3c'
+                        - value: 50
+                          color: '#ddff00'
+                        - value: 60
+                          color: '#ffa000'
+                        - value: 80
+                          color: '#ff5900'
+                        - value: 90
+                          color: '#d32f2f'
+                      show:
+                        extrema: true
 
       #################
-      # STORAGE + CONTROL
+      # STORAGE
       #################
       - type: grid
         column_span: 2
@@ -326,26 +394,12 @@ views:
             heading: Storage
             heading_style: title
 
-          # ---- Disks (auto: 4x HDD + 2x NVMe cache) ----
+          # ---- Disks: 4x HDD (pool 1) + 2x NVMe (pool 2) ----
           - type: custom:button-card
-            entity: none
-            show_icon: false
-            show_name: false
-            show_state: false
-            show_label: false
-            tap_action:
-              action: none
-            triggers_update:
-              - select.ugreen_nas_lovelace_device_select
+            template: ugreen_tpl_host
             grid_options:
               columns: full
             styles:
-              card:
-                - background: transparent
-                - box-shadow: none
-                - border: none
-                - padding: 0
-                - margin: 0
               grid:
                 - grid-template-areas: '"disks"'
                 - grid-template-columns: 1fr
@@ -360,7 +414,14 @@ views:
                   card_param: cards
                   card:
                     type: grid
-                    columns: 3
+                    columns: |
+                      [[[
+                        const w = window.innerWidth;
+                        const steps = [[1000,2],[600,1]];
+                        let n = 3;
+                        for (const [bp, c] of steps) { if (w <= bp) n = c; }
+                        return n;
+                      ]]]
                     square: false
                   sort:
                     method: attribute
@@ -396,22 +457,20 @@ views:
                             (entity?.attributes?.Temperature || ''); ]]]]
                           styles:
                             card:
-                              - background-color: transparent
-                              - border-color: '#404040'
                               - border-radius: 12px
                               - padding: 8px
                               - height: 90px
                             icon:
                               - color: >
                                   [[[[ return entity?.state === 'Normal' ?
-                                  'rgba(0,128,0)' : 'var(--error-color, #f44336)'; ]]]]
+                                  'var(--success-color, #43a047)' : 'var(--error-color, #f44336)'; ]]]]
                             name:
                               - font-weight: 600
-                              - color: white
+                              - color: var(--primary-text-color)
                             state:
-                              - font-size: 0.7em
+                              - font-size: 0.75em
                               - opacity: 0.9
-                              - color: white
+                              - color: var(--secondary-text-color)
                       - entity_id: |
                           [[[
                             const slug =
@@ -422,26 +481,12 @@ views:
                           UGNAS_summary_entity_for: Cache Disk
                         options: *disk_card
 
-          # ---- Pools (Pool 1 = RAID5 bulk, Pool 2 = RAID1 NVMe) ----
+          # ---- Pools ----
           - type: custom:button-card
-            entity: none
-            show_icon: false
-            show_name: false
-            show_state: false
-            show_label: false
-            tap_action:
-              action: none
-            triggers_update:
-              - select.ugreen_nas_lovelace_device_select
+            template: ugreen_tpl_host
             grid_options:
               columns: full
             styles:
-              card:
-                - background: transparent
-                - box-shadow: none
-                - border: none
-                - padding: 0
-                - margin: 0
               grid:
                 - grid-template-areas: '"pools"'
                 - grid-template-columns: 1fr
@@ -456,7 +501,14 @@ views:
                   card_param: cards
                   card:
                     type: grid
-                    columns: 2
+                    columns: |
+                      [[[
+                        const w = window.innerWidth;
+                        const steps = [[600,1]];
+                        let n = 2;
+                        for (const [bp, c] of steps) { if (w <= bp) n = c; }
+                        return n;
+                      ]]]
                     square: false
                   sort:
                     method: attribute
@@ -478,7 +530,7 @@ views:
                           show_name: true
                           show_state: true
                           show_label: true
-                          size: 50px
+                          size: 40px
                           tap_action:
                             action: more-info
                           icon: mdi:database
@@ -494,12 +546,13 @@ views:
                             [[[[
                               const used = entity?.attributes?.['Used Size'] ?? '—';
                               const disks = entity?.attributes?.['Disk Count'] ?? '—';
-                              return `${used} on ${disks} Disks`;
+                              return `${used} on ${disks} disks`;
                             ]]]]
                           label: |
                             [[[[
                               const a = entity?.attributes?.['Available Size'];
-                              return '➠ ' + (a ?? '—');
+                              const st = entity?.state ?? '';
+                              return (a && a !== '—') ? ('free: ' + a) : st;
                             ]]]]
                           styles:
                             grid:
@@ -510,48 +563,34 @@ views:
                               - height: 90px
                               - overflow: hidden
                               - border-radius: 12px
-                              - background-color: transparent
-                              - border-color: '#404040'
-                              - color: white
                             img_cell:
-                              - margin-left: 10px
+                              - margin-left: 6px
                             name:
                               - font-weight: 600
+                              - color: var(--primary-text-color)
                               - white-space: nowrap
                               - overflow: hidden
                               - text-overflow: ellipsis
+                              - justify-self: start
                             state:
-                              - font-size: 0.7em
-                              - opacity: 0.95
+                              - font-size: 0.75em
+                              - color: var(--secondary-text-color)
+                              - justify-self: start
                             label:
-                              - opacity: 0.85
-                              - margin-top: '-6px'
-                              - font-size: 1em
+                              - font-size: 0.8em
+                              - color: var(--secondary-text-color)
+                              - justify-self: start
                             icon:
                               - color: >
                                   [[[[ return entity?.state === 'Normal' ?
-                                  'rgba(0,128,0)' : 'var(--error-color,#f44336)'; ]]]]
+                                  'var(--success-color, #43a047)' : 'var(--warning-color, #ffa000)'; ]]]]
 
-          # ---- Volumes (fill bar shows % used) ----
+          # ---- Volumes (bar fill = % used) ----
           - type: custom:button-card
-            entity: none
-            show_icon: false
-            show_name: false
-            show_state: false
-            show_label: false
-            tap_action:
-              action: none
-            triggers_update:
-              - select.ugreen_nas_lovelace_device_select
+            template: ugreen_tpl_host
             grid_options:
               columns: full
             styles:
-              card:
-                - background: transparent
-                - box-shadow: none
-                - border: none
-                - padding: 0
-                - margin: 0
               grid:
                 - grid-template-areas: '"volumes"'
                 - grid-template-columns: 1fr
@@ -566,7 +605,14 @@ views:
                   card_param: cards
                   card:
                     type: grid
-                    columns: 2
+                    columns: |
+                      [[[
+                        const w = window.innerWidth;
+                        const steps = [[600,1]];
+                        let n = 2;
+                        for (const [bp, c] of steps) { if (w <= bp) n = c; }
+                        return n;
+                      ]]]
                     square: false
                   sort:
                     method: attribute
@@ -596,31 +642,29 @@ views:
                             ]]]]
                           label: |
                             [[[[
-                              return '➠ ' + (entity?.attributes?.['Available Size'] ?? '—');
+                              const a = entity?.attributes?.['Available Size'];
+                              return (a && a !== '—') ? ('free: ' + a) : (entity?.state ?? '');
                             ]]]]
                           state_display: |
                             [[[[
                               const attribs = entity?.attributes || {};
+                              const used = attribs['Used Size'] ?? '—';
+                              const total = attribs['Total Size'] ?? '—';
                               const pool = attribs.UGNAS_pool_index;
                               const vol = attribs.UGNAS_volume_index;
                               const slug = states['select.ugreen_nas_lovelace_device_select']?.attributes?.selected_slug || '';
                               const base = `sensor.${slug}_pool_${pool}_volume_${vol}`;
-                              const used = Number(hass.states[`${base}_used_size_raw`]?.state);
-                              const total = Number(hass.states[`${base}_total_size_raw`]?.state);
-                              if (!Number.isFinite(used) || !Number.isFinite(total) || total <= 0) {
-                                return `<small>${attribs['Used Size'] ?? '—'} of ${attribs['Total Size'] ?? '—'}</small>`;
+                              const u = Number(hass.states[`${base}_used_size_raw`]?.state);
+                              const t = Number(hass.states[`${base}_total_size_raw`]?.state);
+                              if (!Number.isFinite(u) || !Number.isFinite(t) || t <= 0) {
+                                return `${used} of ${total}`;
                               }
-                              const percent = Math.round((used * 100) / total);
-                              return `<small>${attribs['Used Size'] ?? '—'} of ${attribs['Total Size'] ?? '—'} (${percent}%)</small>`;
+                              return `${used} of ${total} (${Math.round((u * 100) / t)}%)`;
                             ]]]]
                           styles:
                             card:
                               - height: 90px
                               - border-radius: 12px
-                              - background-color: transparent
-                              - background-clip: padding-box
-                              - border-color: '#404040'
-                              - color: white
                               - background-image: |
                                   [[[[
                                     const attribs = entity?.attributes || {};
@@ -628,63 +672,81 @@ views:
                                     const vol = attribs.UGNAS_volume_index;
                                     const slug = states['select.ugreen_nas_lovelace_device_select']?.attributes?.selected_slug || '';
                                     const base = `sensor.${slug}_pool_${pool}_volume_${vol}`;
-                                    const used = Number(hass.states[`${base}_used_size_raw`]?.state);
-                                    const total = Number(hass.states[`${base}_total_size_raw`]?.state);
-                                    if (!Number.isFinite(used) || !Number.isFinite(total) || total <= 0) {
-                                      return 'transparent';
+                                    const u = Number(hass.states[`${base}_used_size_raw`]?.state);
+                                    const t = Number(hass.states[`${base}_total_size_raw`]?.state);
+                                    if (!Number.isFinite(u) || !Number.isFinite(t) || t <= 0) {
+                                      return 'none';
                                     }
-                                    const percent = Math.round((used * 100) / total);
-                                    let rgb = '0,128,0';
+                                    const percent = Math.round((u * 100) / t);
+                                    let rgb = '67,160,71';
                                     if (percent >= 90) rgb = '178,34,34';
                                     else if (percent >= 75) rgb = '255,165,0';
                                     else if (percent >= 66) rgb = '204,204,0';
                                     return `linear-gradient(to right,
-                                      rgba(${rgb},1) 0%,
-                                      rgba(${rgb},1) ${percent}%,
+                                      rgba(${rgb},0.35) 0%,
+                                      rgba(${rgb},0.35) ${percent}%,
                                       rgba(${rgb},0) ${percent}%,
                                       rgba(${rgb},0) 100%)`;
                                   ]]]]
                             name:
                               - font-size: 1em
                               - font-weight: 600
+                              - color: var(--primary-text-color)
                               - white-space: nowrap
                               - overflow: hidden
                               - text-overflow: ellipsis
                             state:
-                              - font-size: 0.9em
-                              - opacity: 0.8
+                              - font-size: 0.85em
+                              - color: var(--secondary-text-color)
                             label:
-                              - font-size: 1em
-                              - font-weight: 600
+                              - font-size: 0.85em
+                              - color: var(--secondary-text-color)
 
-          #################
-          # CONTROL
-          #################
+      #################
+      # CONTROL
+      #################
+      - type: grid
+        cards:
           - type: heading
             heading: Control
             heading_style: title
 
-          - type: entities
+          # button-card wrapper again: the entities card cannot template its
+          # own entity_ids. This is what threw "Configuration error" before.
+          - type: custom:button-card
+            template: ugreen_tpl_host
             grid_options:
               columns: full
-            entities:
-              - entity: select.ugreen_nas_lovelace_device_select
-                name: NAS
-                icon: mdi:nas
-              - entity: |
-                  [[[
-                    const slug =
-                      states['select.ugreen_nas_lovelace_device_select']?.attributes?.selected_slug || 'ugreen_nas';
-                    return `select.${slug}_fan_mode`;
-                  ]]]
-                name: Fan Mode
-              - entity: |
-                  [[[
-                    const slug =
-                      states['select.ugreen_nas_lovelace_device_select']?.attributes?.selected_slug || 'ugreen_nas';
-                    return `select.${slug}_power_mode`;
-                  ]]]
-                name: Power Mode
+              rows: 3
+            styles:
+              grid:
+                - grid-template-areas: '"selects"'
+                - grid-template-columns: 1fr
+              custom_fields:
+                selects:
+                  - display: block
+            custom_fields:
+              selects:
+                card:
+                  type: entities
+                  entities:
+                    - entity: select.ugreen_nas_lovelace_device_select
+                      name: NAS
+                      icon: mdi:nas
+                    - entity: |
+                        [[[
+                          const slug =
+                            states['select.ugreen_nas_lovelace_device_select']?.attributes?.selected_slug || 'ugreen_nas';
+                          return `select.${slug}_fan_mode`;
+                        ]]]
+                      name: Fan Mode
+                    - entity: |
+                        [[[
+                          const slug =
+                            states['select.ugreen_nas_lovelace_device_select']?.attributes?.selected_slug || 'ugreen_nas';
+                          return `select.${slug}_power_mode`;
+                        ]]]
+                      name: Power Mode
 
           - type: horizontal-stack
             cards:
@@ -694,12 +756,11 @@ views:
                 styles:
                   card:
                     - border-radius: 12px
-                    - background-color: transparent
-                    - border: '2px solid #808080'
                   icon:
-                    - color: var(--success-color, green)
+                    - color: var(--success-color, '#43a047')
                   name:
                     - font-size: 0.9em
+                    - color: var(--primary-text-color)
                 tap_action:
                   action: call-service
                   service: button.press
@@ -719,12 +780,11 @@ views:
                 styles:
                   card:
                     - border-radius: 12px
-                    - background-color: transparent
-                    - border: '2px solid #808080'
                   icon:
                     - color: var(--warning-color)
                   name:
                     - font-size: 0.9em
+                    - color: var(--primary-text-color)
                 tap_action:
                   action: call-service
                   service: button.press
@@ -744,12 +804,11 @@ views:
                 styles:
                   card:
                     - border-radius: 12px
-                    - background-color: transparent
-                    - border: '2px solid #808080'
                   icon:
                     - color: var(--error-color)
                   name:
                     - font-size: 0.9em
+                    - color: var(--primary-text-color)
                 tap_action:
                   action: call-service
                   service: button.press
@@ -763,17 +822,19 @@ views:
                         return `button.${slug}_power_action_shutdown`;
                       ]]]
 
-  #################
-  # ALL ENTITIES (the 316) — filterable wall
-  #################
+  #####################################################################
+  # ALL ENTITIES — filterable wall, full width
+  #####################################################################
   - title: All Entities
     path: entities
     icon: mdi:view-grid
     type: sections
-    max_columns: 1
+    max_columns: 4
+    dense_section_placement: true
     cards: []
     sections:
       - type: grid
+        column_span: 4
         cards:
           - type: heading
             heading: All UGREEN entities
@@ -788,23 +849,16 @@ views:
                 icon: mdi:filter-variant
 
           - type: custom:button-card
-            entity: none
-            show_icon: false
-            show_name: false
-            show_state: false
+            template: ugreen_tpl_host
             grid_options:
               columns: full
             triggers_update:
               - text.ugreen_nas_lovelace_entity_filter
               - select.ugreen_nas_lovelace_device_select
             styles:
-              card:
-                - background: transparent
-                - box-shadow: none
-                - border: none
-                - padding: 0
               grid:
                 - grid-template-areas: '"wall"'
+                - grid-template-columns: 1fr
               custom_fields:
                 wall:
                   - display: block
@@ -815,7 +869,14 @@ views:
                   card_param: cards
                   card:
                     type: grid
-                    columns: 5
+                    columns: |
+                      [[[
+                        const w = window.innerWidth;
+                        const steps = [[1600,6],[1200,4],[900,3],[600,2]];
+                        let n = 8;
+                        for (const [bp, c] of steps) { if (w <= bp) n = c; }
+                        return n;
+                      ]]]
                     square: false
                   filter:
                     include: |
@@ -844,3 +905,66 @@ views:
                             template: 'ugreen_nas_template'
                           }));
                       ]]]
+
+  #####################################################################
+  # DEVICES — the 11 devices the integration creates, one card each.
+  # Uses the local custom:device-card (same card as the room views),
+  # keyed on device_id, so these survive renaming the NAS or its pools
+  # in UGOS. Grouped by pool to mirror the hardware.
+  #####################################################################
+  - title: Devices
+    path: devices
+    icon: mdi:devices
+    type: sections
+    max_columns: 3
+    dense_section_placement: true
+    cards: []
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: System
+            heading_style: title
+          # jack-sparrow
+          - type: custom:device-card
+            device_id: 9e2d1b012f26e19d47cbbf884dfbab44
+      - type: grid
+        cards:
+          - type: heading
+            heading: Pool 1 — RAID 5 bulk
+            heading_style: title
+          # Pool 1
+          - type: custom:device-card
+            device_id: 91cbbc9bf971689b46709966e3236d51
+          # Pool 1 | Disk 1
+          - type: custom:device-card
+            device_id: eacc2b9877931cf8905d5fb991449738
+          # Pool 1 | Disk 2
+          - type: custom:device-card
+            device_id: b5f95eff3784d43dc535b51deb1ab5fb
+          # Pool 1 | Disk 3
+          - type: custom:device-card
+            device_id: 43a725d558862f589921a2177abc119a
+          # Pool 1 | Disk 4
+          - type: custom:device-card
+            device_id: 01c350d51dda7777b376eae09374779a
+          # Pool 1 | Volume 1
+          - type: custom:device-card
+            device_id: 8d20c1e2edff62861908fdaad5e1bce3
+      - type: grid
+        cards:
+          - type: heading
+            heading: Pool 2 — RAID 1 NVMe
+            heading_style: title
+          # Pool 2
+          - type: custom:device-card
+            device_id: 8916fe1ea2a92c6292118cd47351e18e
+          # Pool 2 | Disk 1
+          - type: custom:device-card
+            device_id: d85eb25a0d21078e96eb9b9767eb05a7
+          # Pool 2 | Disk 2
+          - type: custom:device-card
+            device_id: 4dbacf5ae5b95ccca751f050b869300d
+          # Pool 2 | Volume 1
+          - type: custom:device-card
+            device_id: 2e0cfbaebb790f03c13a48450ca47fb4

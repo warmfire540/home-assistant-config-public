@@ -20,7 +20,7 @@ lovelace:
     jack-sparrow:
       mode: yaml
       title: jack-sparrow
-      icon: mdi:nas
+      icon: mdi:pirate
       show_in_sidebar: true
       filename: dashboards/jack-sparrow.yaml
 
