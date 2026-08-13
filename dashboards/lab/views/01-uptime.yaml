@@ -37,7 +37,48 @@
 # paused. The `Backups` group is paused today and is therefore absent. If
 # something you expect is simply not on the board, check Kuma for a pause
 # before assuming the template is broken — an absent row looks identical to a
-# monitor that was never created.
+# monitor that was never created. This is what the "Monitors reporting" count
+# in the header is for: it is the only place a silent disappearance shows up.
+#
+# ⚠️⚠️ EVERY `filter: template:` MUST END IN ONE `{{ ... }}` THAT EVALUATES
+# TO A LIST. This is the single hardest-won rule on this page, and getting it
+# wrong produces a console error rather than a visible one:
+#
+#     Invalid entity ID at position 0: {'entity':
+#
+# The obvious form — looping and printing one dict per row with a trailing
+# comma — CANNOT WORK. auto-entities does no YAML or JSON parsing whatsoever.
+# It subscribes to HA's `render_template` websocket and then does exactly this
+# (src/main.ts, `_renderer`):
+#
+#     if (typeof tpl === "string") this._template = tpl.split(/[\s,]+/);
+#     else                         this._template = tpl;
+#
+# So a rendered STRING is split on whitespace and commas, which shreds
+# `{'entity': 'sensor.x', 'name': 'Foo'}` into the fragments `{'entity':`,
+# `'sensor.x',` and so on — each then treated as an entity ID. The upstream
+# README's own object example wraps the loop in literal `[ ]` for this reason.
+#
+# The `else` branch is what this page relies on instead: HA renders templates
+# to NATIVE types, so a template whose output is a single expression returning
+# a list arrives as a real JS array and skips the string path entirely. Hence
+# the shape used by every card below — accumulate into a `namespace` list,
+# then emit it as the last statement:
+#
+#     {% set ns = namespace(rows=[]) %}
+#     {% for ... %}{% set ns.rows = ns.rows + [{...}] %}{% endfor %}
+#     {{ ns.rows }}
+#
+# Sorted cards emit `{{ ns.rows | sort(attribute='0') | map(attribute='1')
+# | list }}` — the `| list` is required, because `map` returns a generator and
+# a generator does not survive the native-type conversion as a list.
+#
+# ⚠️ EVERY SIBLING LOOKUP MUST TOLERATE THE SENSOR BEING ABSENT. The entity
+# set is NOT uniform across check types — only HTTP monitors get Monitored URL
+# and Certificate expiry, only port/ping/dns monitors get Monitored hostname,
+# and groups get neither. `| list` then a truth test on the list, never
+# `[0]` on a bare select(), or one push monitor takes out the whole card with
+# an index error. That is the single most common way to break this page.
 #
 # WHY MUSHROOM TEMPLATE CARDS AND NOT `tile`
 #
@@ -46,6 +87,21 @@
 # The colour is computed in Jinja at render time rather than as a nested
 # template inside the card, which keeps it to one level of templating and
 # makes it re-render on every state change like any other Jinja card.
+#
+# ⚠️ THE `_status` SENSORS HAVE NO device_class AND ARE NOT BINARY. States are
+# the lowercase strings `up` / `down` / `pending` / `maintenance`, plus
+# `unknown` / `unavailable` when the integration cannot reach Kuma. Anything
+# comparing to `on`/`off` or to a capitalised form silently matches nothing —
+# which renders as a board of grey tiles, not as an error.
+#
+# LAYOUT (max_columns: 3)
+#
+#   row 1   Lab availability   span 3   portals + verdict + the three numbers
+#   row 2   Problems           span 3   present only when something is down
+#   row 3   Monitors           span 2   the board, worst first
+#   row 3   Groups             span 1   Kuma's own rollups, beside it
+#   row 4   Response time      span 3   up monitors only
+#   row 5   Uptime — 30 days   span 3   worst first
 #
 # Reads: entities/templates/uptime_kuma.yaml
 # Alerts: automations/lab/uptime_kuma_monitor_down.yaml
@@ -60,7 +116,7 @@ dense_section_placement: true
 cards: []
 sections:
   ####################################################################
-  # HEADLINE — the three numbers worth reading before anything else
+  # HEADLINE — the verdict, then the way out, then the three numbers
   ####################################################################
   - type: grid
     column_span: 3
@@ -69,6 +125,79 @@ sections:
         heading: Lab availability
         heading_style: title
         icon: mdi:lan-check
+
+      # ---- Portals ----
+      #
+      # The same escape-hatch row as the top of jack-sparrow's 01-nas.yaml and
+      # 04-drives.yaml, in the same order, so the way out of HA is in the same
+      # place on every page that has one.
+      #
+      # ⚠️ NOT `custom:button-card`. Those two pages use the shared
+      # `ugreen_portal_button` template, which is defined in
+      # dashboards/jack-sparrow/templates/ and reachable only from that
+      # dashboard's own `button_card_templates:` block — templates do not
+      # cross dashboards. lab.yaml deliberately has no such block (see its
+      # header), so this row is core `tile` cards styled to read as the same
+      # class of object: an icon, a name, a subtitle, and a tap that leaves.
+      #
+      # Kuma first here and last there, because on this page it is the subject
+      # rather than one more tool on the NAS.
+      #
+      # Hosts are hardcoded for the same reason as on the other two pages: the
+      # Kuma integration keeps its URL in the config entry rather than in a
+      # state, and neither of the others has an HA entry at all. All three are
+      # the same DHCP reservation on jack-sparrow — if that address moves, it
+      # moves in three files.
+      - type: grid
+        square: false
+        columns: 3
+        grid_options:
+          columns: full
+          rows: auto
+        cards:
+          # `entity:` is the version sensor rather than a status one so the
+          # tile has something real to show a state for, but the tap goes to
+          # Kuma's own UI — the more-info dialog for a version number is not
+          # what anyone wants from a button labelled "Uptime Kuma".
+          - type: tile
+            entity: sensor.lab_availability
+            name: Uptime Kuma
+            icon: mdi:lan-check
+            hide_state: true
+            vertical: false
+            tap_action:
+              action: url
+              url_path: http://192.168.5.8:3001
+            icon_tap_action:
+              action: url
+              url_path: http://192.168.5.8:3001
+
+          - type: tile
+            entity: sensor.scrutiny_drive_health
+            name: Drive health
+            icon: mdi:harddisk
+            hide_state: true
+            # In-HA navigation, not a URL — the Scrutiny drill-down that is
+            # worth having from this page is the HA page, which is already
+            # built. Scrutiny's own web UI is one more hop from there.
+            tap_action:
+              action: navigate
+              navigation_path: /jack-sparrow/drives
+            icon_tap_action:
+              action: navigate
+              navigation_path: /jack-sparrow/drives
+
+          - type: tile
+            entity: sensor.jack_sparrow_health
+            name: jack-sparrow
+            icon: mdi:nas
+            hide_state: true
+            tap_action:
+              action: navigate
+              navigation_path: /jack-sparrow/nas
+            icon_tap_action:
+              action: navigate
+              navigation_path: /jack-sparrow/nas
 
       # sensor.lab_availability already excludes groups, so `down_count` is a
       # count of actual broken things, not of tiles that happen to be red.
@@ -96,32 +225,71 @@ sections:
           {{ state_attr(s, 'down') }}
           {% endif %}
 
-      - type: entities
+      # The three numbers, as tiles rather than `entities` rows. Same reason
+      # jack-sparrow's status row is tiles: a number worth reading from across
+      # the room should not be right-aligned in small text at the end of a
+      # label. `vertical: true` so the three read as a set.
+      #
+      # ⚠️ CORE TILES CANNOT TEMPLATE `color:` — it takes a colour token or a
+      # hex value only, and a Jinja expression there is accepted, rendered as
+      # a literal string, and silently ignored. So the red/green that matters
+      # is carried two other ways: `state` (the default colour mode) tints
+      # from the entity's own state and device_class, which is why the WAN
+      # tile below goes red on its own — it is `device_class: problem`. The
+      # rest of the urgency lives in the markdown verdict above and the
+      # Problems section below, both of which appear only when relevant.
+      #
+      # ⚠️ `attribute:` IS NOT A TILE OPTION either. The count below comes
+      # from `state_content`, which does take an attribute name — an
+      # `attribute: monitor_count` key parses fine and quietly shows the
+      # entity's state (`OK`) instead of the number.
+      - type: grid
+        square: false
+        columns: 3
         grid_options:
           columns: full
           rows: auto
-        entities:
-          - entity: sensor.lab_availability
+        cards:
+          - type: tile
+            entity: sensor.lab_availability
             name: Lab availability
+            vertical: true
+
           # The storm-suppression gate. Worth surfacing because when this is
           # unavailable the per-service alerts have quietly lost their guard —
-          # see the header of entities/templates/uptime_kuma.yaml.
-          - entity: binary_sensor.lab_wan_down
+          # see the header of entities/templates/uptime_kuma.yaml. Its `cause`
+          # attribute says which half broke; that is the more-info dialog's
+          # job, not the tile's.
+          - type: tile
+            entity: binary_sensor.lab_wan_down
             name: WAN
-          - type: attribute
+            vertical: true
+
+          # Not decoration. A monitor that is paused or deleted in Kuma
+          # vanishes from HA entirely rather than going red, so the rollup
+          # cannot see it — a monitor that is gone has no status to be down.
+          # This count dropping is the only visible symptom of the monitoring
+          # quietly monitoring less than you think.
+          - type: tile
             entity: sensor.lab_availability
-            attribute: monitor_count
             name: Monitors reporting
             icon: mdi:counter
+            vertical: true
+            color: grey
+            state_content: monitor_count
 
-      # Its own card rather than a row in the one above, because auto-entities
-      # is a card and cannot be nested in an `entities:` list.
+      # Its own card rather than a row in the block above, because
+      # auto-entities is a card and cannot be nested in an `entities:` list.
       #
       # Derived rather than named: the update entity is slugged from the Kuma
       # host address (`update.192_168_5_8_uptime_kuma_version`), so it renames
       # itself if the NAS is ever readdressed. Worth having on the page —
       # v2.x is where the monitor IDs the whole dashboard depends on live, and
       # a major-version jump is the one upgrade to read release notes for.
+      #
+      # `show_empty: false` so the card disappears rather than rendering an
+      # empty bordered box on the versions where the integration does not
+      # create an update entity at all.
       - type: custom:auto-entities
         show_empty: false
         grid_options:
@@ -129,13 +297,17 @@ sections:
           rows: auto
         card:
           type: entities
+          title: Uptime Kuma
         card_param: entities
         filter:
           template: >
+            {% set ns = namespace(rows=[]) %}
             {% for e in integration_entities('uptime_kuma')
                  | select('search', '^update') %}
-              {{ {'entity': e, 'name': 'Uptime Kuma version'} }},
+              {% set ns.rows = ns.rows
+                   + [{'entity': e, 'name': 'Version'}] %}
             {% endfor %}
+            {{ ns.rows }}
 
   ####################################################################
   # PROBLEMS — only rendered when something is actually down
@@ -143,6 +315,11 @@ sections:
   # `show_empty: false` removes the whole card when nothing matches, so a
   # healthy lab shows no empty "Problems" heading. The heading has the same
   # visibility condition for the same reason.
+  #
+  # This section duplicates rows that also appear at the top of Monitors, and
+  # that is deliberate: this one carries the target (host:port or URL), which
+  # is what turns "Plex is down" into "the box is unreachable" vs "the daemon
+  # died". The board below is for scanning; this is for acting.
   - type: grid
     column_span: 3
     cards:
@@ -177,8 +354,9 @@ sections:
                  'json-query': 'mdi:code-json',
                  'push': 'mdi:cloud-upload-outline',
                  'docker': 'mdi:docker' } %}
+            {% set ns = namespace(rows=[]) %}
             {% for e in integration_entities('uptime_kuma')
-                 | select('search', '_status$') %}
+                 | select('search', '_status$') | sort %}
               {% set sibs = device_entities(device_id(e)) %}
               {% set t = sibs | select('search', '_monitor_type$') | list %}
               {% set kind = states(t[0]) if t else 'unknown' %}
@@ -200,7 +378,7 @@ sections:
                 {% else %}
                   {% set tgt = kind %}
                 {% endif %}
-                {{ {
+                {% set ns.rows = ns.rows + [{
                      'type': 'custom:mushroom-template-card',
                      'entity': e,
                      'primary': nm,
@@ -209,9 +387,10 @@ sections:
                      'icon_color': 'red',
                      'multiline_secondary': true,
                      'tap_action': {'action': 'more-info'}
-                   } }},
+                   }] %}
               {% endif %}
             {% endfor %}
+            {{ ns.rows }}
 
   ####################################################################
   # ALL MONITORS — the board
@@ -268,6 +447,12 @@ sections:
                 {% set rank = '0' if st == 'down'
                      else ('1' if st in ['pending', 'maintenance']
                      else ('2' if st == 'up' else '3')) %}
+                {# 24h uptime, as the second line. The percentage is the part
+                   a green tile cannot tell you: `up · 100.0% 24h` and
+                   `up · 91.2% 24h` look identical on a status board and are
+                   not the same service. Absent on a monitor Kuma has not
+                   scored yet, so the suffix is conditional rather than
+                   printing a bare `-1%`. #}
                 {% set u1 = sibs | select('search', '_uptime_1_day$') | list %}
                 {% set pct = (states(u1[0]) | float(-1)) if u1 else -1 %}
                 {% set sec = st ~ (' · ' ~ (pct | round(1)) ~ '% 24h'
@@ -283,9 +468,7 @@ sections:
                    })] %}
               {% endif %}
             {% endfor %}
-            {% for row in ns.rows | sort(attribute='0') %}
-              {{ row[1] }},
-            {% endfor %}
+            {{ ns.rows | sort(attribute='0') | map(attribute='1') | list }}
 
   ####################################################################
   # GROUPS — Kuma's own rollups
@@ -319,13 +502,14 @@ sections:
                  'up': 'green',
                  'pending': 'orange',
                  'maintenance': 'blue' } %}
+            {% set ns = namespace(rows=[]) %}
             {% for e in integration_entities('uptime_kuma')
                  | select('search', '_status$') | sort %}
               {% set t = device_entities(device_id(e))
                    | select('search', '_monitor_type$') | list %}
               {% if t and states(t[0]) == 'group' %}
                 {% set st = states(e) %}
-                {{ {
+                {% set ns.rows = ns.rows + [{
                      'type': 'custom:mushroom-template-card',
                      'entity': e,
                      'primary': state_attr(e, 'friendly_name')
@@ -334,9 +518,10 @@ sections:
                      'icon': 'mdi:folder-network',
                      'icon_color': colors.get(st, 'grey'),
                      'tap_action': {'action': 'more-info'}
-                   } }},
+                   }] %}
               {% endif %}
             {% endfor %}
+            {{ ns.rows }}
 
   ####################################################################
   # RESPONSE TIME
@@ -344,6 +529,18 @@ sections:
   # Only monitors that are up. A down monitor reports 0 ms, and a flat line at
   # zero on the same axis as a 20 ms service makes the healthy ones unreadable
   # while telling you nothing the red tile above did not already say.
+  #
+  # ⚠️ ONE GRAPH, MANY SERIES, AND THAT IS THE POINT — but it only works
+  # because they share an axis. A LAN ping at 1 ms and an HTTPS check at
+  # 400 ms on one linear scale flattens the ping to the baseline. That is
+  # acceptable here (the question this answers is "did something get slower",
+  # which reads fine as a shape) but it is why `show.labels` is on: without
+  # the scale printed, a flat line is ambiguous between fast and broken.
+  #
+  # `points_per_hour: 4` against Kuma's own 60s check interval means each
+  # plotted point is a 15-minute average. Deliberate — a per-check line over
+  # 24h is noise at this width, and a spike that only shows up in one sample
+  # is not something to act on.
   - type: grid
     column_span: 3
     cards:
@@ -359,31 +556,44 @@ sections:
           rows: auto
         card:
           type: custom:mini-graph-card
-          name: Response time (ms)
+          name: Response time
           hours_to_show: 24
           points_per_hour: 4
           line_width: 2
+          hour24: true
           show:
             labels: true
             fill: false
+            # The legend is what makes a multi-series graph readable at all —
+            # without it the lines are unattributable and the card is
+            # decoration. `state: false` because the "current value" of a
+            # dozen series is meaningless as one number.
+            legend: true
+            state: false
         card_param: entities
         filter:
           template: >
+            {% set ns = namespace(rows=[]) %}
             {% for e in integration_entities('uptime_kuma')
                  | select('search', '_status$') | sort %}
               {% set sibs = device_entities(device_id(e)) %}
               {% set t = sibs | select('search', '_monitor_type$') | list %}
+              {# ⚠️ `_response_time$` and NOT a looser match. The same device
+                 also carries `_response_time_avg_1_day` and the 30/365-day
+                 averages; a prefix match pulls all four in and draws each
+                 monitor four times. #}
               {% set r = sibs
                    | select('search', '_response_time$') | list %}
               {% if t and states(t[0]) != 'group'
                     and states(e) == 'up' and r %}
-                {{ {
+                {% set ns.rows = ns.rows + [{
                      'entity': r[0],
                      'name': state_attr(e, 'friendly_name')
                        | default(e, true) | replace(' Status', '')
-                   } }},
+                   }] %}
               {% endif %}
             {% endfor %}
+            {{ ns.rows }}
 
   ####################################################################
   # UPTIME — 30 days, worst first
@@ -395,6 +605,10 @@ sections:
   #
   # Groups are excluded here too — a group's uptime is a function of its
   # children's and belongs to no host.
+  #
+  # ⚠️ A monitor created less than 30 days ago reports its uptime over its own
+  # lifetime, not over 30 days, and Kuma does not distinguish the two. A new
+  # monitor at 100% has not been up for a month; it has been up since Tuesday.
   - type: grid
     column_span: 3
     cards:
@@ -433,6 +647,4 @@ sections:
                    })] %}
               {% endif %}
             {% endfor %}
-            {% for row in ns.rows | sort(attribute='0') %}
-              {{ row[1] }},
-            {% endfor %}
+            {{ ns.rows | sort(attribute='0') | map(attribute='1') | list }}

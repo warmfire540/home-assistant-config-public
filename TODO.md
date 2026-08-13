@@ -38,6 +38,42 @@ Working notes for streamlining dashboards, entities, backups, and log noise.
 ## Integrations
 
 - [ ] EcoFlow (BLE or Cloud... need to decide)
+- [x] ~~**Portainer** (core integration, no HACS) — Docker on jack-sparrow~~
+      Added 2026-08-13, the same day the container was deployed. HA config is
+      written: `entities/templates/portainer.yaml`,
+      `dashboards/jack-sparrow/views/05-containers.yaml`. Board is at
+      **`/jack-sparrow/containers`**. No automations — see the reasoning below.
+  - [ ] ⚠️ **Verify the entity-ID suffixes.** Everything in both files is
+        derived from the integration's `strings.json` translation keys, not
+        from the live instance. Run this in Developer Tools → Template and
+        check the sibling suffixes against what the sensors are actually
+        called:
+
+        ```jinja
+        {{ integration_entities('portainer') | sort | list }}
+        ```
+
+        A suffix regex that matches nothing does not error — `sensor.docker_health`
+        reads OK forever. This is the same failure mode flagged on
+        `scrutiny.yaml` and it is worth ten minutes now.
+  - [ ] Confirm Portainer surfaces the three UGOS projects as **stacks**. The
+        Stacks card is `show_empty: false`, so if UGOS labels its projects in
+        a way Portainer does not read as a stack, the card is simply absent
+        and nothing tells you which it was.
+  - [ ] Decide on a "container down" automation **after** watching the board
+        for a week. Deliberately not written yet: Uptime Kuma already alerts
+        on all three of these services from outside, so a naive container-down
+        automation double-notifies for every real outage. The two shapes worth
+        having are the ones Kuma structurally cannot see —
+        `sensor.docker_health` attribute `restarting` being non-`none` for
+        more than a few minutes (a crash loop rebinds its port often enough
+        that a Kuma check passes on the retry), and `container_count`
+        *dropping* (a removed container has no status left to be down).
+  - [ ] Known upstream bug, [core#160907](https://github.com/home-assistant/core/issues/160907),
+        **closed as not planned**: stopping a container from HA returns an
+        error even though the stop succeeds, and a container already stopped
+        when HA started cannot be started from HA at all. Documented in the
+        Controls section header. Re-check on each HA release.
 - [x] ~~**Uptime Kuma** (core integration, no HACS) — lab-wide availability~~
       Added 2026-08-13. 16 monitors / 178 entities. HA config is written and
       live: `entities/templates/uptime_kuma.yaml`, `dashboards/lab.yaml` +

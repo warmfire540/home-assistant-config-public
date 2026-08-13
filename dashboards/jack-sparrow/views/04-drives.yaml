@@ -61,8 +61,8 @@ sections:
 
       # ---- Portals ----
       # Identical block to the top of 01-nas.yaml, deliberately: same template,
-      # same pair, same order, so the way out of HA is in the same place with
-      # the same look on both pages. This replaced a markdown text link that
+      # same trio, same order, so the way out of HA is in the same place with
+      # the same look on every page. This replaced a markdown text link that
       # sat below the disk list and read as a footnote. See the longer note on
       # hardcoded hosts there.
       - type: custom:button-card
@@ -90,6 +90,18 @@ sections:
           # Quoted: an unquoted `#` starts a YAML comment, so the bare form
           # parses as `var(--info-color,` and silently drops the fallback.
           accent: 'var(--info-color, #039be5)'
+
+      - type: custom:button-card
+        template: ugreen_portal_button
+        name: Uptime Kuma
+        icon: mdi:lan-check
+        grid_options:
+          columns: 4
+          rows: auto
+        variables:
+          url: http://192.168.5.8:3001
+          subtitle: 192.168.5.8:3001
+          accent: 'var(--success-color, #0da035)'
 
       # `grid_options.columns: full` is load-bearing, and for a different
       # reason than the one on the auto-entities card below. Without it this

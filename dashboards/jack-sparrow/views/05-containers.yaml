@@ -1,0 +1,776 @@
+---
+#####
+# CONTAINERS — what Docker is actually running on jack-sparrow
+#
+# The third of the three "is it broken" surfaces, and the one that answers a
+# question the other two cannot:
+#
+#   /home-lab/uptime      does the service answer on its port, from outside
+#   /jack-sparrow/drives  is the hardware dying, from SMART
+#   this page             does the container exist and is the process alive
+#
+# They disagree in exactly the cases worth knowing about. A container that is
+# up with a wedged process is green here and red on Uptime Kuma. A container
+# in a crash loop rebinds its port often enough that a Kuma check can pass on
+# the retry, and shows as `restarting` only here. A container someone removed
+# outright vanishes from this page entirely rather than going red — which is
+# what `Containers seen` in the header exists to catch.
+#
+# WHY THIS IS A jack-sparrow VIEW AND NOT A lab ONE
+#
+# The opposite call from `lab.yaml`, for the same reason. Uptime Kuma watches
+# the whole lab and merely happens to run on the NAS. Portainer has exactly one
+# endpoint — jack-sparrow's local Docker socket — and the integration does not
+# support Edge, so it cannot grow to cover poat-seedbox, poat-apps or lil-bit
+# without a different mechanism entirely. This page is about one box. If
+# Portainer ever gains real multi-host endpoints, this is the day it moves.
+#
+# NOTHING ON THIS PAGE NAMES A CONTAINER.
+#
+# Every card is an `auto-entities` Jinja template over
+# `integration_entities('portainer')`. Deploy a container and it appears here
+# within one 60-second poll; rename one and the label follows; remove one and
+# the card goes. That is load-bearing rather than tidy — the container set is
+# the thing on this NAS most expected to move. Three today; the arr stack,
+# Immich and possibly Frigate all land once the Phase 2 share layout exists.
+#
+# HOW THE DERIVATION WORKS, since it is repeated on every card
+#
+# `binary_sensor` is the only platform the integration uses for exactly one
+# thing — container Status — so it is a clean, name-free list of containers.
+# Endpoint and stack devices have no binary sensor at all. Everything else
+# about a container hangs off its device:
+#
+#   containers      integration_entities('portainer') | select('search', '^binary_sensor')
+#   its siblings    device_entities(device_id(e))
+#   the endpoint    the one device carrying a `_docker_version` sensor
+#   stacks          switch entities ending `_stack`, vs `_container` for containers
+#
+# ⚠️ ALL SUFFIX MATCHES ON THIS PAGE ARE PREDICTIONS, NOT OBSERVATIONS. They
+# come from the integration's `strings.json` translation keys, which is how HA
+# builds entity IDs — but nothing here has been checked against the live
+# instance yet. See the header of entities/templates/portainer.yaml for the
+# full list and the one-line Developer Tools template that settles it. A card
+# whose template matches nothing renders as an absent card, not as an error.
+#
+# ⚠️ NO `ugreen_tpl_host` WRAPPER, AND NO BRACKET COUNTING AT ALL.
+# Same as 04-drives.yaml: nothing here is keyed to the NAS selector, so
+# auto-entities sits at view level. Unlike 04-drives.yaml, no `[[[ ... ]]]`
+# button-card template appears inside an auto-entities `options:` block either
+# — every derived card is a mushroom-template-card built in Jinja, the way the
+# lab uptime board does it. The only button-cards on the page are the three
+# portal buttons, which are plain call sites at card level. Keep it that way if
+# you extend this: the bracket-depth rule is the single most expensive thing to
+# get wrong in this dashboard.
+#
+# ⚠️ EVERY `filter: template:` MUST END IN ONE `{{ ... }}` THAT EVALUATES TO A
+# LIST. auto-entities does no YAML or JSON parsing — a rendered STRING gets
+# split on whitespace and commas, which shreds a dict into fragments and throws
+# `Invalid entity ID at position 0: {'entity':` in the console and nowhere
+# else. The full explanation is in the header of lab/views/01-uptime.yaml.
+# Accumulate into a namespace list, emit it as the last statement.
+#
+# ⚠️ EVERY SIBLING LOOKUP TOLERATES THE SENSOR BEING ABSENT. `Health` exists
+# only on images declaring a HEALTHCHECK (none of the three today do), and the
+# `update` entity only appears once a digest has been compared. `| list` then a
+# truth test, never `[0]` on a bare select().
+#
+# CONTROLS ARE DELIBERATELY NOT ON THE TILES
+#
+# Every status tile is `tap_action: more-info` and nothing else. Start/stop
+# switches and restart buttons live in their own section at the bottom of the
+# page, behind a scroll, so the tile you tap to check on Plex is never the tile
+# that stops Plex. `Recreate` and `Kill` are omitted from the page entirely —
+# recreate pulls and rebuilds from the image, which is a compose-file operation
+# that belongs in Portainer's own UI where you can see what it will do.
+#
+# LAYOUT (max_columns: 3)
+#
+#   row 1   Containers        span 3   portals + verdict + the three numbers
+#   row 2   Problems          span 3   present only when something is wrong
+#   row 3   Running           span 2   the board
+#   row 3   Docker host       span 1   the endpoint, beside it
+#   row 4   Image updates     span 3   present only when something is stale
+#   row 5   Resources         span 3   CPU and memory, 24h
+#   row 6   Controls          span 3   the only place anything can be changed
+#
+# Reads: entities/templates/portainer.yaml
+# Deploy: servers repo, hosts/jack-sparrow/docker/docker-compose.yml
+#####
+
+title: Containers
+path: containers
+icon: mdi:docker
+type: sections
+max_columns: 3
+dense_section_placement: true
+cards: []
+sections:
+  #####################################################################
+  # HEADLINE — the verdict, then the way out, then the three numbers
+  #####################################################################
+  - type: grid
+    column_span: 3
+    cards:
+      - type: heading
+        heading: Containers
+        heading_style: title
+        icon: mdi:docker
+
+      # ---- Portals ----
+      # Same `ugreen_portal_button` trio, same order, as 01-nas.yaml and
+      # 04-drives.yaml — the way out of HA is in the same place with the same
+      # look on every page that has one. Portainer takes Scrutiny's middle slot
+      # here because on this page it is the subject rather than one more tool.
+      #
+      # ⚠️ https, and port 9444 not 9443. Portainer's default HTTPS port is
+      # exactly what UGOS serves its own UI on, so the compose file remaps it.
+      # The certificate is self-signed — the browser warning on first visit is
+      # expected and is not a broken link.
+      - type: custom:button-card
+        template: ugreen_portal_button
+        name: UGOS Portal
+        icon: mdi:nas
+        grid_options:
+          columns: 4
+          rows: auto
+        variables:
+          url: http://192.168.5.8:9999
+          subtitle: 192.168.5.8:9999
+          accent: var(--primary-color)
+
+      - type: custom:button-card
+        template: ugreen_portal_button
+        name: Portainer
+        icon: mdi:docker
+        grid_options:
+          columns: 4
+          rows: auto
+        variables:
+          url: https://192.168.5.8:9444
+          subtitle: 192.168.5.8:9444
+          # Quoted: an unquoted `#` starts a YAML comment, so the bare form
+          # parses as `var(--info-color,` and silently drops the fallback.
+          accent: 'var(--info-color, #039be5)'
+
+      - type: custom:button-card
+        template: ugreen_portal_button
+        name: Uptime Kuma
+        icon: mdi:lan-check
+        grid_options:
+          columns: 4
+          rows: auto
+        variables:
+          url: http://192.168.5.8:3001
+          subtitle: 192.168.5.8:3001
+          accent: 'var(--success-color, #0da035)'
+
+      # `grid_options.columns: full` is load-bearing here for the same reason
+      # as on 04-drives.yaml: without it this grid takes its default half width
+      # and PACKS ONTO THE PORTAL ROW, rendering the tiles inline beside the
+      # buttons instead of underneath them.
+      - type: markdown
+        grid_options:
+          columns: full
+          rows: auto
+        # Literal block (`|`), not folded (`>-`) — folding joins consecutive
+        # lines with spaces and collapses adjacent list items onto one line.
+        content: |
+          {% set d = 'sensor.docker_health' %}
+          {% set bad = state_attr(d, 'problem_count') | int(0) %}
+          {% set total = state_attr(d, 'container_count') | int(0) %}
+          {% set loop_ = state_attr(d, 'restarting') %}
+          {% if states(d) in ['unknown', 'unavailable'] %}
+          ## ⚠️ Portainer is not reporting
+
+          The integration is unavailable, which is **not** the same as every
+          container being up. Check the container itself at
+          <https://192.168.5.8:9444> — and note that Portainer being down is
+          the one outage this page structurally cannot show you.
+          {% elif bad == 0 %}
+          ## ✅ All {{ total }} containers running
+          {% else %}
+          ## 🔴 {{ bad }} of {{ total }} not healthy
+
+          {{ state_attr(d, 'problems') }}
+          {% endif %}
+          {% if loop_ and loop_ != 'none' %}
+
+          > **Restarting: {{ loop_ }}** — a crash loop, not a slow start, if it
+          > is still saying this a minute from now. This is the failure that
+          > looks healthiest from outside: the port rebinds often enough that
+          > an Uptime Kuma check can pass on the retry.
+          {% endif %}
+
+      # The three numbers, as tiles. Same reasoning as the uptime board: a
+      # number worth reading from across the room should not be right-aligned
+      # in small text at the end of a label.
+      #
+      # ⚠️ CORE TILES CANNOT TEMPLATE `color:` — it takes a colour token or a
+      # hex value only, and a Jinja expression there is accepted, rendered as a
+      # literal string, and silently ignored. The urgency lives in the markdown
+      # verdict above and the Problems section below, both of which appear only
+      # when they have something to say.
+      #
+      # ⚠️ `attribute:` IS NOT A TILE OPTION. The counts below come from
+      # `state_content`, which does take an attribute name — an
+      # `attribute: container_count` key parses fine and quietly shows the
+      # entity's state (`OK`) instead of the number.
+      - type: grid
+        square: false
+        columns: 3
+        grid_options:
+          columns: full
+          rows: auto
+        cards:
+          - type: tile
+            entity: sensor.docker_health
+            name: Docker
+            vertical: true
+
+          # Not decoration. A container that is REMOVED takes its HA device
+          # with it, so it has no status left to be off and the rollup cannot
+          # see it. This count dropping is the only visible symptom of a
+          # container quietly ceasing to exist.
+          - type: tile
+            entity: sensor.docker_health
+            name: Containers seen
+            icon: mdi:counter
+            vertical: true
+            color: grey
+            state_content: container_count
+
+          # Informational, never urgent — two of the three tags are pinned on
+          # purpose. Grey rather than a warning colour for that reason. The
+          # `pending` attribute names them; that is the more-info dialog's job.
+          - type: tile
+            entity: sensor.docker_image_updates
+            name: Image updates
+            icon: mdi:package-variant
+            vertical: true
+            color: grey
+
+  #####################################################################
+  # PROBLEMS — only rendered when something is actually wrong
+  #####################################################################
+  # `show_empty: false` removes the whole card when nothing matches, so a
+  # healthy stack shows no empty "Problems" heading. The heading carries the
+  # same visibility condition for the same reason.
+  #
+  # This duplicates rows that also appear on the board below, deliberately:
+  # this one carries the image tag, which is what turns "scrutiny is down" into
+  # "it is down on the version you just bumped it to".
+  - type: grid
+    column_span: 3
+    cards:
+      - type: heading
+        heading: Problems
+        heading_style: title
+        icon: mdi:alert-circle
+        visibility:
+          - condition: numeric_state
+            entity: sensor.docker_health
+            attribute: problem_count
+            above: 0
+
+      - type: custom:auto-entities
+        show_empty: false
+        grid_options:
+          columns: full
+          rows: auto
+        card:
+          type: grid
+          columns: 2
+          square: false
+        card_param: cards
+        filter:
+          template: >
+            {% set ns = namespace(rows=[]) %}
+            {% for e in integration_entities('portainer')
+                 | select('search', '^binary_sensor') | sort %}
+              {% set sibs = device_entities(device_id(e)) %}
+              {% set s = sibs | select('search', '_state$') | list %}
+              {% set h = sibs | select('search', '_health$') | list %}
+              {% set i = sibs | select('search', '_image$') | list %}
+              {% set st = states(s[0]) if s else 'unknown' %}
+              {% set unhealthy = h and states(h[0]) == 'unhealthy' %}
+              {% if states(e) != 'on' or unhealthy %}
+                {% set nm = state_attr(e, 'friendly_name')
+                     | default(e, true) | replace(' Status', '') %}
+                {# Image tag rather than the state word, which the primary
+                   already implies. A digest-long image string is truncated by
+                   the card, so `multiline_secondary` lets it wrap instead. #}
+                {% set ns.rows = ns.rows + [{
+                     'type': 'custom:mushroom-template-card',
+                     'entity': e,
+                     'primary': nm ~ ' · ' ~ ('unhealthy' if unhealthy else st),
+                     'secondary': states(i[0]) if i else 'image unknown',
+                     'icon': 'mdi:restart-alert' if st == 'restarting'
+                       else ('mdi:heart-broken' if unhealthy
+                       else 'mdi:stop-circle-outline'),
+                     'icon_color': 'red',
+                     'multiline_secondary': true,
+                     'tap_action': {'action': 'more-info'}
+                   }] %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.rows }}
+
+  #####################################################################
+  # RUNNING — the board
+  #####################################################################
+  - type: grid
+    column_span: 2
+    cards:
+      - type: heading
+        heading: Running
+        heading_style: title
+        icon: mdi:format-list-checks
+
+      - type: custom:auto-entities
+        show_empty: false
+        grid_options:
+          columns: full
+          rows: auto
+        card:
+          type: grid
+          columns: 2
+          square: false
+        card_param: cards
+        filter:
+          template: >
+            {% set colors = {
+                 'running': 'green',
+                 'restarting': 'orange',
+                 'paused': 'blue',
+                 'created': 'grey',
+                 'exited': 'red',
+                 'dead': 'red' } %}
+            {% set ns = namespace(rows=[]) %}
+            {% for e in integration_entities('portainer')
+                 | select('search', '^binary_sensor') %}
+              {% set sibs = device_entities(device_id(e)) %}
+              {% set s = sibs | select('search', '_state$') | list %}
+              {% set h = sibs | select('search', '_health$') | list %}
+              {% set c = sibs | select('search', '_cpu_usage_total$') | list %}
+              {% set m = sibs
+                   | select('search', '_memory_usage_percentage$') | list %}
+              {% set st = states(s[0]) if s else 'unknown' %}
+              {% set nm = state_attr(e, 'friendly_name')
+                   | default(e, true) | replace(' Status', '') %}
+              {# Sort key, not a display value. Anything not running floats to
+                 the top, then healthy, alphabetical within each band.
+                 Prefixing the name with a rank digit sorts both at once,
+                 which Jinja cannot do with a multi-key sort. #}
+              {% set rank = '0' if states(e) != 'on'
+                   else ('1' if st == 'restarting' else '2') %}
+              {# CPU and memory as the second line. This is the part a green
+                 tile cannot tell you: `running` and `running` look identical
+                 whether a container is idle or pinning a core. Both suffixes
+                 are conditional — a container that has just started reports
+                 neither, and printing a bare `0%` would read as idle rather
+                 than as unknown. #}
+              {% set bits = [st] %}
+              {% if c and states(c[0]) | float(-1) >= 0 %}
+                {% set bits = bits
+                     + [(states(c[0]) | float | round(1)) ~ '% cpu'] %}
+              {% endif %}
+              {% if m and states(m[0]) | float(-1) >= 0 %}
+                {% set bits = bits
+                     + [(states(m[0]) | float | round(1)) ~ '% mem'] %}
+              {% endif %}
+              {% set ns.rows = ns.rows + [(rank ~ nm | lower, {
+                   'type': 'custom:mushroom-template-card',
+                   'entity': e,
+                   'primary': nm,
+                   'secondary': bits | join(' · '),
+                   'icon': 'mdi:heart-broken' if (h and states(h[0]) == 'unhealthy')
+                     else 'mdi:docker',
+                   'icon_color': 'red' if (h and states(h[0]) == 'unhealthy')
+                     else colors.get(st, 'grey'),
+                   'tap_action': {'action': 'more-info'}
+                 })] %}
+            {% endfor %}
+            {{ ns.rows | sort(attribute='0') | map(attribute='1') | list }}
+
+      # STACKS — one row per compose project, when Portainer sees any.
+      #
+      # It should see three: the compose file is deployed as three separate
+      # UGOS projects (`scrutiny`, `uptime-kuma`, `portainer`) so that one
+      # stale device letter in Scrutiny's `devices:` list cannot take
+      # monitoring and container management down with it. Each UGOS project is
+      # a compose stack, so each shows up here.
+      #
+      # `show_empty: false` because that is a claim about how UGOS presents its
+      # projects to the Docker API, not a certainty — if UGOS labels them in a
+      # way Portainer does not read as stacks, this card simply is not there.
+      - type: custom:auto-entities
+        show_empty: false
+        grid_options:
+          columns: full
+          rows: auto
+        card:
+          type: entities
+          title: Stacks
+        card_param: entities
+        filter:
+          template: >
+            {% set ns = namespace(rows=[]) %}
+            {% for e in integration_entities('portainer')
+                 | select('search', '^sensor') | sort %}
+              {% if e is search('_containers$') %}
+                {% set ns.rows = ns.rows + [{
+                     'entity': e,
+                     'name': state_attr(e, 'friendly_name')
+                       | default(e, true) | replace(' Containers', '')
+                   }] %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.rows }}
+
+  #####################################################################
+  # DOCKER HOST — the endpoint device
+  #####################################################################
+  # One device, but its name is whatever the Portainer environment is called
+  # (`local` unless it was renamed), so it is found by capability rather than
+  # by name: the endpoint is the only device carrying a `_docker_version`
+  # sensor. Rename the environment in Portainer and this still works.
+  #
+  # The rows are an explicit ordered list rather than "every sibling", because
+  # the endpoint carries about twenty entities and most of them — architecture,
+  # OS version, total CPU — are facts that never change and belong in HOST.md,
+  # not on a monitoring page. Reclaimable disk is the one number here worth
+  # glancing at: it is what the prune buttons in Controls would free.
+  - type: grid
+    column_span: 1
+    cards:
+      - type: heading
+        heading: Docker host
+        heading_style: title
+        icon: mdi:server
+
+      - type: custom:auto-entities
+        show_empty: false
+        grid_options:
+          columns: full
+          rows: auto
+        card:
+          type: entities
+        card_param: entities
+        filter:
+          template: >
+            {% set order = [
+                 ('_docker_version$', 'Docker'),
+                 ('_containers_running$', 'Running'),
+                 ('_containers_stopped$', 'Stopped'),
+                 ('_containers_paused$', 'Paused'),
+                 ('_image_count$', 'Images'),
+                 ('_image_disk_usage_reclaimable$', 'Images reclaimable'),
+                 ('_container_disk_usage_reclaimable$', 'Containers reclaimable'),
+                 ('_volume_disk_usage_total_size$', 'Volumes')] %}
+            {% set ns = namespace(rows=[], dev=none) %}
+            {% for e in integration_entities('portainer')
+                 | select('search', '_docker_version$') %}
+              {% set ns.dev = device_id(e) %}
+            {% endfor %}
+            {% if ns.dev %}
+              {% set sibs = device_entities(ns.dev) %}
+              {% for pat, label in order %}
+                {% set hit = sibs | select('search', pat) | list %}
+                {% if hit %}
+                  {% set ns.rows = ns.rows
+                       + [{'entity': hit[0], 'name': label}] %}
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+            {{ ns.rows }}
+
+  #####################################################################
+  # IMAGE UPDATES — informational, never urgent
+  #####################################################################
+  # Absent entirely when nothing is stale. Two of the three tags are pinned on
+  # purpose — `scrutiny:v0.9.3-omnibus` exact because it is the thing that
+  # tells you a drive is dying and must not move underfoot, `uptime-kuma:2` to
+  # the 2.x line — so a pending update here is a Sunday-afternoon item, not an
+  # alert. There is deliberately no automation on this.
+  #
+  # ⚠️ An EXACT-pinned tag showing an update means the tag was re-pushed under
+  # the same version string. That is worth knowing about and is the opposite of
+  # reassuring.
+  #
+  # ⚠️ THE UPDATE BUTTON IN THE MORE-INFO DIALOG RECREATES THE CONTAINER.
+  # For these three that is safe — every piece of state is on a bind mount
+  # under /volume2/docker — but it is a pull-and-recreate, not a restart, and
+  # a container whose state lives in its writable layer would lose it.
+  - type: grid
+    column_span: 3
+    cards:
+      - type: heading
+        heading: Image updates
+        heading_style: title
+        icon: mdi:package-variant
+        visibility:
+          - condition: numeric_state
+            entity: sensor.docker_image_updates
+            above: 0
+
+      - type: custom:auto-entities
+        show_empty: false
+        grid_options:
+          columns: full
+          rows: auto
+        card:
+          type: entities
+        card_param: entities
+        filter:
+          template: >
+            {% set ns = namespace(rows=[]) %}
+            {% for e in integration_entities('portainer')
+                 | select('search', '^update') | sort %}
+              {% if states(e) == 'on' %}
+                {% set ns.rows = ns.rows + [{
+                     'entity': e,
+                     'name': state_attr(e, 'friendly_name')
+                       | default(e, true)
+                       | replace(' Image update available', '')
+                   }] %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.rows }}
+
+  #####################################################################
+  # RESOURCES — 24h, running containers only
+  #####################################################################
+  # A stopped container reports 0, and a flat line at zero on the same axis as
+  # a live one makes the running ones unreadable while telling you nothing the
+  # red tile above did not already say.
+  #
+  # Two graphs rather than one because the axes are genuinely different — CPU
+  # is a percentage of one core and memory is a percentage of the container's
+  # limit, and overlaying them would put two unrelated scales on one baseline.
+  #
+  # `points_per_hour: 4` against the integration's own 60s poll means each
+  # plotted point is a 15-minute average. Deliberate: a per-poll line over 24h
+  # is noise at this width, and a single-sample CPU spike is not actionable.
+  - type: grid
+    column_span: 3
+    cards:
+      - type: heading
+        heading: Resources
+        heading_style: title
+        icon: mdi:chart-areaspline
+
+      - type: custom:auto-entities
+        show_empty: false
+        grid_options:
+          columns: full
+          rows: auto
+        card:
+          type: custom:mini-graph-card
+          name: CPU
+          icon: mdi:cpu-64-bit
+          hours_to_show: 24
+          points_per_hour: 4
+          line_width: 2
+          hour24: true
+          show:
+            labels: true
+            fill: false
+            # The legend is what makes a multi-series graph readable at all —
+            # without it the lines are unattributable and the card is
+            # decoration. `state: false` because the "current value" of several
+            # series is meaningless as one number.
+            legend: true
+            state: false
+        card_param: entities
+        filter:
+          template: >
+            {% set ns = namespace(rows=[]) %}
+            {% for e in integration_entities('portainer')
+                 | select('search', '^binary_sensor') | sort %}
+              {# ⚠️ `_cpu_usage_total$` and not a looser match — the endpoint
+                 device also carries `_cpu_total`, and a prefix match would
+                 pull the host's core count onto a percentage axis. #}
+              {% set c = device_entities(device_id(e))
+                   | select('search', '_cpu_usage_total$') | list %}
+              {% if states(e) == 'on' and c %}
+                {% set ns.rows = ns.rows + [{
+                     'entity': c[0],
+                     'name': state_attr(e, 'friendly_name')
+                       | default(e, true) | replace(' Status', '')
+                   }] %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.rows }}
+
+      - type: custom:auto-entities
+        show_empty: false
+        grid_options:
+          columns: full
+          rows: auto
+        card:
+          type: custom:mini-graph-card
+          name: Memory
+          icon: mdi:memory
+          hours_to_show: 24
+          points_per_hour: 4
+          line_width: 2
+          hour24: true
+          show:
+            labels: true
+            fill: false
+            legend: true
+            state: false
+        card_param: entities
+        filter:
+          template: >
+            {% set ns = namespace(rows=[]) %}
+            {% for e in integration_entities('portainer')
+                 | select('search', '^binary_sensor') | sort %}
+              {# Percentage, not absolute usage — the three containers are not
+                 remotely the same size, and 900MB of Uptime Kuma against
+                 60MB of Portainer on one linear axis flattens the small one
+                 to the baseline. Percent-of-limit is comparable. #}
+              {% set m = device_entities(device_id(e))
+                   | select('search', '_memory_usage_percentage$') | list %}
+              {% if states(e) == 'on' and m %}
+                {% set ns.rows = ns.rows + [{
+                     'entity': m[0],
+                     'name': state_attr(e, 'friendly_name')
+                       | default(e, true) | replace(' Status', '')
+                   }] %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.rows }}
+
+  #####################################################################
+  # CONTROLS — the only place on this page anything can be changed
+  #####################################################################
+  # Everything above is `tap_action: more-info` and cannot alter state. This
+  # section is behind a scroll on purpose: the tile you tap to check on a
+  # container should never be the tile that stops it.
+  #
+  # WHAT IS DELIBERATELY NOT HERE
+  #
+  #   Recreate  pulls and rebuilds from the image. Safe for these three (all
+  #             state is on bind mounts under /volume2/docker) but it is a
+  #             compose operation, and it belongs in Portainer's own UI where
+  #             you can see what it will do before it does it.
+  #   Kill      SIGKILL. `Restart` covers every case where you actually want
+  #             this, and does it without a chance of a half-written database.
+  #   Pause     SIGSTOP on every process in the container. Useful for
+  #             debugging, indistinguishable from "wedged" on every card above.
+  #
+  # ⚠️ STOPPING A CONTAINER FROM HERE WILL PAGE YOU. Uptime Kuma is watching
+  # these services from outside and does not know the difference between a
+  # crash and a deliberate stop. Put the monitor into maintenance in Kuma first
+  # if you are doing something planned.
+  #
+  # ⚠️ KNOWN INTEGRATION BUG — home-assistant/core#160907, closed as not
+  # planned. Stopping a container from HA returns an error even though the stop
+  # succeeds, and a container that was already stopped when HA started cannot
+  # be started again from here (its coordinator entry does not exist, so the
+  # switch throws). If a start does nothing, that is this, not the switch:
+  # reload the Portainer integration, or start it from Portainer's own UI.
+  - type: grid
+    column_span: 3
+    cards:
+      - type: heading
+        heading: Controls
+        heading_style: title
+        icon: mdi:tune
+
+      - type: markdown
+        grid_options:
+          columns: full
+          rows: auto
+        content: >-
+          Uptime Kuma is watching these from outside and cannot tell a planned
+          stop from a crash — set the monitor to maintenance first. `Recreate`
+          and `Kill` are deliberately absent; do those in Portainer at
+          <https://192.168.5.8:9444>.
+
+      # Container switches. `_container$` rather than every switch, so a stack
+      # switch — which starts or stops every container in a compose project at
+      # once — cannot sit in the same list looking like one more container.
+      - type: custom:auto-entities
+        show_empty: false
+        grid_options:
+          columns: full
+          rows: auto
+        card:
+          type: entities
+          title: Start / stop
+        card_param: entities
+        filter:
+          template: >
+            {% set ns = namespace(rows=[]) %}
+            {% for e in integration_entities('portainer')
+                 | select('search', '^switch') | sort %}
+              {% if e is search('_container$') %}
+                {% set ns.rows = ns.rows + [{
+                     'entity': e,
+                     'name': state_attr(e, 'friendly_name')
+                       | default(e, true) | replace(' Container', '')
+                   }] %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.rows }}
+
+      - type: custom:auto-entities
+        show_empty: false
+        grid_options:
+          columns: full
+          rows: auto
+        card:
+          type: entities
+          title: Restart
+        card_param: entities
+        filter:
+          template: >
+            {% set ns = namespace(rows=[]) %}
+            {% for e in integration_entities('portainer')
+                 | select('search', '^button') | sort %}
+              {% if e is search('_restart_container$') %}
+                {% set ns.rows = ns.rows + [{
+                     'entity': e,
+                     'name': state_attr(e, 'friendly_name')
+                       | default(e, true) | replace(' Restart container', '')
+                   }] %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.rows }}
+
+      # Prune. Reclaims the disk the "reclaimable" rows in Docker host report.
+      #
+      # ⚠️ `Prune unused volumes` IS THE DANGEROUS ONE and is included only
+      # because hiding it would not stop it existing. A Docker volume is
+      # "unused" the moment no container references it — which includes every
+      # volume belonging to a container that is currently stopped. None of the
+      # three containers here use named volumes (all state is on explicit bind
+      # mounts under /volume2/docker, which prune cannot touch), so today this
+      # is a no-op. That stops being true the first time a container is added
+      # with a named volume, and there is no confirmation dialog.
+      - type: custom:auto-entities
+        show_empty: false
+        grid_options:
+          columns: full
+          rows: auto
+        card:
+          type: entities
+          title: Prune
+        card_param: entities
+        filter:
+          template: >
+            {% set ns = namespace(rows=[]) %}
+            {% for e in integration_entities('portainer')
+                 | select('search', '^button') | sort %}
+              {% if e is search('_prune_unused_images$') %}
+                {% set ns.rows = ns.rows
+                     + [{'entity': e, 'name': 'Unused images'}] %}
+              {% elif e is search('_prune_unused_volumes$') %}
+                {% set ns.rows = ns.rows
+                     + [{'entity': e, 'name': 'Unused volumes ⚠️'}] %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.rows }}

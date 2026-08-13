@@ -1,0 +1,242 @@
+---
+#####
+# Portainer — Docker rollups for jack-sparrow
+#
+# The core `portainer` integration (no HACS) talks to Portainer CE on
+# jack-sparrow and creates one HA device per Docker object, three kinds:
+#
+#   endpoint   the Docker host itself — version, kernel, OS, container counts,
+#              image count, per-category disk usage and reclaimable space
+#   container  one per container — Status (binary_sensor), State, Health,
+#              Image, CPU, memory usage / % / limit, a start-stop switch,
+#              restart / pause / resume / kill / recreate buttons, and an
+#              `update` entity for image-update-available
+#   stack      one per compose stack — status switch, type, container count
+#
+# That is a lot of entities for three containers, and it grows linearly as the
+# stack does. These two sensors are what a card or an automation should read.
+#
+# WHY THE ENTITY LIST IS DERIVED, NOT HARDCODED
+#
+# Same reasoning as uptime_kuma.yaml and scrutiny.yaml:
+# `integration_entities('portainer')` returns whatever the config entry
+# currently owns, so a container added, renamed or removed on the NAS needs no
+# edit here. That matters more than usual on this integration — the container
+# set is the thing most expected to move. Three today; the arr stack, Immich
+# and possibly Frigate all land after the Phase 2 share layout exists.
+#
+# ⚠️ CONTAINERS ARE IDENTIFIED BY THEIR `binary_sensor`, AND THAT IS THE TRICK.
+#
+# `binary_sensor` is the only platform the integration uses for exactly one
+# thing — container Status. Endpoint devices and stack devices have no binary
+# sensor at all. So `integration_entities('portainer') | select('search',
+# '^binary_sensor')` is a clean, name-free list of containers, with none of the
+# "is this a group" filtering uptime_kuma.yaml needs. Everything else about a
+# container is reached through `device_entities(device_id(e))` from there.
+#
+# ⚠️ THE STATUS BINARY SENSOR IS `on`/`off`, THE STATE SENSOR IS A STRING.
+# `binary_sensor.<name>_status` is running / not-running. `sensor.<name>_state`
+# carries Docker's own word — `running`, `exited`, `paused`, `created`,
+# `restarting`, `dead`. Both are needed: the binary one is what "is it up"
+# should read, the string one is what distinguishes a container someone stopped
+# from a container that is crash-looping. See `restarting` below.
+#
+# ⚠️ EVERY SIBLING LOOKUP TOLERATES THE SENSOR BEING ABSENT. The entity set is
+# NOT uniform: `Health` only exists on images that declare a HEALTHCHECK (none
+# of the three today do, so it reads `unknown` or is missing outright), and the
+# `update` entity only appears once the integration has compared a digest.
+# `| list` then a truth test, never `[0]` on a bare select().
+#
+# ⚠️ A DELIBERATELY STOPPED CONTAINER READS AS A PROBLEM, FOREVER.
+# There is no "should this be running" flag in Docker or in Portainer, and this
+# sensor cannot invent one. Today that is correct — all three containers are
+# `restart: unless-stopped` and are meant to be up 24/7. The day something is
+# kept stopped on purpose, this needs an allowlist (an `input_text` of names,
+# or a Portainer label read through the API) rather than a shrug, or the rollup
+# trains you to ignore it.
+#
+# ⚠️ ENTITY IDS ARE SLUGGED FROM THE DEVICE NAME, which for a container is the
+# container name from `container_name:` in the compose file. So `uptime-kuma`
+# becomes `binary_sensor.uptime_kuma_status` / `sensor.uptime_kuma_state`.
+# If HA ever appends a `_2` because of a genuine collision, the suffix matches
+# below stop seeing that container — and a container this cannot see reads as
+# healthy, not as an error. Re-run this after adding containers:
+#
+#   {{ integration_entities('portainer') | select('search', '^binary_sensor')
+#      | list }}
+#
+# ⚠️ THE ENTITY-ID SUFFIXES BELOW ARE UNVERIFIED AGAINST THE LIVE INSTANCE.
+# They are derived from the integration's own `strings.json` translation keys
+# (`container_state` → "State" → `_state`, `container_health_state` → "Health"
+# → `_health`, `cpu_usage_total` → "CPU usage total" → `_cpu_usage_total`,
+# and so on), which is how HA builds them — but that is a prediction, not an
+# observation. Check the list above in Developer Tools → Template before
+# trusting any number here. A regex that matches nothing does not error; it
+# reads zero forever, which on a health rollup is the worst possible failure.
+#
+# Consumed by:
+#   - dashboards/jack-sparrow/views/05-containers.yaml
+#
+# Deploy steps and the compose file live in the **servers** repo at
+# hosts/jack-sparrow/docker/docker-compose.yml.
+#
+# Upstream: https://www.home-assistant.io/integrations/portainer/
+#####
+
+- sensor:
+    #################
+    # DOCKER HEALTH
+    #################
+    # One OK / Problem for every container on the NAS.
+    #
+    # Deliberately NOT a count as the state, for the same reason
+    # `sensor.lab_availability` is not: 0 vs 1 is the only distinction that
+    # changes behaviour, and a bare number is something you have to interpret.
+    # The counts ride along as attributes for the card.
+    #
+    # ⚠️ THIS OVERLAPS UPTIME KUMA ON PURPOSE, AND ONLY PARTLY. Kuma answers
+    # "does the service respond on its port" from outside the host. This
+    # answers "does the container exist and is it running", from inside Docker.
+    # They disagree in exactly the interesting cases: a container that is up
+    # with a wedged process is green here and red there, and a container that
+    # someone removed entirely is red here and — because Kuma is checking a
+    # port on a host that still answers — can be either. Neither replaces the
+    # other; see the note about not double-alerting in the view header.
+    - name: Docker Health
+      unique_id: 0d4c7a92-6b1e-4f38-a5c7-8e2b93f10d46
+      # `this` = this entity's own state object. A state_attr() call against
+      # itself would deadlock the template.
+      icon: "{{ 'mdi:docker' if this.state == 'OK' else 'mdi:alert-octagon' }}"
+      # Unavailable if the integration is gone or Portainer is unreachable,
+      # rather than a confident OK derived from an empty list. Same failure
+      # mode as the Kuma rollup: the monitoring being down looks exactly like
+      # nothing being wrong.
+      availability: >
+        {{ integration_entities('portainer')
+           | select('search', '^binary_sensor') | list | count > 0 }}
+      state: >
+        {% set ns = namespace(bad=0) %}
+        {% for e in integration_entities('portainer')
+             | select('search', '^binary_sensor') %}
+          {% set h = device_entities(device_id(e))
+               | select('search', '_health$') | list %}
+          {% if states(e) != 'on'
+                or (h and states(h[0]) == 'unhealthy') %}
+            {% set ns.bad = ns.bad + 1 %}
+          {% endif %}
+        {% endfor %}
+        {{ 'Problem' if ns.bad > 0 else 'OK' }}
+      attributes:
+        # Joined string, not a raw list repr — this is what a notification and
+        # the more-info dialog print.
+        problems: >
+          {% set ns = namespace(bad=[]) %}
+          {% for e in integration_entities('portainer')
+               | select('search', '^binary_sensor') %}
+            {% set sibs = device_entities(device_id(e)) %}
+            {% set s = sibs | select('search', '_state$') | list %}
+            {% set h = sibs | select('search', '_health$') | list %}
+            {% set nm = state_attr(e, 'friendly_name')
+                 | default(e, true) | replace(' Status', '') %}
+            {% if states(e) != 'on' %}
+              {% set ns.bad = ns.bad
+                   + [nm ~ ' (' ~ (states(s[0]) if s else 'stopped') ~ ')'] %}
+            {% elif h and states(h[0]) == 'unhealthy' %}
+              {% set ns.bad = ns.bad + [nm ~ ' (unhealthy)'] %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.bad | join(', ') if ns.bad else 'all running' }}
+        problem_count: >
+          {% set ns = namespace(n=0) %}
+          {% for e in integration_entities('portainer')
+               | select('search', '^binary_sensor') %}
+            {% set h = device_entities(device_id(e))
+                 | select('search', '_health$') | list %}
+            {% if states(e) != 'on'
+                  or (h and states(h[0]) == 'unhealthy') %}
+              {% set ns.n = ns.n + 1 %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.n }}
+        running_count: >
+          {{ integration_entities('portainer')
+             | select('search', '^binary_sensor')
+             | select('is_state', 'on') | list | count }}
+        # Sanity check for the card, and the counterpart to Kuma's
+        # `monitor_count`. A container that is REMOVED — not stopped, removed —
+        # takes its HA device with it, so it has no status left to be off. The
+        # rollup above cannot see it. This number dropping is the only visible
+        # symptom of a container quietly ceasing to exist.
+        container_count: >
+          {{ integration_entities('portainer')
+             | select('search', '^binary_sensor') | list | count }}
+        # A crash loop, which is the failure that looks healthiest from
+        # outside. A container restarting every few seconds binds its port
+        # often enough that a Kuma check can pass on the retry, so this is the
+        # one state worth pulling out of the pack by name.
+        restarting: >
+          {% set ns = namespace(r=[]) %}
+          {% for e in integration_entities('portainer')
+               | select('search', '^binary_sensor') %}
+            {% set s = device_entities(device_id(e))
+                 | select('search', '_state$') | list %}
+            {% if s and states(s[0]) == 'restarting' %}
+              {% set ns.r = ns.r + [state_attr(e, 'friendly_name')
+                   | default(e, true) | replace(' Status', '')] %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.r | join(', ') if ns.r else 'none' }}
+        navigation_path: /jack-sparrow/containers
+
+    #################
+    # IMAGE UPDATES
+    #################
+    # How many containers are running an image older than its tag's current
+    # digest. Pure numeric state so it gets history and statistics — the useful
+    # reading is the shape over a month, not the value right now.
+    #
+    # ⚠️ THIS IS NOT A PROBLEM SENSOR AND SHOULD NOT ALERT. Two of the three
+    # tags are pinned on purpose (`scrutiny:v0.9.3-omnibus` exact, and
+    # `uptime-kuma:2` to the 2.x line) precisely so they do not move
+    # underneath you, and Portainer's own image is `:lts`. A pending update is
+    # a thing to read release notes about on a Sunday, not a thing to be woken
+    # by. It is here so "there are updates" is visible without opening
+    # Portainer, and so an image that has been stale for months is noticeable.
+    #
+    # ⚠️ AN EXACT-PINNED TAG SHOULD NEVER SHOW AN UPDATE. If Scrutiny ever
+    # does, the tag was re-pushed under the same version string — which is
+    # worth knowing about, and is the opposite of reassuring.
+    - name: Docker Image Updates
+      unique_id: 5a91f0c3-2d47-4e6b-9c18-7f3ba54e0d29
+      unit_of_measurement: containers
+      state_class: measurement
+      icon: "{{ 'mdi:package-variant' if this.state | int(0) > 0
+                else 'mdi:package-variant-closed-check' }}"
+      # No `update` entity exists until the integration has compared a digest
+      # at least once, so an empty list is a normal startup state rather than a
+      # failure — hence availability keyed on the integration existing at all,
+      # not on the update entities existing.
+      availability: >
+        {{ integration_entities('portainer') | list | count > 0 }}
+      state: >
+        {{ integration_entities('portainer')
+           | select('search', '^update')
+           | select('is_state', 'on') | list | count }}
+      attributes:
+        pending: >
+          {% set ns = namespace(u=[]) %}
+          {% for e in integration_entities('portainer')
+               | select('search', '^update') %}
+            {% if states(e) == 'on' %}
+              {% set ns.u = ns.u + [state_attr(e, 'friendly_name')
+                   | default(e, true)
+                   | replace(' Image update available', '')] %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.u | join(', ') if ns.u else 'all current' }}
+        # Same role as `container_count` above: if this is 0 the integration is
+        # not producing update entities at all, and a state of 0 means "not
+        # checking" rather than "nothing to do".
+        tracked_count: >
+          {{ integration_entities('portainer')
+             | select('search', '^update') | list | count }}
