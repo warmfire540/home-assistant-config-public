@@ -51,6 +51,44 @@ sections:
         heading_style: title
         icon: mdi:pirate
 
+      # ---- Portals: the two web UIs behind this dashboard ----
+      #
+      # Same pair, same order, same template as the top of 04-drives.yaml —
+      # this dashboard summarises both tools and neither one's own UI is
+      # reachable from HA otherwise. `columns: 4` of the 12-column section grid
+      # puts them side by side in the left third of this full-width row and
+      # lets them stack on a phone.
+      #
+      # Hosts are hardcoded because neither is templatable from an entity: the
+      # UGREEN integration is UI-configured so its host is not in this repo,
+      # and Scrutiny has no HA config entry at all. Both are DHCP reservations
+      # on jack-sparrow; if that address moves, it moves in both files.
+      - type: custom:button-card
+        template: ugreen_portal_button
+        name: UGOS Portal
+        icon: mdi:nas
+        grid_options:
+          columns: 4
+          rows: auto
+        variables:
+          url: http://192.168.5.8:9999
+          subtitle: 192.168.5.8:9999
+          accent: var(--primary-color)
+
+      - type: custom:button-card
+        template: ugreen_portal_button
+        name: Scrutiny
+        icon: mdi:harddisk
+        grid_options:
+          columns: 4
+          rows: auto
+        variables:
+          url: http://192.168.5.8:8080
+          subtitle: 192.168.5.8:8080
+          # Quoted: an unquoted `#` starts a YAML comment, so the bare form
+          # parses as `var(--info-color,` and silently drops the fallback.
+          accent: 'var(--info-color, #039be5)'
+
       # Native tile cards, wrapped only so their entity_ids can be templated
       # off the selected NAS. rows: auto — a fixed row count is what used to
       # clip the Control card into the buttons under it.

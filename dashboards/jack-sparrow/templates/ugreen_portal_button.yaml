@@ -1,0 +1,92 @@
+---
+#####
+# ugreen_portal_button — "leave Home Assistant" link
+#
+# Both external tools behind this dashboard (UGOS and Scrutiny) are better at
+# their own drill-down than any Lovelace card, so every page wants a way out to
+# them. Those escape hatches were a markdown link on one page and nothing on
+# the other, which read as page decoration rather than navigation.
+#
+# This is the one shape they all share, so a portal button looks the same
+# wherever it appears and never looks like a control. Call sites set:
+#   name              — the destination, as a label
+#   icon              — the destination's mark
+#   variables.url     — where it opens
+#   variables.subtitle— host:port, printed so you know where you are going
+#   variables.accent  — a theme var, used for icon + tint
+#
+# WHY url_path AND NOT action: url
+#
+# button-card's `tap_action: { action: url }` takes `url_path`, NOT `url` —
+# the same key the core navigate action uses for its own path. Writing `url:`
+# parses fine and produces a button that does nothing at all on tap. There is
+# no console error either; the action just resolves to undefined.
+#
+# `new_tab` is deliberately absent. In the HA companion app an external URL
+# opens in an in-app browser regardless, and on desktop keeping it in the same
+# tab means the back button returns to the dashboard — which is what you want
+# after glancing at a drive's attribute page.
+#
+# THE ARROW IS A `label`, NOT PART OF THE NAME
+#
+# It sits in its own grid cell pinned right, so a long subtitle ellipsises
+# under it rather than shoving it off the card. `show_label: true` is required
+# at the call site level or the cell renders empty — it is set here so call
+# sites cannot forget it.
+#####
+
+ugreen_portal_button:
+  variables:
+    url: ''
+    subtitle: ''
+    accent: 'var(--primary-color)'
+  show_icon: true
+  show_name: true
+  show_label: true
+  size: 24px
+  label: |
+    [[[
+      return `<span style="opacity:0.8">${variables.subtitle}</span>
+              <ha-icon icon="mdi:open-in-new"
+                       style="--mdc-icon-size:16px;
+                              vertical-align:-3px;
+                              margin-left:6px;
+                              opacity:0.65"></ha-icon>`;
+    ]]]
+  tap_action:
+    action: url
+    url_path: '[[[ return variables.url; ]]]'
+  styles:
+    # Icon left, name over subtitle on the right — the same left-icon shape the
+    # per-drive cards on the Drives page use, so the two read as one system.
+    grid:
+      - grid-template-areas: '"i n" "i l"'
+      - grid-template-columns: 42px 1fr
+      - grid-template-rows: auto auto
+      - align-items: center
+    card:
+      - border-radius: 14px
+      - height: 72px
+      - padding: 10px 14px
+      # Same faint accent wash as ugreen_power_button, so an external link is
+      # visibly the same class of object as the other actions on the page
+      # without competing with them for attention.
+      - background: '[[[ return `color-mix(in srgb, ${variables.accent} 8%, var(--card-background-color))`; ]]]'
+      - border: '[[[ return `1px solid color-mix(in srgb, ${variables.accent} 22%, transparent)`; ]]]'
+      - box-shadow: none
+    img_cell:
+      - justify-self: start
+    icon:
+      - color: '[[[ return variables.accent; ]]]'
+    name:
+      - font-size: 0.95em
+      - font-weight: 600
+      - color: var(--primary-text-color)
+      - justify-self: start
+    label:
+      - font-size: 0.72em
+      - color: var(--secondary-text-color)
+      - justify-self: start
+      - white-space: nowrap
+      - overflow: hidden
+      - text-overflow: ellipsis

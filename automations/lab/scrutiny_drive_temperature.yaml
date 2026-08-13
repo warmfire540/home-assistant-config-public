@@ -1,17 +1,21 @@
 #####
 # Alert when the hottest drive runs sustained-hot
 #
-# Celsius — Scrutiny reports °C. The UGREEN integration reports the CPU in °F,
-# so do not copy thresholds between this and the NAS view.
+# ⚠️ 122 IS FAHRENHEIT (= 50 °C). ha_scrutiny is natively °C, but this instance
+# runs US customary units so HA converts before any template sees the value —
+# `sensor.scrutiny_max_drive_temperature` is declared °F to stop it converting
+# twice. A threshold of 50 here would fire permanently; the drives idle around
+# 105 °F. Flip this together with the unit in entities/templates/scrutiny.yaml
+# and the dashboard thresholds in views/04-drives.yaml, never on its own.
 #
-# 50 °C for an hour, not an instant spike. Four helium spinners sharing one
-# intake will touch high numbers during a parity sync, a scrub, or the initial
+# For an hour, not an instant spike. Four helium spinners sharing one intake
+# will touch high numbers during a parity sync, a scrub, or the initial
 # burn-in, and that is expected. Sustained is the signal: BackBlaze's data puts
-# the AFR climb above roughly 45 °C, and anything holding 50 °C is a cooling
-# problem (fan mode, dust, ambient) rather than a failing drive.
+# the AFR climb above roughly 113 °F (45 °C), and anything holding 122 °F is a
+# cooling problem (fan mode, dust, ambient) rather than a failing drive.
 #
-# The `hottest_drive` attribute names which one, which matters — a single hot
-# bay is airflow or a dying drive, all six hot is the room or the fan curve.
+# The `hottest_drive` attribute names the serial and /dev path, which matters —
+# one hot bay is airflow or a dying drive, all seven hot is the room.
 #####
 
 alias: Scrutiny drive temperature alert
@@ -20,7 +24,7 @@ id: e1d29338-04a2-4222-a6a0-01389f0da1e8
 trigger:
   trigger: numeric_state
   entity_id: sensor.scrutiny_max_drive_temperature
-  above: 50
+  above: 122
   for:
     hours: 1
 
@@ -30,15 +34,15 @@ action:
       title: '🌡️ Drive Temperature High'
       message: >-
         {{ state_attr('sensor.scrutiny_max_drive_temperature', 'hottest_drive') }}
-        has held {{ states('sensor.scrutiny_max_drive_temperature') }}°C for an
-        hour. If only one bay is hot it is airflow or the drive; if all six are,
-        check fan mode and ambient.
+        has held {{ states('sensor.scrutiny_max_drive_temperature') }}°F for an
+        hour. If only one bay is hot it is airflow or that drive; if they all
+        are, check fan mode and ambient.
   - action: notify.mobile_app_poat_s_iphone_14_pro_max
     data:
       title: '🌡️ Drive Temperature High'
       message: >-
         {{ state_attr('sensor.scrutiny_max_drive_temperature', 'hottest_drive') }}
-        at {{ states('sensor.scrutiny_max_drive_temperature') }}°C, sustained.
+        at {{ states('sensor.scrutiny_max_drive_temperature') }}°F, sustained.
       data:
         tag: scrutiny_drive_temp
         url: /jack-sparrow/drives

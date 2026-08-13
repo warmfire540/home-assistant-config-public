@@ -24,8 +24,12 @@
 #
 # LAYOUT (max_columns: 3)
 #
-#   row 1   Health       span 3
+#   row 1   Health       span 3      (portal buttons + the three tiles)
 #   row 2   Drives       span 2      Trends (1)
+#
+# The two portal buttons at the top are the same `ugreen_portal_button` pair,
+# in the same order, as the top of 01-nas.yaml — the way out to UGOS and
+# Scrutiny is in the same place with the same look on every page that has one.
 #
 # WHY NO ugreen_tpl_host WRAPPER
 #
@@ -55,6 +59,38 @@ sections:
         heading_style: title
         icon: mdi:harddisk
 
+      # ---- Portals ----
+      # Identical block to the top of 01-nas.yaml, deliberately: same template,
+      # same pair, same order, so the way out of HA is in the same place with
+      # the same look on both pages. This replaced a markdown text link that
+      # sat below the disk list and read as a footnote. See the longer note on
+      # hardcoded hosts there.
+      - type: custom:button-card
+        template: ugreen_portal_button
+        name: UGOS Portal
+        icon: mdi:nas
+        grid_options:
+          columns: 4
+          rows: auto
+        variables:
+          url: http://192.168.5.8:9999
+          subtitle: 192.168.5.8:9999
+          accent: var(--primary-color)
+
+      - type: custom:button-card
+        template: ugreen_portal_button
+        name: Scrutiny
+        icon: mdi:harddisk
+        grid_options:
+          columns: 4
+          rows: auto
+        variables:
+          url: http://192.168.5.8:8080
+          subtitle: 192.168.5.8:8080
+          # Quoted: an unquoted `#` starts a YAML comment, so the bare form
+          # parses as `var(--info-color,` and silently drops the fallback.
+          accent: 'var(--info-color, #039be5)'
+
       - type: grid
         square: false
         columns: 3
@@ -82,10 +118,14 @@ sections:
               [[[
                 const t = Number(states['sensor.scrutiny_max_drive_temperature']?.state);
                 if (!Number.isFinite(t)) return 'grey';
-                // Celsius here — the UGREEN integration reports °F, Scrutiny
-                // reports °C. Do not reuse the thresholds from 01-nas.yaml.
-                if (t >= 50) return 'red';
-                if (t >= 45) return 'orange';
+                // ⚠️ FAHRENHEIT. ha_scrutiny is natively °C but this instance
+                // runs US customary units, so HA converts before a template
+                // ever sees the value. 113 °F = 45 °C (where BackBlaze's AFR
+                // curve starts climbing), 122 °F = 50 °C (a cooling problem,
+                // not a drive problem). Flip these with the unit declared in
+                // entities/templates/scrutiny.yaml, never on their own.
+                if (t >= 122) return 'red';
+                if (t >= 113) return 'orange';
                 return 'green';
               ]]]
 
@@ -117,13 +157,23 @@ sections:
         heading_style: title
         icon: mdi:server
 
+      # `grid_options.columns: full` is load-bearing. A card in a sections view
+      # defaults to half the section's 12-column grid, so without it the inner
+      # 2-up grid rendered at a quarter width each and left the right half of
+      # the section empty. Every card in 01-nas.yaml carries the same pair.
       - type: custom:auto-entities
         show_empty: false
         card_param: cards
+        grid_options:
+          columns: full
+          rows: auto
         card:
           type: grid
-          columns: 2
+          columns: 3
           square: false
+        # Sorts on the status entity's friendly name, which leads with the
+        # model — so the four Ultrastars group together, then the 990 PROs,
+        # then the boot SSD. The cards themselves are titled by serial.
         sort:
           method: friendly_name
           numeric: false
@@ -148,36 +198,54 @@ sections:
                 # consistently per device; if this ever returns undefined, the
                 # suffix changed upstream — check Developer Tools before
                 # assuming the sensor is missing.
+                #
+                # Titled by SERIAL, not model. All four Ultrastars share a
+                # model string long enough to truncate, so a model-titled card
+                # made them visually identical — useless on the one page whose
+                # job is telling you which drive to pull. Serial is also the
+                # identity UGOS shows per bay and the one an RMA runs on.
                 name: |
                   [[[
-                    const n = entity?.attributes?.friendly_name || entity.entity_id;
-                    return n.replace(/ Overall Status$/, '');
+                    return entity?.attributes?.serial_number
+                      || (entity?.attributes?.friendly_name || entity.entity_id)
+                           .replace(/ Overall Status$/, '');
                   ]]]
                 state_display: |
                   [[[
                     const id = entity.entity_id;
                     const g = s => states[id.replace('_overall_status', s)]?.state;
-                    const cap = g('_capacity');
-                    const dev = entity?.attributes?.device_name;
+                    const cap = Number(g('_capacity'));
+                    // Capacity arrives in GB. 11176 GB is technically correct
+                    // and reads as noise; 11.2 TB is the number you hold in
+                    // your head. Boot SSD stays in GB.
+                    const size = Number.isFinite(cap)
+                      ? (cap >= 1000 ? `${(cap / 1000).toFixed(1)} TB`
+                                     : `${Math.round(cap)} GB`)
+                      : null;
                     // `device_name` is whatever path Scrutiny last reported.
                     // Linux does not guarantee /dev/sdX stability across
                     // reboots, so treat it as a hint, not an identity.
-                    return [cap ? `${cap} GB` : null, dev]
-                      .filter(Boolean).join('  ·  ') || entity?.state || '—';
+                    const dev = entity?.attributes?.device_name;
+                    return [size, dev].filter(Boolean).join('  ·  ')
+                      || entity?.state || '—';
                   ]]]
                 label: |
                   [[[
                     const id = entity.entity_id;
                     const g = s => states[id.replace('_overall_status', s)]?.state;
                     const bits = [];
+                    // °F — see the tile threshold comment above. HA has
+                    // already converted from ha_scrutiny's native °C.
                     const temp = Number(g('_temperature'));
-                    if (Number.isFinite(temp)) bits.push(`${Math.round(temp)}°C`);
-                    // Power-on time comes through in hours. Days is the unit
-                    // you actually reason about for a drive with ~8.5k hours
-                    // already on it at purchase.
-                    const hrs = Number(g('_power_on_time'));
-                    if (Number.isFinite(hrs) && hrs > 0) {
-                      bits.push(`${Math.round(hrs / 24)}d powered`);
+                    if (Number.isFinite(temp)) bits.push(`${Math.round(temp)}°F`);
+                    // ⚠️ ALREADY IN DAYS. The sensor carries
+                    // `unit_of_measurement: d` and `device_class: duration`,
+                    // so HA hands over 354.08, not 8498 hours. Dividing by 24
+                    // turned 354 days into "15d powered" — which looked like
+                    // the seller had reset SMART on a refurb drive. It had not.
+                    const days = Number(g('_power_on_time'));
+                    if (Number.isFinite(days) && days > 0) {
+                      bits.push(`${Math.round(days)}d powered`);
                     }
                     const test = g('_smart_test_result');
                     if (test && !['unknown', 'unavailable'].includes(test)) {
@@ -238,18 +306,17 @@ sections:
                     - overflow: hidden
                     - text-overflow: ellipsis
 
-      # Full attribute drill-down is Scrutiny's own UI, and it is better at it
-      # than a Lovelace card would be. This is the escape hatch.
+      # The escape hatch to Scrutiny's own UI is now the portal button at the
+      # top of the page, alongside the same one on 01-nas.yaml. What is left
+      # here is the thing a reader of THIS list needs and cannot infer: why the
+      # values only move four times a day.
       - type: markdown
         grid_options:
           columns: full
           rows: auto
         content: >-
-          Per-attribute detail, thresholds and raw history:
-          [open Scrutiny](http://192.168.5.8:8080)
-
-
-          Collector runs every 6h — see
+          Collector runs every 6h — a flat line between steps is the schedule,
+          not a dead sensor. Runbook:
           `hosts/jack-sparrow/scrutiny-runbook.md` in the **servers** repo.
 
   #####################################################################
@@ -304,40 +371,129 @@ sections:
         animate: true
         show:
           extrema: true
-        # Celsius. 45 °C is where enterprise drive AFR starts climbing in the
-        # BackBlaze data; 50 °C+ sustained is a cooling problem, not a drive one.
+        # ⚠️ Fahrenheit — this instance uses US customary units, so HA has
+        # already converted ha_scrutiny's native °C. 113 °F (45 °C) is where
+        # enterprise drive AFR starts climbing in the BackBlaze data; 122 °F
+        # (50 °C) sustained is a cooling problem, not a drive one.
         color_thresholds:
-          - value: 30
+          - value: 86
             color: '#388e3c'
-          - value: 40
+          - value: 104
             color: '#c0ca33'
-          - value: 45
+          - value: 113
             color: '#ffa000'
-          - value: 50
+          - value: 122
             color: '#d32f2f'
 
-      # Text summary rather than more tiles: when something IS wrong, the
-      # useful output is a sentence naming the drive, not another colour.
+      # SUMMARY — the sentence version of this page
+      #
+      # Still text, on purpose: when something IS wrong the useful output is a
+      # sentence naming the drive and its device path, not another coloured
+      # square. Three tiles at the top of the page already do the colour.
+      #
+      # What changed from the first version is the shape, not the content. It
+      # was a five-row markdown table, which gave "Pending: 0" exactly as much
+      # visual weight as a named failing drive and buried the one line worth
+      # reading. This leads with a verdict line, then prints only the
+      # supporting detail — and prints the drive-count caveat and the problem
+      # list ONLY when they say something.
+      #
+      # ⚠️ LITERAL BLOCK (`|`), NOT FOLDED (`>-`).
+      # A folded scalar joins consecutive lines with spaces, which collapses
+      # adjacent list items onto one line and renders the markup as literal
+      # text. Blank lines survive folding, so headings and paragraphs look fine
+      # and only the lists give it away. Any markdown with tables or adjacent
+      # list items needs `|`.
+      #
+      # card_mod targets `ha-markdown` inside the card's shadow root — styling
+      # `ha-card` alone does not reach the rendered markdown. The verdict line
+      # is an h3 so it can be selected without wrapping it in a div; markdown
+      # cards strip most inline HTML.
       - type: markdown
         grid_options:
           columns: full
           rows: auto
-        content: >-
-          {% set h = 'sensor.scrutiny_drive_health' %}
-          {% set r = 'sensor.scrutiny_reallocated_sectors_total' %}
+        card_mod:
+          style: |
+            ha-card {
+              border-radius: 14px;
+            }
+            ha-markdown h3 {
+              font-size: 1.05em;
+              font-weight: 600;
+              margin: 0 0 10px 0;
+              padding-bottom: 10px;
+              border-bottom: 1px solid var(--divider-color);
+            }
+            ha-markdown ul {
+              margin: 0;
+              padding-left: 0;
+              list-style: none;
+            }
+            /* Label / value on one row, value right-aligned and allowed to
+               wrap — a serial plus a device path does not fit on a phone. */
+            ha-markdown li {
+              display: flex;
+              justify-content: space-between;
+              gap: 16px;
+              padding: 5px 0;
+              font-size: 0.92em;
+            }
+            ha-markdown li strong {
+              color: var(--secondary-text-color);
+              font-weight: 400;
+              white-space: nowrap;
+            }
+            ha-markdown li em {
+              font-style: normal;
+              text-align: right;
+              color: var(--primary-text-color);
+            }
+            ha-markdown blockquote {
+              margin: 12px 0 0 0;
+              padding: 10px 12px;
+              font-size: 0.86em;
+              line-height: 1.45;
+              border-left: 3px solid var(--warning-color);
+              border-radius: 0 8px 8px 0;
+              background: color-mix(in srgb, var(--warning-color) 10%, transparent);
+            }
+            ha-markdown blockquote p {
+              margin: 0;
+            }
+        content: |
+          {%- set h = 'sensor.scrutiny_drive_health' -%}
+          {%- set r = 'sensor.scrutiny_reallocated_sectors_total' -%}
+          {%- set t = 'sensor.scrutiny_max_drive_temperature' -%}
+          {%- set count = state_attr(h, 'drive_count') -%}
+          {%- set problems = state_attr(h, 'problems') -%}
+          {%- set realloc = states(r) | int(0) -%}
+          {%- set pending = state_attr(r, 'pending_total') | int(0) -%}
+          {#- The verdict, in three states rather than two.
+              `all_clear` deliberately requires the drive count to be right as
+              well: seven passing drives out of six present is not an all
+              clear, and the status rollup cannot see a missing drive.
+              `unknown` is separated out because a rollup that is unavailable —
+              Scrutiny down, integration reloading, HA still starting — is not
+              a problem with a drive, and showing "Needs a look" for it trains
+              you to ignore the one case that matters. -#}
+          {%- set unknown = states(h) in ['unknown', 'unavailable']
+                            or count is none -%}
+          {%- set all_clear = states(h) == 'OK' and realloc == 0
+                              and pending == 0 and count == 7 -%}
+          ### {% if unknown %}⏳ Waiting on Scrutiny{% elif all_clear %}✅ All drives healthy{% else %}⚠️ Needs a look{% endif %}
 
-          ### {{ states(h) }}
+          - **Drives seen** — *{{ count if count is not none else '—' }} of 7*
+          - **Hottest** — *{{ state_attr(t, 'hottest_drive') or '—' }}*
+          - **Reallocated** — *{{ state_attr(r, 'by_drive') or '—' }}*
+          - **Pending** — *{{ pending }}{{ ' — sectors flagged, not yet remapped' if pending else '' }}*
+          {%- if problems %}
+          - **Failing** — *{{ problems }}*
+          {%- endif %}
+          {%- if count is not none and count != 7 %}
 
-          | | |
-          |---|---|
-          | **Drives seen** | {{ state_attr(h, 'drive_count') or '—' }} |
-          | **Problems** | {{ state_attr(h, 'problems') or 'none' }} |
-          | **Hottest** | {{ state_attr('sensor.scrutiny_max_drive_temperature', 'hottest_drive') or '—' }} |
-          | **Reallocated** | {{ state_attr(r, 'by_drive') or '—' }} |
-          | **Pending** | {{ state_attr(r, 'pending_total') or '0' }} |
-
-          {% if state_attr(h, 'drive_count') not in [7, none] %}
-          ⚠️ Expected 7 drives — 4× Ultrastar (Pool 1), 2× 990 PRO (Pool 2), and
-          the internal 128GB boot SSD. A missing drive does not show up as a
-          failure; it shows up as a smaller count.
-          {% endif %}
+          > **Expected 7 drives, seeing {{ count }}.** 4× Ultrastar (Pool 1),
+          > 2× 990 PRO (Pool 2), and the internal 128GB boot SSD. A missing
+          > drive does not show up as a failure — it shows up as a smaller
+          > count, which is why this line exists.
+          {%- endif %}

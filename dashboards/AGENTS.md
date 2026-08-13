@@ -75,6 +75,26 @@ foo/views/NN-*.yaml      one view per file
   integration and exist on the live instance only. Do not "fix" those paths.
 - **`device_id` values are opaque.** The comment above each card is the only
   label; keep them in sync.
+- **A card in a `sections` view defaults to HALF the section's 12-column grid.**
+  Without `grid_options: {columns: full, rows: auto}` a nested 2-up grid renders
+  at a quarter width each and leaves the right half of the section empty — it
+  reads as "auto-entities matched nothing" when it actually matched fine. Every
+  card in `jack-sparrow/views/` carries that pair for this reason.
+- **Markdown with a table needs a literal block (`|`), not folded (`>-`).**
+  Folding joins consecutive lines with spaces, so a table collapses into
+  `| | | |---|---| | Drives seen | 7 |`. Blank lines survive folding, so
+  headings and paragraphs still look right and only the table gives it away.
+- **This instance uses US customary units, so HA converts temperatures before a
+  template ever reads them.** A source sensor that is natively °C arrives as
+  `114.8` with `unit_of_measurement: °F`. Declaring `°C` on a derived sensor
+  tells HA the value is Celsius and it converts a *second* time — 46 °C became
+  239 °F on a card, which is believable enough to ship. Read the real unit in
+  Developer Tools → States before declaring one, and remember the unit, the
+  dashboard thresholds and any automation thresholds have to move together.
+- **Check the unit on duration sensors too.** `power_on_time` carries
+  `unit_of_measurement: d` — dividing it by 24 to "convert hours to days"
+  turned 354 days into 15 and made a healthy refurb drive look like it had had
+  its SMART counters reset.
 
 ## Before marking a file polished
 

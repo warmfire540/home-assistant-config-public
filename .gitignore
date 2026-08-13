@@ -23,6 +23,7 @@
 .DS_Store
 custom_components
 themes
+www/community/*
 
 # Ensure these YAML files are ignored, otherwise your secret data/credentials will leak.
 ip_bans.yaml

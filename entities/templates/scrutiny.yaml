@@ -19,20 +19,29 @@
 # no edit to this file. `expand()` turns those IDs into state objects, which is
 # the same idiom jack_sparrow.yaml uses and gives `.name` for free.
 #
-# ⚠️ VERIFY THE SUFFIXES ONCE, ON THE LIVE INSTANCE.
-# `_overall_status` and `_temperature` are documented and stable. The
-# reallocated/pending matches are a best guess at what the critical-attribute
-# raw sensors are named. Check in Developer Tools → Template:
+# SUFFIXES VERIFIED AGAINST THE LIVE INSTANCE 2026-08-13. Do not loosen them.
 #
-#   {{ integration_entities('scrutiny') | select('search', 'realloc') | list }}
-#   {{ integration_entities('scrutiny') | select('search', 'pending') | list }}
+# The reallocated match is ANCHORED for a reason. ha_scrutiny exposes two
+# similarly named attributes per drive:
 #
-# and correct the regexes below if either comes back empty. A pattern that
-# matches nothing does NOT error — the sensor reads 0 forever, which is exactly
-# the failure mode this file exists to catch. Do not skip this.
+#   ..._reallocated_sectors_count_raw    attribute 5   ← the one we want
+#   ..._reallocation_event_count_raw     attribute 196 ← a DIFFERENT attribute
+#
+# A loose `realloc.*_raw$` matches both and silently double-counts. It reads
+# fine while everything is zero and inflates the moment anything moves — the
+# worst possible time to be wrong. Same for pending: match the full name.
 #
 # The raw-value sensors only exist if "Enable raw value sensors" is on in the
 # integration options (Settings → Devices & Services → Scrutiny → Configure).
+# A pattern matching nothing does NOT error, it reads 0 forever, so re-run this
+# after any integration upgrade:
+#
+#   {{ integration_entities('scrutiny') | select('search', 'realloc') | list }}
+#
+# DRIVES ARE NAMED BY SERIAL, from the `serial_number` attribute that every
+# ha_scrutiny sensor carries. Parsing the friendly name would work too, but
+# serial is the identity that matters: it is what the four Ultrastars differ
+# by, what UGOS shows per bay, and what an RMA conversation is conducted in.
 #
 # Consumed by:
 #   - dashboards/jack-sparrow/views/04-drives.yaml   (Drives page)
@@ -78,8 +87,11 @@
           {% for s in expand(integration_entities('scrutiny'))
                | selectattr('entity_id', 'search', '_overall_status$')
                | rejectattr('state', 'in', ['Passed', 'unknown', 'unavailable']) %}
-            {% set label = s.name | replace(' Overall Status', '') %}
-            {% set ns.bad = ns.bad + [label ~ ': ' ~ s.state] %}
+            {% set label = s.attributes.serial_number
+                 | default(s.name | replace(' Overall Status', ''), true) %}
+            {% set ns.bad = ns.bad
+                 + [label ~ ' (' ~ s.attributes.device_name | default('?', true)
+                    ~ '): ' ~ s.state] %}
           {% endfor %}
           {{ ns.bad | join(', ') }}
         problem_count: >
@@ -102,12 +114,24 @@
     # chassis share one intake, so the hottest drive is the one that matters —
     # an average would hide it.
     #
-    # Celsius. The UGREEN integration reports the CPU in °F; do not copy
-    # thresholds between the two.
+    # ⚠️ °F, NOT °C — and getting this wrong is not cosmetic.
+    #
+    # ha_scrutiny's temperature sensors are natively °C, but this instance runs
+    # the US customary unit system, so HA has already converted them by the
+    # time a template reads them: `states(...)` returns 114.8 with
+    # `unit_of_measurement: °F`. Declaring °C here told HA the value was
+    # Celsius and it converted a SECOND time — 46 °C became 115 °C became
+    # 239 °F on the card. Believable enough to miss, and it would have made
+    # the 50-degree alert unreachable.
+    #
+    # Matches how the UGREEN CPU temp already behaves in this repo. If the
+    # instance is ever switched to metric, this unit and every threshold
+    # downstream (dashboard tile, mini-graph, temperature automation) has to
+    # flip together.
     - name: Scrutiny Max Drive Temperature
       unique_id: 1ca28c00-a207-4e3f-b564-57aad9357759
       icon: 'mdi:thermometer'
-      unit_of_measurement: '°C'
+      unit_of_measurement: '°F'
       device_class: temperature
       state_class: measurement
       # Guards `max()` on an empty list, which throws rather than returning 0.
@@ -132,7 +156,9 @@
                | rejectattr('state', 'in', ['unknown', 'unavailable']) %}
             {% if s.state | float(-999) > ns.temp %}
               {% set ns.temp = s.state | float(-999) %}
-              {% set ns.name = s.name | replace(' Temperature', '') %}
+              {% set ns.name = s.attributes.serial_number
+                   | default(s.name | replace(' Temperature', ''), true)
+                   ~ ' (' ~ s.attributes.device_name | default('?', true) ~ ')' %}
             {% endif %}
           {% endfor %}
           {{ ns.name }}
@@ -157,11 +183,11 @@
       state_class: measurement
       availability: >
         {{ expand(integration_entities('scrutiny'))
-           | selectattr('entity_id', 'search', 'realloc.*_raw$')
+           | selectattr('entity_id', 'search', '_reallocated_sectors_count_raw$')
            | list | count > 0 }}
       state: >
         {{ expand(integration_entities('scrutiny'))
-           | selectattr('entity_id', 'search', 'realloc.*_raw$')
+           | selectattr('entity_id', 'search', '_reallocated_sectors_count_raw$')
            | rejectattr('state', 'in', ['unknown', 'unavailable'])
            | map(attribute='state') | map('int', 0)
            | list | sum }}
@@ -171,17 +197,13 @@
         by_drive: >
           {% set ns = namespace(rows=[]) %}
           {% for s in expand(integration_entities('scrutiny'))
-               | selectattr('entity_id', 'search', 'realloc.*_raw$')
+               | selectattr('entity_id', 'search', '_reallocated_sectors_count_raw$')
                | rejectattr('state', 'in', ['unknown', 'unavailable']) %}
             {% if s.state | int(0) > 0 %}
-              {# Trim the attribute name off the end: ha_scrutiny friendly
-                 names are `model (serial) Attribute Name`, and the useful
-                 half is everything through the closing paren. `replace()`
-                 would need the exact attribute wording, which is the thing
-                 most likely to drift upstream. #}
-              {% set label = (s.name.split(')')[0] ~ ')')
-                   if ')' in s.name else s.name %}
-              {% set ns.rows = ns.rows + [label ~ ': ' ~ s.state] %}
+              {% set ns.rows = ns.rows
+                   + [s.attributes.serial_number | default('?', true)
+                      ~ ' (' ~ s.attributes.device_name | default('?', true)
+                      ~ '): ' ~ s.state] %}
             {% endif %}
           {% endfor %}
           {{ ns.rows | join(', ') if ns.rows else 'all zero' }}
@@ -191,7 +213,7 @@
         # sensor and its own alert to ignore.
         pending_total: >
           {{ expand(integration_entities('scrutiny'))
-             | selectattr('entity_id', 'search', 'pending.*_raw$')
+             | selectattr('entity_id', 'search', '_current_pending_sector_count_raw$')
              | rejectattr('state', 'in', ['unknown', 'unavailable'])
              | map(attribute='state') | map('int', 0)
              | list | sum }}
