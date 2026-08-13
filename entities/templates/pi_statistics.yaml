@@ -36,27 +36,27 @@
       state: "{{ state_attr('sensor.poat_hole_rpi_monitor_poat_hole', 'cpu') == None }}"
       attributes:
         model: >
-          {{ 
+          {{
             state_attr('sensor.poat_hole_rpi_monitor_poat_hole', 'cpu').model
-            if state_attr('sensor.poat_hole_rpi_monitor_poat_hole', 'cpu') 
+            if state_attr('sensor.poat_hole_rpi_monitor_poat_hole', 'cpu')
           }}
         load_1m: >
-          {{ 
+          {{
             (state_attr('sensor.poat_hole_rpi_monitor_poat_hole', 'cpu').load_1min_prcnt / 100)
             | round(3)
-            if state_attr('sensor.poat_hole_rpi_monitor_poat_hole', 'cpu') 
+            if state_attr('sensor.poat_hole_rpi_monitor_poat_hole', 'cpu')
           }}
         load_5m: >
-          {{ 
+          {{
             (state_attr('sensor.poat_hole_rpi_monitor_poat_hole', 'cpu').load_5min_prcnt / 100)
             | round(3)
-            if state_attr('sensor.poat_hole_rpi_monitor_poat_hole', 'cpu') 
+            if state_attr('sensor.poat_hole_rpi_monitor_poat_hole', 'cpu')
           }}
         load_15m: >
-          {{ 
+          {{
             (state_attr('sensor.poat_hole_rpi_monitor_poat_hole', 'cpu').load_15min_prcnt / 100)
             | round(3)
-            if state_attr('sensor.poat_hole_rpi_monitor_poat_hole', 'cpu') 
+            if state_attr('sensor.poat_hole_rpi_monitor_poat_hole', 'cpu')
           }}
 
     - name: Pi Share CPU
@@ -65,27 +65,27 @@
       state: "{{ state_attr('sensor.poat_share_rpi_monitor_poat_share', 'cpu') == None }}"
       attributes:
         model: >
-          {{ 
+          {{
             state_attr('sensor.poat_share_rpi_monitor_poat_share', 'cpu').model
-            if state_attr('sensor.poat_share_rpi_monitor_poat_share', 'cpu') 
+            if state_attr('sensor.poat_share_rpi_monitor_poat_share', 'cpu')
           }}
         load_1m: >
-          {{ 
+          {{
             (state_attr('sensor.poat_share_rpi_monitor_poat_share', 'cpu').load_1min_prcnt / 100)
             | round(3)
-            if state_attr('sensor.poat_share_rpi_monitor_poat_share', 'cpu') 
+            if state_attr('sensor.poat_share_rpi_monitor_poat_share', 'cpu')
           }}
         load_5m: >
-          {{ 
+          {{
             (state_attr('sensor.poat_share_rpi_monitor_poat_share', 'cpu').load_5min_prcnt / 100)
             | round(3)
-            if state_attr('sensor.poat_share_rpi_monitor_poat_share', 'cpu') 
+            if state_attr('sensor.poat_share_rpi_monitor_poat_share', 'cpu')
           }}
         load_15m: >
-          {{ 
+          {{
             (state_attr('sensor.poat_share_rpi_monitor_poat_share', 'cpu').load_15min_prcnt / 100)
             | round(3)
-            if state_attr('sensor.poat_share_rpi_monitor_poat_share', 'cpu') 
+            if state_attr('sensor.poat_share_rpi_monitor_poat_share', 'cpu')
           }}
 
     - name: Pi Seedbox CPU
@@ -94,27 +94,27 @@
       state: "{{ state_attr('sensor.poat_seedbox_rpi_monitor_poat_seedbox', 'cpu') == None }}"
       attributes:
         model: >
-          {{ 
+          {{
             state_attr('sensor.poat_seedbox_rpi_monitor_poat_seedbox', 'cpu').model
-            if state_attr('sensor.poat_seedbox_rpi_monitor_poat_seedbox', 'cpu') 
+            if state_attr('sensor.poat_seedbox_rpi_monitor_poat_seedbox', 'cpu')
           }}
         load_1m: >
-          {{ 
+          {{
             (state_attr('sensor.poat_seedbox_rpi_monitor_poat_seedbox', 'cpu').load_1min_prcnt / 100)
             | round(3)
-            if state_attr('sensor.poat_seedbox_rpi_monitor_poat_seedbox', 'cpu') 
+            if state_attr('sensor.poat_seedbox_rpi_monitor_poat_seedbox', 'cpu')
           }}
         load_5m: >
-          {{ 
+          {{
             (state_attr('sensor.poat_seedbox_rpi_monitor_poat_seedbox', 'cpu').load_5min_prcnt / 100)
             | round(3)
-            if state_attr('sensor.poat_seedbox_rpi_monitor_poat_seedbox', 'cpu') 
+            if state_attr('sensor.poat_seedbox_rpi_monitor_poat_seedbox', 'cpu')
           }}
         load_15m: >
-          {{ 
+          {{
             (state_attr('sensor.poat_seedbox_rpi_monitor_poat_seedbox', 'cpu').load_15min_prcnt / 100)
             | round(3)
-            if state_attr('sensor.poat_seedbox_rpi_monitor_poat_seedbox', 'cpu') 
+            if state_attr('sensor.poat_seedbox_rpi_monitor_poat_seedbox', 'cpu')
           }}
 
     - name: Pi Plex CPU
@@ -123,25 +123,25 @@
       state: "{{ state_attr('sensor.poat_plex_rpi_monitor_poat_plex', 'cpu') == None }}"
       attributes:
         model: >
-          {{ 
+          {{
             state_attr('sensor.poat_plex_rpi_monitor_poat_plex', 'cpu').model
-            if state_attr('sensor.poat_plex_rpi_monitor_poat_plex', 'cpu') 
+            if state_attr('sensor.poat_plex_rpi_monitor_poat_plex', 'cpu')
           }}
         load_1m: >
-          {{ 
+          {{
             (state_attr('sensor.poat_plex_rpi_monitor_poat_plex', 'cpu').load_1min_prcnt / 100)
             | round(3)
-            if state_attr('sensor.poat_plex_rpi_monitor_poat_plex', 'cpu') 
+            if state_attr('sensor.poat_plex_rpi_monitor_poat_plex', 'cpu')
           }}
         load_5m: >
-          {{ 
+          {{
             (state_attr('sensor.poat_plex_rpi_monitor_poat_plex', 'cpu').load_5min_prcnt / 100)
             | round(3)
-            if state_attr('sensor.poat_plex_rpi_monitor_poat_plex', 'cpu') 
+            if state_attr('sensor.poat_plex_rpi_monitor_poat_plex', 'cpu')
           }}
         load_15m: >
-          {{ 
+          {{
             (state_attr('sensor.poat_plex_rpi_monitor_poat_plex', 'cpu').load_15min_prcnt / 100)
             | round(3)
-            if state_attr('sensor.poat_plex_rpi_monitor_poat_plex', 'cpu') 
+            if state_attr('sensor.poat_plex_rpi_monitor_poat_plex', 'cpu')
           }}

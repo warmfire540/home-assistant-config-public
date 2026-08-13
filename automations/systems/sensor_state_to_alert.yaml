@@ -72,7 +72,7 @@ action:
       message: false
       data:
         prompt: >-
-          The {{ trigger.to_state.attributes.friendly_name or trigger.entity_id }} sensor 
+          The {{ trigger.to_state.attributes.friendly_name or trigger.entity_id }} sensor
           has changed from {{ trigger.from_state.state }} to {{ trigger.to_state.state }}.
           {% if trigger.to_state.attributes.device_class %}
             This is a {{ trigger.to_state.attributes.device_class }} sensor.

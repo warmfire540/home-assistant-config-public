@@ -234,7 +234,7 @@ cards:
         filter:
           include:
             - domain: alert
-        
+
       - type: 'custom:button-card'
         template: card_input_boolean
         entity: input_boolean.dishwasher_needs_cleaned

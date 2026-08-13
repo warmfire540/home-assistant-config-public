@@ -23,11 +23,11 @@ poat_chip_double_state:
         if (variables.ulm_chip_icon_double_state_icon_2){
           label += ' ' +  variables.ulm_chip_icon_double_state_icon_2;
         }
-        
+
         if (states[variables.ulm_chip_icon_double_state_entity_2].state){
           label += ' ' +  helpers.localize(states[variables.ulm_chip_icon_double_state_entity_2])
         }
       }
-      
+
       return label;
     ]]]

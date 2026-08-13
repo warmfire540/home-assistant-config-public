@@ -55,7 +55,7 @@ cards:
             - color: >
                 [[[ if (Object.keys(states)
                         .filter(key => key.startsWith('light.'))
-                        .some(key => states[key].state === 'on')) 
+                        .some(key => states[key].state === 'on'))
                       return "var(--green-color)" ;
                     else return "var(--red-color)";
                 ]]]

@@ -29,7 +29,7 @@ action:
             target:
               entity_id:
                 - binary_sensor.poat_hole_local
-                #- binary_sensor.poat_seedbox_local
+                # - binary_sensor.poat_seedbox_local
 
       - conditions:
           - condition: trigger

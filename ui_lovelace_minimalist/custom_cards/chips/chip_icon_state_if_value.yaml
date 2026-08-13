@@ -8,7 +8,7 @@ chip_icon_state_if_value:
       - margin-right: 5px
     icon:
       - color: >
-          [[[ if (entity.state > 0 || entity.state == variables.on_state) 
+          [[[ if (entity.state > 0 || entity.state == variables.on_state)
                 return variables.on_color;
               else return "var(--green-color)"; ]]]
   state:

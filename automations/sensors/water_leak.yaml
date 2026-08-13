@@ -16,4 +16,4 @@ actions:
   - alias: Turn off water valve
     action: switch.turn_off
     target:
-      entity_id:  switch.water_valve
+      entity_id: switch.water_valve

@@ -103,7 +103,7 @@ cards:
           "Pixar": /local/img/cats/marbles-pixar.PNG
           "Ghibli": /local/img/cats/marbles-ghibli.PNG
           "PetKit": https://img5-us.petkit.cn/uavatar/2023/10/20/6531cf2b8b048a000d041b04Xf2cMUw0z
-          
+
 
   - type: 'custom:button-card'
     template: card_title
@@ -152,7 +152,7 @@ cards:
         - sensor.gnar_visits_today
         - sensor.murderbot_visits_today
       hide_names: true
-      
+
   - type: custom:whisker-card
     device_id: 59879713413a5ca5a75f9453eee8e75e
     view_layout:

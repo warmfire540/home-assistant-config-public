@@ -71,7 +71,7 @@ cards:
       - type: 'custom:button-card'
         template: card_title
         label: Sensors
-        
+
       - type: custom:area-energy-card
         area: master_bath
         features:

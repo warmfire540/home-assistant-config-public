@@ -24,7 +24,7 @@ conditions:
         'dishwasher_done',
         'rolo_done',
         'washy'
-      ] 
+      ]
     }}
 
 action:

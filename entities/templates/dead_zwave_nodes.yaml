@@ -7,7 +7,7 @@
     - name: Dead Z-Wave Nodes
       unique_id: 63219bac-033f-405e-9108-b481d5af867d
       icon: mdi:z-wave
-      state:  >-
+      state: >-
         {% set count = states
           | selectattr('entity_id','search', 'node_status')
           | selectattr('state','in', ['dead', 'unknown', 'unavailable'])

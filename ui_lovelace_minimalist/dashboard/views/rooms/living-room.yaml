@@ -65,7 +65,7 @@ cards:
         variables:
           - sensor_prefix: living_room
           - fave_percent: 90
-      
+
       - type: custom:vacuum-card
         entity: vacuum.joey_essex
 

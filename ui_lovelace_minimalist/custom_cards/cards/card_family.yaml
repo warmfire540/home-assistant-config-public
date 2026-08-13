@@ -5,7 +5,7 @@ card_family:
   styles:
     card:
       - background-color: >
-          [[[ if (states[variables.z_mute_entity].state == 'on') 
+          [[[ if (states[variables.z_mute_entity].state == 'on')
                 return "rgba(var(--color-background-red),var(--opacity-bg))"; ]]]
 
   variables:

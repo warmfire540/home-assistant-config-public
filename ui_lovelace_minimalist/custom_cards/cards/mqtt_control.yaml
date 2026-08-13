@@ -11,7 +11,7 @@ mqtt_control:
     condition_entity: binary_sensor.homeassistant_wired_connected
     entity: null
     restart_entity: >
-      [[[ 
+      [[[
         if (variables.device === 'homeassistant')
           return 'script.reboot_home_assistant';
         if (variables.device === 'poat_rgb')
@@ -19,7 +19,7 @@ mqtt_control:
         return `button.${variables.device}_rpi_reboot_${variables.device}_command`;
       ]]]
     shutdown_entity: >
-      [[[ 
+      [[[
         if (variables.device === 'homeassistant')
           return 'script.shutdown_home_assistant';
         if (variables.device === 'poat_rgb')
@@ -27,7 +27,7 @@ mqtt_control:
         return `button.${variables.device}_rpi_shutdown_${variables.device}_command`;
       ]]]
     restore_entity: >
-      [[[ 
+      [[[
         if (variables.device === 'homeassistant')
           return 'script.reboot_home_assistant';
         if (variables.device === 'poat_rgb')
@@ -77,7 +77,7 @@ mqtt_control:
                   entity_id: '[[[ return variables.shutdown_entity; ]]]'
             - entity: '[[[ return variables.restore_entity; ]]]'
               icon: >
-                [[[ 
+                [[[
                   if (variables.device === 'homeassistant')
                     return 'mdi:restart';
                   if (variables.device === 'poat_rgb')
@@ -85,7 +85,7 @@ mqtt_control:
                   return 'mdi:restore-alert';
                 ]]]
               name: >
-                [[[ 
+                [[[
                   if (variables.device === 'homeassistant')
                     return 'reboot';
                   if (variables.device === 'poat_rgb')

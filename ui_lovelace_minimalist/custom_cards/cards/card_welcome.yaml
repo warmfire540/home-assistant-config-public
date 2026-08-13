@@ -45,7 +45,7 @@ card_welcome:
   show_icon: false
   show_label: true
   show_name: false
-  
+
   styles:
     grid:
       - grid-template-areas: >
@@ -82,7 +82,7 @@ card_welcome:
                 return "block";
               }
             ]]]
-  
+
   custom_fields:
     item1:
       card:

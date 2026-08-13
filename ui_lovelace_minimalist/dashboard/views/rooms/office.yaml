@@ -257,7 +257,7 @@ cards:
         chart:
           axis_style: none
           line_type: gradient_no_fill
-      
+
 
   #################
   # DEVICE HEALTH

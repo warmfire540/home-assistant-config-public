@@ -283,8 +283,8 @@ cards:
         - pi_name: plex
         - icon: mdi:plex
         - name: Pi Plex
-        
-  - type: conditional  
+
+  - type: conditional
     conditions:
       - condition: state
         entity: binary_sensor.poat_plex_local

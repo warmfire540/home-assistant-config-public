@@ -22,7 +22,7 @@
         | rejectattr('entity_id','search', 'mfc_7860|seedbox|poat_plex||ipad')
         | rejectattr('entity_id', 'in', integration_entities('cast'))
         | list
-        | count 
+        | count
       }}
     attributes:
       navigation_path: /the-matrix/network?anchor=disconnected
