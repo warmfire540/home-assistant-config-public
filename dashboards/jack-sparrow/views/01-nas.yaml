@@ -4,13 +4,23 @@
 #
 # LAYOUT (max_columns: 3; sections flow left-to-right and wrap)
 #
-#   row 1   Status       span 3
-#   row 2   System (1)   Performance (2)
-#   row 3   Storage (2)  Control (1)
+#   row 1   Status            span 3
+#   row 2   Performance (2)   Control (1)
+#   row 3   System (1)        Storage (2)
 #
 # Every row adds up to exactly 3, so there is no dead gutter down the right
 # hand side. If you change one `column_span` the rest of the page reflows —
 # change them in pairs.
+#
+# The pairing is by measured height, not by topic. Sections in a row bottom out
+# independently, so the taller one leaves whitespace beside the shorter one:
+#
+#   Performance ~276px  vs  Control ~342px   →  ~66px
+#   System      ~514px  vs  Storage ~522px   →   ~8px
+#
+# Grouping them the obvious way instead (System with Performance, Storage with
+# Control) pairs 514 against 276 and 522 against 342, and drops ~420px of dead
+# space into the middle of the page.
 #
 # Why the mini-graphs live in the 2-wide section: at 1/3 page width the three
 # of them side by side squeeze to ~130px each and the plot area collapses to a
@@ -57,8 +67,8 @@ sections:
               columns: |
                 [[[
                   const w = window.innerWidth;
-                  const steps = [[1500, 4], [1100, 3], [700, 2]];
-                  let n = 8;
+                  const steps = [[1500, 5], [1100, 3], [700, 2]];
+                  let n = 9;
                   for (const [bp, c] of steps) { if (w <= bp) n = c; }
                   return n;
                 ]]]
@@ -73,6 +83,27 @@ sections:
                   color: |
                     [[[
                       return states[`sensor.${variables.slug}_health`]?.state === 'OK'
+                        ? 'green' : 'red';
+                    ]]]
+
+                # SMART health from Scrutiny — deliberately NOT slug-templated.
+                # The tile above is UGOS's own view: a firmware pass/fail that
+                # only turns red once a drive already is. This one is Scrutiny's
+                # attribute-level assessment, which moves first. Both being
+                # green is the point; either being red is worth a look.
+                # Rolled up in entities/templates/scrutiny.yaml.
+                - type: tile
+                  entity: sensor.scrutiny_drive_health
+                  name: SMART
+                  vertical: true
+                  # The only tile here that navigates rather than opening
+                  # more-info — the per-drive breakdown is a whole page.
+                  tap_action:
+                    action: navigate
+                    navigation_path: /jack-sparrow/drives
+                  color: |
+                    [[[
+                      return states['sensor.scrutiny_drive_health']?.state === 'OK'
                         ? 'green' : 'red';
                     ]]]
 
@@ -129,68 +160,6 @@ sections:
                   name: Last Boot
                   vertical: true
                   color: blue-grey
-
-  #####################################################################
-  # SYSTEM — identity, and the photo
-  #####################################################################
-  - type: grid
-    cards:
-      - type: heading
-        heading: System
-        heading_style: title
-        icon: mdi:server
-
-      # Markdown takes Jinja natively, so this one needs no button-card
-      # wrapper — `state_attr()` resolves the slug directly.
-      - type: markdown
-        grid_options:
-          columns: full
-          rows: auto
-        content: >-
-          {% set slug = state_attr('select.ugreen_nas_lovelace_device_select',
-          'selected_slug') or 'ugreen_nas' %}{% set s = 'sensor.' ~ slug ~ '_'
-          %}{% set up = states(s ~ 'total_runtime') | int(0) %}{% set d = up //
-          86400 %}{% set h = (up % 86400) // 3600 %}{% set m = (up % 3600) // 60
-          %}
-
-          ### {{ states(s ~ 'nas_name') }}
-
-          | | |
-          |---|---|
-          | **Model** | {{ states(s ~ 'nas_model') }} · UGOS {{ states(s ~ 'nas_ugos_version') }} |
-          | **CPU** | {{ states(s ~ 'cpu_model') }} |
-          | | {{ states(s ~ 'cpu_cores') }} cores / {{ states(s ~ 'cpu_threads') }} threads |
-          | **Memory** | {{ states(s ~ 'ram_usage_used_gb') | round(1) }} GB used of {{ states(s ~ 'ram_total_size') }} GB |
-          | **Uptime** | {% if d %}{{ d }}d {% endif %}{{ h }}h {{ m }}m · since {{ states(s ~ 'last_boot') }} |
-          | **Network** | {{ states(s ~ 'lan_1_ip') }} · {{ states(s ~ 'lan_1_speed') }} Gb/s |
-          | **Fans** | CPU {{ states(s ~ 'cpu_fan') }} rpm · chassis {{ states(s ~ 'device_fan') }} rpm |
-          | **Serial** | {{ states(s ~ 'nas_serial') }} |
-
-          {{ states(s ~ 'system_message') }} {{ states(s ~ 'temperature_message') }}
-
-      # NAS product photo, from the integration's HACS assets in
-      # /config/www/community/ugreen/. Pinned to 4-bay-picture-square.png
-      # rather than the `selected_image_file` attribute, which picks a worse
-      # image. Base image is a 1px transparent spacer; the real picture is a
-      # card_mod background so it can be object-fit: contain.
-      - type: picture-elements
-        image: /local/community/ugreen/1px_transparent.png
-        grid_options:
-          columns: full
-          rows: 4
-        elements: []
-        card_mod:
-          style: |
-            ha-card {
-              border: 0;
-              box-shadow: none;
-              background: transparent;
-              background-image: url("/local/community/ugreen/4-bay-picture-square.png");
-              background-repeat: no-repeat;
-              background-position: center;
-              background-size: contain;
-              min-height: 200px;
-            }
 
   #####################################################################
   # PERFORMANCE — 24 h trends
@@ -294,6 +263,145 @@ sections:
                     extrema: true
 
   #####################################################################
+  # CONTROL — mode selects and the three destructive buttons
+  #####################################################################
+  - type: grid
+    cards:
+      - type: heading
+        heading: Control
+        heading_style: title
+        icon: mdi:tune
+
+      # Wrapper again: an entities card cannot template its own entity_ids.
+      # This is what threw "Configuration error" before it was added.
+      - type: custom:button-card
+        template: ugreen_tpl_host
+        grid_options:
+          columns: full
+          rows: auto
+        custom_fields:
+          item1:
+            card:
+              type: entities
+              entities:
+                - entity: select.ugreen_nas_lovelace_device_select
+                  name: NAS
+                  icon: mdi:nas
+                - entity: '[[[ return `select.${variables.slug}_fan_mode`; ]]]'
+                  name: Fan Mode
+                  icon: mdi:fan
+                - entity: '[[[ return `select.${variables.slug}_power_mode`; ]]]'
+                  name: Power Mode
+                  icon: mdi:speedometer
+
+      # All three prompt for confirmation. The NAS name in the prompt is
+      # hardcoded on purpose — a confirmation dialog that says "the selected
+      # device?" is not a confirmation.
+      #
+      # `columns: 4` of the section grid's 12 puts the three side by side and
+      # lets them reflow on narrow screens. A horizontal-stack would keep them
+      # squeezed onto one line at any width.
+      - type: custom:button-card
+        template: ugreen_power_button
+        name: Wake Up
+        icon: mdi:power-sleep
+        grid_options:
+          columns: 4
+          rows: auto
+        variables:
+          action_slug: wake_up
+          confirm: Wake up jack-sparrow?
+          accent: var(--success-color)
+
+      - type: custom:button-card
+        template: ugreen_power_button
+        name: Restart
+        icon: mdi:restart
+        grid_options:
+          columns: 4
+          rows: auto
+        variables:
+          action_slug: reboot
+          confirm: Restart jack-sparrow?
+          accent: var(--warning-color)
+
+      - type: custom:button-card
+        template: ugreen_power_button
+        name: Shutdown
+        icon: mdi:power
+        grid_options:
+          columns: 4
+          rows: auto
+        variables:
+          action_slug: shutdown
+          confirm: Shut down jack-sparrow?
+          accent: var(--error-color)
+
+  #####################################################################
+  # SYSTEM — identity, and the photo
+  #####################################################################
+  - type: grid
+    cards:
+      - type: heading
+        heading: System
+        heading_style: title
+        icon: mdi:server
+
+      # Markdown takes Jinja natively, so this one needs no button-card
+      # wrapper — `state_attr()` resolves the slug directly.
+      #
+      # `content: |` (literal), NOT `>-` (folded). A folded scalar collapses
+      # single newlines into spaces, which flattens every list item onto one
+      # line and makes the card render its own markup as plain text.
+      #
+      # The `{%- ... -%}` trimming on the setup lines is load-bearing too:
+      # without it each `set` leaves a blank line at the top of the card.
+      - type: markdown
+        grid_options:
+          columns: full
+          rows: auto
+        content: |
+          {%- set slug = state_attr('select.ugreen_nas_lovelace_device_select', 'selected_slug') or 'ugreen_nas' -%}
+          {%- set s = 'sensor.' ~ slug ~ '_' -%}
+          {%- set up = states(s ~ 'total_runtime') | int(0) -%}
+          {%- set d = up // 86400 -%}
+          {%- set h = (up % 86400) // 3600 -%}
+          {%- set m = (up % 3600) // 60 -%}
+          - **Model** — {{ states(s ~ 'nas_model') }} · UGOS {{ states(s ~ 'nas_ugos_version') }}
+          - **CPU** — {{ states(s ~ 'cpu_model') }} · {{ states(s ~ 'cpu_cores') }} cores / {{ states(s ~ 'cpu_threads') }} threads
+          - **Memory** — {{ states(s ~ 'ram_usage_used_gb') | round(1) }} GB of {{ states(s ~ 'ram_total_size') }} GB
+          - **Uptime** — {% if d %}{{ d }}d {% endif %}{{ h }}h {{ m }}m, since {{ states(s ~ 'last_boot') }}
+          - **Network** — {{ states(s ~ 'lan_1_ip') }} · {{ states(s ~ 'lan_1_speed') }} Gb/s
+          - **Fans** — CPU {{ states(s ~ 'cpu_fan') }} rpm · chassis {{ states(s ~ 'device_fan') }} rpm
+          - **Serial** — {{ states(s ~ 'nas_serial') }}
+
+          {{ states(s ~ 'system_message') }} {{ states(s ~ 'temperature_message') }}
+
+      # NAS product photo, from the integration's HACS assets in
+      # /config/www/community/ugreen/. Pinned to 4-bay-picture-square.png
+      # rather than the `selected_image_file` attribute, which picks a worse
+      # image. Base image is a 1px transparent spacer; the real picture is a
+      # card_mod background so it can be object-fit: contain.
+      - type: picture-elements
+        image: /local/community/ugreen/1px_transparent.png
+        grid_options:
+          columns: full
+          rows: 4
+        elements: []
+        card_mod:
+          style: |
+            ha-card {
+              border: 0;
+              box-shadow: none;
+              background: transparent;
+              background-image: url("/local/community/ugreen/4-bay-picture-square.png");
+              background-repeat: no-repeat;
+              background-position: center;
+              background-size: contain;
+              min-height: 200px;
+            }
+
+  #####################################################################
   # STORAGE — disks, pools, volumes
   #
   # All three lists are auto-entities driven off `UGNAS_summary_entity_for`,
@@ -379,8 +487,10 @@ sections:
                         [[[[
                           const a = entity?.attributes || {};
                           const bits = [a.Type, a.Slot, a['Used In']];
+                          // >= 24 h only. The NVMe pair reports single-digit
+                          // hours, and "0d powered" is noise, not information.
                           const hrs = Number(a['Power-On Hours']);
-                          if (Number.isFinite(hrs) && hrs > 0) {
+                          if (Number.isFinite(hrs) && hrs >= 24) {
                             bits.push(`${Math.round(hrs / 24)}d powered`);
                           }
                           const smart = a['SMART Last Result'];
@@ -688,78 +798,3 @@ sections:
                           - white-space: nowrap
                           - overflow: hidden
                           - text-overflow: ellipsis
-
-  #####################################################################
-  # CONTROL — mode selects and the three destructive buttons
-  #####################################################################
-  - type: grid
-    cards:
-      - type: heading
-        heading: Control
-        heading_style: title
-        icon: mdi:tune
-
-      # Wrapper again: an entities card cannot template its own entity_ids.
-      # This is what threw "Configuration error" before it was added.
-      - type: custom:button-card
-        template: ugreen_tpl_host
-        grid_options:
-          columns: full
-          rows: auto
-        custom_fields:
-          item1:
-            card:
-              type: entities
-              entities:
-                - entity: select.ugreen_nas_lovelace_device_select
-                  name: NAS
-                  icon: mdi:nas
-                - entity: '[[[ return `select.${variables.slug}_fan_mode`; ]]]'
-                  name: Fan Mode
-                  icon: mdi:fan
-                - entity: '[[[ return `select.${variables.slug}_power_mode`; ]]]'
-                  name: Power Mode
-                  icon: mdi:speedometer
-
-      # All three prompt for confirmation. The NAS name in the prompt is
-      # hardcoded on purpose — a confirmation dialog that says "the selected
-      # device?" is not a confirmation.
-      #
-      # `columns: 4` of the section grid's 12 puts the three side by side and
-      # lets them reflow on narrow screens. A horizontal-stack would keep them
-      # squeezed onto one line at any width.
-      - type: custom:button-card
-        template: ugreen_power_button
-        name: Wake Up
-        icon: mdi:power-sleep
-        grid_options:
-          columns: 4
-          rows: auto
-        variables:
-          action_slug: wake_up
-          confirm: Wake up jack-sparrow?
-          accent: var(--success-color)
-
-      - type: custom:button-card
-        template: ugreen_power_button
-        name: Restart
-        icon: mdi:restart
-        grid_options:
-          columns: 4
-          rows: auto
-        variables:
-          action_slug: reboot
-          confirm: Restart jack-sparrow?
-          accent: var(--warning-color)
-
-      - type: custom:button-card
-        template: ugreen_power_button
-        name: Shutdown
-        icon: mdi:power
-        grid_options:
-          columns: 4
-          rows: auto
-        variables:
-          action_slug: shutdown
-          confirm: Shut down jack-sparrow?
-          accent: var(--error-color)

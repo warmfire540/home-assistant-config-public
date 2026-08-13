@@ -1,0 +1,197 @@
+---
+#####
+# Scrutiny — drive health rollups
+#
+# ha_scrutiny (HACS, vitals5/ha_scrutiny) creates one HA device per physical
+# drive on the Scrutiny server running on jack-sparrow, each with its own
+# Overall Status / Temperature / attribute sensors. Seven drives today — 4x
+# 12TB Ultrastar (Pool 1), 2x 990 PRO NVMe (Pool 2), and the internal 128GB
+# boot SSD, which is in no pool and which UGOS barely surfaces. That is ~7
+# status sensors and a large pile of attribute sensors. Nobody watches that.
+# These are the three numbers worth putting on a card or alerting off.
+#
+# WHY THE ENTITY LIST IS DERIVED, NOT HARDCODED
+#
+# ha_scrutiny names devices `model (serial)`, so entity IDs come out as
+# `sensor.huh721212ale604_xxxxxxxx_overall_status` — unpredictable from here,
+# and they change if a drive is RMA'd. `integration_entities('scrutiny')`
+# returns whatever the config entry currently owns, so swapping a drive needs
+# no edit to this file. `expand()` turns those IDs into state objects, which is
+# the same idiom jack_sparrow.yaml uses and gives `.name` for free.
+#
+# ⚠️ VERIFY THE SUFFIXES ONCE, ON THE LIVE INSTANCE.
+# `_overall_status` and `_temperature` are documented and stable. The
+# reallocated/pending matches are a best guess at what the critical-attribute
+# raw sensors are named. Check in Developer Tools → Template:
+#
+#   {{ integration_entities('scrutiny') | select('search', 'realloc') | list }}
+#   {{ integration_entities('scrutiny') | select('search', 'pending') | list }}
+#
+# and correct the regexes below if either comes back empty. A pattern that
+# matches nothing does NOT error — the sensor reads 0 forever, which is exactly
+# the failure mode this file exists to catch. Do not skip this.
+#
+# The raw-value sensors only exist if "Enable raw value sensors" is on in the
+# integration options (Settings → Devices & Services → Scrutiny → Configure).
+#
+# Consumed by:
+#   - dashboards/jack-sparrow/views/04-drives.yaml   (Drives page)
+#   - dashboards/jack-sparrow/views/01-nas.yaml      (Status row chip)
+#   - automations/lab/scrutiny_drive_failed.yaml
+#   - automations/lab/scrutiny_drive_temperature.yaml
+#   - automations/lab/scrutiny_sectors_reallocated.yaml
+#
+# Upstream: https://github.com/vitals5/ha_scrutiny
+#####
+
+- sensor:
+    #################
+    # ROLLED-UP DRIVE HEALTH
+    #################
+    # Scrutiny's Overall Status is an enum: "Passed" when both the drive's own
+    # SMART assessment and Scrutiny's BackBlaze-derived thresholds are clean,
+    # and one of several "Failed (...)" strings otherwise. Rather than listing
+    # the failure strings — which would silently stop matching if upstream
+    # reworded one — anything that is not Passed/unknown/unavailable counts as
+    # a problem. Fails loud, not quiet.
+    - name: Scrutiny Drive Health
+      unique_id: f1164a42-7900-4e69-b293-5b1b995c96d8
+      # `this` = this entity's own state object. Avoids a self-referencing
+      # state_attr() call, which would deadlock the template.
+      icon: "{{ 'mdi:harddisk' if this.state == 'OK' else 'mdi:harddisk-remove' }}"
+      # Unavailable if the integration is gone or Scrutiny is unreachable —
+      # better than a confident "OK" derived from an empty list.
+      availability: >
+        {{ expand(integration_entities('scrutiny'))
+           | selectattr('entity_id', 'search', '_overall_status$')
+           | list | count > 0 }}
+      state: >
+        {{ 'Problem' if expand(integration_entities('scrutiny'))
+             | selectattr('entity_id', 'search', '_overall_status$')
+             | rejectattr('state', 'in', ['Passed', 'unknown', 'unavailable'])
+             | list | count > 0 else 'OK' }}
+      attributes:
+        # Rendered as a joined string so it drops straight into a notification
+        # or a more-info dialog, not as a raw list repr.
+        problems: >
+          {% set ns = namespace(bad=[]) %}
+          {% for s in expand(integration_entities('scrutiny'))
+               | selectattr('entity_id', 'search', '_overall_status$')
+               | rejectattr('state', 'in', ['Passed', 'unknown', 'unavailable']) %}
+            {% set label = s.name | replace(' Overall Status', '') %}
+            {% set ns.bad = ns.bad + [label ~ ': ' ~ s.state] %}
+          {% endfor %}
+          {{ ns.bad | join(', ') }}
+        problem_count: >
+          {{ expand(integration_entities('scrutiny'))
+             | selectattr('entity_id', 'search', '_overall_status$')
+             | rejectattr('state', 'in', ['Passed', 'unknown', 'unavailable'])
+             | list | count }}
+        # Sanity check for the card: if this is not 6, a drive dropped out of
+        # Scrutiny entirely — which the status rollup above cannot see, because
+        # a missing drive has no status to fail.
+        drive_count: >
+          {{ expand(integration_entities('scrutiny'))
+             | selectattr('entity_id', 'search', '_overall_status$')
+             | list | count }}
+
+    #################
+    # HOTTEST DRIVE
+    #################
+    # One number to threshold instead of six. Four helium spinners in a 4-bay
+    # chassis share one intake, so the hottest drive is the one that matters —
+    # an average would hide it.
+    #
+    # Celsius. The UGREEN integration reports the CPU in °F; do not copy
+    # thresholds between the two.
+    - name: Scrutiny Max Drive Temperature
+      unique_id: 1ca28c00-a207-4e3f-b564-57aad9357759
+      icon: 'mdi:thermometer'
+      unit_of_measurement: '°C'
+      device_class: temperature
+      state_class: measurement
+      # Guards `max()` on an empty list, which throws rather than returning 0.
+      availability: >
+        {{ expand(integration_entities('scrutiny'))
+           | selectattr('entity_id', 'search', '_temperature$')
+           | rejectattr('state', 'in', ['unknown', 'unavailable'])
+           | list | count > 0 }}
+      state: >
+        {{ expand(integration_entities('scrutiny'))
+           | selectattr('entity_id', 'search', '_temperature$')
+           | rejectattr('state', 'in', ['unknown', 'unavailable'])
+           | map(attribute='state') | map('float', 0)
+           | list | max | round(1) }}
+      attributes:
+        # Which drive, not just how hot. One hot bay is airflow or a dying
+        # drive; all six hot is the room or the fan curve. Different fixes.
+        hottest_drive: >
+          {% set ns = namespace(name='', temp=-999) %}
+          {% for s in expand(integration_entities('scrutiny'))
+               | selectattr('entity_id', 'search', '_temperature$')
+               | rejectattr('state', 'in', ['unknown', 'unavailable']) %}
+            {% if s.state | float(-999) > ns.temp %}
+              {% set ns.temp = s.state | float(-999) %}
+              {% set ns.name = s.name | replace(' Temperature', '') %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.name }}
+
+    #################
+    # REALLOCATED SECTORS — TOTAL
+    #################
+    # The number this whole exercise is for.
+    #
+    # Four seller-refurbished drives in a RAID 5 with one drive of parity, in a
+    # market where a replacement is expensive and slow. A reallocated sector
+    # count that goes 0 → 0 → 8 → 24 over six weeks is a drive telling you it
+    # is going, well before it fails an assessment. Summing across drives makes
+    # it one line on a graph: healthy is a flat zero, and ANY departure from
+    # zero is worth opening Scrutiny over.
+    #
+    # state_class: measurement so the recorder keeps long-term statistics —
+    # without it the history that makes the trend visible ages out.
+    - name: Scrutiny Reallocated Sectors Total
+      unique_id: aaa5feb5-bc78-4a22-a1b1-7e0f382a524e
+      icon: 'mdi:harddisk-plus'
+      state_class: measurement
+      availability: >
+        {{ expand(integration_entities('scrutiny'))
+           | selectattr('entity_id', 'search', 'realloc.*_raw$')
+           | list | count > 0 }}
+      state: >
+        {{ expand(integration_entities('scrutiny'))
+           | selectattr('entity_id', 'search', 'realloc.*_raw$')
+           | rejectattr('state', 'in', ['unknown', 'unavailable'])
+           | map(attribute='state') | map('int', 0)
+           | list | sum }}
+      attributes:
+        # Per-drive breakdown, so a nonzero total names the drive immediately
+        # instead of sending you to the Scrutiny UI to find out which.
+        by_drive: >
+          {% set ns = namespace(rows=[]) %}
+          {% for s in expand(integration_entities('scrutiny'))
+               | selectattr('entity_id', 'search', 'realloc.*_raw$')
+               | rejectattr('state', 'in', ['unknown', 'unavailable']) %}
+            {% if s.state | int(0) > 0 %}
+              {# Trim the attribute name off the end: ha_scrutiny friendly
+                 names are `model (serial) Attribute Name`, and the useful
+                 half is everything through the closing paren. `replace()`
+                 would need the exact attribute wording, which is the thing
+                 most likely to drift upstream. #}
+              {% set label = (s.name.split(')')[0] ~ ')')
+                   if ')' in s.name else s.name %}
+              {% set ns.rows = ns.rows + [label ~ ': ' ~ s.state] %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.rows | join(', ') if ns.rows else 'all zero' }}
+        # Pending = a sector the drive has flagged bad but not yet remapped.
+        # Pending climbing while reallocated stays flat is the earlier of the
+        # two signals, so it rides along here rather than getting its own
+        # sensor and its own alert to ignore.
+        pending_total: >
+          {{ expand(integration_entities('scrutiny'))
+             | selectattr('entity_id', 'search', 'pending.*_raw$')
+             | rejectattr('state', 'in', ['unknown', 'unavailable'])
+             | map(attribute='state') | map('int', 0)
+             | list | sum }}

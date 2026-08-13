@@ -1,0 +1,47 @@
+#####
+# Alert the first time a reallocated sector appears on any drive
+#
+# This is the earliest actionable signal in the whole storage stack, and it
+# fires long before anything reports "failed".
+#
+# Four of the seven drives are seller-refurbished with ~8.5k hours already on
+# them, in a RAID 5 with one drive of parity, in a market (Aug 2026) where a
+# replacement 12TB is expensive and lead times run months. Catching a drive on
+# the way out — rather than after — is the difference between ordering a
+# replacement at leisure and rebuilding a degraded array while praying.
+#
+# Threshold is ABOVE 0, not above some tolerance. A healthy drive reallocates
+# nothing. The right response to the first sector is not panic, it is: check
+# whether it climbs, and if the drive is still inside the 2-year seller
+# warranty (expires ~Aug 2028), start the conversation early.
+#
+# Fires once on the 0 → nonzero edge. It will not re-fire as the count climbs;
+# that trend is what the graph on the Drives view is for.
+#####
+
+alias: Scrutiny reallocated sectors alert
+id: 2187e25c-e242-4d9e-b2ab-807397ba5bfd
+
+trigger:
+  trigger: numeric_state
+  entity_id: sensor.scrutiny_reallocated_sectors_total
+  above: 0
+
+action:
+  - action: notify.persistent_notification
+    data:
+      title: '⚠️ Reallocated Sectors Detected'
+      message: >-
+        {{ state_attr('sensor.scrutiny_reallocated_sectors_total', 'by_drive') }}.
+        Pending: {{ state_attr('sensor.scrutiny_reallocated_sectors_total',
+        'pending_total') }}. Check the trend on /jack-sparrow/drives — if it
+        climbs, RMA while the seller warranty is live (expires ~Aug 2028).
+  - action: notify.mobile_app_poat_s_iphone_14_pro_max
+    data:
+      title: '⚠️ Reallocated Sectors Detected'
+      message: >-
+        {{ state_attr('sensor.scrutiny_reallocated_sectors_total', 'by_drive') }}.
+        Not urgent tonight — but start watching it.
+      data:
+        tag: scrutiny_reallocated
+        url: /jack-sparrow/drives

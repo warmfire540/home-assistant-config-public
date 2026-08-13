@@ -12,6 +12,7 @@ top-level `- sensor:` / `- binary_sensor:`, not a bare mapping.
 | File | Status | Notes |
 | --- | --- | --- |
 | `jack_sparrow.yaml` | ✅ polished — 2026-08-13 | NAS volume-used %, plus a rolled-up health sensor. Watched entities are matched by regex, not hardcoded. |
+| `scrutiny.yaml` | ✅ polished — 2026-08-13 | Per-drive SMART rollups from ha_scrutiny: health, hottest drive, reallocated-sector total. Entity list derived via `integration_entities('scrutiny')` + `expand()`, so an RMA'd drive needs no edit. **The `realloc.*_raw` / `pending.*_raw` regexes are unverified against the live instance** — see the header. |
 | `battery_low_devices.yaml` | ⬜ not reviewed | |
 | `cat_devices_problems.yaml` | ⬜ not reviewed | |
 | `dead_zwave_nodes.yaml` | ⬜ not reviewed | |

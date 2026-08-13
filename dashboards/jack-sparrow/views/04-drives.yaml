@@ -1,0 +1,343 @@
+---
+#####
+# DRIVES — SMART health per physical disk, from Scrutiny
+#
+# The NAS view (01-nas.yaml) shows what UGOS thinks: pool state, volume fill,
+# and a per-disk "Normal". That is a pass/fail assessment made by the drive
+# firmware, and firmware only says "failing" once it already is. This page is
+# the other half — Scrutiny's collected SMART attributes, scored against
+# BackBlaze's real-world failure rates, with history.
+#
+# The distinction that matters here: four of these seven drives are
+# seller-refurbished, sitting in a RAID 5 with one drive of parity, in a market
+# where replacements are expensive and slow. A reallocated sector count moving
+# off zero is worth acting on months before anything reports "failed".
+#
+# DATA SOURCE
+#
+#   Scrutiny  http://192.168.5.8:8080  (Docker on jack-sparrow, Pool 2)
+#   → ha_scrutiny (HACS, vitals5/ha_scrutiny) — one HA device per drive
+#   → entities/templates/scrutiny.yaml — the three rollups at the top
+#
+# Collector runs every 6h. Values only change that often no matter how fast HA
+# polls; a flat line between steps is the collector schedule, not a dead sensor.
+#
+# LAYOUT (max_columns: 3)
+#
+#   row 1   Health       span 3
+#   row 2   Drives       span 2      Trends (1)
+#
+# WHY NO ugreen_tpl_host WRAPPER
+#
+# Every other view in this dashboard wraps cards in `ugreen_tpl_host` so they
+# can resolve `variables.slug` off the NAS selector. Nothing here is keyed to a
+# NAS — Scrutiny entity IDs come from the drive model and serial, and there is
+# one Scrutiny instance. So auto-entities sits at view level and the button-card
+# templates in its `options:` block use THREE brackets, not four. Copying a
+# block out of 01-nas.yaml without dropping a bracket pair will break it.
+#####
+
+title: Drives
+path: drives
+icon: mdi:harddisk
+type: sections
+max_columns: 3
+cards: []
+sections:
+  #####################################################################
+  # HEALTH — the three numbers, above the fold
+  #####################################################################
+  - type: grid
+    column_span: 3
+    cards:
+      - type: heading
+        heading: Drive health
+        heading_style: title
+        icon: mdi:harddisk
+
+      - type: grid
+        square: false
+        columns: 3
+        cards:
+          # Rolled up in entities/templates/scrutiny.yaml. The `problems`
+          # attribute names which drive, which is what the more-info dialog is
+          # for — no need to print it on the tile.
+          - type: tile
+            entity: sensor.scrutiny_drive_health
+            name: SMART Status
+            vertical: true
+            color: |
+              [[[
+                return states['sensor.scrutiny_drive_health']?.state === 'OK'
+                  ? 'green' : 'red';
+              ]]]
+
+          # Hottest drive, not average — the array shares one intake, so the
+          # worst-case disk is the one that tells you something.
+          - type: tile
+            entity: sensor.scrutiny_max_drive_temperature
+            name: Hottest Drive
+            vertical: true
+            color: |
+              [[[
+                const t = Number(states['sensor.scrutiny_max_drive_temperature']?.state);
+                if (!Number.isFinite(t)) return 'grey';
+                // Celsius here — the UGREEN integration reports °F, Scrutiny
+                // reports °C. Do not reuse the thresholds from 01-nas.yaml.
+                if (t >= 50) return 'red';
+                if (t >= 45) return 'orange';
+                return 'green';
+              ]]]
+
+          # Healthy is a flat zero. Any nonzero value at all is worth opening
+          # Scrutiny over, which is why there is no warning band — green or red.
+          - type: tile
+            entity: sensor.scrutiny_reallocated_sectors_total
+            name: Reallocated Sectors
+            vertical: true
+            color: |
+              [[[
+                const n = Number(states['sensor.scrutiny_reallocated_sectors_total']?.state);
+                return Number.isFinite(n) && n === 0 ? 'green' : 'red';
+              ]]]
+
+  #####################################################################
+  # DRIVES — one card per physical disk
+  #
+  # auto-entities keyed on `integration: scrutiny` rather than an entity_id
+  # glob: ha_scrutiny names entities after model + serial, so a glob would have
+  # to be rewritten every time a drive is replaced. This picks up an RMA'd
+  # drive's replacement with no edit.
+  #####################################################################
+  - type: grid
+    column_span: 2
+    cards:
+      - type: heading
+        heading: Disks
+        heading_style: title
+        icon: mdi:server
+
+      - type: custom:auto-entities
+        show_empty: false
+        card_param: cards
+        card:
+          type: grid
+          columns: 2
+          square: false
+        sort:
+          method: friendly_name
+          numeric: false
+        filter:
+          include:
+            # One status sensor per drive == one card per drive. The rest of
+            # that drive's sensors are reached by suffix swap below.
+            - integration: scrutiny
+              entity_id: '*_overall_status'
+              options:
+                type: custom:button-card
+                entity: this.entity_id
+                show_icon: true
+                show_name: true
+                show_state: true
+                show_label: true
+                size: 26px
+                tap_action:
+                  action: more-info
+                # Sibling sensors on the same device share the entity_id stem,
+                # so they are derived rather than looked up. ha_scrutiny slugs
+                # consistently per device; if this ever returns undefined, the
+                # suffix changed upstream — check Developer Tools before
+                # assuming the sensor is missing.
+                name: |
+                  [[[
+                    const n = entity?.attributes?.friendly_name || entity.entity_id;
+                    return n.replace(/ Overall Status$/, '');
+                  ]]]
+                state_display: |
+                  [[[
+                    const id = entity.entity_id;
+                    const g = s => states[id.replace('_overall_status', s)]?.state;
+                    const cap = g('_capacity');
+                    const dev = entity?.attributes?.device_name;
+                    // `device_name` is whatever path Scrutiny last reported.
+                    // Linux does not guarantee /dev/sdX stability across
+                    // reboots, so treat it as a hint, not an identity.
+                    return [cap ? `${cap} GB` : null, dev]
+                      .filter(Boolean).join('  ·  ') || entity?.state || '—';
+                  ]]]
+                label: |
+                  [[[
+                    const id = entity.entity_id;
+                    const g = s => states[id.replace('_overall_status', s)]?.state;
+                    const bits = [];
+                    const temp = Number(g('_temperature'));
+                    if (Number.isFinite(temp)) bits.push(`${Math.round(temp)}°C`);
+                    // Power-on time comes through in hours. Days is the unit
+                    // you actually reason about for a drive with ~8.5k hours
+                    // already on it at purchase.
+                    const hrs = Number(g('_power_on_time'));
+                    if (Number.isFinite(hrs) && hrs > 0) {
+                      bits.push(`${Math.round(hrs / 24)}d powered`);
+                    }
+                    const test = g('_smart_test_result');
+                    if (test && !['unknown', 'unavailable'].includes(test)) {
+                      bits.push(test);
+                    }
+                    return bits.join(' · ') || entity?.state || '';
+                  ]]]
+                icon: |
+                  [[[
+                    // Capacity is the only reliable NVMe/HDD discriminator
+                    // exposed here — the 990 PROs are 2TB, the Ultrastars 12TB.
+                    const cap = Number(
+                      states[entity.entity_id.replace('_overall_status', '_capacity')]?.state
+                    );
+                    return (Number.isFinite(cap) && cap < 4000)
+                      ? 'mdi:chip' : 'mdi:harddisk';
+                  ]]]
+                styles:
+                  grid:
+                    - grid-template-areas: '"i n" "i s" "i l"'
+                    - grid-template-columns: 44px 1fr
+                    - grid-template-rows: auto auto auto
+                  card:
+                    - height: 92px
+                    - padding: 10px 12px
+                    - border-radius: 14px
+                    - overflow: hidden
+                  img_cell:
+                    - justify-self: start
+                  icon:
+                    # Anything that is not an explicit Passed goes red,
+                    # including unknown. A monitoring tile that renders a
+                    # missing value as green is worse than no tile.
+                    - color: |
+                        [[[
+                          return entity?.state === 'Passed'
+                            ? 'var(--success-color, #43a047)'
+                            : 'var(--error-color, #f44336)';
+                        ]]]
+                  name:
+                    - font-size: 0.95em
+                    - font-weight: 600
+                    - color: var(--primary-text-color)
+                    - justify-self: start
+                    - white-space: nowrap
+                    - overflow: hidden
+                    - text-overflow: ellipsis
+                  state:
+                    - font-size: 0.8em
+                    - color: var(--secondary-text-color)
+                    - justify-self: start
+                  label:
+                    - font-size: 0.72em
+                    - color: var(--secondary-text-color)
+                    - opacity: 0.75
+                    - justify-self: start
+                    - white-space: nowrap
+                    - overflow: hidden
+                    - text-overflow: ellipsis
+
+      # Full attribute drill-down is Scrutiny's own UI, and it is better at it
+      # than a Lovelace card would be. This is the escape hatch.
+      - type: markdown
+        grid_options:
+          columns: full
+          rows: auto
+        content: >-
+          Per-attribute detail, thresholds and raw history:
+          [open Scrutiny](http://192.168.5.8:8080)
+
+
+          Collector runs every 6h — see
+          `hosts/jack-sparrow/scrutiny-runbook.md` in the **servers** repo.
+
+  #####################################################################
+  # TRENDS — the whole reason Scrutiny exists
+  #
+  # 30 days, because a sector count that matters moves over weeks. A 24h window
+  # (what the NAS view uses for CPU/RAM) would show four flat collector steps
+  # and nothing else.
+  #####################################################################
+  - type: grid
+    cards:
+      - type: heading
+        heading: Trends
+        heading_style: title
+        icon: mdi:chart-line
+
+      # Flat at zero is the expected shape. Any step up is the alert.
+      # `group_by: date` + `func: max` so a single nonzero reading in a day
+      # cannot be averaged back down into invisibility.
+      - type: custom:mini-graph-card
+        name: Reallocated Sectors
+        icon: mdi:harddisk-plus
+        entities:
+          - entity: sensor.scrutiny_reallocated_sectors_total
+        hours_to_show: 720
+        group_by: date
+        aggregate_func: max
+        points_per_hour: 0.05
+        line_width: 4
+        height: 120
+        decimals: 0
+        animate: true
+        show:
+          extrema: true
+        color_thresholds:
+          - value: 0
+            color: '#388e3c'
+          - value: 1
+            color: '#d32f2f'
+
+      - type: custom:mini-graph-card
+        name: Hottest Drive
+        icon: mdi:thermometer
+        entities:
+          - entity: sensor.scrutiny_max_drive_temperature
+        hours_to_show: 168
+        points_per_hour: 0.5
+        min_bound_range: 10
+        line_width: 4
+        height: 120
+        decimals: 0
+        animate: true
+        show:
+          extrema: true
+        # Celsius. 45 °C is where enterprise drive AFR starts climbing in the
+        # BackBlaze data; 50 °C+ sustained is a cooling problem, not a drive one.
+        color_thresholds:
+          - value: 30
+            color: '#388e3c'
+          - value: 40
+            color: '#c0ca33'
+          - value: 45
+            color: '#ffa000'
+          - value: 50
+            color: '#d32f2f'
+
+      # Text summary rather than more tiles: when something IS wrong, the
+      # useful output is a sentence naming the drive, not another colour.
+      - type: markdown
+        grid_options:
+          columns: full
+          rows: auto
+        content: >-
+          {% set h = 'sensor.scrutiny_drive_health' %}
+          {% set r = 'sensor.scrutiny_reallocated_sectors_total' %}
+
+          ### {{ states(h) }}
+
+          | | |
+          |---|---|
+          | **Drives seen** | {{ state_attr(h, 'drive_count') or '—' }} |
+          | **Problems** | {{ state_attr(h, 'problems') or 'none' }} |
+          | **Hottest** | {{ state_attr('sensor.scrutiny_max_drive_temperature', 'hottest_drive') or '—' }} |
+          | **Reallocated** | {{ state_attr(r, 'by_drive') or '—' }} |
+          | **Pending** | {{ state_attr(r, 'pending_total') or '0' }} |
+
+          {% if state_attr(h, 'drive_count') not in [7, none] %}
+          ⚠️ Expected 7 drives — 4× Ultrastar (Pool 1), 2× 990 PRO (Pool 2), and
+          the internal 128GB boot SSD. A missing drive does not show up as a
+          failure; it shows up as a smaller count.
+          {% endif %}

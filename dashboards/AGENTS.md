@@ -15,6 +15,7 @@ explaining anything non-obvious. Treat them as reference for style.
 | `jack-sparrow.yaml` | ✅ polished — 2026-08-13 | UGREEN NASync DXP4800 Pro. Entry stub only; header comment explains the split, the button-card wrapper pattern, the two `selected_slug` fallbacks, and why the anchors live in the view file. |
 | `jack-sparrow/templates/*.yaml` | ✅ polished — 2026-08-13 | One `button_card_template` per file, merged by `!include_dir_merge_named`. |
 | `jack-sparrow/views/*.yaml` | ✅ polished — 2026-08-13 | One view per file, ordered by the `NN-` prefix. |
+| `jack-sparrow/views/04-drives.yaml` | ✅ polished — 2026-08-13 | Scrutiny SMART health per disk. **The one view with no `ugreen_tpl_host` wrapper** — nothing on it is keyed to the NAS selector, so `auto-entities` sits at view level and its `options:` templates use THREE brackets, not four. |
 | `room-summary-card/*.yaml` | ⬜ not reviewed | Scratch dashboards for testing the custom card. Hidden from sidebar. Candidates for pruning. |
 
 ## Splitting a dashboard

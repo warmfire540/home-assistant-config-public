@@ -128,10 +128,18 @@ the things worth knowing before editing anything in it.
 .github/
 assets/
 automations/
+└── lab/
 └── systems/
 blueprints/
 dashboards/
 └── jack-sparrow.yaml
+└── jack-sparrow/
+    └── templates/
+    └── views/
+        ├── 01-nas.yaml
+        ├── 02-entities.yaml
+        ├── 03-devices.yaml
+        └── 04-drives.yaml
 └── room-summary-card/
 entities/
 └── templates/
@@ -171,10 +179,12 @@ Tracking sections I've reworked.
 - [x] [`.github/`](.github/) - GitHub workflows
 - [x] [`assets/`](assets/) - screenshots and such for documentation
 - [ ] [`automations/`](automations/) - automations of course
+  - [ ] [`lab/`](automations/lab/) - home lab alerting (seedbox VPN, drive health)
   - [ ] [`systems/`](automations/systems/) - automations related to core system functionality
 - [x] [`blueprints/`](blueprints/) - HA Blueprints - I don't have a use for these
 - [ ] [`dashboards/`](dashboards/AGENTS.md) - standalone YAML dashboards, outside the UML framework
   - [x] [`jack-sparrow.yaml`](dashboards/jack-sparrow.yaml) - UGREEN NASync DXP4800 Pro
+    - [x] [`views/04-drives.yaml`](dashboards/jack-sparrow/views/04-drives.yaml) - per-disk SMART health from Scrutiny
 - [ ] [`entities/`](entities/) - entity definitions
   - [ ] [`templates/`](entities/templates/AGENTS.md) - template sensors
 - [ ] [`integrations/`](integrations/) - split config to load folders
