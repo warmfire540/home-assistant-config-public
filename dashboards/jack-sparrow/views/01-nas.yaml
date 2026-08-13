@@ -1,0 +1,765 @@
+---
+#####
+# NAS — the page you actually look at
+#
+# LAYOUT (max_columns: 3; sections flow left-to-right and wrap)
+#
+#   row 1   Status       span 3
+#   row 2   System (1)   Performance (2)
+#   row 3   Storage (2)  Control (1)
+#
+# Every row adds up to exactly 3, so there is no dead gutter down the right
+# hand side. If you change one `column_span` the rest of the page reflows —
+# change them in pairs.
+#
+# Why the mini-graphs live in the 2-wide section: at 1/3 page width the three
+# of them side by side squeeze to ~130px each and the plot area collapses to a
+# sliver under the min/max block.
+#
+# ANCHORS DEFINED HERE (they cannot cross an !include boundary):
+#   &percent_thresholds  0-100 % colour ramp — CPU load + RAM
+#   &two_up_grid         2-up responsive grid — pools + volumes
+#   &disk_card           disk tile — data disks + cache disks
+# CPU Temp deliberately does NOT reuse the percent ramp; it is in °F.
+#####
+
+title: NAS
+path: nas
+icon: mdi:nas
+type: sections
+max_columns: 3
+cards: []
+sections:
+  #####################################################################
+  # STATUS — "is anything wrong", answered above the fold
+  #####################################################################
+  - type: grid
+    column_span: 3
+    cards:
+      - type: heading
+        heading: jack-sparrow
+        heading_style: title
+        icon: mdi:pirate
+
+      # Native tile cards, wrapped only so their entity_ids can be templated
+      # off the selected NAS. rows: auto — a fixed row count is what used to
+      # clip the Control card into the buttons under it.
+      - type: custom:button-card
+        template: ugreen_tpl_host
+        grid_options:
+          columns: full
+          rows: auto
+        custom_fields:
+          item1:
+            card:
+              type: grid
+              square: false
+              columns: |
+                [[[
+                  const w = window.innerWidth;
+                  const steps = [[1500, 4], [1100, 3], [700, 2]];
+                  let n = 8;
+                  for (const [bp, c] of steps) { if (w <= bp) n = c; }
+                  return n;
+                ]]]
+              cards:
+                # Rolled-up health from entities/templates/jack_sparrow.yaml.
+                # Its `problems` attribute names what is wrong — that is what
+                # the more-info dialog is for, so no need to print it here.
+                - type: tile
+                  entity: '[[[ return `sensor.${variables.slug}_health`; ]]]'
+                  name: Health
+                  vertical: true
+                  color: |
+                    [[[
+                      return states[`sensor.${variables.slug}_health`]?.state === 'OK'
+                        ? 'green' : 'red';
+                    ]]]
+
+                - type: tile
+                  entity: '[[[ return `sensor.${variables.slug}_cpu_usage`; ]]]'
+                  name: CPU
+                  vertical: true
+                  color: blue
+
+                # Thresholds are °F. 180 °F ≈ 82 °C is the danger point.
+                - type: tile
+                  entity: '[[[ return `sensor.${variables.slug}_cpu_temperature`; ]]]'
+                  name: CPU Temp
+                  vertical: true
+                  color: |
+                    [[[
+                      const t = Number(states[`sensor.${variables.slug}_cpu_temperature`]?.state);
+                      if (!Number.isFinite(t)) return 'grey';
+                      if (t >= 170) return 'red';
+                      if (t >= 145) return 'orange';
+                      return 'green';
+                    ]]]
+
+                - type: tile
+                  entity: '[[[ return `sensor.${variables.slug}_ram_usage`; ]]]'
+                  name: Memory
+                  vertical: true
+                  color: purple
+
+                - type: tile
+                  entity: '[[[ return `sensor.${variables.slug}_device_fan`; ]]]'
+                  name: Chassis Fan
+                  vertical: true
+                  color: cyan
+
+                - type: tile
+                  entity: '[[[ return `sensor.${variables.slug}_overall_lan_download`; ]]]'
+                  name: Down
+                  vertical: true
+                  color: teal
+
+                - type: tile
+                  entity: '[[[ return `sensor.${variables.slug}_overall_lan_upload`; ]]]'
+                  name: Up
+                  vertical: true
+                  color: indigo
+
+                # `last_boot` is a preformatted string ("08-12 23:45"), not a
+                # timestamp — no device_class, so the tile prints it verbatim.
+                # Elapsed uptime is computed in the System card below from
+                # `total_runtime` (seconds).
+                - type: tile
+                  entity: '[[[ return `sensor.${variables.slug}_last_boot`; ]]]'
+                  name: Last Boot
+                  vertical: true
+                  color: blue-grey
+
+  #####################################################################
+  # SYSTEM — identity, and the photo
+  #####################################################################
+  - type: grid
+    cards:
+      - type: heading
+        heading: System
+        heading_style: title
+        icon: mdi:server
+
+      # Markdown takes Jinja natively, so this one needs no button-card
+      # wrapper — `state_attr()` resolves the slug directly.
+      - type: markdown
+        grid_options:
+          columns: full
+          rows: auto
+        content: >-
+          {% set slug = state_attr('select.ugreen_nas_lovelace_device_select',
+          'selected_slug') or 'ugreen_nas' %}{% set s = 'sensor.' ~ slug ~ '_'
+          %}{% set up = states(s ~ 'total_runtime') | int(0) %}{% set d = up //
+          86400 %}{% set h = (up % 86400) // 3600 %}{% set m = (up % 3600) // 60
+          %}
+
+          ### {{ states(s ~ 'nas_name') }}
+
+          | | |
+          |---|---|
+          | **Model** | {{ states(s ~ 'nas_model') }} · UGOS {{ states(s ~ 'nas_ugos_version') }} |
+          | **CPU** | {{ states(s ~ 'cpu_model') }} |
+          | | {{ states(s ~ 'cpu_cores') }} cores / {{ states(s ~ 'cpu_threads') }} threads |
+          | **Memory** | {{ states(s ~ 'ram_usage_used_gb') | round(1) }} GB used of {{ states(s ~ 'ram_total_size') }} GB |
+          | **Uptime** | {% if d %}{{ d }}d {% endif %}{{ h }}h {{ m }}m · since {{ states(s ~ 'last_boot') }} |
+          | **Network** | {{ states(s ~ 'lan_1_ip') }} · {{ states(s ~ 'lan_1_speed') }} Gb/s |
+          | **Fans** | CPU {{ states(s ~ 'cpu_fan') }} rpm · chassis {{ states(s ~ 'device_fan') }} rpm |
+          | **Serial** | {{ states(s ~ 'nas_serial') }} |
+
+          {{ states(s ~ 'system_message') }} {{ states(s ~ 'temperature_message') }}
+
+      # NAS product photo, from the integration's HACS assets in
+      # /config/www/community/ugreen/. Pinned to 4-bay-picture-square.png
+      # rather than the `selected_image_file` attribute, which picks a worse
+      # image. Base image is a 1px transparent spacer; the real picture is a
+      # card_mod background so it can be object-fit: contain.
+      - type: picture-elements
+        image: /local/community/ugreen/1px_transparent.png
+        grid_options:
+          columns: full
+          rows: 4
+        elements: []
+        card_mod:
+          style: |
+            ha-card {
+              border: 0;
+              box-shadow: none;
+              background: transparent;
+              background-image: url("/local/community/ugreen/4-bay-picture-square.png");
+              background-repeat: no-repeat;
+              background-position: center;
+              background-size: contain;
+              min-height: 200px;
+            }
+
+  #####################################################################
+  # PERFORMANCE — 24 h trends
+  #####################################################################
+  - type: grid
+    column_span: 2
+    cards:
+      - type: heading
+        heading: Performance
+        heading_style: title
+        icon: mdi:chart-line
+
+      # Wrapper: mini-graph-card cannot evaluate [[[ ]]] itself.
+      # rows: auto — at a fixed 4 rows the plot area was clipped to a sliver
+      # underneath the min/max block.
+      - type: custom:button-card
+        template: ugreen_tpl_host
+        grid_options:
+          columns: full
+          rows: auto
+        custom_fields:
+          item1:
+            card:
+              type: horizontal-stack
+              cards:
+                - type: custom:mini-graph-card
+                  name: CPU Load
+                  icon: mdi:chip
+                  hours_to_show: 24
+                  points_per_hour: 10
+                  min_bound_range: 10
+                  animate: true
+                  hour24: true
+                  height: 120
+                  decimals: 0
+                  show_state: true
+                  line_width: 4
+                  entities:
+                    - entity: '[[[ return `sensor.${variables.slug}_cpu_usage`; ]]]'
+                  # Percentage ramp, green -> red. Shared with the RAM graph
+                  # below, which is also a 0-100 % series.
+                  color_thresholds: &percent_thresholds
+                    - value: 20
+                      color: '#388e3c'
+                    - value: 50
+                      color: '#c0ca33'
+                    - value: 60
+                      color: '#ffa000'
+                    - value: 80
+                      color: '#ff5900'
+                    - value: 90
+                      color: '#d32f2f'
+                  show:
+                    extrema: true
+
+                - type: custom:mini-graph-card
+                  name: CPU Temp
+                  icon: mdi:thermometer
+                  hours_to_show: 24
+                  points_per_hour: 10
+                  min_bound_range: 20
+                  animate: true
+                  hour24: true
+                  height: 120
+                  show_state: true
+                  line_width: 4
+                  entities:
+                    - entity: '[[[ return `sensor.${variables.slug}_cpu_temperature`; ]]]'
+                  # Fahrenheit — the instance reports °F. Do not reuse the
+                  # percent ramp here; 180 °F ≈ 82 °C is the danger point.
+                  color_thresholds:
+                    - value: 100
+                      color: '#388e3c'
+                    - value: 120
+                      color: '#c0ca33'
+                    - value: 140
+                      color: '#ffa000'
+                    - value: 160
+                      color: '#ff5900'
+                    - value: 180
+                      color: '#d32f2f'
+                  show:
+                    extrema: true
+
+                - type: custom:mini-graph-card
+                  name: RAM
+                  icon: mdi:memory
+                  hours_to_show: 24
+                  points_per_hour: 10
+                  min_bound_range: 50
+                  animate: true
+                  hour24: true
+                  height: 120
+                  decimals: 0
+                  show_state: true
+                  line_width: 4
+                  entities:
+                    - entity: '[[[ return `sensor.${variables.slug}_ram_usage`; ]]]'
+                  color_thresholds: *percent_thresholds
+                  show:
+                    extrema: true
+
+  #####################################################################
+  # STORAGE — disks, pools, volumes
+  #
+  # All three lists are auto-entities driven off `UGNAS_summary_entity_for`,
+  # so adding a disk or a pool in UGOS shows up here without editing YAML.
+  #####################################################################
+  - type: grid
+    column_span: 2
+    cards:
+      - type: heading
+        heading: Storage
+        heading_style: title
+        icon: mdi:harddisk
+
+      # ---- Disks: 4x HDD (pool 1) + 2x NVMe (pool 2) ----
+      - type: heading
+        heading: Disks
+        heading_style: subtitle
+
+      - type: custom:button-card
+        template: ugreen_tpl_host
+        grid_options:
+          columns: full
+          rows: auto
+        custom_fields:
+          item1:
+            card:
+              type: custom:auto-entities
+              show_empty: false
+              card_param: cards
+              card:
+                type: grid
+                columns: |
+                  [[[
+                    const w = window.innerWidth;
+                    const steps = [[1200, 2], [700, 1]];
+                    let n = 3;
+                    for (const [bp, c] of steps) { if (w <= bp) n = c; }
+                    return n;
+                  ]]]
+                square: false
+              # Sorted on the global disk number, NOT `Slot`: a disk the NAS
+              # is still enumerating has no Slot attribute and would sort to
+              # the front of the list.
+              sort:
+                method: attribute
+                attribute: UGNAS global disk number
+                numeric: true
+              filter:
+                include:
+                  - entity_id: |
+                      [[[
+                        return variables.filter ? `sensor.${variables.filter}_*` : 'sensor.none_*';
+                      ]]]
+                    attributes:
+                      UGNAS_summary_entity_for: Disk
+                    # Every field below falls back. A rebuilding or newly
+                    # inserted disk reports only Size and the disk number —
+                    # no Label, Slot, Type or Temperature — and used to render
+                    # as a nameless tile with a trailing bullet.
+                    options: &disk_card
+                      type: custom:button-card
+                      entity: this.entity_id
+                      show_icon: true
+                      show_name: true
+                      show_state: true
+                      show_label: true
+                      size: 26px
+                      tap_action:
+                        action: more-info
+                      name: |
+                        [[[[
+                          const a = entity?.attributes || {};
+                          const n = a['UGNAS global disk number'];
+                          return a.Label || (n ? `Disk ${n}` : 'Disk');
+                        ]]]]
+                      state_display: |
+                        [[[[
+                          const a = entity?.attributes || {};
+                          return [a.Size, a.Temperature].filter(Boolean).join('  ·  ')
+                            || entity?.state || '—';
+                        ]]]]
+                      label: |
+                        [[[[
+                          const a = entity?.attributes || {};
+                          const bits = [a.Type, a.Slot, a['Used In']];
+                          const hrs = Number(a['Power-On Hours']);
+                          if (Number.isFinite(hrs) && hrs > 0) {
+                            bits.push(`${Math.round(hrs / 24)}d powered`);
+                          }
+                          const smart = a['SMART Last Result'];
+                          if (smart && smart !== 'Normal') bits.push(`SMART ${smart}`);
+                          return bits.filter(Boolean).join(' · ') || entity?.state || '';
+                        ]]]]
+                      icon: |
+                        [[[[
+                          const t = entity?.attributes?.Type;
+                          if (t === 'M.2' || t === 'SSD') return 'mdi:chip';
+                          return 'mdi:harddisk';
+                        ]]]]
+                      styles:
+                        grid:
+                          - grid-template-areas: '"i n" "i s" "i l"'
+                          - grid-template-columns: 44px 1fr
+                          - grid-template-rows: auto auto auto
+                        card:
+                          - height: 92px
+                          - padding: 10px 12px
+                          - border-radius: 14px
+                          - overflow: hidden
+                        img_cell:
+                          - justify-self: start
+                        icon:
+                          # Green only if the disk AND its last SMART scan are
+                          # clean; a disk that is "Normal" with a failed SMART
+                          # result is the case worth catching early.
+                          - color: |
+                              [[[[
+                                const a = entity?.attributes || {};
+                                const smart = a['SMART Last Result'];
+                                const ok = entity?.state === 'Normal'
+                                  && (!smart || smart === 'Normal');
+                                return ok ? 'var(--success-color, #43a047)'
+                                          : 'var(--error-color, #f44336)';
+                              ]]]]
+                        name:
+                          - font-size: 0.95em
+                          - font-weight: 600
+                          - color: var(--primary-text-color)
+                          - justify-self: start
+                          - white-space: nowrap
+                          - overflow: hidden
+                          - text-overflow: ellipsis
+                        state:
+                          - font-size: 0.8em
+                          - color: var(--secondary-text-color)
+                          - justify-self: start
+                        label:
+                          - font-size: 0.72em
+                          - color: var(--secondary-text-color)
+                          - opacity: 0.75
+                          - justify-self: start
+                          - white-space: nowrap
+                          - overflow: hidden
+                          - text-overflow: ellipsis
+                  - entity_id: |
+                      [[[
+                        return variables.filter ? `sensor.${variables.filter}_*` : 'sensor.none_*';
+                      ]]]
+                    attributes:
+                      UGNAS_summary_entity_for: Cache Disk
+                    options: *disk_card
+
+      # ---- Pools ----
+      # `Used` on a pool is space allocated to volumes, which is 100 % on a
+      # fully carved-up pool — a useless number to show as a fill bar. Pools
+      # get capacity + member count; the fill bars live on the volumes below.
+      - type: heading
+        heading: Pools
+        heading_style: subtitle
+
+      - type: custom:button-card
+        template: ugreen_tpl_host
+        grid_options:
+          columns: full
+          rows: auto
+        custom_fields:
+          item1:
+            card:
+              type: custom:auto-entities
+              show_empty: false
+              card_param: cards
+              # 2-up, collapsing to 1 on narrow screens. Shared with the
+              # volumes grid below, which wants the same shape.
+              card: &two_up_grid
+                type: grid
+                columns: |
+                  [[[
+                    return window.innerWidth <= 700 ? 1 : 2;
+                  ]]]
+                square: false
+              sort:
+                method: attribute
+                attribute: UGNAS_pool_index
+                numeric: true
+              filter:
+                include:
+                  - entity_id: |
+                      [[[
+                        return variables.filter ? `sensor.${variables.filter}_*` : 'sensor.none_*';
+                      ]]]
+                    attributes:
+                      UGNAS_summary_entity_for: Pool
+                    options:
+                      type: custom:button-card
+                      entity: this.entity_id
+                      show_icon: true
+                      show_name: true
+                      show_state: true
+                      show_label: true
+                      size: 26px
+                      tap_action:
+                        action: more-info
+                      icon: mdi:database
+                      name: |
+                        [[[[
+                          const a = entity?.attributes || {};
+                          const n = a.Label || a.Name || 'Pool';
+                          const lvl = String(a.Level || '').toUpperCase();
+                          return lvl ? `${n} · ${lvl}` : n;
+                        ]]]]
+                      state_display: |
+                        [[[[
+                          const a = entity?.attributes || {};
+                          const size = a.Size || '—';
+                          const n = Number(a['Disk Count']);
+                          return Number.isFinite(n)
+                            ? `${size} across ${n} disk${n === 1 ? '' : 's'}`
+                            : size;
+                        ]]]]
+                      label: |
+                        [[[[
+                          const a = entity?.attributes || {};
+                          const slots = Array.isArray(a['Member Slots'])
+                            ? a['Member Slots'].join(', ') : '';
+                          return [entity?.state, slots].filter(Boolean).join(' · ');
+                        ]]]]
+                      styles:
+                        grid:
+                          - grid-template-areas: '"i n" "i s" "i l"'
+                          - grid-template-columns: 44px 1fr
+                          - grid-template-rows: auto auto auto
+                        card:
+                          - height: 92px
+                          - padding: 10px 12px
+                          - border-radius: 14px
+                          - overflow: hidden
+                        img_cell:
+                          - justify-self: start
+                        icon:
+                          - color: |
+                              [[[[
+                                return entity?.state === 'Normal'
+                                  ? 'var(--success-color, #43a047)'
+                                  : 'var(--warning-color, #ffa000)';
+                              ]]]]
+                        name:
+                          - font-size: 0.95em
+                          - font-weight: 600
+                          - color: var(--primary-text-color)
+                          - justify-self: start
+                          - white-space: nowrap
+                          - overflow: hidden
+                          - text-overflow: ellipsis
+                        state:
+                          - font-size: 0.8em
+                          - color: var(--secondary-text-color)
+                          - justify-self: start
+                        label:
+                          - font-size: 0.72em
+                          - color: var(--secondary-text-color)
+                          - opacity: 0.75
+                          - justify-self: start
+                          - white-space: nowrap
+                          - overflow: hidden
+                          - text-overflow: ellipsis
+
+      # ---- Volumes (background fill = % used) ----
+      # Percentage comes from this entity's own `Used (raw)` / `Size (raw)`
+      # attributes (strings like "16830464 B"). An earlier revision looked up
+      # sibling `*_used_size_raw` sensors by reconstructing their entity_id
+      # from the pool/volume indices — one more thing to break, for the same
+      # number.
+      - type: heading
+        heading: Volumes
+        heading_style: subtitle
+
+      - type: custom:button-card
+        template: ugreen_tpl_host
+        grid_options:
+          columns: full
+          rows: auto
+        custom_fields:
+          item1:
+            card:
+              type: custom:auto-entities
+              show_empty: false
+              card_param: cards
+              card: *two_up_grid
+              sort:
+                method: attribute
+                attribute: UGNAS_volume_index
+                numeric: true
+              filter:
+                include:
+                  - entity_id: |
+                      [[[
+                        return variables.filter ? `sensor.${variables.filter}_*` : 'sensor.none_*';
+                      ]]]
+                    attributes:
+                      UGNAS_summary_entity_for: Volume
+                    options:
+                      type: custom:button-card
+                      entity: this.entity_id
+                      show_icon: true
+                      show_name: true
+                      show_state: true
+                      show_label: true
+                      size: 26px
+                      icon: mdi:folder-open
+                      tap_action:
+                        action: more-info
+                      name: |
+                        [[[[
+                          const a = entity?.attributes || {};
+                          return [a.Label || a.Name || 'Volume', a.Filesystem]
+                            .filter(Boolean).join(' · ');
+                        ]]]]
+                      state_display: |
+                        [[[[
+                          const a = entity?.attributes || {};
+                          return `${a.Used || '—'} of ${a.Size || '—'}`;
+                        ]]]]
+                      label: |
+                        [[[[
+                          const a = entity?.attributes || {};
+                          const num = s => Number(String(s ?? '').replace(/[^0-9.]/g, ''));
+                          const u = num(a['Used (raw)']);
+                          const t = num(a['Size (raw)']);
+                          const pct = (Number.isFinite(u) && t > 0)
+                            ? (u / t < 0.001 ? '<1%' : `${Math.round((u * 100) / t)}%`)
+                            : null;
+                          const free = a.Free ? `${a.Free} free` : null;
+                          return [free, pct && `${pct} used`, a.Status]
+                            .filter(Boolean).join(' · ');
+                        ]]]]
+                      styles:
+                        grid:
+                          - grid-template-areas: '"i n" "i s" "i l"'
+                          - grid-template-columns: 44px 1fr
+                          - grid-template-rows: auto auto auto
+                        card:
+                          - height: 92px
+                          - padding: 10px 12px
+                          - border-radius: 14px
+                          - overflow: hidden
+                          # Fill bar drawn as a hard-stop linear-gradient at the
+                          # used percentage, tinted by how full the volume is.
+                          - background-image: |
+                              [[[[
+                                const a = entity?.attributes || {};
+                                const num = s => Number(String(s ?? '').replace(/[^0-9.]/g, ''));
+                                const u = num(a['Used (raw)']);
+                                const t = num(a['Size (raw)']);
+                                if (!Number.isFinite(u) || !(t > 0)) return 'none';
+                                const percent = Math.min(100, Math.round((u * 100) / t));
+                                let rgb = '67,160,71';
+                                if (percent >= 90) rgb = '178,34,34';
+                                else if (percent >= 75) rgb = '255,165,0';
+                                else if (percent >= 66) rgb = '204,204,0';
+                                return `linear-gradient(to right,
+                                  rgba(${rgb},0.28) 0%,
+                                  rgba(${rgb},0.28) ${percent}%,
+                                  rgba(${rgb},0) ${percent}%,
+                                  rgba(${rgb},0) 100%)`;
+                              ]]]]
+                        img_cell:
+                          - justify-self: start
+                        icon:
+                          - color: |
+                              [[[[
+                                return entity?.state === 'Normal'
+                                  ? 'var(--success-color, #43a047)'
+                                  : 'var(--warning-color, #ffa000)';
+                              ]]]]
+                        name:
+                          - font-size: 0.95em
+                          - font-weight: 600
+                          - color: var(--primary-text-color)
+                          - justify-self: start
+                          - white-space: nowrap
+                          - overflow: hidden
+                          - text-overflow: ellipsis
+                        state:
+                          - font-size: 0.8em
+                          - color: var(--secondary-text-color)
+                          - justify-self: start
+                        label:
+                          - font-size: 0.72em
+                          - color: var(--secondary-text-color)
+                          - opacity: 0.75
+                          - justify-self: start
+                          - white-space: nowrap
+                          - overflow: hidden
+                          - text-overflow: ellipsis
+
+  #####################################################################
+  # CONTROL — mode selects and the three destructive buttons
+  #####################################################################
+  - type: grid
+    cards:
+      - type: heading
+        heading: Control
+        heading_style: title
+        icon: mdi:tune
+
+      # Wrapper again: an entities card cannot template its own entity_ids.
+      # This is what threw "Configuration error" before it was added.
+      - type: custom:button-card
+        template: ugreen_tpl_host
+        grid_options:
+          columns: full
+          rows: auto
+        custom_fields:
+          item1:
+            card:
+              type: entities
+              entities:
+                - entity: select.ugreen_nas_lovelace_device_select
+                  name: NAS
+                  icon: mdi:nas
+                - entity: '[[[ return `select.${variables.slug}_fan_mode`; ]]]'
+                  name: Fan Mode
+                  icon: mdi:fan
+                - entity: '[[[ return `select.${variables.slug}_power_mode`; ]]]'
+                  name: Power Mode
+                  icon: mdi:speedometer
+
+      # All three prompt for confirmation. The NAS name in the prompt is
+      # hardcoded on purpose — a confirmation dialog that says "the selected
+      # device?" is not a confirmation.
+      #
+      # `columns: 4` of the section grid's 12 puts the three side by side and
+      # lets them reflow on narrow screens. A horizontal-stack would keep them
+      # squeezed onto one line at any width.
+      - type: custom:button-card
+        template: ugreen_power_button
+        name: Wake Up
+        icon: mdi:power-sleep
+        grid_options:
+          columns: 4
+          rows: auto
+        variables:
+          action_slug: wake_up
+          confirm: Wake up jack-sparrow?
+          accent: var(--success-color)
+
+      - type: custom:button-card
+        template: ugreen_power_button
+        name: Restart
+        icon: mdi:restart
+        grid_options:
+          columns: 4
+          rows: auto
+        variables:
+          action_slug: reboot
+          confirm: Restart jack-sparrow?
+          accent: var(--warning-color)
+
+      - type: custom:button-card
+        template: ugreen_power_button
+        name: Shutdown
+        icon: mdi:power
+        grid_options:
+          columns: 4
+          rows: auto
+        variables:
+          action_slug: shutdown
+          confirm: Shut down jack-sparrow?
+          accent: var(--error-color)

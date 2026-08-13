@@ -116,6 +116,10 @@ Key integrations used in this configuration:
 
 I'm using the README files as a way to keep track of areas that I'm revamping for 2025 to clean up my instance and make things more reusable and wife friendly.
 
+Folders that have been through a polish pass also carry an `AGENTS.md`, which
+tracks per-file status and records the conventions and gotchas for that folder —
+the things worth knowing before editing anything in it.
+
 ![wip](https://img.shields.io/badge/Work%20In%20Progress-yellow?style=for-the-badge)
 
 ### Structure
@@ -126,7 +130,11 @@ assets/
 automations/
 └── systems/
 blueprints/
+dashboards/
+└── jack-sparrow.yaml
+└── room-summary-card/
 entities/
+└── templates/
 integrations/
 python_scripts/
 scripts/
@@ -145,6 +153,7 @@ ui_lovelace_minimalist/
             ├── lab.yaml
             ├── lights.yaml
             └── network.yaml
+        └── rooms/
         └── subviews/
             └── z-wave.yaml
         └── 01-home.yaml
@@ -164,7 +173,10 @@ Tracking sections I've reworked.
 - [ ] [`automations/`](automations/) - automations of course
   - [ ] [`systems/`](automations/systems/) - automations related to core system functionality
 - [x] [`blueprints/`](blueprints/) - HA Blueprints - I don't have a use for these
+- [ ] [`dashboards/`](dashboards/AGENTS.md) - standalone YAML dashboards, outside the UML framework
+  - [x] [`jack-sparrow.yaml`](dashboards/jack-sparrow.yaml) - UGREEN NASync DXP4800 Pro
 - [ ] [`entities/`](entities/) - entity definitions
+  - [ ] [`templates/`](entities/templates/AGENTS.md) - template sensors
 - [ ] [`integrations/`](integrations/) - split config to load folders
 - [ ] [`python_scripts/`](python_scripts/) - python scripts to call in automations
 - [ ] [`scripts/`](scripts/) - HA script definitions

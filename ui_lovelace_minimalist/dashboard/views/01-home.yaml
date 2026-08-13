@@ -311,10 +311,8 @@ cards:
       - type: custom:room-summary-card
         view_layout:
           grid-area: nas
-        area: server_closet
+        area: jack_sparrow
         area_name: jack-sparrow
-        features:
-          - full_card_actions
         actions:
           tap_action:
             action: navigate
@@ -323,25 +321,22 @@ cards:
         # disk is not "Normal". Defined in entities/templates/jack_sparrow.yaml.
         entity:
           entity_id: sensor.jack_sparrow_health
-          off_color: green
-          on_color: red
-          hold_action:
+          tap_action:
             action: more-info
         temperature_sensor: sensor.jack_sparrow_cpu_temperature
         entities:
           # Pool 1 = RAID 5 bulk, single-drive tolerance. The one that matters.
           - entity_id: sensor.jack_sparrow_pool_1_status
-            off_color: green
-            on_color: red
+            tap_action:
+              action: more-info
           # Capacity trend on the bulk array.
           - entity_id: sensor.jack_sparrow_pool_1_volume_1_used
+            tap_action:
+              action: more-info
           # Pool 2 = NVMe mirror holding container/DB state.
           - entity_id: sensor.jack_sparrow_pool_2_status
-            off_color: green
-            on_color: red
-        background:
-          options:
-            - icon_background
+            tap_action:
+              action: more-info
 
       #################
       # Patio

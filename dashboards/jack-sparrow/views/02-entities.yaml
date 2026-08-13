@@ -1,0 +1,102 @@
+---
+#####
+# ALL ENTITIES — the filterable wall
+#
+# Every sensor the integration exposes for the selected NAS, one tile each,
+# sorted by category then name. Roughly 200 tiles. This is a debugging and
+# discovery surface, not a monitoring one: the NAS view answers "is anything
+# wrong", this one answers "what is this thing even called".
+#
+# The tile styling lives in the `ugreen_nas_template` button-card template.
+#
+# The filter box is `text.ugreen_nas_lovelace_entity_filter`, an entity the
+# integration provides for exactly this. It is matched against friendly_name,
+# case-insensitively, as a substring — not a glob, not a regex.
+#####
+
+title: All Entities
+path: entities
+icon: mdi:view-grid
+type: sections
+max_columns: 4
+dense_section_placement: true
+cards: []
+sections:
+  - type: grid
+    column_span: 4
+    cards:
+      - type: heading
+        heading: All UGREEN entities
+        heading_style: title
+        icon: mdi:view-grid
+
+      - type: entities
+        grid_options:
+          columns: full
+          rows: auto
+        entities:
+          - entity: text.ugreen_nas_lovelace_entity_filter
+            name: Filter by name
+            icon: mdi:filter-variant
+
+      - type: custom:button-card
+        template: ugreen_tpl_host
+        grid_options:
+          columns: full
+          rows: auto
+        # The host template already redraws on device select; the filter box
+        # has to be added here or typing in it does nothing until something
+        # else changes.
+        triggers_update:
+          - text.ugreen_nas_lovelace_entity_filter
+          - select.ugreen_nas_lovelace_device_select
+        custom_fields:
+          item1:
+            card:
+              type: custom:auto-entities
+              card_param: cards
+              card:
+                type: grid
+                columns: |
+                  [[[
+                    const w = window.innerWidth;
+                    const steps = [[1600, 6], [1200, 4], [900, 3], [600, 2]];
+                    let n = 8;
+                    for (const [bp, c] of steps) { if (w <= bp) n = c; }
+                    return n;
+                  ]]]
+                square: false
+              # auto-entities' own filter syntax cannot express "sort by one
+              # attribute then by name, case- and number-aware", so the whole
+              # include list is built in JS instead.
+              filter:
+                include: |
+                  [[[
+                    const search =
+                      (states['text.ugreen_nas_lovelace_entity_filter']?.state || '')
+                        .toLowerCase();
+                    if (!variables.filter) return [];
+                    return Object.values(states)
+                      .filter(e => e.entity_id.startsWith(`sensor.${variables.filter}`))
+                      .filter(e => search === ''
+                        || (e.attributes.friendly_name || '').toLowerCase().includes(search))
+                      // `*_raw` sensors are byte counts that back the formatted
+                      // ones already on the wall — noise, not information.
+                      .filter(e => !e.entity_id.endsWith('_raw'))
+                      .sort((a, b) => {
+                        const catA = (a.attributes.UGNAS_part_category || '').toLowerCase();
+                        const catB = (b.attributes.UGNAS_part_category || '').toLowerCase();
+                        if (catA < catB) return -1;
+                        if (catA > catB) return 1;
+                        const nameA = (a.attributes.friendly_name || '').toLowerCase();
+                        const nameB = (b.attributes.friendly_name || '').toLowerCase();
+                        return nameA.localeCompare(nameB, undefined, {
+                          numeric: true, sensitivity: 'base'
+                        });
+                      })
+                      .map(e => ({
+                        entity: e.entity_id,
+                        type: 'custom:button-card',
+                        template: 'ugreen_nas_template'
+                      }));
+                  ]]]

@@ -1,3 +1,4 @@
+---
 #####
 # jack-sparrow (UGREEN NASync DXP4800 Pro) — derived sensors
 #
@@ -8,6 +9,10 @@
 #
 # Volume 1 on pool 1 = the RAID 5 bulk array (32.6 TiB).
 # Volume 1 on pool 2 = the RAID 1 NVMe app/VM pool (1.8 TiB).
+#
+# Consumed by:
+#   - ui_lovelace_minimalist/dashboard/views/01-home.yaml (NAS summary card)
+#   - dashboards/jack-sparrow.yaml (standalone dashboard)
 #####
 
 - sensor:
@@ -54,46 +59,41 @@
     # One entity to alert on / colour the home card with, instead of watching
     # eleven separate status sensors. Any pool, volume or disk not reporting
     # "Normal" makes this Problem, and lists what is wrong in an attribute.
+    #
+    # The watched-entity list is built by pattern rather than hardcoded so it
+    # cannot drift between `state` and `problems`, and so adding a disk or pool
+    # in UGOS is picked up without editing this file. Matches:
+    #   sensor.jack_sparrow_pool_N_status
+    #   sensor.jack_sparrow_pool_N_disk_N_status
+    #   sensor.jack_sparrow_pool_N_volume_N_status
     - name: jack-sparrow Health
       unique_id: 2d4a6b22-a261-43d3-80c8-e18d2e7d9e73
       # `this` = this entity's own state object. Avoids a self-referencing
       # state_attr() call, which would deadlock the template.
       icon: "{{ 'mdi:nas' if this.state == 'OK' else 'mdi:alert' }}"
       state: >
-        {% set ns = namespace(bad=0) %}
-        {% for e in [
-            'sensor.jack_sparrow_pool_1_status',
-            'sensor.jack_sparrow_pool_2_status',
-            'sensor.jack_sparrow_pool_1_volume_1_status',
-            'sensor.jack_sparrow_pool_2_volume_1_status',
-            'sensor.jack_sparrow_pool_1_disk_1_status',
-            'sensor.jack_sparrow_pool_1_disk_2_status',
-            'sensor.jack_sparrow_pool_1_disk_3_status',
-            'sensor.jack_sparrow_pool_1_disk_4_status',
-            'sensor.jack_sparrow_pool_2_disk_1_status',
-            'sensor.jack_sparrow_pool_2_disk_2_status' ] %}
-          {% if states(e) not in ['Normal', 'unknown', 'unavailable'] %}
-            {% set ns.bad = ns.bad + 1 %}
-          {% endif %}
-        {% endfor %}
-        {{ 'Problem' if ns.bad > 0 else 'OK' }}
+        {{ 'Problem' if states.sensor
+             | selectattr('entity_id', 'search',
+                          '^sensor\.jack_sparrow_pool_\d+(_(disk|volume)_\d+)?_status$')
+             | rejectattr('state', 'in', ['Normal', 'unknown', 'unavailable'])
+             | list | count > 0 else 'OK' }}
       attributes:
+        # Human-readable so it can be dropped straight into a notification or
+        # more-info dialog: "Pool 1 Disk 3: Degraded, Pool 2: Warning".
         problems: >
           {% set ns = namespace(bad=[]) %}
-          {% for e in [
-              'sensor.jack_sparrow_pool_1_status',
-              'sensor.jack_sparrow_pool_2_status',
-              'sensor.jack_sparrow_pool_1_volume_1_status',
-              'sensor.jack_sparrow_pool_2_volume_1_status',
-              'sensor.jack_sparrow_pool_1_disk_1_status',
-              'sensor.jack_sparrow_pool_1_disk_2_status',
-              'sensor.jack_sparrow_pool_1_disk_3_status',
-              'sensor.jack_sparrow_pool_1_disk_4_status',
-              'sensor.jack_sparrow_pool_2_disk_1_status',
-              'sensor.jack_sparrow_pool_2_disk_2_status' ] %}
-            {% if states(e) not in ['Normal', 'unknown', 'unavailable'] %}
-              {% set ns.bad = ns.bad + [
-                   state_attr(e, 'friendly_name') ~ ': ' ~ states(e) ] %}
-            {% endif %}
+          {% for s in states.sensor
+               | selectattr('entity_id', 'search',
+                            '^sensor\.jack_sparrow_pool_\d+(_(disk|volume)_\d+)?_status$')
+               | rejectattr('state', 'in', ['Normal', 'unknown', 'unavailable']) %}
+            {% set label = s.name
+                 | replace('jack-sparrow ', '') | replace(' Status', '') %}
+            {% set ns.bad = ns.bad + [label ~ ': ' ~ s.state] %}
           {% endfor %}
-          {{ ns.bad }}
+          {{ ns.bad | join(', ') }}
+        problem_count: >
+          {{ states.sensor
+             | selectattr('entity_id', 'search',
+                          '^sensor\.jack_sparrow_pool_\d+(_(disk|volume)_\d+)?_status$')
+             | rejectattr('state', 'in', ['Normal', 'unknown', 'unavailable'])
+             | list | count }}

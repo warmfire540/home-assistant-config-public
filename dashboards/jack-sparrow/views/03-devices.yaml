@@ -1,0 +1,143 @@
+---
+#####
+# DEVICES — the 11 devices the integration registers, one card each
+#
+# Uses the local custom:device-card (same card as the room views), keyed on
+# device_id, so these survive renaming the NAS or its pools in UGOS. Grouped
+# by pool to mirror the hardware.
+#
+# Physical layout:
+#   Pool 1 — RAID 5, 4x 12 TB HDD (bays 1-4), tolerates one drive loss
+#   Pool 2 — RAID 1, 2x 2 TB NVMe mirror, container/DB state
+#
+# device_id is opaque, so every card carries an explicit `title:` naming what
+# it points at. That is deliberate: the title is both the UI label and the
+# only human-readable record of which device the hash is. To re-derive one:
+# Settings > Devices, open the device, read the id out of the URL.
+#
+# Card options in use (see homeassistant-extras/device-card):
+#   title:         overrides the registry name, which is the verbose
+#                  "jack-sparrow (Pool 1 | Disk 1)" form
+#   preview_count: entities shown per section before "Show N more…";
+#                  the card default is 3, which collapses almost everything
+#   features:
+#     hide_device_model  the registry model string double-prints the brand
+#                        ("Western Digital Western Digital HGST HUH72…")
+#####
+
+title: Devices
+path: devices
+icon: mdi:devices
+type: sections
+max_columns: 3
+dense_section_placement: true
+cards: []
+sections:
+  - type: grid
+    cards:
+      - type: heading
+        heading: System
+        heading_style: title
+        icon: mdi:server
+
+      # jack-sparrow
+      - type: custom:device-card
+        device_id: 9e2d1b012f26e19d47cbbf884dfbab44
+        title: jack-sparrow
+        preview_count: 8
+        features:
+          - hide_device_model
+
+  - type: grid
+    cards:
+      - type: heading
+        heading: Pool 1 — RAID 5 bulk
+        heading_style: title
+        icon: mdi:harddisk
+
+      # Pool 1
+      - type: custom:device-card
+        device_id: 91cbbc9bf971689b46709966e3236d51
+        title: Storage Pool 1
+        preview_count: 6
+        features:
+          - hide_device_model
+
+      # Pool 1 | Disk 1
+      - type: custom:device-card
+        device_id: eacc2b9877931cf8905d5fb991449738
+        title: Disk 1 — bay ata1
+        preview_count: 6
+        features:
+          - hide_device_model
+
+      # Pool 1 | Disk 2
+      - type: custom:device-card
+        device_id: b5f95eff3784d43dc535b51deb1ab5fb
+        title: Disk 2 — bay ata2
+        preview_count: 6
+        features:
+          - hide_device_model
+
+      # Pool 1 | Disk 3
+      - type: custom:device-card
+        device_id: 43a725d558862f589921a2177abc119a
+        title: Disk 3 — bay ata3
+        preview_count: 6
+        features:
+          - hide_device_model
+
+      # Pool 1 | Disk 4
+      - type: custom:device-card
+        device_id: 01c350d51dda7777b376eae09374779a
+        title: Disk 4 — bay ata4
+        preview_count: 6
+        features:
+          - hide_device_model
+
+      # Pool 1 | Volume 1
+      - type: custom:device-card
+        device_id: 8d20c1e2edff62861908fdaad5e1bce3
+        title: Volume 1 — ext4
+        preview_count: 6
+        features:
+          - hide_device_model
+
+  - type: grid
+    cards:
+      - type: heading
+        heading: Pool 2 — RAID 1 NVMe
+        heading_style: title
+        icon: mdi:chip
+
+      # Pool 2
+      - type: custom:device-card
+        device_id: 8916fe1ea2a92c6292118cd47351e18e
+        title: Storage Pool 2
+        preview_count: 6
+        features:
+          - hide_device_model
+
+      # Pool 2 | Disk 1
+      - type: custom:device-card
+        device_id: d85eb25a0d21078e96eb9b9767eb05a7
+        title: M.2 Disk 1 — nvme1
+        preview_count: 6
+        features:
+          - hide_device_model
+
+      # Pool 2 | Disk 2
+      - type: custom:device-card
+        device_id: 4dbacf5ae5b95ccca751f050b869300d
+        title: M.2 Disk 2 — nvme2
+        preview_count: 6
+        features:
+          - hide_device_model
+
+      # Pool 2 | Volume 1
+      - type: custom:device-card
+        device_id: 2e0cfbaebb790f03c13a48450ca47fb4
+        title: Volume 2 — ext4
+        preview_count: 6
+        features:
+          - hide_device_model

@@ -1,0 +1,49 @@
+---
+#####
+# ugreen_power_button — Wake / Restart / Shutdown
+#
+# All three are the same card differing only in label, icon, tint and which
+# `button.<nas>_power_action_<X>` they press, so the shared chrome lives here.
+# Call sites set:
+#   variables.action_slug — the `button.<nas>_power_action_<X>` suffix
+#   variables.confirm     — confirmation prompt text
+#   variables.accent      — a theme var, used for both icon and tint
+#####
+
+ugreen_power_button:
+  variables:
+    action_slug: ''
+    confirm: 'Are you sure?'
+    accent: 'var(--primary-text-color)'
+  show_icon: true
+  show_name: true
+  size: 26px
+  styles:
+    card:
+      - border-radius: 14px
+      - height: 84px
+      - padding: 10px 6px
+      # Faint wash of the accent so the three buttons read as a set of
+      # severities (green / amber / red) without shouting on a light theme.
+      - background: '[[[ return `color-mix(in srgb, ${variables.accent} 8%, var(--card-background-color))`; ]]]'
+      - border: '[[[ return `1px solid color-mix(in srgb, ${variables.accent} 22%, transparent)`; ]]]'
+      - box-shadow: none
+    icon:
+      - color: '[[[ return variables.accent; ]]]'
+    name:
+      - font-size: 0.85em
+      - font-weight: 600
+      - padding-top: 4px
+      - color: var(--primary-text-color)
+  tap_action:
+    action: call-service
+    service: button.press
+    confirmation:
+      text: '[[[ return variables.confirm; ]]]'
+    target:
+      entity_id: |
+        [[[
+          const slug = states['select.ugreen_nas_lovelace_device_select']
+            ?.attributes?.selected_slug || 'ugreen_nas';
+          return `button.${slug}_power_action_${variables.action_slug}`;
+        ]]]

@@ -1,0 +1,71 @@
+---
+#####
+# ugreen_tpl_host — transparent shell that gives nested cards JS templating
+#
+# `[[[ ... ]]]` only evaluates inside custom:button-card. A tile, entities,
+# grid or mini-graph-card that needs a templated entity_id has to be rendered
+# *by* a button-card, so it goes in this wrapper's `custom_fields`:
+#
+#   - type: custom:button-card
+#     template: ugreen_tpl_host
+#     custom_fields:
+#       item1:
+#         card: { ...the real card... }
+#
+# `item1` is the fixed field name (matching the `grid_single_column` naming in
+# ui_lovelace_minimalist/custom_cards/templates/styles/). Naming it per-card
+# bought nothing and meant repeating the grid block at every call site.
+#
+# The wrapper also resolves the selected NAS once into `variables`, so nested
+# cards can write `variables.slug` instead of repeating the lookup:
+#
+#   slug    — for direct entity refs. Falls back to 'ugreen_nas' so a card
+#             still resolves to *something* before the select entity loads.
+#   filter  — for auto-entities include patterns. Falls back to '' so the
+#             pattern becomes `sensor.none_*` and matches NOTHING. These two
+#             are NOT interchangeable: defaulting a filter to a real slug
+#             would list a second NAS's entities on this page.
+#
+# Sizing: call sites should use `grid_options.rows: auto`. A fixed row count
+# here is what used to clip the Control card so the power buttons overlapped
+# the Power Mode row.
+#####
+
+ugreen_tpl_host:
+  entity: none
+  show_icon: false
+  show_name: false
+  show_state: false
+  show_label: false
+  tap_action:
+    action: none
+  hold_action:
+    action: none
+  double_tap_action:
+    action: none
+  triggers_update:
+    - select.ugreen_nas_lovelace_device_select
+  variables:
+    slug: |
+      [[[
+        return states['select.ugreen_nas_lovelace_device_select']
+          ?.attributes?.selected_slug || 'ugreen_nas';
+      ]]]
+    filter: |
+      [[[
+        return states['select.ugreen_nas_lovelace_device_select']
+          ?.attributes?.selected_slug || '';
+      ]]]
+  styles:
+    card:
+      - background: none
+      - box-shadow: none
+      - border: none
+      - padding: 0
+      - margin: 0
+    grid:
+      - grid-template-areas: '"item1"'
+      - grid-template-columns: 1fr
+    custom_fields:
+      item1:
+        - display: block

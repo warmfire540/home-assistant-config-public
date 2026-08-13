@@ -1,0 +1,164 @@
+---
+#####
+# ugreen_nas_template — one tile on the All Entities wall
+#
+# Upstream fills the whole tile with a saturated category colour and prints
+# white text on it. At ~200 tiles that is a lot of shouting, and it only works
+# on a dark theme. This version keeps the category colour as *identity* — a
+# left accent bar, a tinted icon watermark, a hairline border — and leaves the
+# card body on the theme background so text contrast comes from theme vars.
+#
+# The colour is resolved once into `variables.accent` rather than repeating
+# the lookup table in every style field.
+#
+# Layout is a 3-row grid: name strip / value / footer. The value font size
+# steps down by string length so a 40-character model number and a 2-digit
+# percentage both fit the same 120px tile without wrapping into the footer.
+#####
+
+ugreen_nas_template:
+  variables:
+    # Category -> accent. Mid-saturation on purpose: these have to stay legible
+    # as a 1px border on a white card and as an icon wash on a dark one.
+    # An entity with no UGNAS_part_category goes red, so it is obvious that
+    # something new turned up that this map does not know about.
+    accent: |
+      [[[
+        const map = {
+          Device:   '#c77d00',
+          Hardware: '#3b82f6',
+          Status:   '#16a34a',
+          Network:  '#0891b2',
+          Disks:    '#0d9488',
+          Pools:    '#7c3aed',
+          Volumes:  '#475569',
+          USB:      '#db2777',
+          UPS:      '#ea580c',
+          Summary:  '#2563eb',
+          Cache:    '#64748b',
+        };
+        return map[entity?.attributes?.UGNAS_part_category] || '#dc2626';
+      ]]]
+  # Friendly names are prefixed with the NAS name ("jack-sparrow Disk 1 Size").
+  # The wall is already scoped to one NAS, so the prefix is pure noise.
+  name: |
+    [[[
+      const friendly =
+        entity?.attributes?.friendly_name || entity?.entity_id || '';
+      const selectedNas =
+        states['select.ugreen_nas_lovelace_device_select']?.state || '';
+      if (selectedNas && friendly.startsWith(selectedNas + ' ')) {
+        return friendly.slice(selectedNas.length + 1);
+      }
+      if (friendly.startsWith('UGREEN NAS ')) {
+        return friendly.slice('UGREEN NAS '.length);
+      }
+      return friendly;
+    ]]]
+  show_icon: false
+  show_state: true
+  show_name: true
+  tap_action:
+    action: more-info
+  styles:
+    card:
+      - background: var(--card-background-color)
+      - border-radius: 14px
+      - border: '[[[ return `1px solid color-mix(in srgb, ${variables.accent} 30%, transparent)`; ]]]'
+      - border-left: '[[[ return `4px solid ${variables.accent}`; ]]]'
+      - min-height: 120px
+      - height: 120px
+      - padding: 0
+      - display: grid
+      - grid-template-rows: auto 1fr auto
+      - grid-template-columns: 1fr
+      - position: relative
+      - overflow: hidden
+      - box-shadow: none
+    name:
+      - font-size: 0.72em
+      - font-weight: 500
+      - letter-spacing: 0.02em
+      - color: var(--secondary-text-color)
+      - z-index: 2
+      - justify-self: stretch
+      - align-self: start
+      - width: 100%
+      - padding: 0.5em 0.8em 0
+      - box-sizing: border-box
+      - text-align: left
+      - white-space: nowrap
+      - overflow: hidden
+      - text-overflow: ellipsis
+    state:
+      - display: grid
+      - place-items: center
+      - text-align: center
+      - color: var(--primary-text-color)
+      - font-weight: 600
+      - z-index: 2
+      - white-space: normal
+      - word-break: break-word
+      - overflow-wrap: break-word
+      - width: 100%
+      - padding: 0 10px
+      - height: 60px
+      - overflow: hidden
+      - font-size: |
+          [[[
+            const len = entity.state.length;
+            if (len <= 6) return '1.7em';
+            if (len <= 10) return '1.25em';
+            if (len <= 20) return '0.95em';
+            return '0.75em';
+          ]]]
+    custom_fields:
+      icon_bg:
+        - position: absolute
+        - top: 14px
+        - right: -6px
+        - width: 4.5em
+        - opacity: 0.12
+        - z-index: 1
+      footer:
+        - color: var(--secondary-text-color)
+        - opacity: 0.7
+        - font-size: 0.65em
+        - display: grid
+        - grid-template-columns: 1fr auto
+        - align-items: center
+        - padding: 0 0.8em 0.5em
+        - height: 1.5em
+        - width: 100%
+        - box-sizing: border-box
+        - z-index: 2
+        - position: absolute
+        - bottom: 0
+        - left: 0
+  custom_fields:
+    icon_bg: |
+      [[[
+        const icon = entity?.attributes?.icon || 'mdi:help-circle';
+        return `
+          <ha-icon
+            icon="${icon}"
+            style="height: 100%; width: auto; color: ${variables.accent};">
+          </ha-icon>
+        `;
+      ]]]
+    footer: |
+      [[[
+        const cat = entity?.attributes?.UGNAS_part_category || '';
+        const when = entity?.last_changed
+          ? new Date(entity.last_changed).toLocaleString('en-US', {
+              month: '2-digit', day: '2-digit',
+              hour: '2-digit', minute: '2-digit'
+            })
+          : '';
+        return `
+          <div style="display: contents;">
+            <span style="justify-self: start; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${cat}</span>
+            <span style="justify-self: end;">${when}</span>
+          </div>
+        `;
+      ]]]

@@ -17,6 +17,8 @@ lovelace:
     # jack-sparrow (UGREEN NASync DXP4800 Pro)
     # Standalone: needs its own button_card_templates: block for the
     # ugreen_nas_template, which can't live in UML's HACS-managed template dir.
+    # The entry file is a stub; templates and views are !include'd from the
+    # sibling dashboards/jack-sparrow/ directory.
     jack-sparrow:
       mode: yaml
       title: jack-sparrow
