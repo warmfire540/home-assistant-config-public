@@ -44,15 +44,17 @@ Working notes for streamlining dashboards, entities, backups, and log noise.
       `dashboards/lab/views/01-uptime.yaml`,
       `automations/lab/uptime_kuma_monitor_down.yaml`. Deploy steps live in
       the **servers** repo at `hosts/jack-sparrow/uptime-kuma-runbook.md`.
-  - [x] ~~Set up the Kuma-native channel (runbook Part 3)~~ — Discord, created
-        and tested 2026-08-13, attached to `Internet`, `Gateway`,
-        `homeassistant`. Those are the three HA cannot report on. Note this
-        works *without* any exclusion in the automation: the first two are
-        caught by the WAN gate and the third cannot notify at all. Adding a
-        fourth monitor to Discord would double-notify — `poat-hole - DNS` was
-        tried and reverted for exactly that reason (runbook §3.4).
-  - [ ] Decide whether a recovery ("back up") notification is wanted. Only the
-        down alert exists today, so a resolved outage is silent.
+  - [ ] Set up the Kuma-native ntfy channel (runbook Part 3) and attach it to
+        exactly `Internet`, `Gateway`, `homeassistant`. Until then those three
+        outages are **unalerted** — HA cannot notify you that HA is down, and
+        the down automation deliberately skips them.
+  - [x] ~~Recovery notification~~ — an **all-clear** branch in the same
+        automation, firing once when `down_count` returns to zero, on the same
+        notification tag so the green message replaces the red one. Dormant
+        until Portainer / lil-bit / poat-seedbox are up.
+  - [ ] Board is at **`/home-lab/uptime`**, not `/lab/uptime` — HA requires a
+        hyphen in a YAML dashboard's URL path and rejects the whole config
+        without one. Source files still live under `dashboards/lab/`.
   - [ ] Tag monitors in Kuma (runbook §4.5) if the rollup should ever cover a
         subset rather than everything.
   - [ ] Remove the stale HA device left behind by the paused `Backups` group —

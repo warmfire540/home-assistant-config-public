@@ -116,7 +116,7 @@ cards:
           ]]]
         tap_action:
           action: navigate
-          navigation_path: /lab/uptime
+          navigation_path: /home-lab/uptime
         styles:
           <<: *nav_chip_styles
           # Merged into the anchored block rather than replacing it, so the

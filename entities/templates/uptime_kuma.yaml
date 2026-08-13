@@ -161,7 +161,7 @@
             {% endif %}
           {% endfor %}
           {{ ns.n }}
-        navigation_path: /lab/uptime
+        navigation_path: /home-lab/uptime
 
 - binary_sensor:
     #################

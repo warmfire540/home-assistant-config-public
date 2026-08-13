@@ -1,5 +1,5 @@
 #####
-# Alert when an Uptime Kuma monitor goes down — with storm suppression
+# Uptime Kuma — monitor down, and all-clear — with storm suppression
 #
 # WHY THIS IS TRIGGERED ON AN ATTRIBUTE AND NOT ON A LIST OF ENTITIES
 #
@@ -33,26 +33,50 @@
 # nothing to do with the service it watches, and this declines to fire.
 #
 # ⚠️ THE THREE MONITORS THIS AUTOMATION DOES NOT COVER are Internet, Gateway
-# and homeassistant — deliberately. Those are alerted out-of-band by Kuma's
-# own ntfy channel, because Home Assistant cannot report that Home Assistant
-# is down, and cannot report an outage it is on the far side of. See Part 3 of
-# hosts/jack-sparrow/uptime-kuma-runbook.md in the servers repo. If that
-# channel is not set up yet, those three outages are currently unalerted.
+# and homeassistant — and nothing here excludes them explicitly. They fall out
+# for three different reasons: the first two trip the WAN gate above, and the
+# third cannot notify about its own death. That is a load-bearing coincidence,
+# not a rule this file enforces. Anything else added to Kuma's Discord channel
+# WILL double-notify — `poat-hole - DNS` was tried and reverted for exactly
+# that reason. See §3.2 and §3.4 of the servers repo's
+# hosts/jack-sparrow/uptime-kuma-runbook.md.
+#
+# WHY THE RECOVERY BRANCH IS "ALL CLEAR" AND NOT PER-MONITOR
+#
+# A symmetric per-monitor "X is back" flips the storm problem around. The down
+# path is protected by the WAN gate; the up path has no equivalent, because by
+# definition the WAN is healthy again by the time services recover. So an ISP
+# outage ending would produce ten notifications celebrating something you
+# already knew was over.
+#
+# One message per *outage* instead, on the same `tag`, so on the phone the
+# green message REPLACES the red one rather than stacking under it. The
+# notification you are looking at always describes the current state.
+#
+# ⚠️ It fires on a return to ZERO, so while Portainer is undeployed and
+# lil-bit / poat-seedbox are powered off, `down_count` never reaches zero and
+# the all-clear cannot fire. That is correct — nothing is clear — but it means
+# the branch is dormant until those resolve.
+#
+# ⚠️ Both branches share one trigger and one `variables:` block on purpose.
+# Splitting recovery into its own file would duplicate the now/was/newly
+# derivation, and two copies of one derivation drift — see the Jinja notes in
+# entities/templates/AGENTS.md.
 #
 # ⚠️ The runbook refers to an `input_boolean.mute_alerts`. It does not exist —
 # this repo has per-person mutes (`input_boolean.poat_mute`, `gina_mute`),
-# which is what the push below is gated on. The persistent notification always
-# fires, matching automations/lab/scrutiny_drive_failed.yaml.
+# which is what the pushes below are gated on. The persistent notifications
+# always fire, matching automations/lab/scrutiny_drive_failed.yaml.
 #
 # Reads: entities/templates/uptime_kuma.yaml
 #####
 
-alias: Uptime Kuma monitor down
+alias: Uptime Kuma monitor down / all clear
 id: 0c9a4e6b-3f21-4d77-b0a5-8e5c1f9d2a64
 
 description: >-
-  Notify when one or more Kuma monitors go down, naming only the newly-down
-  ones, and only when the WAN is healthy.
+  Notify when Kuma monitors go down, naming only the newly-down ones and only
+  when the WAN is healthy; then once when everything is back.
 
 trigger:
   - trigger: state
@@ -79,51 +103,129 @@ variables:
   # second outage of the same thing.
   newly_down: >-
     {{ now_down | reject('in', was_down) | list }}
+  # Same tag on both branches, so the recovery notification replaces the
+  # outage one on the lock screen instead of stacking beneath it.
+  tag: uptime_kuma_monitor_down
 
 condition:
-  # Recoveries change the attribute too. Nothing new down, nothing to say.
+  # The rollup going unavailable — integration reload, Kuma container
+  # restarted — empties the attribute and would otherwise read as a full
+  # recovery. `for: 2 minutes` covers a routine HA restart; this covers the
+  # rest. An all-clear you cannot trust is worse than none.
   - condition: template
-    value_template: '{{ newly_down | count > 0 }}'
-
-  # STORM SUPPRESSION. `unavailable` is treated as "do not suppress": if the
-  # gate itself is broken, an over-notification is the safer failure than
-  # silence. See the Lab WAN Down sensor's header for how that can happen.
-  - condition: template
-    value_template: "{{ not is_state('binary_sensor.lab_wan_down', 'on') }}"
+    value_template: >-
+      {{ states('sensor.lab_availability')
+         not in ['unknown', 'unavailable'] }}
 
 action:
-  - variables:
-      body: >-
-        {{ newly_down | join(', ') }} {{ 'is' if newly_down | count == 1
-        else 'are' }} down.
-      others: >-
-        {% set n = now_down | count - newly_down | count %}
-        {{ ' ' ~ n ~ ' other monitor' ~ ('s' if n != 1 else '')
-           ~ ' still down.' if n > 0 else '' }}
-
-  - action: notify.persistent_notification
-    data:
-      title: '🔴 Lab monitor down'
-      message: '{{ body }}{{ others }}'
-
   - choose:
-      - conditions:
-          - condition: state
-            entity_id: input_boolean.poat_mute
-            state: 'off'
+      #################
+      # SOMETHING NEWLY DOWN
+      #################
+      - alias: Newly down, and the WAN is healthy
+        conditions:
+          - condition: template
+            value_template: '{{ newly_down | count > 0 }}'
+          # ⚠️ DO NOT ALERT ON A RE-BASELINE AFTER A RESTART.
+          #
+          # On a Home Assistant restart the rollup goes `unavailable` and
+          # comes back with the same value. That is a state change, and an
+          # unavailable state carries no attributes — so `was_down` comes back
+          # EMPTY and every already-known-down monitor reads as newly down.
+          # Without this, a routine restart pages you with the full list of
+          # things you already knew about. `for: 2 minutes` does not help,
+          # because the value is perfectly stable afterwards.
+          #
+          # The trade: a monitor that breaks *during* the restart window is
+          # absorbed into the new baseline and not announced. It still shows
+          # red on the board, and the next real change re-announces. Silence
+          # on one edge case beats a false page on every restart.
+          - condition: template
+            value_template: >-
+              {{ trigger.from_state is not none
+                 and trigger.from_state.state
+                     not in ['unknown', 'unavailable'] }}
+          # STORM SUPPRESSION. `unavailable` is treated as "do not suppress":
+          # if the gate itself is broken, an over-notification is the safer
+          # failure than silence. See the Lab WAN Down sensor's header.
+          - condition: template
+            value_template: >-
+              {{ not is_state('binary_sensor.lab_wan_down', 'on') }}
         sequence:
-          - action: notify.mobile_app_poat_s_iphone_14_pro_max
-            data:
+          - variables:
               title: '🔴 Lab monitor down'
-              message: '{{ body }}{{ others }}'
-              data:
-                # Same tag on every firing so a follow-on outage replaces the
-                # notification rather than stacking a second one.
-                tag: uptime_kuma_monitor_down
-                url: /lab/uptime
-                push:
-                  sound:
-                    name: 'default'
+              # The trailing clause only appears when something else was
+              # already down, so the common single-failure case reads as one
+              # clean sentence.
+              body: >-
+                {{ newly_down | join(', ') }}
+                {{- ' is' if newly_down | count == 1 else ' are' }} down.
+                {%- set n = now_down | count - newly_down | count %}
+                {%- if n > 0 %}
+                {{ ' ' ~ n ~ ' other monitor' ~ ('s' if n != 1 else '')
+                   ~ ' still down.' }}
+                {%- endif %}
+          - action: notify.persistent_notification
+            data:
+              title: '{{ title }}'
+              message: '{{ body }}'
+          - choose:
+              - conditions:
+                  - condition: state
+                    entity_id: input_boolean.poat_mute
+                    state: 'off'
+                sequence:
+                  - action: notify.mobile_app_poat_s_iphone_14_pro_max
+                    data:
+                      title: '{{ title }}'
+                      message: '{{ body }}'
+                      data:
+                        tag: '{{ tag }}'
+                        url: /home-lab/uptime
+                        push:
+                          sound:
+                            name: 'default'
+
+      #################
+      # ALL CLEAR
+      #################
+      # Requires `was_down` to be non-empty, so this cannot fire on a restart
+      # (from_state is None, both lists come back empty) or on any transition
+      # that did not actually resolve something.
+      - alias: Everything recovered
+        conditions:
+          - condition: template
+            value_template: >-
+              {{ now_down | count == 0 and was_down | count > 0 }}
+        sequence:
+          - variables:
+              title: '✅ Lab all clear'
+              body: >-
+                Everything is back —
+                {{ state_attr('sensor.lab_availability', 'monitor_count') }}
+                monitors up. Last down: {{ was_down | join(', ') }}.
+          - action: notify.persistent_notification
+            data:
+              title: '{{ title }}'
+              message: '{{ body }}'
+          - choose:
+              - conditions:
+                  - condition: state
+                    entity_id: input_boolean.poat_mute
+                    state: 'off'
+                sequence:
+                  - action: notify.mobile_app_poat_s_iphone_14_pro_max
+                    data:
+                      title: '{{ title }}'
+                      message: '{{ body }}'
+                      data:
+                        tag: '{{ tag }}'
+                        url: /home-lab/uptime
+                        push:
+                          # Silent on purpose. Good news should update the
+                          # notification already on the lock screen, not buzz
+                          # the phone a second time for an outage that is over.
+                          sound: 'none'
 
 mode: queued
 max: 5
