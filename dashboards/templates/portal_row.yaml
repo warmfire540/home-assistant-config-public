@@ -1,0 +1,121 @@
+---
+#####
+# portal_row — the responsive shell the portal buttons sit in
+#
+# Added 2026-08-14, when Dozzle made the row six wide and the phone layout
+# finally became indefensible.
+#
+# WHY THIS EXISTS AT ALL
+#
+# The row used to be `type: grid` with `columns: 5`. HA's grid card renders
+# that count at every viewport width — five across on a 27" monitor and five
+# across on a phone. At phone width each button was ~55px, which turned the
+# subtitle (`192.168.5.8:81`, the button's entire reason for being) into an
+# ellipsis. The core grid card has no breakpoints, and `layout-card` — which
+# does — is not installed in this config and is not worth a new HACS
+# dependency for one row.
+#
+# A `custom:button-card` lays its `custom_fields` out on its own `#states`
+# CSS grid. Because ONE element owns both the track definition and the
+# children, that grid can carry `@media` rules and actually reflow. That is
+# the whole trick.
+#
+# ⚠️ THE BREAKPOINTS MUST LIVE ON THE PARENT, NOT THE BUTTONS. Setting
+# `--portal-cols` from `portal_button`'s own `extra_styles` looks equivalent
+# and cannot work: each button's `:host` is its own element in its own shadow
+# root, so a custom property declared there is invisible to the parent that
+# positions it, and there is no child-to-parent selector in CSS. The property
+# is declared here, on the element whose `grid-template-columns` reads it.
+#
+# ⚠️ `styles.grid` CANNOT HOLD AN `@media` BLOCK — it takes property/value
+# pairs only. `extra_styles` is injected as real CSS into this card's shadow
+# root, so the media queries go there and only the `var()` reference goes in
+# `styles.grid`. Splitting them is not a style choice; neither half works
+# alone.
+#
+# LAYOUT
+#
+#     ≥1000px   6 across, one row      (desktop / tablet landscape)
+#     600–999   3 across, 2 rows       (tablet portrait, split view)
+#     <600px    2 across, 3 rows       (phone)
+#
+# Fixed counts per breakpoint rather than `repeat(auto-fit, minmax(...))`,
+# which is the obvious-looking alternative. `auto-fit` picks whatever fits and
+# would happily land on 5 across, orphaning a single button alone on row two —
+# the exact thing the old `columns: 5` was chosen to avoid back when the row
+# had four buttons. Pinning the count keeps every row full at every width.
+#
+# ⚠️ ADDING A SEVENTH TOOL MEANS EDITING THIS FILE TOO. Fields auto-place, so
+# a new button does not need a named area — but it DOES need a `field07` entry
+# in `custom_fields` below, or button-card never gives it a cell and it renders
+# nowhere at all, with no error. Add it here and in
+# dashboards/cards/portal-row.yaml, and re-check the counts: 7 is prime, so it
+# orphans one button at every split, and the breakpoints want revisiting
+# (probably 4/2 rather than 6/3/2).
+#
+# Loaded by both dashboards via
+# `button_card_templates: !include_dir_merge_named templates`.
+#####
+
+portal_row:
+  entity: none
+  show_icon: false
+  show_name: false
+  show_state: false
+  show_label: false
+  # The shell is a layout, not a control. Without these the whole row is one
+  # giant tap target that ripples on press and does nothing, and it swallows
+  # taps meant for the buttons inside it.
+  tap_action:
+    action: none
+  hold_action:
+    action: none
+  double_tap_action:
+    action: none
+  extra_styles: |
+    :host {
+      --portal-cols: 6;
+    }
+    @media (max-width: 999px) {
+      :host { --portal-cols: 3; }
+    }
+    @media (max-width: 599px) {
+      :host { --portal-cols: 2; }
+    }
+  styles:
+    card:
+      # Transparent shell: the buttons carry their own accent wash and border,
+      # and a card background here would frame them in a second box.
+      - background: none
+      - box-shadow: none
+      - border: none
+      - padding: 0
+      - margin: 0
+    grid:
+      # ⚠️ NO `grid-template-areas` HERE, DELIBERATELY — every other template
+      # in this directory has one, so its absence looks like an omission.
+      #
+      # A named-areas string is a FIXED shape. `"field01 … field06"` declares
+      # six columns on one row, and it wins over `grid-template-columns` — the
+      # media queries below would change the property and the layout would not
+      # move. Without it the custom_fields auto-place in key order into
+      # whatever track count is current, wrapping onto new rows on their own,
+      # which is the entire point of this card.
+      #
+      # The cost of auto-placement is that order is key order (field01 first),
+      # so the fields in portal-row.yaml must stay in display order.
+      - grid-template-columns: repeat(var(--portal-cols), minmax(0, 1fr))
+      - gap: 8px
+    custom_fields:
+      field01:
+        - display: block
+      field02:
+        - display: block
+      field03:
+        - display: block
+      field04:
+        - display: block
+      field05:
+        - display: block
+      field06:
+        - display: block

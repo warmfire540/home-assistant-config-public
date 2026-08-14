@@ -52,10 +52,11 @@ sections:
         icon: mdi:pirate
 
       # ---- Portals ----
-      # One shared card: dashboards/cards/portal-row.yaml. Four buttons, the
-      # same four in the same order with the same look on every page of every
-      # dashboard. Was three hand-maintained copies plus a divergent core-tile
-      # version on the lab board until 2026-08-13.
+      # One shared card: dashboards/cards/portal-row.yaml. The same tools in
+      # the same order with the same look on every page of every dashboard,
+      # and it reflows to 3- or 2-up on narrow screens. Was three
+      # hand-maintained copies plus a divergent core-tile version on the lab
+      # board until 2026-08-13.
       #
       # `!include` resolves relative to THIS file, hence ../../ from
       # dashboards/<dash>/views/. Hosts, ports, order, colours and the

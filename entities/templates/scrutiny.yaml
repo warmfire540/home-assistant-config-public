@@ -70,9 +70,16 @@
       icon: "{{ 'mdi:harddisk' if this.state == 'OK' else 'mdi:harddisk-remove' }}"
       # Unavailable if the integration is gone or Scrutiny is unreachable —
       # better than a confident "OK" derived from an empty list.
+      # ⚠️ EXISTING IS NOT REPORTING — same fix as uptime_kuma.yaml, applied
+      # here on 2026-08-14 before it could bite. The `rejectattr` in the state
+      # below discards `unavailable` drives, so an integration that had lost
+      # the Scrutiny container would count zero problems out of zero readable
+      # drives and report a confident OK. Require at least one drive returning
+      # a real assessment.
       availability: >
         {{ expand(integration_entities('scrutiny'))
            | selectattr('entity_id', 'search', '_overall_status$')
+           | rejectattr('state', 'in', ['unknown', 'unavailable'])
            | list | count > 0 }}
       state: >
         {{ 'Problem' if expand(integration_entities('scrutiny'))

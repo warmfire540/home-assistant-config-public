@@ -1,0 +1,148 @@
+---
+#####
+# Diun stopped — image update alerts are no longer being generated
+#
+# Diun watches the container registry and posts to Discord when an image the
+# lab runs has moved. It exists because of a failure that already happened:
+# Nginx Proxy Manager sat on 2.12.3 while 2.15.0 closed three OpenResty CVEs —
+# the component terminating TLS for every service here — and nothing in the
+# lab was capable of noticing.
+#
+# WHY THIS AUTOMATION EXISTS AT ALL
+#
+# ⚠️ A STOPPED DIUN AND A QUIET DIUN LOOK IDENTICAL. It publishes no port, has
+# no health endpoint, and most weeks correctly says nothing. There is no
+# passive signal that distinguishes "no updates available" from "died three
+# weeks ago". This automation is the entire difference.
+#
+# WHY THERE IS NO UPTIME KUMA MONITOR TO BACK THIS UP
+#
+# Deliberate, and it is the one gap in the usual two-path arrangement. Kuma
+# has a `Docker Container` monitor type that would cover this, but it requires
+# mounting the Docker socket into the Uptime Kuma container — upstream's own
+# warning is that this "gives that full control over the Docker daemon on the
+# host". Kuma is the most externally-reachable service in the lab; handing it
+# root-equivalent host control to watch one notify-only container is a bad
+# trade.
+#
+# So unlike cert_expiry, this has ONE path, not two. Portainer already holds
+# the socket and HA already reads Portainer, so this costs no new privilege.
+# The accepted consequence: if HA is down, nothing is watching Diun. That is
+# tolerable because Diun is a slow-signal service — a missed day of update
+# notifications is not an outage.
+#
+# ⚠️ THE ONE ASSUMPTION IN THIS FILE
+#
+# `sensor.diun_state` is an OBSERVED entity ID, read off the live instance on
+# 2026-08-14 — not predicted from the integration's strings.json, which is how
+# the Portainer template entities got into trouble. The healthy state string
+# is assumed to be lowercase `running`. Verify once in Developer Tools →
+# States. If it reads anything else, this fires constantly instead of never —
+# the opposite failure, but equally wrong.
+#
+# The trigger is written as `!= 'running'` rather than a list of bad states on
+# purpose. Portainer can report exited, dead, removing, created, paused or
+# restarting, and a match-list would silently miss any value not predicted —
+# the same class of bug as a template that matches nothing and therefore reads
+# healthy forever. Anything that is not "running" is worth knowing about.
+#
+# `for: 10 minutes` matches the house pattern and rides out a Home Assistant
+# restart, when the sensor reads unavailable while the integration reloads.
+# Learned the hard way on 2026-08-14, when a stale template listener after an
+# integration reconfigure made every rollup on the board read zero.
+#
+# Backing integration: core `portainer` (no Diun integration exists, core or
+# HACS — this is how gate 5 is satisfied for this container).
+# Setup + the whole story: **servers** repo,
+#   hosts/jack-sparrow/diun-dozzle-runbook.md
+#####
+
+alias: Lab - Diun not running
+id: 7c4b1e92-8a3d-4f16-b5e0-2d9c6a03f841
+description: >
+  Alerts when the Diun container is in any state other than running. Diun has
+  no port, no health endpoint and deliberately no Uptime Kuma monitor, so a
+  stopped update-notifier is otherwise indistinguishable from a quiet one.
+mode: single
+
+triggers:
+  - trigger: template
+    value_template: "{{ states('sensor.diun_state') not in ['running'] }}"
+    for: "00:10:00"
+    id: stopped
+
+  # All-clear, so a restart closes the loop without anyone going to look.
+  - trigger: state
+    entity_id: sensor.diun_state
+    to: 'running'
+    for: "00:10:00"
+    id: recovered
+
+conditions:
+  # An unavailable sensor during a reload is not an emergency. Note this does
+  # NOT suppress a genuinely missing container: if Diun is removed entirely,
+  # Portainer stops reporting it and the entity goes unavailable permanently —
+  # which this condition would hide. That is an accepted blind spot, and the
+  # reason the container is also in the Portainer view on the dashboard.
+  - condition: not
+    conditions:
+      - condition: state
+        entity_id: sensor.diun_state
+        state:
+          - unknown
+          - unavailable
+
+actions:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: stopped
+        sequence:
+          - action: notify.persistent_notification
+            data:
+              title: '📦 Diun is not running'
+              message: >-
+                Diun on jack-sparrow reads
+                '{{ states('sensor.diun_state') }}'. Image update alerts are
+                NOT being generated — pinned images can go stale, including
+                NPM, without anything saying so.
+
+                Check it:
+
+                  sudo docker logs diun
+
+                While it is down, re-check pins by hand when touching a
+                container.
+          - choose:
+              - conditions:
+                  - condition: state
+                    entity_id: input_boolean.poat_mute
+                    state: 'off'
+                sequence:
+                  - action: notify.mobile_app_poat_s_iphone_14_pro_max
+                    data:
+                      title: '📦 Diun is not running'
+                      message: >-
+                        Diun reads '{{ states('sensor.diun_state') }}'.
+                        Image update alerts are off.
+                      data:
+                        tag: diun_state
+                        url: /jack-sparrow/containers
+                        push:
+                          sound:
+                            name: 'default'
+
+      - conditions:
+          - condition: trigger
+            id: recovered
+        sequence:
+          - action: notify.persistent_notification
+            data:
+              title: '✅ Diun running again'
+              message: >-
+                Image update notifications are being generated again.
+
+                ⚠️ Diun does not backfill. Anything that was published while it
+                was down is now part of its baseline and will never be reported
+                as new — check the pins by hand once:
+                scrutiny, uptime-kuma, portainer, npm, dozzle.

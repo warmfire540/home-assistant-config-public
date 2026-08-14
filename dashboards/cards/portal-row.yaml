@@ -22,27 +22,51 @@
 # depth has to have its path adjusted, and the failure is a hard config error
 # at reload rather than a missing card — which is the good kind.
 #
-# ⚠️ ONE CARD, NOT A LIST OF FIVE. `!include` substitutes a single YAML node,
+# ⚠️ ONE CARD, NOT A LIST OF SIX. `!include` substitutes a single YAML node,
 # so a file containing a list of cards would be inserted as ONE list item that
-# happens to be a list, and Lovelace rejects it. Hence the wrapper `grid`.
+# happens to be a list, and Lovelace rejects it. Hence the wrapper card.
 # That is also why the wrapper carries `grid_options: columns: full` — without
 # it a card in a sections view claims half the section's 12-column grid, and
 # this row would pack itself into the left half of the page.
 #
-# ⚠️ THE WRAPPER GRID DOES NOT REFLOW. `columns: 5` is five across at every
-# width, including a phone. Was 4 until NPM joined the row on 2026-08-14;
-# five-up is tighter but keeps one row, and 4 would have left a single orphan
-# button wrapping onto a second line. If five ever reads as cramped the knob
-# is here — drop to 3 for a 3+2 block and every page follows. Do not fix it by
-# shrinking the font in templates/portal_button.yaml, which trades a legible
-# subtitle for a layout problem that belongs in this file.
+###############################################################
+# WHY THIS IS NOT A `type: grid` ANY MORE — changed 2026-08-14
+###############################################################
+#
+# `type: grid` has no breakpoints. `columns: 5` was five across at every width,
+# including a phone, which is how this row became a strip of unreadable
+# ~55px-wide buttons in a hand — the subtitle that is the button's whole job
+# ellipsised to nothing. HA's grid card cannot reflow, and `layout-card` (which
+# can) is not installed and is not worth a new HACS dependency for one row.
+#
+# So the wrapper is a `custom:button-card` using the `portal_row` template.
+# A button-card lays its `custom_fields` out on its own `#states` CSS grid,
+# and because one element owns both the tracks and the children, that grid
+# can carry real breakpoints. See templates/portal_row.yaml — the column
+# counts live there:
+#
+#     ≥1000px   6 across, one row
+#     600–999   3 across, 2 rows
+#     <600px    2 across, 3 rows
+#
+# ⚠️ THE COLUMN KNOB IS NOW IN templates/portal_row.yaml, NOT HERE. An earlier
+# pass at this tried to set it from `portal_button`'s own `extra_styles`; that
+# cannot work. A child's `:host` is its own element in its own shadow root, so
+# a custom property set there is invisible to the parent that positions it.
+# The grid and the breakpoints have to live on the same element.
+#
+# ⚠️ DISPLAY ORDER IS KEY ORDER. The fields auto-place into the grid, so
+# `field01` is first on the page and re-ordering these blocks re-orders the
+# row — the numbers are not decorative. Adding a seventh tool means adding
+# `field07` to BOTH files; `portal_row` has to give it a cell or it renders
+# nowhere at all, silently.
 #
 # ORDER: the box first, then its tools alphabetically.
 #
 # UGOS is the NAS itself and everything else runs on it, so it leads. Then
-# NPM, Portainer, Scrutiny, Uptime Kuma. An explicit rule rather than a habit,
-# because the previous order was "whatever existed when the page was written"
-# and that is how the pages diverged in the first place.
+# Dozzle, NPM, Portainer, Scrutiny, Uptime Kuma. An explicit rule rather than a
+# habit, because the previous order was "whatever existed when the page was
+# written" and that is how the pages diverged in the first place.
 #
 ###############################################################
 # HOSTNAMES, NOT IPs — changed 2026-08-14, and what it costs
@@ -81,68 +105,94 @@
 # already required by the UGREEN HA integration, which fails with a `400`
 # when it is on — one switch, two things depending on it.
 #
-# Uses: templates/portal_button.yaml, which BOTH dashboards must load via
+# Uses: templates/portal_row.yaml and templates/portal_button.yaml, which BOTH
+# dashboards must load via
 # `button_card_templates: !include_dir_merge_named templates`. A dashboard
 # that includes this row without that block renders cards reading
 # "Custom element doesn't exist" — the template is not found, not the card.
 #####
 
-type: grid
-square: false
-columns: 5
+type: custom:button-card
+template: portal_row
 grid_options:
   columns: full
   rows: auto
-cards:
-  - type: custom:button-card
-    template: portal_button
-    name: UGOS
-    icon: mdi:nas
-    variables:
-      url: https://ugos.home.masterscrib.net
-      subtitle: ugos.home
-      accent: var(--primary-color)
+custom_fields:
+  field01:
+    card:
+      type: custom:button-card
+      template: portal_button
+      name: UGOS
+      icon: mdi:nas
+      variables:
+        url: https://ugos.home.masterscrib.net
+        subtitle: ugos.home
+        accent: var(--primary-color)
+
+  field02:
+    card:
+      type: custom:button-card
+      template: portal_button
+      name: Dozzle
+      icon: mdi:text-box-search
+      variables:
+        url: https://dozzle.home.masterscrib.net
+        subtitle: dozzle.home
+        # Container *logs*, next to Portainer's container *control*.
+        # Deliberately not another blue: `--info-color` is Portainer's and the
+        # two sit side by side in the alphabetical order, which is exactly the
+        # collision that pushed Scrutiny off `--info-color` when Portainer
+        # arrived. Quoted for the `#` — see the note on Portainer below.
+        accent: 'var(--error-color, #e5573f)'
 
   # The odd one out, and intentionally so — see the recovery-path note above.
-  - type: custom:button-card
-    template: portal_button
-    name: NPM
-    icon: mdi:shield-key
-    variables:
-      url: http://192.168.5.8:81
-      subtitle: 192.168.5.8:81
-      accent: 'var(--warning-color, #ff9800)'
+  field03:
+    card:
+      type: custom:button-card
+      template: portal_button
+      name: NPM
+      icon: mdi:shield-key
+      variables:
+        url: http://192.168.5.8:81
+        subtitle: 192.168.5.8:81
+        accent: 'var(--warning-color, #ff9800)'
 
-  - type: custom:button-card
-    template: portal_button
-    name: Portainer
-    icon: mdi:docker
-    variables:
-      url: https://portainer.home.masterscrib.net
-      subtitle: portainer.home
-      # Quoted: an unquoted `#` starts a YAML comment, so the bare form
-      # parses as `var(--info-color,` and silently drops the fallback.
-      accent: 'var(--info-color, #039be5)'
+  field04:
+    card:
+      type: custom:button-card
+      template: portal_button
+      name: Portainer
+      icon: mdi:docker
+      variables:
+        url: https://portainer.home.masterscrib.net
+        subtitle: portainer.home
+        # Quoted: an unquoted `#` starts a YAML comment, so the bare form
+        # parses as `var(--info-color,` and silently drops the fallback.
+        accent: 'var(--info-color, #039be5)'
 
-  - type: custom:button-card
-    template: portal_button
-    name: Scrutiny
-    icon: mdi:harddisk
-    variables:
-      url: https://scrutiny.home.masterscrib.net
-      subtitle: scrutiny.home
-      # Scrutiny held `--info-color` until Portainer joined the row and the
-      # two blues became indistinguishable at this size. `--accent-color` is
-      # the only remaining theme var that is reliably distinct from primary,
-      # info and success; the fallback is set because several themes leave it
-      # equal to `--primary-color`, which would undo the whole point.
-      accent: 'var(--accent-color, #7e57c2)'
+  field05:
+    card:
+      type: custom:button-card
+      template: portal_button
+      name: Scrutiny
+      icon: mdi:harddisk
+      variables:
+        url: https://scrutiny.home.masterscrib.net
+        subtitle: scrutiny.home
+        # Scrutiny held `--info-color` until Portainer joined the row and the
+        # two blues became indistinguishable at this size. `--accent-color` is
+        # the only remaining theme var that is reliably distinct from primary,
+        # info and success; the fallback is set because several themes leave it
+        # equal to `--primary-color`, which would undo the whole point.
+        accent: 'var(--accent-color, #7e57c2)'
 
-  - type: custom:button-card
-    template: portal_button
-    name: Uptime Kuma
-    icon: mdi:lan-check
-    variables:
-      url: https://kuma.home.masterscrib.net
-      subtitle: kuma.home
-      accent: 'var(--success-color, #0da035)'
+  field06:
+    card:
+      type: custom:button-card
+      template: portal_button
+      name: Uptime Kuma
+      icon: mdi:lan-check
+      variables:
+        url: https://kuma.home.masterscrib.net
+        subtitle: kuma.home
+        accent: 'var(--success-color, #0da035)'

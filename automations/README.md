@@ -19,6 +19,16 @@ Contains core system automations focusing on:
 
 For detailed information about the system automations, see the README in the ['systems/'](systems/) directory.
 
+### 📁 lab/
+
+Home lab infrastructure — the NAS (`jack-sparrow`), the Pis, the containers and
+the network. Drive health, certificate expiry, container liveness, uptime
+monitoring.
+
+Everything in there follows one rule: it exists because **the failure it
+detects is otherwise silent**. See the README in the ['lab/'](lab/) directory
+for the full table and the house patterns.
+
 ## Adding New Automations
 
 When adding new automations to this directory:

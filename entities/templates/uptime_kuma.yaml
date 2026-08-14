@@ -88,9 +88,24 @@
       # than a confident "OK" derived from an empty list. This is the failure
       # mode that matters here: the monitoring being down looks exactly like
       # nothing being wrong.
+      # ⚠️ EXISTING IS NOT REPORTING. This used to test only that status
+      # entities EXIST, which stays true even when every one of them reads
+      # `unavailable` because the integration has lost the Kuma container.
+      #
+      # On 2026-08-14 that produced the second silent-green of the day: all 18
+      # entities unavailable, so nothing was literally `down`, so `down_count`
+      # was 0, so the board rendered "✅ All 18 monitors up" over a monitoring
+      # system reporting nothing at all. Worse than the first one — the count
+      # was RIGHT, which made it look verified.
+      #
+      # So the test is that at least one monitor returns a real verdict. An
+      # integration that cannot reach Kuma now makes this sensor unavailable,
+      # which the card already renders as "not reporting".
       availability: >
-        {{ integration_entities('uptime_kuma')
-           | select('search', '_status$') | list | count > 0 }}
+        {{ expand(integration_entities('uptime_kuma'))
+           | selectattr('entity_id', 'search', '_status$')
+           | selectattr('state', 'in', ['up', 'down', 'pending'])
+           | list | count > 0 }}
       state: >
         {% set ns = namespace(bad=0) %}
         {% for e in integration_entities('uptime_kuma')
@@ -102,7 +117,13 @@
             {% set ns.bad = ns.bad + 1 %}
           {% endif %}
         {% endfor %}
-        {{ 'Problem' if ns.bad > 0 else 'OK' }}
+        {# Unavailable is not up. Counted separately because every loop above
+           ignores it by construction — see `unavailable_count` below. #}
+        {% set stale = expand(integration_entities('uptime_kuma'))
+             | selectattr('entity_id', 'search', '_status$')
+             | selectattr('state', 'in', ['unknown', 'unavailable'])
+             | list | count %}
+        {{ 'Problem' if (ns.bad > 0 or stale > 0) else 'OK' }}
       attributes:
         # Joined string, not a raw list repr — this drops straight into the
         # notification in automations/lab/uptime_kuma_monitor_down.yaml and
@@ -145,6 +166,21 @@
             {% endif %}
           {% endfor %}
           {{ ns.n }}
+        # ⚠️ NOT THE SAME AS `down_count`, AND THE MORE DANGEROUS NUMBER.
+        # A monitor reading `unavailable` is not up and not down — HA has no
+        # verdict for it, because the integration could not reach Kuma. Every
+        # other count here ignores those by construction, so without this one
+        # a completely dead integration reads as a perfectly healthy lab.
+        #
+        # Groups are deliberately NOT filtered out of this count: when the
+        # integration is gone they are unavailable too, and the `_monitor_type`
+        # sensor used to identify them is unavailable along with them, so
+        # there is nothing left to filter on.
+        unavailable_count: >
+          {{ expand(integration_entities('uptime_kuma'))
+             | selectattr('entity_id', 'search', '_status$')
+             | selectattr('state', 'in', ['unknown', 'unavailable'])
+             | list | count }}
         # Sanity check for the card. Thirteen leaf monitors as built on
         # 2026-08-13. If this drops, a monitor was deleted or paused — which
         # the Problem rollup above cannot see, because a monitor that is gone

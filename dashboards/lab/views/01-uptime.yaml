@@ -127,10 +127,11 @@ sections:
         icon: mdi:lan-check
 
       # ---- Portals ----
-      # One shared card: dashboards/cards/portal-row.yaml. Four buttons, the
-      # same four in the same order with the same look on every page of every
-      # dashboard. Was three hand-maintained copies plus a divergent core-tile
-      # version on the lab board until 2026-08-13.
+      # One shared card: dashboards/cards/portal-row.yaml. The same tools in
+      # the same order with the same look on every page of every dashboard,
+      # and it reflows to 3- or 2-up on narrow screens. Was three
+      # hand-maintained copies plus a divergent core-tile version on the lab
+      # board until 2026-08-13.
       #
       # `!include` resolves relative to THIS file, hence ../../ from
       # dashboards/<dash>/views/. Hosts, ports, order, colours and the
@@ -164,10 +165,24 @@ sections:
              that can render green from an empty set will eventually render
              green from a broken set. Fixed by a `Reload Template Entities`;
              kept visible by this line. #}
-          {% if states(s) in ['unknown', 'unavailable'] or total == 0 %}
+          {% set stale = state_attr(s, 'unavailable_count') | int(0) %}
+          {% if states(s) in ['unknown', 'unavailable'] or total == 0 or stale > 0 %}
           ## ⚠️ Uptime Kuma is not reporting
 
-          {% if total == 0 and states(s) not in ['unknown', 'unavailable'] %}
+          {% if stale > 0 %}
+          **{{ stale }} of {{ total }} monitors are `unavailable`** — not up,
+          not down, no verdict at all. HA cannot reach the Kuma container.
+
+          Since 2026-08-14 that path runs
+          `HA → Pi-hole → NPM → kuma.home.masterscrib.net`, so check in that
+          order: does the name still resolve
+          (`dig +short kuma.home.masterscrib.net @192.168.4.127`), is NPM up
+          (<http://192.168.5.8:81>), is the container up
+          (<http://192.168.5.8:3001>)?
+
+          The Kuma monitors themselves all target IP:port and are unaffected —
+          which is exactly why they were left that way.
+          {% elif total == 0 and states(s) not in ['unknown', 'unavailable'] %}
           The rollup is reporting **zero monitors**, which is not the same as
           everything being up. Usually a stale template listener after an
           integration reload — try Developer Tools → YAML → **Reload Template
@@ -237,6 +252,19 @@ sections:
             vertical: true
             color: grey
             state_content: monitor_count
+
+          # Not decoration either, and not a duplicate of the tile above.
+          # `Monitors reporting` counts what HA KNOWS ABOUT; this counts how
+          # many of those have no verdict. The pair is the whole lesson of
+          # 2026-08-14: the first number was correct and reassuring at the
+          # exact moment the second one was 18.
+          - type: tile
+            entity: sensor.lab_availability
+            name: No verdict
+            icon: mdi:help-network
+            vertical: true
+            color: grey
+            state_content: unavailable_count
 
       ####################################################################
       # CERTIFICATE — the NPM renewal watchdog
