@@ -22,48 +22,74 @@
 # depth has to have its path adjusted, and the failure is a hard config error
 # at reload rather than a missing card — which is the good kind.
 #
-# ⚠️ ONE CARD, NOT A LIST OF FOUR. `!include` substitutes a single YAML node,
-# so a file containing a list of four cards would be inserted as ONE list item
-# that happens to be a list, and Lovelace rejects it. Hence the wrapper `grid`.
+# ⚠️ ONE CARD, NOT A LIST OF FIVE. `!include` substitutes a single YAML node,
+# so a file containing a list of cards would be inserted as ONE list item that
+# happens to be a list, and Lovelace rejects it. Hence the wrapper `grid`.
 # That is also why the wrapper carries `grid_options: columns: full` — without
 # it a card in a sections view claims half the section's 12-column grid, and
 # this row would pack itself into the left half of the page.
 #
-# ⚠️ THE WRAPPER GRID DOES NOT REFLOW. `columns: 4` is four across at every
-# width, including a phone. That is the one knob worth knowing about on this
-# file: drop it to 2 for a 2×2 block if four-up ever reads as cramped, and
-# every page follows. Do not fix it by shrinking the font in
-# templates/portal_button.yaml — that trades a legible subtitle for a layout
-# problem that belongs here.
+# ⚠️ THE WRAPPER GRID DOES NOT REFLOW. `columns: 5` is five across at every
+# width, including a phone. Was 4 until NPM joined the row on 2026-08-14;
+# five-up is tighter but keeps one row, and 4 would have left a single orphan
+# button wrapping onto a second line. If five ever reads as cramped the knob
+# is here — drop to 3 for a 3+2 block and every page follows. Do not fix it by
+# shrinking the font in templates/portal_button.yaml, which trades a legible
+# subtitle for a layout problem that belongs in this file.
 #
 # ORDER: the box first, then its tools alphabetically.
 #
 # UGOS is the NAS itself and everything else runs on it, so it leads. Then
-# Portainer, Scrutiny, Uptime Kuma. An explicit rule rather than a habit,
+# NPM, Portainer, Scrutiny, Uptime Kuma. An explicit rule rather than a habit,
 # because the previous order was "whatever existed when the page was written"
 # and that is how the pages diverged in the first place.
 #
-# HOSTS ARE HARDCODED, and there is no way around it: the UGREEN integration
-# is UI-configured so its host is not in this repo, Scrutiny has no HA config
-# entry at all, Portainer and Kuma both keep their URLs in the config entry
-# rather than exposing them as state. All four are the same DHCP reservation
-# on jack-sparrow — and now, if that address moves, it moves in ONE file
-# instead of four.
+###############################################################
+# HOSTNAMES, NOT IPs — changed 2026-08-14, and what it costs
+###############################################################
 #
-# ⚠️ PORTAINER IS https AND ON 9444, not the 9443 Portainer defaults to —
-# UGOS serves its own HTTPS UI on 9443, so the compose file remaps it. The
-# certificate is self-signed; the browser warning on first visit is expected
-# and is not a broken link.
+# Every link below except one now goes through Nginx Proxy Manager over real
+# TLS, on the `*.home.masterscrib.net` wildcard. The IP:port forms still work
+# and are recorded in the **servers** repo (hosts/jack-sparrow/HOST.md) — NPM
+# is additive, nothing was unpublished.
+#
+# ⚠️ THIS ROW NOW HAS TWO DEPENDENCIES IT DID NOT HAVE BEFORE. A hostname
+# resolves only if Pi-hole is up, and it answers only if NPM is up. The old
+# IP links depended on neither. So when poat-hole dies, every button on this
+# row dies with it — while the services themselves are all perfectly fine.
+#
+# That trade is accepted deliberately, for two reasons. The gain is real:
+# these are admin UIs whose passwords were previously crossing the LAN in
+# cleartext, on a network that also carries four Amcrest cameras. And the loss
+# is contained, because the two things that would notice the outage were
+# deliberately NOT moved:
+#
+#   - every Uptime Kuma monitor still targets IP:port, so monitoring survives
+#     a Pi-hole or NPM failure and reports it correctly
+#   - the NPM button below is still an IP, on purpose
+#
+# ⚠️ NPM'S OWN BUTTON IS DELIBERATELY http://192.168.5.8:81 AND MUST STAY
+# THAT WAY. It is the recovery path. If a proxy host, the certificate or the
+# nginx config breaks, `npm.home.masterscrib.net` breaks with it — and this
+# button is how you get back in to fix the thing that broke everything else.
+# A recovery link that depends on the system it recovers is not a recovery
+# link. Its subtitle shows the raw address for the same reason: when you need
+# it, you may be typing it into a phone.
+#
+# ⚠️ UGOS's "HTTP to HTTPS redirect" MUST STAY OFF or its button bounces the
+# browser out of the proxy to https://192.168.5.8:9443. That setting is also
+# already required by the UGREEN HA integration, which fails with a `400`
+# when it is on — one switch, two things depending on it.
 #
 # Uses: templates/portal_button.yaml, which BOTH dashboards must load via
 # `button_card_templates: !include_dir_merge_named templates`. A dashboard
-# that includes this row without that block renders four cards reading
+# that includes this row without that block renders cards reading
 # "Custom element doesn't exist" — the template is not found, not the card.
 #####
 
 type: grid
 square: false
-columns: 4
+columns: 5
 grid_options:
   columns: full
   rows: auto
@@ -73,17 +99,27 @@ cards:
     name: UGOS
     icon: mdi:nas
     variables:
-      url: http://192.168.5.8:9999
-      subtitle: 192.168.5.8:9999
+      url: https://ugos.home.masterscrib.net
+      subtitle: ugos.home
       accent: var(--primary-color)
+
+  # The odd one out, and intentionally so — see the recovery-path note above.
+  - type: custom:button-card
+    template: portal_button
+    name: NPM
+    icon: mdi:shield-key
+    variables:
+      url: http://192.168.5.8:81
+      subtitle: 192.168.5.8:81
+      accent: 'var(--warning-color, #ff9800)'
 
   - type: custom:button-card
     template: portal_button
     name: Portainer
     icon: mdi:docker
     variables:
-      url: https://192.168.5.8:9444
-      subtitle: 192.168.5.8:9444
+      url: https://portainer.home.masterscrib.net
+      subtitle: portainer.home
       # Quoted: an unquoted `#` starts a YAML comment, so the bare form
       # parses as `var(--info-color,` and silently drops the fallback.
       accent: 'var(--info-color, #039be5)'
@@ -93,8 +129,8 @@ cards:
     name: Scrutiny
     icon: mdi:harddisk
     variables:
-      url: http://192.168.5.8:8080
-      subtitle: 192.168.5.8:8080
+      url: https://scrutiny.home.masterscrib.net
+      subtitle: scrutiny.home
       # Scrutiny held `--info-color` until Portainer joined the row and the
       # two blues became indistinguishable at this size. `--accent-color` is
       # the only remaining theme var that is reliably distinct from primary,
@@ -107,6 +143,6 @@ cards:
     name: Uptime Kuma
     icon: mdi:lan-check
     variables:
-      url: http://192.168.5.8:3001
-      subtitle: 192.168.5.8:3001
+      url: https://kuma.home.masterscrib.net
+      subtitle: kuma.home
       accent: 'var(--success-color, #0da035)'

@@ -149,12 +149,34 @@ sections:
           {% set s = 'sensor.lab_availability' %}
           {% set down = state_attr(s, 'down_count') | int(0) %}
           {% set total = state_attr(s, 'monitor_count') | int(0) %}
-          {% if states(s) in ['unknown', 'unavailable'] %}
+          {# ⚠️ `total == 0` IS PART OF THE UNHEALTHY TEST, NOT AN EDGE CASE.
+             This guard used to check the state alone, and on 2026-08-14 it
+             rendered a confident "✅ All 0 monitors up" for half an hour
+             while nothing whatsoever was being monitored.
+
+             The cause was a stale template listener after the Kuma
+             integration was reconfigured onto its new HTTPS hostname: the
+             sensor kept its last state (`OK`) but its attributes went empty.
+             So the state read healthy, `monitor_count` read None, `int(0)`
+             turned that into 0, and `down == 0` was perfectly true.
+
+             A rollup over zero monitors is never a healthy answer. Anything
+             that can render green from an empty set will eventually render
+             green from a broken set. Fixed by a `Reload Template Entities`;
+             kept visible by this line. #}
+          {% if states(s) in ['unknown', 'unavailable'] or total == 0 %}
           ## ⚠️ Uptime Kuma is not reporting
 
+          {% if total == 0 and states(s) not in ['unknown', 'unavailable'] %}
+          The rollup is reporting **zero monitors**, which is not the same as
+          everything being up. Usually a stale template listener after an
+          integration reload — try Developer Tools → YAML → **Reload Template
+          Entities** first.
+          {% else %}
           The integration is unavailable, which is **not** the same as
           everything being up. Check the container on jack-sparrow at
           <http://192.168.5.8:3001>.
+          {% endif %}
           {% elif down == 0 %}
           ## ✅ All {{ total }} monitors up
           {% else %}
@@ -215,6 +237,78 @@ sections:
             vertical: true
             color: grey
             state_content: monitor_count
+
+      ####################################################################
+      # CERTIFICATE — the NPM renewal watchdog
+      ####################################################################
+      # There is no Home Assistant integration for Nginx Proxy Manager, core
+      # or HACS, so this is what "NPM is integrated into HA" actually means.
+      # It watches the failure that costs something: certbot renews the
+      # wildcard unattended over DNS-01, so a renewal that has stopped
+      # working is completely silent until every hostname in the house throws
+      # a browser warning on the same morning.
+      #
+      # Lives on the LAB board rather than under /jack-sparrow/ for the same
+      # reason the rest of this dashboard does — only the container happens to
+      # run on the NAS. The certificate is what the whole lab is reached
+      # through.
+      #
+      # ⚠️ THE SENSOR IS DAYS, THE INTEGRATION IS A TIMESTAMP. `cert_expiry`
+      # reports a UTC datetime and the frontend renders it as "in 47 days",
+      # which is formatting, not state — a numeric comparison against the raw
+      # entity does not work. entities/templates/cert_expiry.yaml does the
+      # `as_datetime()` conversion once so nothing here has to.
+      #
+      # Healthy is 60-90 and sawtoothing. A line that stops resetting is a
+      # broken renewal, visible months before the outage.
+      - type: grid
+        square: false
+        columns: 2
+        grid_options:
+          columns: full
+          rows: auto
+        cards:
+          - type: tile
+            entity: sensor.lab_certificate_expiry
+            name: Certificate
+            icon: mdi:certificate
+            vertical: true
+
+          # Same role as "Monitors reporting" above: a watchdog that stopped
+          # watching looks exactly like a certificate that is fine. If this
+          # reads 0 the alert in automations/lab/cert_expiry.yaml can never
+          # fire, and nothing else would tell you.
+          - type: tile
+            entity: sensor.lab_certificate_expiry
+            name: Certs watched
+            icon: mdi:counter
+            vertical: true
+            color: grey
+            state_content: cert_count
+
+      # Only when the handshake is actually failing. `is_valid` false is a
+      # different and more urgent failure than the countdown — it can happen
+      # with 60 days still on the clock, and the likeliest cause is not the
+      # certificate at all but NPM being down or the Pi-hole wildcard gone.
+      - type: markdown
+        grid_options:
+          columns: full
+          rows: auto
+        visibility:
+          - condition: numeric_state
+            entity: sensor.lab_certificate_expiry
+            attribute: invalid_count
+            above: 0
+        content: |
+          ## 🔴 TLS handshake failing
+
+          {{ state_attr('sensor.lab_certificate_expiry', 'invalid') }}
+
+          Days remaining reads
+          **{{ states('sensor.lab_certificate_expiry') }}**, so this is
+          probably not the certificate — check NPM at
+          <http://192.168.5.8:81> and that the Pi-hole wildcard still
+          resolves.
 
       # Its own card rather than a row in the block above, because
       # auto-entities is a card and cannot be nested in an `entities:` list.

@@ -63,9 +63,8 @@ portal_button:
     [[[
       return `<span style="opacity:0.8">${variables.subtitle}</span>
               <ha-icon icon="mdi:open-in-new"
-                       style="--mdc-icon-size:15px;
-                              vertical-align:-3px;
-                              margin-left:5px;
+                       style="--mdc-icon-size:20px;
+                              margin-left:15px;
                               opacity:0.65"></ha-icon>`;
     ]]]
   tap_action:

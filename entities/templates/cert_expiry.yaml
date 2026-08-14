@@ -1,0 +1,149 @@
+---
+#####
+# Certificate expiry — the NPM renewal watchdog
+#
+# There is NO Home Assistant integration for Nginx Proxy Manager, core or
+# HACS. Nothing enumerates proxy hosts into HA and nothing ever will. So the
+# question this file answers is not "is NPM up" — Uptime Kuma answers that,
+# and you would notice anyway the moment a page stopped loading. It is the
+# quieter one:
+#
+#   Is the wildcard certificate still renewing?
+#
+# That is the failure that costs something. Certbot renews inside the NPM
+# container over DNS-01 with no interaction, which means a renewal that has
+# stopped working produces no signal at all — until the day every service in
+# the house goes red simultaneously, roughly 60 days after the Cloudflare
+# token was revoked or the DNS plugin broke on an upgrade. NPM 2.15.0 shipped
+# an explicit warning that DNS plugins "may not work as expected" across that
+# upgrade, so this is a live risk, not a theoretical one.
+#
+# HA's **core** `cert_expiry` integration is the whole mechanism. Point it at
+# any proxied hostname on 443 and it reports the cert NPM is actually serving,
+# which is the thing that matters — not what the NPM UI claims it holds.
+#
+# ⚠️ THE STATE IS A UTC DATETIME, NOT A DAY COUNT. The frontend renders it as
+# "in 47 days" and that formatting is a lie you can build a bug on: a numeric
+# comparison against the raw state does not work. Upstream is explicit —
+# convert with `as_datetime()` and subtract `now()`. That conversion is done
+# once here so nothing downstream has to remember.
+#
+# WHY THE ENTITY LIST IS DERIVED, NOT HARDCODED
+#
+# Same reasoning as uptime_kuma.yaml and scrutiny.yaml, with one extra payoff:
+# `cert_expiry` slugs its entity IDs from the hostname
+# (`sensor.cert_expiry_scrutiny_home_masterscrib_net`), which is long, easy to
+# mistype, and would change if the domain ever moves.
+# `integration_entities('cert_expiry')` sidesteps that entirely — and it means
+# adding a second host to the integration needs no edit here.
+#
+# That matters more than usual on this repo's track record. A predicted entity
+# ID that matches nothing does NOT error; it renders healthy forever. Deriving
+# the list is what makes that class of mistake unavailable rather than merely
+# unlikely.
+#
+# ⚠️ ONE CERT, MANY HOSTS. Every proxy host shares the one wildcard, so
+# monitoring a single hostname is sufficient today and the `min` below is
+# defensive rather than load-bearing. Keep it: the day a second certificate
+# exists (a bought cert, a second domain, a split-off service) this file needs
+# no change, and the alert covers whichever expires first.
+#
+# Consumed by:
+#   - automations/lab/cert_expiry.yaml
+#   - dashboards/lab/views/01-uptime.yaml
+#
+# Setup, the DNS-01 flow and the Cloudflare token live in the **servers** repo
+# at hosts/jack-sparrow/npm-runbook.md.
+#
+# Upstream: https://www.home-assistant.io/integrations/cert_expiry/
+#####
+
+- sensor:
+    #################
+    # DAYS UNTIL THE SOONEST CERTIFICATE EXPIRES
+    #################
+    # Let's Encrypt issues for 90 days and certbot attempts renewal at 30 days
+    # remaining. So this number lives at 60-90 in a healthy lab and only walks
+    # below 30 if renewal has actually failed. That is what makes it a good
+    # alert signal rather than a countdown you learn to ignore.
+    #
+    # `device_class: duration` + `state_class: measurement` so the recorder
+    # keeps long-term statistics. The sawtooth — down to 30, snap back to 90 —
+    # IS the evidence renewal is working. A line that stops resetting is the
+    # picture of a broken renewal, visible months before the outage.
+    - name: Lab Certificate Expiry
+      unique_id: 6d4b21ae-93c7-4f18-8a5c-e02b7f419dd6
+      icon: >
+        {{ 'mdi:certificate-outline' if this.state | int(999) > 21
+           else 'mdi:certificate-off' }}
+      unit_of_measurement: d
+      device_class: duration
+      state_class: measurement
+      # Unavailable if the integration is gone, rather than a confident large
+      # number derived from an empty list. `min()` also throws on an empty
+      # list, so this guard is doing double duty.
+      #
+      # Entities are filtered on having a PARSEABLE state, not just on
+      # existing: cert_expiry reports `unknown` when it cannot reach the host,
+      # and `as_datetime('unknown')` returns None, which poisons the min().
+      availability: >
+        {{ expand(integration_entities('cert_expiry'))
+           | rejectattr('state', 'in', ['unknown', 'unavailable'])
+           | list | count > 0 }}
+      state: >
+        {% set ns = namespace(days=[]) %}
+        {% for s in expand(integration_entities('cert_expiry'))
+             | rejectattr('state', 'in', ['unknown', 'unavailable']) %}
+          {% set d = as_datetime(s.state) %}
+          {% if d is not none %}
+            {% set ns.days = ns.days + [(d - now()).days] %}
+          {% endif %}
+        {% endfor %}
+        {{ ns.days | min if ns.days else None }}
+      attributes:
+        # Which host, so a low number names the certificate without a trip to
+        # the integration page.
+        soonest: >
+          {% set ns = namespace(name='', days=99999) %}
+          {% for s in expand(integration_entities('cert_expiry'))
+               | rejectattr('state', 'in', ['unknown', 'unavailable']) %}
+            {% set d = as_datetime(s.state) %}
+            {% if d is not none and (d - now()).days < ns.days %}
+              {% set ns.days = (d - now()).days %}
+              {% set ns.name = s.name | replace('Cert Expiry ', '') %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.name if ns.name else 'none reporting' }}
+        # ⚠️ A SEPARATE AND MORE URGENT FAILURE THAN THE COUNTDOWN.
+        #
+        # `is_valid` goes false when the handshake itself fails — expired,
+        # self-signed, hostname mismatch, or the host simply not answering on
+        # 443. That can happen with 60 days still on the clock, so the numeric
+        # alert below would never fire. Checked independently for that reason.
+        #
+        # The most likely real cause here is not the certificate at all: it is
+        # NPM down, or the Pi-hole wildcard gone, either of which breaks the
+        # handshake while the cert on disk stays perfectly valid.
+        invalid: >
+          {% set ns = namespace(bad=[]) %}
+          {% for s in expand(integration_entities('cert_expiry')) %}
+            {% if s.attributes.is_valid is defined
+                  and not s.attributes.is_valid %}
+              {% set ns.bad = ns.bad
+                   + [(s.name | replace('Cert Expiry ', ''))
+                      ~ ': ' ~ (s.attributes.error | default('handshake failed', true))] %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.bad | join(', ') if ns.bad else 'all valid' }}
+        invalid_count: >
+          {{ expand(integration_entities('cert_expiry'))
+             | selectattr('attributes.is_valid', 'defined')
+             | rejectattr('attributes.is_valid')
+             | list | count }}
+        # Sanity check, same role as `monitor_count` on lab_availability and
+        # `drive_count` on scrutiny_drive_health: if this drops to zero the
+        # watchdog is not watching, and a watchdog that stopped looks exactly
+        # like a certificate that is fine.
+        cert_count: >
+          {{ integration_entities('cert_expiry') | list | count }}
+        navigation_path: /home-lab/uptime
