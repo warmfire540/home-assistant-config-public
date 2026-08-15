@@ -20,9 +20,10 @@
 # Same reasoning as scrutiny.yaml: `integration_entities('uptime_kuma')`
 # returns whatever the config entry currently owns, so adding, renaming or
 # deleting a monitor in Kuma needs no edit here. That matters more than usual
-# because the monitor set is expected to move — the §2.4 push monitors do not
-# exist yet, `poat-share - SMB` gets dropped after the Phase 4 cutover, and
-# Portainer / Plex / Deluge go green as those hosts come back.
+# because the monitor set is expected to move — `poat-share - SMB` gets
+# dropped after the Phase 4 cutover, and Portainer / Plex / Deluge go green
+# as those hosts come back. Backup freshness is Healthchecks, not a Kuma
+# group.
 #
 # ⚠️ GROUP MONITORS ARE EXCLUDED, AND THIS IS THE WHOLE TRICK.
 #

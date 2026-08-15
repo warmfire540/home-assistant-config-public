@@ -77,8 +77,8 @@
 # set is NOT uniform across check types — only HTTP monitors get Monitored URL
 # and Certificate expiry, only port/ping/dns monitors get Monitored hostname,
 # and groups get neither. `| list` then a truth test on the list, never
-# `[0]` on a bare select(), or one push monitor takes out the whole card with
-# an index error. That is the single most common way to break this page.
+# `[0]` on a bare select(), or one new monitor type takes out the whole card
+# with an index error. That is the single most common way to break this page.
 #
 # WHY MUSHROOM TEMPLATE CARDS AND NOT `tile`
 #

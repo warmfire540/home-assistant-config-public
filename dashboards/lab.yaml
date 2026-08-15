@@ -18,9 +18,9 @@
 # board under jack-sparrow would put "is the internet up" behind a page named
 # after one host, and would have to move the day Kuma is migrated off it.
 #
-# The same reasoning applies to what comes next: the §2.4 backup-freshness
-# push monitors, and anything else that is about the lab rather than about one
-# box. This dashboard is the place for those.
+# Backup freshness is Healthchecks, not Kuma. When that board exists it is
+# lab-wide the same way this one is — the jobs span HA, Pi-hole, Plex and
+# the NAS, not one host. This dashboard stays the uptime board.
 #
 # THE `button_card_templates:` BLOCK — ADDED 2026-08-13, AND WHY
 #
@@ -53,9 +53,9 @@
 # `integration_entities('uptime_kuma')` at render time, so adding, renaming,
 # regrouping or deleting a monitor in Kuma changes the page with no edit here.
 # That is load-bearing, not tidiness — the monitor set is expected to move:
-# push monitors do not exist yet, `poat-share - SMB` gets dropped after the
-# Phase 4 cutover, and Portainer / Plex / Deluge go green as those hosts come
-# back.
+# `poat-share - SMB` gets dropped after the Phase 4 cutover, and Portainer /
+# Plex / Deluge go green as those hosts come back. Backup freshness does not
+# land here; that is Healthchecks.
 #
 # The two exceptions are named and explained in
 # entities/templates/uptime_kuma.yaml: `Internet` and `Gateway`, which back

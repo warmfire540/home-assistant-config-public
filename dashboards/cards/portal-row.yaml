@@ -39,34 +39,20 @@
 # ellipsised to nothing. HA's grid card cannot reflow, and `layout-card` (which
 # can) is not installed and is not worth a new HACS dependency for one row.
 #
-# So the wrapper is a `custom:button-card` using the `portal_row` template.
-# A button-card lays its `custom_fields` out on its own `#states` CSS grid,
-# and because one element owns both the tracks and the children, that grid
-# can carry real breakpoints. See templates/portal_row.yaml — the column
-# counts live there:
+# So the wrapper is a `custom:button-card` using the `portal_row` template,
+# which flex-wraps the buttons: as many per row as fit at ~140px each, 2-up
+# on a phone. See templates/portal_row.yaml — the sizing lives there, and
+# nothing in this file sets a column count any more.
 #
-#     ≥1000px   6 across, one row
-#     600–999   3 across, 2 rows
-#     <600px    2 across, 3 rows
-#
-# ⚠️ THE COLUMN KNOB IS NOW IN templates/portal_row.yaml, NOT HERE. An earlier
-# pass at this tried to set it from `portal_button`'s own `extra_styles`; that
-# cannot work. A child's `:host` is its own element in its own shadow root, so
-# a custom property set there is invisible to the parent that positions it.
-# The grid and the breakpoints have to live on the same element.
-#
-# ⚠️ DISPLAY ORDER IS KEY ORDER. The fields auto-place into the grid, so
-# `field01` is first on the page and re-ordering these blocks re-orders the
-# row — the numbers are not decorative. Adding a seventh tool means adding
-# `field07` to BOTH files; `portal_row` has to give it a cell or it renders
-# nowhere at all, silently.
+# Display order is the order of the blocks below — `portal_row` flex-wraps
+# them in document order, so the `fieldNN` numbers are just names. Adding a
+# tool means a block here plus a `fieldNN` entry in `portal_row`'s
+# `custom_fields` (it needs a cell, or button-card never renders it).
 #
 # ORDER: the box first, then its tools alphabetically.
 #
 # UGOS is the NAS itself and everything else runs on it, so it leads. Then
-# Dozzle, NPM, Portainer, Scrutiny, Uptime Kuma. An explicit rule rather than a
-# habit, because the previous order was "whatever existed when the page was
-# written" and that is how the pages diverged in the first place.
+# Deluge, Dozzle, Healthchecks, Kopia, NPM, Portainer, Scrutiny, Uptime Kuma.
 #
 ###############################################################
 # HOSTNAMES, NOT IPs — changed 2026-08-14, and what it costs
@@ -133,6 +119,20 @@ custom_fields:
     card:
       type: custom:button-card
       template: portal_button
+      name: Deluge
+      icon: mdi:download-network
+      variables:
+        url: https://deluge.home.masterscrib.net
+        subtitle: deluge.home
+        # Teal, not a theme var — the row already spent primary / error /
+        # warning / info / accent / success on the other six, and a second
+        # green next to Kuma would collide the same way two blues did.
+        accent: '#00897b'
+
+  field03:
+    card:
+      type: custom:button-card
+      template: portal_button
       name: Dozzle
       icon: mdi:text-box-search
       variables:
@@ -145,8 +145,32 @@ custom_fields:
         # arrived. Quoted for the `#` — see the note on Portainer below.
         accent: 'var(--error-color, #e5573f)'
 
+  field04:
+    card:
+      type: custom:button-card
+      template: portal_button
+      name: Healthchecks
+      icon: mdi:heart-pulse
+      variables:
+        url: https://healthchecks.home.masterscrib.net
+        subtitle: healthchecks.home
+        # Magenta — every theme var on this row is already spent, and a
+        # second red next to Dozzle would collide. Quoted for the `#`.
+        accent: '#c2185b'
+
+  field05:
+    card:
+      type: custom:button-card
+      template: portal_button
+      name: Kopia
+      icon: mdi:backup-restore
+      variables:
+        url: https://kopia.home.masterscrib.net
+        subtitle: kopia.home
+        accent: '#455a64'
+
   # The odd one out, and intentionally so — see the recovery-path note above.
-  field03:
+  field06:
     card:
       type: custom:button-card
       template: portal_button
@@ -157,7 +181,7 @@ custom_fields:
         subtitle: 192.168.5.8:81
         accent: 'var(--warning-color, #ff9800)'
 
-  field04:
+  field07:
     card:
       type: custom:button-card
       template: portal_button
@@ -170,7 +194,7 @@ custom_fields:
         # parses as `var(--info-color,` and silently drops the fallback.
         accent: 'var(--info-color, #039be5)'
 
-  field05:
+  field08:
     card:
       type: custom:button-card
       template: portal_button
@@ -186,7 +210,7 @@ custom_fields:
         # equal to `--primary-color`, which would undo the whole point.
         accent: 'var(--accent-color, #7e57c2)'
 
-  field06:
+  field09:
     card:
       type: custom:button-card
       template: portal_button

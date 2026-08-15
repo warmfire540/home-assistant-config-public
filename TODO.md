@@ -14,15 +14,14 @@ Working notes for streamlining dashboards, entities, backups, and log noise.
 - [ ] Confirm every important service has a last-backup sensor
 - [ ] Add alerts (and supporting entities) when backups go stale or missing
 - [ ] Make backup health visible on the dashboard, not just buried in entity lists
-- [ ] **Uptime Kuma push monitors for backup freshness** — the mechanism for
-      the two items above now exists but is not wired up. A push monitor
-      detects a thing that *didn't happen*, which is the shape of "the nightly
-      backup silently stopped running three weeks ago"; a last-backup sensor
-      only tells you the date if something is still writing one. Deferred by
-      decision on 2026-08-13 until the backup pass itself happens, since the
-      job set is about to change. Mechanism and the exact `curl` line are in
-      §2.4 of the servers repo's `hosts/jack-sparrow/uptime-kuma-runbook.md`.
-      The `Backups` group already exists in Kuma, paused and empty.
+- [ ] **Healthchecks for backup freshness** — replaces the retired Kuma
+      Backups group. A check detects a thing that *didn't happen*, which is
+      the shape of "the nightly backup silently stopped running three weeks
+      ago"; a last-backup sensor only tells you the date if something is
+      still writing one. Empty Healthchecks portal first; one check per job
+      during the per-container pass. Ping URL is
+      `http://192.168.5.8:8002/ping/<uuid>` (IP, not the hostname). Runbook:
+      servers repo `hosts/jack-sparrow/kopia-healthchecks-runbook.md`.
 
 ## Config reconciliation
 
@@ -37,6 +36,15 @@ Working notes for streamlining dashboards, entities, backups, and log noise.
 
 ## Integrations
 
+- [ ] ⏸️ **Deluge** (core, no HACS) —
+      https://www.home-assistant.io/integrations/deluge/
+      **Do not add yet.** Empty client on jack-sparrow is live; liveness is
+      already `sensor.deluge_state` via Portainer. This integration talks
+      to the daemon and is only worth it once there are torrents.
+      Trigger: jack-sparrow TODO → Deluge phase 1b, after Pool 1 path +
+      arr + cutover. Then: host `192.168.5.8`, port `58846` (daemon, not
+      WebUI, not the hostname). Auth from
+      `/volume2/docker/deluge/config/auth` on the NAS.
 - [ ] EcoFlow (BLE or Cloud... need to decide)
 - [x] ~~**Portainer** (core integration, no HACS) — Docker on jack-sparrow~~
       Added 2026-08-13, the same day the container was deployed. HA config is
@@ -145,3 +153,48 @@ Lab view, and at least one pair is not equivalent:
 
 - Existing backup sensors live in `entities/command_line/sensors/pi_backups.yaml` (HA, Pi-hole, Deluge, Plex).
 - Lab view: `ui_lovelace_minimalist/dashboard/views/mainviews/lab.yaml`
+
+## After poat-seedbox is decommissioned
+
+Do **not** start this while rpi1 still exists, even powered off. The Lab
+card, ping sensor and Kuma monitor are how you would notice it came back.
+Trigger: jack-sparrow Deluge has been the live seedbox long enough that the
+Pi will not be powered on again. Servers-side pointer:
+`servers/hosts/jack-sparrow/TODO.md` (gluetun / phase 1b).
+
+The NordVPN-on-the-Pi stack is replaced by gluetun on the NAS. These files
+are the old path (`nordlynx` in rpi_monitor attributes, ICMP ping, a backup
+tree on poat-share). They will page, go stale, or render a dead host forever
+if left.
+
+### Home Assistant — delete / stop referencing
+
+- [ ] `entities/templates/seedbox_vpn_on.yaml` — `sensor.seedbox_vpn_on`
+- [ ] `automations/lab/seedbox_vpn_off.yaml` and its row in
+      `automations/lab/README.md`
+- [ ] `customizations/entities/entities.yaml` — `sensor.seedbox_vpn_on` and
+      `binary_sensor.poat_seedbox_local`
+- [ ] `entities/templates/AGENTS.md` — `seedbox_vpn_on.yaml` row
+- [ ] `entities/templates/pi_statistics.yaml` — every
+      `sensor.poat_seedbox_rpi_monitor_poat_seedbox` block
+- [ ] `entities/command_line/sensors/pi_backups.yaml` — `sensor.deluge_last_backup`
+      (`/media/pi_backups/deluge-backup`). Replace only if the new container
+      has its own backup path; do not retarget this find at jack-sparrow
+      without checking the path exists.
+- [ ] `ui_lovelace_minimalist/dashboard/views/mainviews/lab.yaml` — the
+      `poat_seedbox` mqtt_control card (`sensor.deluge_last_backup`) and the
+      `sensor.poat_seedbox_rpi_monitor_poat_seedbox` row
+- [ ] Ping: `binary_sensor.poat_seedbox_local` config entry, plus the
+      commented line in `automations/sensors/ping_interval.yaml`
+- [ ] Drop `poat-seedbox` from the legacy-vs-Kuma table in this file once
+      the swap above is done
+
+### Kuma / servers repo — same window
+
+- [ ] Pause or delete monitor `poat-seedbox - Deluge` (`192.168.4.109:58846`)
+- [ ] Mark `servers/hosts/poat-seedbox/HOST.md` retired; leave discovery
+- [ ] Close `servers/TODO.md` "poat-seedbox — VPN resiliency & no-leak"
+      (superseded by gluetun; do not finish the Nord kill-switch work)
+- [ ] Retarget `servers/plex-automation-plan.md` ("Deluge stays on rpi1")
+- [ ] Update jack-sparrow `HOST.md` topology (poat-seedbox is no longer the
+      Deluge completer) and `servers/README.md` host table

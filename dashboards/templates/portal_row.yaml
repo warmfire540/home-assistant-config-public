@@ -3,7 +3,7 @@
 # portal_row — the responsive shell the portal buttons sit in
 #
 # Added 2026-08-14, when Dozzle made the row six wide and the phone layout
-# finally became indefensible.
+# finally became indefensible. Healthchecks + Kopia made it nine on 2026-08-14.
 #
 # WHY THIS EXISTS AT ALL
 #
@@ -15,43 +15,24 @@
 # does — is not installed in this config and is not worth a new HACS
 # dependency for one row.
 #
-# A `custom:button-card` lays its `custom_fields` out on its own `#states`
-# CSS grid. Because ONE element owns both the track definition and the
-# children, that grid can carry `@media` rules and actually reflow. That is
-# the whole trick.
+# A `custom:button-card` holds the buttons in `custom_fields`, and its
+# `#container` gets flex-wrapped by `extra_styles` below — one element owning
+# both the layout and the children, so it can actually reflow.
 #
-# ⚠️ THE BREAKPOINTS MUST LIVE ON THE PARENT, NOT THE BUTTONS. Setting
-# `--portal-cols` from `portal_button`'s own `extra_styles` looks equivalent
-# and cannot work: each button's `:host` is its own element in its own shadow
-# root, so a custom property declared there is invisible to the parent that
-# positions it, and there is no child-to-parent selector in CSS. The property
-# is declared here, on the element whose `grid-template-columns` reads it.
-#
-# ⚠️ `styles.grid` CANNOT HOLD AN `@media` BLOCK — it takes property/value
-# pairs only. `extra_styles` is injected as real CSS into this card's shadow
-# root, so the media queries go there and only the `var()` reference goes in
-# `styles.grid`. Splitting them is not a style choice; neither half works
-# alone.
+# ⚠️ THE LAYOUT MUST LIVE ON THE PARENT, NOT THE BUTTONS. Styling from
+# `portal_button`'s own `extra_styles` looks equivalent and cannot work: each
+# button's `:host` is its own element in its own shadow root, invisible to the
+# parent that positions it, and CSS has no child-to-parent selector.
 #
 # LAYOUT
 #
-#     ≥1000px   6 across, one row      (desktop / tablet landscape)
-#     600–999   3 across, 2 rows       (tablet portrait, split view)
-#     <600px    2 across, 3 rows       (phone)
+# Flex wrap, ~140px per button: as many per row as fit, the rest wrap. One
+# media query pins 2-up under 600px. No fixed column counts, so nothing here
+# needs touching when a tool is added or removed.
 #
-# Fixed counts per breakpoint rather than `repeat(auto-fit, minmax(...))`,
-# which is the obvious-looking alternative. `auto-fit` picks whatever fits and
-# would happily land on 5 across, orphaning a single button alone on row two —
-# the exact thing the old `columns: 5` was chosen to avoid back when the row
-# had four buttons. Pinning the count keeps every row full at every width.
-#
-# ⚠️ ADDING A SEVENTH TOOL MEANS EDITING THIS FILE TOO. Fields auto-place, so
-# a new button does not need a named area — but it DOES need a `field07` entry
-# in `custom_fields` below, or button-card never gives it a cell and it renders
-# nowhere at all, with no error. Add it here and in
-# dashboards/cards/portal-row.yaml, and re-check the counts: 7 is prime, so it
-# orphans one button at every split, and the breakpoints want revisiting
-# (probably 4/2 rather than 6/3/2).
+# ADDING A TOOL: add the card in dashboards/cards/portal-row.yaml and
+# a `fieldNN: [- display: block]` entry in `custom_fields` below. That is all —
+# there are no area names to keep in sync.
 #
 # Loaded by both dashboards via
 # `button_card_templates: !include_dir_merge_named templates`.
@@ -72,15 +53,36 @@ portal_row:
     action: none
   double_tap_action:
     action: none
+  # FLEX, NOT GRID — and that is the whole trick.
+  #
+  # button-card ships a stack of `#container.vertical.no-icon.no-name...`
+  # rules using the `grid-template` SHORTHAND, which resets areas, rows AND
+  # columns. Overriding those with longhand `grid-template-areas` /
+  # `-columns` loses no matter how many !importants you add. Flex ignores
+  # every one of them, wraps on its own, and needs no per-field area names.
+  #
+  # The element is `#container` (verified in the DOM, not `#states`), and a
+  # wrong selector here fails silently — no grid, all fields stacked.
+  #
+  # `styles.grid` is deliberately empty: it renders as an INLINE style, which
+  # would beat these rules.
+  #
+  # Sizing: each button wants ~140px, so a row fits as many as the width
+  # allows and wraps the rest — no breakpoints needed for desktop/tablet. The
+  # one media query forces exactly 2-up on a phone (44% + gap), because
+  # letting 140px decide there gives an ugly 2/1 orphan on narrow handsets.
   extra_styles: |
-    :host {
-      --portal-cols: 6;
+    #container {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      gap: 8px;
     }
-    @media (max-width: 999px) {
-      :host { --portal-cols: 3; }
+    #container > div {
+      flex: 1 1 var(--portal-basis, 140px);
+      min-width: 0;
     }
     @media (max-width: 599px) {
-      :host { --portal-cols: 2; }
+      #container { --portal-basis: 44%; }
     }
   styles:
     card:
@@ -91,21 +93,8 @@ portal_row:
       - border: none
       - padding: 0
       - margin: 0
-    grid:
-      # ⚠️ NO `grid-template-areas` HERE, DELIBERATELY — every other template
-      # in this directory has one, so its absence looks like an omission.
-      #
-      # A named-areas string is a FIXED shape. `"field01 … field06"` declares
-      # six columns on one row, and it wins over `grid-template-columns` — the
-      # media queries below would change the property and the layout would not
-      # move. Without it the custom_fields auto-place in key order into
-      # whatever track count is current, wrapping onto new rows on their own,
-      # which is the entire point of this card.
-      #
-      # The cost of auto-placement is that order is key order (field01 first),
-      # so the fields in portal-row.yaml must stay in display order.
-      - grid-template-columns: repeat(var(--portal-cols), minmax(0, 1fr))
-      - gap: 8px
+    # No `grid:` block — see the note on extra_styles above. Anything set here
+    # becomes an inline style and silently beats the media queries.
     custom_fields:
       field01:
         - display: block
@@ -118,4 +107,10 @@ portal_row:
       field05:
         - display: block
       field06:
+        - display: block
+      field07:
+        - display: block
+      field08:
+        - display: block
+      field09:
         - display: block
