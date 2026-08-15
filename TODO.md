@@ -21,7 +21,7 @@ Working notes for streamlining dashboards, entities, backups, and log noise.
       still writing one. Empty Healthchecks portal first; one check per job
       during the per-container pass. Ping URL is
       `http://192.168.5.8:8002/ping/<uuid>` (IP, not the hostname). Runbook:
-      servers repo `hosts/jack-sparrow/kopia-healthchecks-runbook.md`.
+      servers repo `hosts/jack-sparrow/duplicati-runbook.md`.
 
 ## Config reconciliation
 

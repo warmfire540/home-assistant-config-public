@@ -52,7 +52,7 @@
 # ORDER: the box first, then its tools alphabetically.
 #
 # UGOS is the NAS itself and everything else runs on it, so it leads. Then
-# Deluge, Dozzle, Healthchecks, Kopia, NPM, Portainer, Scrutiny, Uptime Kuma.
+# Deluge, Dozzle, Duplicati, Healthchecks, NPM, Portainer, Scrutiny, Uptime Kuma.
 #
 ###############################################################
 # HOSTNAMES, NOT IPs — changed 2026-08-14, and what it costs
@@ -162,11 +162,11 @@ custom_fields:
     card:
       type: custom:button-card
       template: portal_button
-      name: Kopia
+      name: Duplicati
       icon: mdi:backup-restore
       variables:
-        url: https://kopia.home.masterscrib.net
-        subtitle: kopia.home
+        url: https://duplicati.home.masterscrib.net
+        subtitle: duplicati.home
         accent: '#455a64'
 
   # The odd one out, and intentionally so — see the recovery-path note above.

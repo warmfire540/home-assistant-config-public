@@ -3,7 +3,8 @@
 # portal_row — the responsive shell the portal buttons sit in
 #
 # Added 2026-08-14, when Dozzle made the row six wide and the phone layout
-# finally became indefensible. Healthchecks + Kopia made it nine on 2026-08-14.
+# finally became indefensible. Healthchecks + Duplicati made it nine on
+# 2026-08-14.
 #
 # WHY THIS EXISTS AT ALL
 #

@@ -1,0 +1,207 @@
+---
+#####
+# BACKUPS — Duplicati job health
+#
+# Healthchecks answers "did the nightly job run at all" (dead man's switch,
+# lab-wide, not yet built — see TODO.md). This page answers the next
+# question once you know it ran: did it succeed, how long did it take, and
+# how much did it move. Same relationship as Drives/Uptime on jack-sparrow —
+# different failure mode, different page.
+#
+# NOTHING ON THIS PAGE NAMES A BACKUP JOB.
+#
+# Every card is an `auto-entities` template over
+# `integration_entities('duplicati')`. One job today — Scrutiny Backup — but
+# add a second job in Duplicati and it appears here with no dashboard edit;
+# rename one and the label follows.
+#
+# HOW THE DERIVATION WORKS
+#
+# hass-duplicati gives each job one device (`<name> Backup`) carrying a fixed
+# entity set — no per-check-type variation the way Uptime Kuma or Portainer
+# have, so there is less sibling-lookup tolerance needed here than on those
+# two pages. Still derived by suffix off the same base ID rather than
+# `device_entities()`, matching the style of the other two rollup pages:
+#
+#   status (binary)    integration_entities('duplicati') | select('search', '^binary_sensor.*_status$')
+#   its job name        the device name, via friendly_name minus ' Status'
+#   siblings            same entity_id stem, suffix swapped
+#
+# ⚠️ `binary_sensor.*_status` IS device_class: problem, NOT success. ON MEANS
+# A PROBLEM. Verified against upstream source — see the header of
+# entities/templates/duplicati.yaml for the full explanation. Every color/icon
+# template on this page treats `on` as red and `off` as green for that sensor
+# specifically; do not copy the Scrutiny/Portainer "on = healthy" convention
+# here by reflex.
+#
+# ⚠️ EVERY `filter: template:` MUST END IN ONE `{{ ... }}` THAT EVALUATES TO A
+# LIST. auto-entities does no YAML/JSON parsing — see lab/views/01-uptime.yaml
+# header for the full explanation of why the naive per-row dict loop breaks.
+# Accumulate into a namespace list, emit it as the last statement.
+#
+# LAYOUT (max_columns: 3)
+#
+#   row 1   Backups        span 3   portals + verdict + the three numbers
+#   row 2   Jobs           span 3   one card per job, detail + controls
+#
+# Reads: entities/templates/duplicati.yaml
+# Upstream: https://github.com/txxa/hass-duplicati
+#####
+
+title: Backups
+path: backups
+icon: mdi:backup-restore
+type: sections
+max_columns: 3
+dense_section_placement: true
+cards: []
+sections:
+  #####################################################################
+  # HEADLINE — the verdict, then the way out, then the three numbers
+  #####################################################################
+  - type: grid
+    column_span: 3
+    cards:
+      - type: heading
+        heading: Backups
+        heading_style: title
+        icon: mdi:backup-restore
+
+      # ---- Portals ----
+      # One shared card: dashboards/cards/portal-row.yaml. Same tools, same
+      # order, same look on every page of both dashboards.
+      #
+      # `!include` resolves relative to THIS file, hence ../../ from
+      # dashboards/<dash>/views/.
+      - !include ../../cards/portal-row.yaml
+
+      # `grid_options.columns: full` is load-bearing — see the note on
+      # 04-drives.yaml / 05-containers.yaml: without it this card packs onto
+      # the portal row instead of sitting underneath it.
+      - type: markdown
+        grid_options:
+          columns: full
+          rows: auto
+        # Literal block (`|`), not folded (`>-`) — folding joins consecutive
+        # lines with spaces and collapses adjacent list items onto one line.
+        content: |
+          {% set h = 'sensor.duplicati_backup_health' %}
+          {% set jobs = state_attr(h, 'job_count') | int(0) %}
+          {% set running = state_attr(h, 'running') %}
+          {% if states(h) in ['unknown', 'unavailable'] %}
+          ## ⚠️ Duplicati is not reporting
+
+          The integration is unavailable, which is **not** the same as every
+          job being healthy. Check the container itself at
+          <https://duplicati.home.masterscrib.net> — this page structurally
+          cannot show you that outage.
+          {% elif states(h) == 'OK' %}
+          ## ✅ All {{ jobs }} job{{ '' if jobs == 1 else 's' }} healthy
+          {% else %}
+          ## 🔴 Needs a look
+
+          {{ state_attr(h, 'problems') }}
+          {% endif %}
+          {% if running %}
+
+          > **Running now: {{ running }}** — a low file/size count on that
+          > job's card below is mid-backup, not a shrunk source.
+          {% endif %}
+
+      # The three numbers, as tiles.
+      #
+      # ⚠️ CORE TILES CANNOT TEMPLATE `color:` — a Jinja expression there is
+      # accepted, rendered as a literal string, and silently ignored. Urgency
+      # lives in the markdown verdict above.
+      - type: grid
+        square: false
+        columns: 3
+        grid_options:
+          columns: full
+          rows: auto
+        cards:
+          - type: tile
+            entity: sensor.duplicati_backup_health
+            name: Backups
+            vertical: true
+
+          - type: tile
+            entity: sensor.duplicati_backup_health
+            name: Jobs seen
+            icon: mdi:counter
+            vertical: true
+            color: grey
+            state_content: job_count
+
+          # Most-recent completion across every job, so "when did anything
+          # last back up" is answerable at a glance without opening a job
+          # card. `last_backup` is a computed attribute on the rollup sensor
+          # (max of every job's Date sensor) — a tile can show an attribute
+          # but has no `last_changed` state_content.
+          - type: tile
+            entity: sensor.duplicati_backup_health
+            name: Last backup
+            icon: mdi:clock-check-outline
+            vertical: true
+            color: grey
+            state_content: last_backup
+
+  #####################################################################
+  # JOBS — one card per backup job
+  #####################################################################
+  - type: grid
+    column_span: 3
+    cards:
+      - type: heading
+        heading: Jobs
+        heading_style: title
+        icon: mdi:format-list-checks
+
+      - type: custom:auto-entities
+        show_empty: false
+        grid_options:
+          columns: full
+          rows: auto
+        card:
+          type: grid
+          columns: 1
+          square: false
+        card_param: cards
+        filter:
+          template: >
+            {% set ns = namespace(rows=[]) %}
+            {% for e in integration_entities('duplicati')
+                 | select('search', '^binary_sensor\..*_status$') | sort %}
+              {% set stem = e | replace('binary_sensor.', '')
+                   | replace('_status', '') %}
+              {% set job = state_attr(e, 'friendly_name')
+                   | default(e, true) | replace(' Status', '') %}
+              {% set problem = states(e) == 'on' %}
+              {% set running = states('binary_sensor.' ~ stem ~ '_running') == 'on' %}
+              {% set err = states('sensor.' ~ stem ~ '_error_message') %}
+              {% set ns.rows = ns.rows + [{
+                   'type': 'entities',
+                   'title': job,
+                   'icon': 'mdi:restart-alert' if running
+                     else ('mdi:alert-circle' if problem else 'mdi:check-circle'),
+                   'state_color': true,
+                   'entities': [
+                     {'entity': e, 'name': 'Status'},
+                     {'entity': 'binary_sensor.' ~ stem ~ '_running', 'name': 'Running'},
+                     {'entity': 'sensor.' ~ stem ~ '_date', 'name': 'Last run'},
+                     {'entity': 'sensor.' ~ stem ~ '_duration', 'name': 'Duration'},
+                     {'entity': 'sensor.' ~ stem ~ '_next_scheduled_execution',
+                      'name': 'Next run'},
+                     {'entity': 'sensor.' ~ stem ~ '_source_files', 'name': 'Source files'},
+                     {'entity': 'sensor.' ~ stem ~ '_source_size', 'name': 'Source size'},
+                     {'entity': 'sensor.' ~ stem ~ '_target_files', 'name': 'Target files'},
+                     {'entity': 'sensor.' ~ stem ~ '_target_size', 'name': 'Target size'},
+                   ] + ([{'entity': 'sensor.' ~ stem ~ '_error_message', 'name': 'Error'}]
+                        if problem and err not in ['unknown', 'unavailable', 'None', '']
+                        else []) + [
+                     {'entity': 'button.' ~ stem ~ '_create_backup', 'name': 'Create backup'},
+                     {'entity': 'button.' ~ stem ~ '_refresh_sensor_data', 'name': 'Refresh'},
+                   ]
+                 }] %}
+            {% endfor %}
+            {{ ns.rows }}

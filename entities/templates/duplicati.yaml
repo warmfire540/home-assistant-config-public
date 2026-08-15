@@ -1,0 +1,128 @@
+---
+#####
+# Duplicati — backup job rollups
+#
+# hass-duplicati (HACS, txxa/hass-duplicati) creates one HA device per
+# configured backup job — `<job name> Backup` — each carrying the same fixed
+# set of entities: Status / Running (binary), Date, Duration, Error message,
+# Next scheduled execution, Source/Target files & size (sensors), and Create
+# Backup / Refresh Sensor Data (buttons). One job today — "Scrutiny Backup",
+# which backs up the Scrutiny container's data — but everything below reads
+# `integration_entities('duplicati')` rather than naming it, so a second job
+# needs no edit here or on the dashboard.
+#
+# ⚠️ `binary_sensor.*_status` IS device_class: problem, NOT success.
+# Verified against upstream source (const.py METRIC_LAST_STATUS,
+# binary_sensor.py device_class=BinarySensorDeviceClass.PROBLEM): **on means a
+# problem, off means the last backup was clean.** This is the opposite
+# convention from Scrutiny's rolled-up health sensor and from a naive reading
+# of the entity name. Getting this backwards renders a failed backup as green.
+#
+# `binary_sensor.*_running` is device_class: running — on means a backup is
+# executing right now. Unremarkable, included for completeness.
+#
+# Suffixes verified against upstream source 2026-08-15 (const.py METRIC_*
+# constants + sensor.py/binary_sensor.py entity descriptions), not yet
+# against the live instance. Re-run this after any integration upgrade if a
+# card silently goes empty:
+#
+#   {{ integration_entities('duplicati') | list }}
+#
+# JOBS ARE NAMED BY THE DEVICE NAME, which is whatever the job is called in
+# Duplicati itself (`<name> Backup`) — there is no serial or other stable
+# identifier the way Scrutiny drives have one.
+#
+# Consumed by:
+#   - dashboards/lab/views/02-backups.yaml   (Backups page)
+#
+# Upstream: https://github.com/txxa/hass-duplicati
+#####
+
+- sensor:
+    #################
+    # ROLLED-UP BACKUP HEALTH
+    #################
+    # One verdict across every job. A problem is "the last run for some job
+    # ended in error" OR "some job has gone stale" — the second because a
+    # backup that silently stopped scheduling looks identical to a healthy one
+    # here otherwise. Staleness itself is judged by comparing each job's own
+    # `next_scheduled_execution` to now, so a job on a weekly schedule is not
+    # flagged for being quiet on a Tuesday.
+    - name: Duplicati Backup Health
+      unique_id: 6e9b1a3a-9f5b-4b0e-9a1a-8a2e6b8b8b0e
+      icon: "{{ 'mdi:shield-check' if this.state == 'OK' else 'mdi:shield-alert' }}"
+      # Unavailable if the integration is gone or every job is unreachable —
+      # matches the guard pattern in scrutiny.yaml: existing is not the same
+      # as reporting.
+      availability: >
+        {{ expand(integration_entities('duplicati'))
+           | selectattr('entity_id', 'search', '_status$')
+           | selectattr('entity_id', 'search', '^binary_sensor\.')
+           | rejectattr('state', 'in', ['unknown', 'unavailable'])
+           | list | count > 0 }}
+      state: >
+        {% set ns = namespace(problem=false) %}
+        {% for s in expand(integration_entities('duplicati'))
+             | selectattr('entity_id', 'search', '^binary_sensor\..*_status$') %}
+          {% if s.state == 'on' %}
+            {% set ns.problem = true %}
+          {% endif %}
+        {% endfor %}
+        {% for s in expand(integration_entities('duplicati'))
+             | selectattr('entity_id', 'search', '^sensor\..*_next_scheduled_execution$')
+             | rejectattr('state', 'in', ['unknown', 'unavailable']) %}
+          {% if as_datetime(s.state) < now() %}
+            {% set ns.problem = true %}
+          {% endif %}
+        {% endfor %}
+        {{ 'Problem' if ns.problem else 'OK' }}
+      attributes:
+        # Named per job so a problem is actionable without opening Duplicati.
+        problems: >
+          {% set ns = namespace(bad=[]) %}
+          {% for s in expand(integration_entities('duplicati'))
+               | selectattr('entity_id', 'search', '^binary_sensor\..*_status$') %}
+            {% if s.state == 'on' %}
+              {% set job = s.name | replace(' Status', '') %}
+              {% set err_id = s.entity_id
+                   | replace('binary_sensor.', 'sensor.')
+                   | replace('_status', '_error_message') %}
+              {% set err = states(err_id) %}
+              {% set ns.bad = ns.bad
+                   + [job ~ (': ' ~ err if err not in ['unknown', 'unavailable', 'None', ''] else '')] %}
+            {% endif %}
+          {% endfor %}
+          {% for s in expand(integration_entities('duplicati'))
+               | selectattr('entity_id', 'search', '^sensor\..*_next_scheduled_execution$')
+               | rejectattr('state', 'in', ['unknown', 'unavailable']) %}
+            {% if as_datetime(s.state) < now() %}
+              {% set job = s.name | replace(' Next scheduled execution', '') %}
+              {% set ns.bad = ns.bad + [job ~ ': overdue since ' ~ s.state] %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.bad | join(', ') }}
+        job_count: >
+          {{ expand(integration_entities('duplicati'))
+             | selectattr('entity_id', 'search', '^binary_sensor\..*_status$')
+             | list | count }}
+        # A job actively running is not a problem, but it is the reason a
+        # dashboard glance might look "stuck" mid-backup — surfaced so the
+        # verdict card can mention it without it being an alert on its own.
+        running: >
+          {% set ns = namespace(jobs=[]) %}
+          {% for s in expand(integration_entities('duplicati'))
+               | selectattr('entity_id', 'search', '^binary_sensor\..*_running$') %}
+            {% if s.state == 'on' %}
+              {% set ns.jobs = ns.jobs + [s.name | replace(' Running', '')] %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.jobs | join(', ') }}
+        # Most recent completion across every job — a tile can show an
+        # attribute but not `last_changed`, so this is the value the Backups
+        # page reads for its "Last backup" tile.
+        last_backup: >
+          {% set dates = expand(integration_entities('duplicati'))
+               | selectattr('entity_id', 'search', '^sensor\..*_date$')
+               | rejectattr('state', 'in', ['unknown', 'unavailable'])
+               | map(attribute='state') | map('as_datetime') | list %}
+          {{ dates | max if dates else 'unknown' }}

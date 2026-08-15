@@ -18,9 +18,11 @@
 # board under jack-sparrow would put "is the internet up" behind a page named
 # after one host, and would have to move the day Kuma is migrated off it.
 #
-# Backup freshness is Healthchecks, not Kuma. When that board exists it is
-# lab-wide the same way this one is — the jobs span HA, Pi-hole, Plex and
-# the NAS, not one host. This dashboard stays the uptime board.
+# Same reasoning covers Backups (02-backups.yaml, added 2026-08-15): Duplicati
+# runs on the NAS but a backup job is a lab-wide concern, not a jack-sparrow
+# one. Backup *freshness* — did the job run at all — is a separate concern
+# covered by Healthchecks (not yet built, see TODO.md); 02-backups.yaml
+# answers "did the last run succeed", which Healthchecks structurally cannot.
 #
 # THE `button_card_templates:` BLOCK — ADDED 2026-08-13, AND WHY
 #
@@ -54,8 +56,9 @@
 # regrouping or deleting a monitor in Kuma changes the page with no edit here.
 # That is load-bearing, not tidiness — the monitor set is expected to move:
 # `poat-share - SMB` gets dropped after the Phase 4 cutover, and Portainer /
-# Plex / Deluge go green as those hosts come back. Backup freshness does not
-# land here; that is Healthchecks.
+# Plex / Deluge go green as those hosts come back. Same principle drives
+# 02-backups.yaml off `integration_entities('duplicati')` — see its own
+# header for the one exception, the on-means-problem binary sensor.
 #
 # The two exceptions are named and explained in
 # entities/templates/uptime_kuma.yaml: `Internet` and `Gateway`, which back
