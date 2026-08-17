@@ -52,7 +52,36 @@
 # ORDER: the box first, then its tools alphabetically.
 #
 # UGOS is the NAS itself and everything else runs on it, so it leads. Then
-# Deluge, Dozzle, Duplicati, Healthchecks, NPM, Portainer, Scrutiny, Uptime Kuma.
+# Bazarr, Deluge, Dozzle, Duplicati, Healthchecks, NPM, Pawsport, Portainer,
+# Prowlarr, Radarr, Scrutiny, Sonarr, Uptime Kuma.
+#
+###############################################################
+# THE arr FOUR SHARE ONE ACCENT — new rule, 2026-08-16
+###############################################################
+#
+# Every button before this row grew to thirteen had its own colour, and the
+# comments below are a running record of that getting harder: Scrutiny pushed
+# off `--info-color` by Portainer, Dozzle kept off it for the same reason,
+# Healthchecks and Deluge given raw hex because the theme vars ran out.
+#
+# At thirteen buttons, per-button uniqueness has stopped paying. There are not
+# thirteen colours that stay distinguishable at 140px on a phone, and chasing
+# it would mean re-tinting half the row every time a container is added.
+#
+# So Bazarr, Prowlarr, Radarr and Sonarr all take indigo `#3f51b5`. They are
+# one system — the same stack, deployed as one UGOS project, backed up as one
+# unit, useless individually — and colour now says *which system* rather than
+# *which button*. The name and icon already say which button.
+#
+# ⚠️ Indigo is otherwise unused here and is deliberately NOT `--info-color`
+# (Portainer's light blue) or `--primary-color` (UGOS). Check both on your
+# theme before reusing it; several themes move `--primary-color` toward
+# indigo, which would collapse the distinction UGOS relies on.
+#
+# If you would rather have four distinct arr colours, the alternative is
+# Prowlarr orange / Radarr gold / Sonarr sky / Bazarr violet — brand-accurate,
+# but sky collides with Portainer and violet with Scrutiny, which is the trap
+# this rule exists to stop walking into again.
 #
 ###############################################################
 # HOSTNAMES, NOT IPs — changed 2026-08-14, and what it costs
@@ -115,6 +144,20 @@ custom_fields:
         subtitle: ugos.home
         accent: var(--primary-color)
 
+  # Bazarr — subtitles. Part of the arr stack; see the shared-accent note
+  # above. `fieldNN` numbers are names, not order — this is field10 because
+  # it was added last, and it sits first because the row is alphabetical.
+  field10:
+    card:
+      type: custom:button-card
+      template: portal_button
+      name: Bazarr
+      icon: mdi:subtitles-outline
+      variables:
+        url: https://bazarr.home.masterscrib.net
+        subtitle: bazarr.home
+        accent: '#3f51b5'
+
   field02:
     card:
       type: custom:button-card
@@ -145,6 +188,20 @@ custom_fields:
         # arrived. Quoted for the `#` — see the note on Portainer below.
         accent: 'var(--error-color, #e5573f)'
 
+  # ⚠️ Duplicati and Healthchecks were swapped in document order until
+  # 2026-08-16 — the header has always claimed alphabetical and the file was
+  # not. Fixed here rather than left as a small lie about the ordering rule.
+  field05:
+    card:
+      type: custom:button-card
+      template: portal_button
+      name: Duplicati
+      icon: mdi:backup-restore
+      variables:
+        url: https://duplicati.home.masterscrib.net
+        subtitle: duplicati.home
+        accent: '#455a64'
+
   field04:
     card:
       type: custom:button-card
@@ -158,17 +215,6 @@ custom_fields:
         # second red next to Dozzle would collide. Quoted for the `#`.
         accent: '#c2185b'
 
-  field05:
-    card:
-      type: custom:button-card
-      template: portal_button
-      name: Duplicati
-      icon: mdi:backup-restore
-      variables:
-        url: https://duplicati.home.masterscrib.net
-        subtitle: duplicati.home
-        accent: '#455a64'
-
   # The odd one out, and intentionally so — see the recovery-path note above.
   field06:
     card:
@@ -180,6 +226,22 @@ custom_fields:
         url: http://192.168.5.8:81
         subtitle: 192.168.5.8:81
         accent: 'var(--warning-color, #ff9800)'
+
+  # ⚠️ Was ticked done in the servers repo TODO on 2026-08-16 and was not
+  # here — the whole row was searched for "pawsport" and returned nothing.
+  # Added 2026-08-16. Brown is unused on this row and reads as "not lab
+  # infrastructure", which is what it is: the odd one out, an app portal
+  # rather than a tool for running the box.
+  field11:
+    card:
+      type: custom:button-card
+      template: portal_button
+      name: Pawsport
+      icon: mdi:paw
+      variables:
+        url: https://pawsport.home.masterscrib.net
+        subtitle: pawsport.home
+        accent: '#8d6e63'
 
   field07:
     card:
@@ -193,6 +255,28 @@ custom_fields:
         # Quoted: an unquoted `#` starts a YAML comment, so the bare form
         # parses as `var(--info-color,` and silently drops the fallback.
         accent: 'var(--info-color, #039be5)'
+
+  field12:
+    card:
+      type: custom:button-card
+      template: portal_button
+      name: Prowlarr
+      icon: mdi:magnify-scan
+      variables:
+        url: https://prowlarr.home.masterscrib.net
+        subtitle: prowlarr.home
+        accent: '#3f51b5'
+
+  field13:
+    card:
+      type: custom:button-card
+      template: portal_button
+      name: Radarr
+      icon: mdi:movie-open-outline
+      variables:
+        url: https://radarr.home.masterscrib.net
+        subtitle: radarr.home
+        accent: '#3f51b5'
 
   field08:
     card:
@@ -209,6 +293,17 @@ custom_fields:
         # info and success; the fallback is set because several themes leave it
         # equal to `--primary-color`, which would undo the whole point.
         accent: 'var(--accent-color, #7e57c2)'
+
+  field14:
+    card:
+      type: custom:button-card
+      template: portal_button
+      name: Sonarr
+      icon: mdi:television-classic
+      variables:
+        url: https://sonarr.home.masterscrib.net
+        subtitle: sonarr.home
+        accent: '#3f51b5'
 
   field09:
     card:

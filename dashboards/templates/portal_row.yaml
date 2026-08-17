@@ -115,3 +115,22 @@ portal_row:
         - display: block
       field09:
         - display: block
+      # ⚠️ Added 2026-08-16 with the arr stack + the missing Pawsport button.
+      # A `fieldNN` present in cards/portal-row.yaml but absent HERE does not
+      # render at all — button-card needs the cell to exist. It fails silently:
+      # no error, no gap, the button is simply not on the page. If a new tool's
+      # button "did not appear", check this list first.
+      #
+      # These numbers are NOT display order. Order is document order in
+      # cards/portal-row.yaml, which is alphabetical; 10–14 were appended here
+      # because they were added last.
+      field10:
+        - display: block
+      field11:
+        - display: block
+      field12:
+        - display: block
+      field13:
+        - display: block
+      field14:
+        - display: block

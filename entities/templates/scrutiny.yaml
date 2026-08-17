@@ -106,7 +106,7 @@
              | selectattr('entity_id', 'search', '_overall_status$')
              | rejectattr('state', 'in', ['Passed', 'unknown', 'unavailable'])
              | list | count }}
-        # Sanity check for the card: if this is not 6, a drive dropped out of
+        # Sanity check for the card: if this is not 7, a drive dropped out of
         # Scrutiny entirely — which the status rollup above cannot see, because
         # a missing drive has no status to fail.
         drive_count: >
@@ -117,7 +117,7 @@
     #################
     # HOTTEST DRIVE
     #################
-    # One number to threshold instead of six. Four helium spinners in a 4-bay
+    # One number to threshold instead of seven. Four helium spinners in a 4-bay
     # chassis share one intake, so the hottest drive is the one that matters —
     # an average would hide it.
     #
@@ -155,7 +155,7 @@
            | list | max | round(1) }}
       attributes:
         # Which drive, not just how hot. One hot bay is airflow or a dying
-        # drive; all six hot is the room or the fan curve. Different fixes.
+        # drive; all of them hot is the room or the fan curve. Different fixes.
         hottest_drive: >
           {% set ns = namespace(name='', temp=-999) %}
           {% for s in expand(integration_entities('scrutiny'))

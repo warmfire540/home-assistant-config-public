@@ -25,14 +25,31 @@
 # set is the thing most expected to move. Three today; the arr stack, Immich
 # and possibly Frigate all land after the Phase 2 share layout exists.
 #
-# ⚠️ CONTAINERS ARE IDENTIFIED BY THEIR `binary_sensor`, AND THAT IS THE TRICK.
+# ⚠️ CONTAINERS ARE IDENTIFIED BY THEIR `binary_sensor` **PLUS A `_state`
+# SIBLING**. The binary sensor alone is not enough.
 #
-# `binary_sensor` is the only platform the integration uses for exactly one
+# ❌ CORRECTED 2026-08-15, against the live instance. This block used to claim:
+# "binary_sensor is the only platform the integration uses for exactly one
 # thing — container Status. Endpoint devices and stack devices have no binary
-# sensor at all. So `integration_entities('portainer') | select('search',
-# '^binary_sensor')` is a clean, name-free list of containers, with none of the
-# "is this a group" filtering uptime_kuma.yaml needs. Everything else about a
-# container is reached through `device_entities(device_id(e))` from there.
+# sensor at all." **That is wrong.** The endpoint device has one too:
+#
+#   binary_sensor.local_status        <- the ENDPOINT ("local"), not a container
+#   sensor.local_container_count, sensor.local_containers_running,
+#   sensor.local_image_count, button.local_prune_unused_images ...
+#
+# So a bare `^binary_sensor` select returned 11 entries for 10 containers, and
+# `container_count` was off by one in exactly the direction that hides a
+# problem: a container could be removed and the count would still look
+# plausible. Precisely the failure this file warns about elsewhere.
+#
+# THE FILTER IS STRUCTURAL, NOT BY NAME. Every container device carries a
+# `_state` sensor (Docker's own word: running / exited / paused / restarting).
+# The endpoint device has no `_state` — its sensors are counts and disk usage.
+# So "has a `_state` sibling" separates them without hardcoding "local", which
+# is an environment name the user can rename at any time.
+#
+# Everything else about a container is reached through
+# `device_entities(device_id(e))` from there.
 #
 # ⚠️ THE STATUS BINARY SENSOR IS `on`/`off`, THE STATE SENSOR IS A STRING.
 # `binary_sensor.<name>_status` is running / not-running. `sensor.<name>_state`
@@ -118,11 +135,15 @@
         {% set ns = namespace(bad=0) %}
         {% for e in integration_entities('portainer')
              | select('search', '^binary_sensor') %}
-          {% set h = device_entities(device_id(e))
-               | select('search', '_health$') | list %}
-          {% if states(e) != 'on'
-                or (h and states(h[0]) == 'unhealthy') %}
-            {% set ns.bad = ns.bad + 1 %}
+          {% set sibs = device_entities(device_id(e)) %}
+          {% set h = sibs | select('search', '_health$') | list %}
+          {# Endpoint device has no _state sibling — skip it, it is not a
+             container. See the header correction. #}
+          {% if sibs | select('search', '_state$') | list %}
+            {% if states(e) != 'on'
+                  or (h and states(h[0]) == 'unhealthy') %}
+              {% set ns.bad = ns.bad + 1 %}
+            {% endif %}
           {% endif %}
         {% endfor %}
         {{ 'Problem' if ns.bad > 0 else 'OK' }}
@@ -138,11 +159,14 @@
             {% set h = sibs | select('search', '_health$') | list %}
             {% set nm = state_attr(e, 'friendly_name')
                  | default(e, true) | replace(' Status', '') %}
-            {% if states(e) != 'on' %}
-              {% set ns.bad = ns.bad
-                   + [nm ~ ' (' ~ (states(s[0]) if s else 'stopped') ~ ')'] %}
-            {% elif h and states(h[0]) == 'unhealthy' %}
-              {% set ns.bad = ns.bad + [nm ~ ' (unhealthy)'] %}
+            {# No _state sibling = the endpoint device, not a container. #}
+            {% if s %}
+              {% if states(e) != 'on' %}
+                {% set ns.bad = ns.bad
+                     + [nm ~ ' (' ~ states(s[0]) ~ ')'] %}
+              {% elif h and states(h[0]) == 'unhealthy' %}
+                {% set ns.bad = ns.bad + [nm ~ ' (unhealthy)'] %}
+              {% endif %}
             {% endif %}
           {% endfor %}
           {{ ns.bad | join(', ') if ns.bad else 'all running' }}
@@ -150,26 +174,56 @@
           {% set ns = namespace(n=0) %}
           {% for e in integration_entities('portainer')
                | select('search', '^binary_sensor') %}
-            {% set h = device_entities(device_id(e))
-                 | select('search', '_health$') | list %}
-            {% if states(e) != 'on'
-                  or (h and states(h[0]) == 'unhealthy') %}
-              {% set ns.n = ns.n + 1 %}
+            {% set sibs = device_entities(device_id(e)) %}
+            {% set h = sibs | select('search', '_health$') | list %}
+            {% if sibs | select('search', '_state$') | list %}
+              {% if states(e) != 'on'
+                    or (h and states(h[0]) == 'unhealthy') %}
+                {% set ns.n = ns.n + 1 %}
+              {% endif %}
             {% endif %}
           {% endfor %}
           {{ ns.n }}
         running_count: >
-          {{ integration_entities('portainer')
-             | select('search', '^binary_sensor')
-             | select('is_state', 'on') | list | count }}
+          {% set ns = namespace(n=0) %}
+          {% for e in integration_entities('portainer')
+               | select('search', '^binary_sensor') %}
+            {% if device_entities(device_id(e))
+                 | select('search', '_state$') | list
+                 and states(e) == 'on' %}
+              {% set ns.n = ns.n + 1 %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.n }}
         # Sanity check for the card, and the counterpart to Kuma's
         # `monitor_count`. A container that is REMOVED — not stopped, removed —
         # takes its HA device with it, so it has no status left to be off. The
         # rollup above cannot see it. This number dropping is the only visible
         # symptom of a container quietly ceasing to exist.
         container_count: >
-          {{ integration_entities('portainer')
-             | select('search', '^binary_sensor') | list | count }}
+          {% set ns = namespace(n=0) %}
+          {% for e in integration_entities('portainer')
+               | select('search', '^binary_sensor') %}
+            {% if device_entities(device_id(e))
+                 | select('search', '_state$') | list %}
+              {% set ns.n = ns.n + 1 %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.n }}
+        # The endpoint device, kept separately rather than silently folded into
+        # the container counts above. `off` here means Portainer has lost the
+        # Docker socket — every container reading `unknown` at once is that,
+        # not ten simultaneous failures.
+        endpoint_ok: >
+          {% set ns = namespace(ok='unknown') %}
+          {% for e in integration_entities('portainer')
+               | select('search', '^binary_sensor') %}
+            {% if not device_entities(device_id(e))
+                 | select('search', '_state$') | list %}
+              {% set ns.ok = states(e) %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.ok }}
         # A crash loop, which is the failure that looks healthiest from
         # outside. A container restarting every few seconds binds its port
         # often enough that a Kuma check can pass on the retry, so this is the

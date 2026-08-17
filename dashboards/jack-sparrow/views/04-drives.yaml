@@ -494,7 +494,7 @@ sections:
           {%- set pending = state_attr(r, 'pending_total') | int(0) -%}
           {#- The verdict, in three states rather than two.
               `all_clear` deliberately requires the drive count to be right as
-              well: seven passing drives out of six present is not an all
+              well: six passing drives out of seven expected is not an all
               clear, and the status rollup cannot see a missing drive.
               `unknown` is separated out because a rollup that is unavailable —
               Scrutiny down, integration reloading, HA still starting — is not

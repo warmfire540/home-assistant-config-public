@@ -1,0 +1,338 @@
+---
+#####
+# Portainer — the container failures Uptime Kuma structurally cannot see
+#
+# WHY THIS IS NOT "ALERT WHEN A CONTAINER IS DOWN"
+#
+# That was the obvious version and it is the wrong one. Nearly every container
+# on jack-sparrow already has a Kuma monitor watching its port from outside the
+# host. A naive "any container not running" automation double-notifies for
+# every real outage: Kuma pages you that Scrutiny stopped answering, and this
+# pages you that the scrutiny container is not running. Two messages, one fact.
+# `poat-hole - DNS` was already tried and reverted on the Kuma side for exactly
+# that reason — see uptime_kuma_monitor_down.yaml.
+#
+# So this covers ONLY the three failures Kuma cannot report, and deliberately
+# stays quiet about ordinary container-stopped-so-service-is-down. Deferred on
+# 2026-08-14 pending a week of watching the board; written 2026-08-15 because
+# the Uptime Kuma backup job made case 1 concrete rather than hypothetical.
+#
+# ── 1. UPTIME KUMA ITSELF IS NOT RUNNING ──────────────────────────────────
+#
+# The monitoring system cannot report its own death. Nothing else in the lab
+# can either:
+#   - Healthchecks only watches backup jobs, which may have succeeded.
+#   - HA's uptime_kuma integration goes UNAVAILABLE, not down, so
+#     sensor.lab_availability is unavailable and uptime_kuma_monitor_down.yaml
+#     declines to fire. Over-notifying is its safe failure — here that means
+#     silence.
+#
+# ⚠️ THIS IS NOW A ROUTINE RISK, NOT A THEORETICAL ONE. The nightly Duplicati
+# job at 3am STOPS the uptime-kuma container so its SQLite/WAL data directory
+# can be copied consistently, then starts it again from --run-script-after. If
+# that after-script does not run, Kuma stays stopped until someone notices.
+# This automation is what notices. See the servers repo,
+# hosts/jack-sparrow/uptime-kuma-runbook.md §1.5d.
+#
+# `for: 10 minutes` is what makes that safe: the backup stop lasts seconds (the
+# whole job is ~7 MB), so a healthy nightly run never trips this, while a
+# failed restart does. Written as a duration rather than a suppression window
+# on purpose — no backup schedule is hardcoded here, so moving the job off 3am
+# needs no edit to this file.
+#
+# ⚠️ "CANNOT FIND THE CONTAINER" IS ALSO AN ALERT, NOT A PASS. If the search
+# below matches nothing, this fires with a different message instead of quietly
+# reading healthy. That is the single most repeated bug in this repo — a regex
+# that matches nothing does not error, it reads OK forever — and the whole
+# reason case 3 exists too. It is guarded so that Portainer being down entirely
+# (zero binary sensors) does NOT trip it: that is a different problem, and
+# sensor.docker_health goes unavailable to show it.
+#
+# ── 2. A CRASH LOOP ───────────────────────────────────────────────────────
+#
+# The failure that looks healthiest from outside. A container restarting every
+# few seconds rebinds its port often enough that a Kuma check can pass on the
+# retry, so the board stays green while the service is unusable. Docker's own
+# `restarting` state is the only reliable signal, and portainer.yaml already
+# pulls it out by name.
+#
+# ── 3. A CONTAINER REMOVED ENTIRELY ───────────────────────────────────────
+#
+# A removed container takes its HA device with it, so it has no status left to
+# be `off`. sensor.docker_health cannot see it — the rollup counts problems
+# among containers that still exist. `container_count` dropping is the only
+# visible symptom.
+#
+# This matters most for containers with no Kuma monitor at all — diun, dozzle,
+# gluetun. diun_not_running.yaml documents exactly this as an accepted blind
+# spot: if Diun is removed, its sensor goes unavailable permanently and that
+# automation's own unavailable-guard hides it. This closes that hole.
+#
+# ⚠️ NO HARDCODED EXPECTED COUNT. Comparing against "should be 10" goes stale
+# the first time a container is added, and goes stale silently. This compares
+# the attribute to its own previous value instead, so the baseline maintains
+# itself. The cost is that a drop occurring while HA is restarting is absorbed
+# into the new baseline — the same trade uptime_kuma_monitor_down.yaml makes,
+# and for the same reason.
+#
+# ── WHAT THIS DOES NOT DO ─────────────────────────────────────────────────
+#
+# No alert for an ordinary stopped container whose service Kuma already
+# watches. If that turns out to be a gap, the fix is a Kuma monitor for
+# whatever is missing one, not a broader trigger here.
+#
+# Reads: entities/templates/portainer.yaml (sensor.docker_health)
+# ⚠️ That file's entity-ID suffixes are UNVERIFIED against the live instance.
+# This automation only touches attributes defined in that file plus the
+# `^binary_sensor` prefix, which is structural rather than predicted — the
+# integration uses binary_sensor for exactly one thing, container status. It
+# does NOT depend on `_state` / `_health` suffixes being right.
+#####
+
+alias: Lab - Portainer container failures Kuma cannot see
+id: 3e7d9b41-6c25-4a80-9f13-b8e0a25c7d64
+description: >-
+  Uptime Kuma left stopped, a container crash-looping, or a container removed
+  outright — the three Docker failures the uptime monitoring is structurally
+  blind to. Deliberately silent about ordinary container-down.
+mode: queued
+max: 5
+
+triggers:
+  # Kuma stopped, or missing from Portainer entirely.
+  - trigger: template
+    value_template: >-
+      {% set all = integration_entities('portainer')
+           | select('search', '^binary_sensor') | list %}
+      {% set c = all | select('search', 'uptime_kuma') | list %}
+      {{ all | count > 0
+         and (c | count == 0 or states(c[0]) not in ['on', 'unknown', 'unavailable']) }}
+    for: "00:10:00"
+    id: kuma_down
+
+  - trigger: template
+    value_template: >-
+      {% set all = integration_entities('portainer')
+           | select('search', '^binary_sensor') | list %}
+      {% set c = all | select('search', 'uptime_kuma') | list %}
+      {{ all | count > 0 and c | count == 1 and states(c[0]) == 'on' }}
+    for: "00:05:00"
+    id: kuma_recovered
+
+  # Crash loop. 5 minutes: a legitimate restart passes through `restarting`
+  # in seconds, a loop does not.
+  - trigger: template
+    value_template: >-
+      {{ state_attr('sensor.docker_health', 'restarting')
+         not in [none, 'none', ''] }}
+    for: "00:05:00"
+    id: crash_loop
+
+  # Container count changed. Whether it DROPPED is decided in the branch —
+  # a state trigger cannot express "less than it was".
+  - trigger: state
+    entity_id: sensor.docker_health
+    attribute: container_count
+    id: count_changed
+
+conditions:
+  # An unavailable rollup during an integration reload is not an emergency.
+  # Same guard as diun_not_running.yaml.
+  - condition: not
+    conditions:
+      - condition: state
+        entity_id: sensor.docker_health
+        state:
+          - unknown
+          - unavailable
+
+actions:
+  - choose:
+      #################
+      # UPTIME KUMA IS DOWN
+      #################
+      - alias: Uptime Kuma stopped or missing
+        conditions:
+          - condition: trigger
+            id: kuma_down
+        sequence:
+          - variables:
+              missing: >-
+                {% set all = integration_entities('portainer')
+                     | select('search', '^binary_sensor') | list %}
+                {{ all | select('search', 'uptime_kuma') | list | count == 0 }}
+              title: '🚨 Uptime Kuma is not running'
+              body: >-
+                {% if missing %}
+                The uptime-kuma container is GONE from Portainer — removed, or
+                its name changed so nothing matches it. Either way the lab has
+                no uptime monitoring and the board is stale.
+                {% else %}
+                The uptime-kuma container is stopped. The lab has no uptime
+                monitoring right now, and Kuma cannot tell you that itself.
+                Most likely cause: the 3am Duplicati job stopped it to copy its
+                data directory and the restart did not happen.
+
+                  sudo docker start uptime-kuma
+                  sudo docker logs duplicati | tail -40
+                {% endif %}
+          - action: notify.persistent_notification
+            data:
+              title: '{{ title }}'
+              message: '{{ body }}'
+          - choose:
+              - conditions:
+                  - condition: state
+                    entity_id: input_boolean.poat_mute
+                    state: 'off'
+                sequence:
+                  - action: notify.mobile_app_poat_s_iphone_14_pro_max
+                    data:
+                      title: '{{ title }}'
+                      message: >-
+                        No uptime monitoring — the Kuma container is
+                        {{ 'missing from Portainer' if missing else 'stopped' }}.
+                      data:
+                        tag: portainer_kuma_down
+                        url: /jack-sparrow/containers
+                        push:
+                          sound:
+                            name: 'default'
+
+      #################
+      # UPTIME KUMA IS BACK
+      #################
+      - alias: Uptime Kuma running again
+        conditions:
+          - condition: trigger
+            id: kuma_recovered
+        sequence:
+          - action: notify.persistent_notification
+            data:
+              title: '✅ Uptime Kuma running again'
+              message: >-
+                Uptime monitoring is live again.
+
+                ⚠️ Kuma does not backfill. Anything that went down and came
+                back while it was stopped left no heartbeat, so the uptime
+                percentages for that window are a gap rather than a dip.
+          - choose:
+              - conditions:
+                  - condition: state
+                    entity_id: input_boolean.poat_mute
+                    state: 'off'
+                sequence:
+                  - action: notify.mobile_app_poat_s_iphone_14_pro_max
+                    data:
+                      title: '✅ Uptime Kuma running again'
+                      message: 'Uptime monitoring is live again.'
+                      data:
+                        tag: portainer_kuma_down
+                        url: /home-lab/uptime
+                        push:
+                          # Silent — replaces the red notification rather than
+                          # buzzing for news you already acted on.
+                          sound: 'none'
+
+      #################
+      # CRASH LOOP
+      #################
+      - alias: A container is crash-looping
+        conditions:
+          - condition: trigger
+            id: crash_loop
+        sequence:
+          - variables:
+              looping: "{{ state_attr('sensor.docker_health', 'restarting') }}"
+              title: '🔁 Container crash loop'
+              body: >-
+                Restarting for 5+ minutes: {{ looping }}.
+
+                ⚠️ Uptime Kuma may still show this GREEN — a container
+                restarting every few seconds rebinds its port often enough for
+                a check to pass on the retry. Trust this, not the board.
+
+                  sudo docker logs --tail 100 <name>
+          - action: notify.persistent_notification
+            data:
+              title: '{{ title }}'
+              message: '{{ body }}'
+          - choose:
+              - conditions:
+                  - condition: state
+                    entity_id: input_boolean.poat_mute
+                    state: 'off'
+                sequence:
+                  - action: notify.mobile_app_poat_s_iphone_14_pro_max
+                    data:
+                      title: '{{ title }}'
+                      message: 'Crash-looping: {{ looping }}. Kuma may read green.'
+                      data:
+                        tag: portainer_crash_loop
+                        url: /jack-sparrow/containers
+                        push:
+                          sound:
+                            name: 'default'
+
+      #################
+      # A CONTAINER DISAPPEARED
+      #################
+      - alias: Container count dropped
+        conditions:
+          - condition: trigger
+            id: count_changed
+          # ⚠️ DO NOT ALERT ON A RE-BASELINE AFTER A RESTART. An unavailable
+          # state carries no attributes, so every restart would read as every
+          # container vanishing at once. Same guard, same reasoning, as
+          # uptime_kuma_monitor_down.yaml.
+          - condition: template
+            value_template: >-
+              {{ trigger.from_state is not none
+                 and trigger.from_state.state not in ['unknown', 'unavailable']
+                 and trigger.to_state.state not in ['unknown', 'unavailable'] }}
+          - condition: template
+            value_template: >-
+              {% set was = trigger.from_state.attributes.get('container_count')
+                   | int(-1) %}
+              {% set now = trigger.to_state.attributes.get('container_count')
+                   | int(-1) %}
+              {{ was >= 0 and now >= 0 and now < was }}
+        sequence:
+          - variables:
+              was: >-
+                {{ trigger.from_state.attributes.get('container_count') | int(0) }}
+              now: >-
+                {{ trigger.to_state.attributes.get('container_count') | int(0) }}
+              title: '👻 A container disappeared'
+              body: >-
+                Portainer sees {{ now }} containers, was {{ was }}. A REMOVED
+                container takes its HA device with it, so it has no status left
+                to be down — this count is the only symptom.
+
+                Still running: {{ state_attr('sensor.docker_health', 'problems') }}
+
+                If this was deliberate, nothing to do. If not, the container is
+                gone rather than stopped, and `docker start` will not bring it
+                back — it needs recreating from the UGOS project.
+          - action: notify.persistent_notification
+            data:
+              title: '{{ title }}'
+              message: '{{ body }}'
+          - choose:
+              - conditions:
+                  - condition: state
+                    entity_id: input_boolean.poat_mute
+                    state: 'off'
+                sequence:
+                  - action: notify.mobile_app_poat_s_iphone_14_pro_max
+                    data:
+                      title: '{{ title }}'
+                      message: >-
+                        Container count {{ was }} → {{ now }}. Something was
+                        removed, not stopped.
+                      data:
+                        tag: portainer_container_count
+                        url: /jack-sparrow/containers
+                        push:
+                          sound:
+                            name: 'default'

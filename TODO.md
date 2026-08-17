@@ -51,32 +51,60 @@ Working notes for streamlining dashboards, entities, backups, and log noise.
       written: `entities/templates/portainer.yaml`,
       `dashboards/jack-sparrow/views/05-containers.yaml`. Board is at
       **`/jack-sparrow/containers`**. No automations — see the reasoning below.
-  - [ ] ⚠️ **Verify the entity-ID suffixes.** Everything in both files is
-        derived from the integration's `strings.json` translation keys, not
-        from the live instance. Run this in Developer Tools → Template and
-        check the sibling suffixes against what the sensors are actually
-        called:
+  - [x] ~~⚠️ **Verify the entity-ID suffixes**~~ — done 2026-08-15 against the
+        live instance. **All correct**: `_state`, `_health`, `_image`,
+        `_cpu_usage_total`, `_memory_usage_percentage`. `_health` exists on
+        only `gluetun` and `uptime_kuma`, exactly as the "only images declaring
+        a HEALTHCHECK" caveat predicted — the defensive `| list`-then-truth-test
+        was right.
+        **The dump found a different bug the suffixes hid:**
+        `binary_sensor.local_status` is the **endpoint** device, not a
+        container. `portainer.yaml` asserted endpoints have no binary sensor;
+        they do. `container_count` read **11 for 10 containers** and
+        `running_count` was inflated to match. Fixed by filtering on a `_state`
+        sibling — structural, since containers have one and the endpoint does
+        not, so it survives the environment being renamed off "local". The
+        endpoint is now surfaced separately as `endpoint_ok`.
+  - [x] ~~🐛 **Orphaned Duplicati device**~~ — deleted 2026-08-15. A full
+        duplicate set under `*.e1a4ef9e3497_duplicati_*`, container-ID-prefixed,
+        left behind when Duplicati was recreated to add the docker socket and
+        scripts mounts. **Confirmed absent from Portainer itself** — purely an
+        HA registry leftover. It had no `binary_sensor`, so container counts
+        escaped, but `update.e1a4ef9e3497_duplicati_image_update_available` was
+        double-counting Duplicati in `sensor.docker_image_updates`.
 
-        ```jinja
-        {{ integration_entities('portainer') | sort | list }}
-        ```
-
-        A suffix regex that matches nothing does not error — `sensor.docker_health`
-        reads OK forever. This is the same failure mode flagged on
-        `scrutiny.yaml` and it is worth ten minutes now.
+        ⚠️ **Pattern worth remembering — this is the second one.** The paused
+        Kuma monitor left the same kind of ghost. HA cannot distinguish a
+        device that no longer exists from one that has merely gone quiet, so it
+        never cleans up on its own. **Recreating a container can mint a new
+        device and strand the old one**, and the symptom is a silently inflated
+        count rather than an error. After any container recreate, check
+        Settings → Devices & Services for a duplicate — or compare
+        `container_count` against `sudo docker ps` on the NAS.
   - [ ] Confirm Portainer surfaces the three UGOS projects as **stacks**. The
         Stacks card is `show_empty: false`, so if UGOS labels its projects in
         a way Portainer does not read as a stack, the card is simply absent
         and nothing tells you which it was.
-  - [ ] Decide on a "container down" automation **after** watching the board
-        for a week. Deliberately not written yet: Uptime Kuma already alerts
-        on all three of these services from outside, so a naive container-down
-        automation double-notifies for every real outage. The two shapes worth
-        having are the ones Kuma structurally cannot see —
-        `sensor.docker_health` attribute `restarting` being non-`none` for
-        more than a few minutes (a crash loop rebinds its port often enough
-        that a Kuma check passes on the retry), and `container_count`
-        *dropping* (a removed container has no status left to be down).
+  - [x] ~~Decide on a "container down" automation~~ — **written 2026-08-15**,
+        `automations/lab/portainer_container_down.yaml`. The double-notify
+        concern was right and is respected: it stays deliberately silent about
+        ordinary container-down, and covers only what Kuma structurally cannot
+        see. **Three** shapes, not the two predicted here:
+        - `restarting` for 5+ min (crash loop — rebinds its port often enough
+          that a Kuma check passes on the retry)
+        - `container_count` *dropping* (a removed container has no status left
+          to be down; compares against its own previous value, so no expected
+          count goes stale)
+        - **`uptime-kuma` itself stopped or missing** — the case that made this
+          urgent rather than nice-to-have. The nightly Duplicati job now
+          *stops* that container to copy its SQLite/WAL data dir consistently;
+          if the restart fails, Kuma cannot report its own death, Healthchecks
+          only sees the backup, and `sensor.lab_availability` goes
+          *unavailable* rather than down so the Kuma automation declines to
+          fire. `for: 10 minutes` clears the seconds-long healthy stop without
+          hardcoding the 3am schedule.
+        ⚠️ "Cannot find the container" alerts rather than passing — a search
+        matching nothing must not read healthy.
   - [ ] Known upstream bug, [core#160907](https://github.com/home-assistant/core/issues/160907),
         **closed as not planned**: stopping a container from HA returns an
         error even though the stop succeeds, and a container already stopped
@@ -88,10 +116,14 @@ Working notes for streamlining dashboards, entities, backups, and log noise.
       `dashboards/lab/views/01-uptime.yaml`,
       `automations/lab/uptime_kuma_monitor_down.yaml`. Deploy steps live in
       the **servers** repo at `hosts/jack-sparrow/uptime-kuma-runbook.md`.
-  - [ ] Set up the Kuma-native ntfy channel (runbook Part 3) and attach it to
-        exactly `Internet`, `Gateway`, `homeassistant`. Until then those three
-        outages are **unalerted** — HA cannot notify you that HA is down, and
-        the down automation deliberately skips them.
+  - [x] ~~Set up the Kuma-native channel (runbook Part 3)~~ — **done and
+        tested.** **Discord**, not ntfy: it is already the lab's out-of-band
+        path (Healthchecks alerts through it too), so this avoided a second
+        dependency for one channel's worth of alerts. Attached to exactly
+        `Internet`, `Gateway`, `homeassistant` — the three HA cannot report on,
+        because HA cannot notify you that HA is down. **Do not attach it to
+        anything else**: everything else double-notifies against
+        `uptime_kuma_monitor_down.yaml`.
   - [x] ~~Recovery notification~~ — an **all-clear** branch in the same
         automation, firing once when `down_count` returns to zero, on the same
         notification tag so the green message replaces the red one. Dormant
@@ -137,17 +169,28 @@ Lab view, and at least one pair is not equivalent:
       the sensors.
 - [ ] Keep whatever still has no Kuma equivalent rather than deleting for
       symmetry.
-- [ ] **Scrutiny** (`vitals5/ha_scrutiny`, HACS default catalog) — drive SMART
-      health from jack-sparrow. Config written and waiting on the Scrutiny
-      container: `entities/templates/scrutiny.yaml`,
-      `dashboards/jack-sparrow/views/04-drives.yaml`,
-      `automations/lab/scrutiny_*.yaml`. Deploy steps live in the **servers**
-      repo at `hosts/jack-sparrow/scrutiny-runbook.md`.
-  - [ ] Verify the `realloc.*_raw` / `pending.*_raw` regexes in
-        `entities/templates/scrutiny.yaml` against real entity IDs. A regex
-        matching nothing reads 0 forever instead of erroring.
-  - [ ] Turn on **Critical SMART attribute sensors** + **Enable raw value
-        sensors** in the integration options, or the sector totals stay empty.
+- [x] ~~**Scrutiny** (`vitals5/ha_scrutiny`, HACS default catalog) — drive SMART
+      health from jack-sparrow.~~ **Done.** Live since 2026-08-13;
+      `entities/templates/scrutiny.yaml`,
+      `dashboards/jack-sparrow/views/04-drives.yaml` and
+      `automations/lab/scrutiny_*.yaml` are all deployed and rendering real
+      values. Servers-side runbook: `hosts/jack-sparrow/scrutiny-runbook.md`.
+  - [x] ~~Verify the `realloc.*_raw` / `pending.*_raw` regexes against real
+        entity IDs~~ — done 2026-08-13, and the suffixes were **tightened** as
+        a result. `realloc.*_raw$` matched both
+        `_reallocated_sectors_count_raw` (attribute 5, wanted) and
+        `_reallocation_event_count_raw` (attribute 196, a different
+        attribute) — silently double-counting, and reading fine only while
+        everything was zero. Both are now anchored to the full name. Do not
+        loosen them; see the header comment in the file.
+  - [x] ~~Turn on **Critical SMART attribute sensors** + **Enable raw value
+        sensors**~~ — both on. Raw sensors are the point: the text sensors are
+        enums HA cannot plot, the raw companions are numeric and land in
+        long-term statistics.
+  - [x] ~~Integration URL~~ — moved onto
+        `https://scrutiny.home.masterscrib.net` 2026-08-14. ⚠️ **This is the
+        change that silently killed every template rollup until HA was
+        restarted.** Reloading is not enough; nothing is logged.
 
 ## Notes
 
