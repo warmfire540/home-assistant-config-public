@@ -158,7 +158,6 @@ ui_lovelace_minimalist/
         └── mainviews/
             ├── cats.yaml
             ├── house.yaml
-            ├── lights.yaml
             └── network.yaml
         └── rooms/
         └── subviews/
@@ -189,6 +188,7 @@ Tracking sections I've reworked.
     - [x] [`views/01-uptime.yaml`](dashboards/lab/views/01-uptime.yaml) - Uptime Kuma
     - [x] [`views/03-pi-hole.yaml`](dashboards/lab/views/03-pi-hole.yaml) - Pi-hole
     - [x] [`views/04-zwave.yaml`](dashboards/lab/views/04-zwave.yaml) - Z-Wave by type
+    - [x] [`views/05-hosts.yaml`](dashboards/lab/views/05-hosts.yaml) - Pi hosts + Tasmota
 - [ ] [`entities/`](entities/) - entity definitions
   - [ ] [`templates/`](entities/templates/AGENTS.md) - template sensors
 - [ ] [`integrations/`](integrations/) - split config to load folders
@@ -207,8 +207,8 @@ Tracking sections I've reworked.
       - [x] [`mainviews/`](ui_lovelace_minimalist/dashboard/views/mainviews/README.md) - sub view configurations
         - [x] [`cats.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/cats.yaml) - Cat station
         - [x] [`house.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/house.yaml) - House overview
-        - [x] [`lights.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/lights.yaml) - Quick view of all lights / switches
-        - [x] [`network.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/network.yaml) - Quick view of my network
+        - [x] [`network.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/network.yaml) - WAN / Wi-Fi / device presence
+        - [x] ~~`lights.yaml`~~ — unused; welcome pill now opens Cameras
       - [ ] [`subviews/`](ui_lovelace_minimalist/dashboard/views/subviews/README.md) - sub view configurations
       - [x] [`01-home.yaml`](ui_lovelace_minimalist/dashboard/views/01-home.yaml) - main dashboard configuration file
     - [x] [`home-dashboard.yaml`](ui_lovelace_minimalist/dashboard/home-dashboard.yaml) - dashboard layout entrypoint

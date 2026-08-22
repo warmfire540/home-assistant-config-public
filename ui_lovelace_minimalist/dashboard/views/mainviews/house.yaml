@@ -1,3 +1,12 @@
+---
+#####
+# House — climate, covers, chores, and presence.
+#
+# Long dumps (every battery, every idle alert, every GPS tracker) sit
+# behind a fold. The open list is the relevant slice: batteries under
+# 40%, alerts that are actually firing. Unfold to see the rest — nothing
+# was removed.
+#####
 title: 'House'
 path: 'house'
 subview: true
@@ -214,12 +223,33 @@ cards:
               ulm_card_input_boolean_color: red
               ulm_card_input_boolean_force_background_color: true
 
+      # Firing only. Idle alerts are in the fold below.
+      - type: custom:auto-entities
+        show_empty: false
+        card:
+          type: entities
+        else:
+          type: markdown
+          content: >-
+            <ha-alert alert-type="info">Nothing firing</ha-alert>
+        filter:
+          include:
+            - domain: alert
+              state: 'on'
+
       - type: custom:auto-entities
         card:
           type: entities
         filter:
-          include:
-            - domain: alert
+          template: >
+            {% set ents = states.alert
+               | map(attribute='entity_id') | list %}
+            {{ [{
+              'type': 'custom:fold-entity-row',
+              'open': false,
+              'head': {'type': 'section', 'label': 'All alerts'},
+              'entities': ents
+            }] }}
 
       - type: 'custom:button-card'
         template: card_input_boolean
@@ -248,13 +278,22 @@ cards:
         template: card_title
         label: Batteries
 
+      # Under 40% is the glanceable list. Everything else is one fold
+      # away — phones at 80% do not bury a blind at 12%.
       - type: custom:auto-entities
+        show_empty: false
         card:
           type: entities
+          state_color: true
+        else:
+          type: markdown
+          content: >-
+            <ha-alert alert-type="info">All batteries OK</ha-alert>
         filter:
           include:
             - attributes:
                 device_class: battery
+              state: '< 40'
               options:
                 state_color: true
           exclude:
@@ -262,6 +301,24 @@ cards:
         sort:
           method: state
           numeric: true
+
+      - type: custom:auto-entities
+        card:
+          type: entities
+        filter:
+          template: >
+            {% set ents = states
+               | selectattr('attributes.device_class', 'defined')
+               | selectattr('attributes.device_class', 'eq', 'battery')
+               | rejectattr('domain', 'eq', 'binary_sensor')
+               | sort(attribute='name')
+               | map(attribute='entity_id') | list %}
+            {{ [{
+              'type': 'custom:fold-entity-row',
+              'open': false,
+              'head': {'type': 'section', 'label': 'All batteries'},
+              'entities': ents
+            }] }}
 
   #################
   # SCHEDULES
@@ -338,9 +395,18 @@ cards:
         card:
           type: entities
         filter:
-          include:
-            - attributes:
-                source_type: gps
+          template: >
+            {% set ents = states.device_tracker
+               | selectattr('attributes.source_type', 'defined')
+               | selectattr('attributes.source_type', 'eq', 'gps')
+               | sort(attribute='name')
+               | map(attribute='entity_id') | list %}
+            {{ [{
+              'type': 'custom:fold-entity-row',
+              'open': false,
+              'head': {'type': 'section', 'label': 'GPS entities'},
+              'entities': ents
+            }] }}
 
   #################
   # PHONES

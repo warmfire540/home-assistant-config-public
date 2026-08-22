@@ -4,19 +4,20 @@ subview: true
 type: custom:grid-layout
 layout:
   grid-template-areas: |
-    "header ."
-    "devices ."
+    "header header"
+    "devices health"
   mediaquery:
     # portrait monitor
     'only screen and (min-width: 769px) and (max-width: 1400px)':
       grid-template-areas: |
         "header header"
-        "devices devices"
+        "devices health"
     # Smartphones
     'only screen and (max-width: 768px)':
       grid-template-areas: |
         "header"
         "devices"
+        "health"
 cards:
   #################
   # HEADER
@@ -41,3 +42,20 @@ cards:
         template: frigate_camera
         variables:
           - camera: patio
+
+  #################
+  # DEVICE HEALTH
+  #################
+  - type: vertical-stack
+    view_layout:
+      grid-area: health
+    cards:
+      - type: 'custom:button-card'
+        template: card_title
+        label: Device Health
+
+      # Node moved out here from dining. Same declutter as living / garage.
+      - type: custom:decluttering-card
+        template: eero
+        variables:
+          - location: patio

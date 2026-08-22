@@ -1,0 +1,401 @@
+---
+#####
+# HOSTS — Pi hardware stats, Tasmota RF bridge, Brother printer
+#
+# The graphs on this page used to live on `/the-matrix/lab`. Pi-hole the
+# *service* is `/home-lab/pi-hole`; this tab is the boxes (CPU, temp,
+# RAM, disk, NICs) and the Sonoff RF Bridge that is not a Pi.
+#
+# `pi_details` / `home_assistant_details` are decluttering templates in
+# `ui_lovelace_minimalist/card_declutter/`. lab.yaml loads that directory
+# so this view can call them without copying the graphs. Variables are
+# the list-of-dicts form the card expects (`- pi_name: hole`).
+#
+# Named Pis, not `integration_entities`: each card is a bundle of
+# `sensor.poat_<name>_rpi_*` entities that do not share an integration
+# suffix the way Kuma/Duplicati do. Seedbox and Plex hide when their
+# rpi_monitor sensor is `unavailable` (the Pi is gone), same as the old
+# view. Do not retarget those cards at jack-sparrow.
+#
+# Tasmota is rebuilt in mushroom/tiles. The Matrix version used UML
+# `card_generic_swap` / `card_wifi_signal` (the latter is gone). Same
+# entities, no UML — this dashboard does not load those templates.
+#
+# Controls are the old `mqtt_control` row, without the UML button-card
+# template. Same buttons: `button.poat_<name>_rpi_reboot_<name>_command`
+# (and shutdown / restart_service). HA uses
+# `script.reboot_home_assistant` / `script.shutdown_home_assistant`.
+# `poat_rgb` is the office Pi; it also lives on the Office view.
+# Seedbox / Plex rows hide when their ping sensor is off.
+#
+# LAYOUT (max_columns: 3)
+#
+#   row 1   Hosts          span 3   portals
+#   row 2   Controls       span 3   reboot / shutdown / restore
+#   row 3   Pis            span 3   2-up, HA then each Pi
+#   row 4   RF bridge      span 3   Tasmota tiles + 24h RSSI
+#   row 5   Printer        span 3   Brother MFC — hidden when unavailable
+#
+# Requires HACS: `decluttering-card`, `mini-graph-card`, `bar-card`,
+# `stack-in-card`, `fold-entity-row` (pulled in by the Pi templates).
+#####
+
+title: Hosts
+path: hosts
+icon: mdi:raspberry-pi
+type: sections
+max_columns: 3
+dense_section_placement: true
+cards: []
+sections:
+  #####################################################################
+  # HEADLINE
+  #####################################################################
+  - type: grid
+    column_span: 3
+    cards:
+      - type: heading
+        heading: Hosts
+        heading_style: title
+        icon: mdi:raspberry-pi
+
+      # Shared card: dashboards/cards/portal-row.yaml.
+      # `!include` is relative to this file, hence ../../ from
+      # dashboards/<dash>/views/.
+      - !include ../../cards/portal-row.yaml
+
+  #####################################################################
+  # CONTROLS — reboot / shutdown / restore. Same entities as the old
+  # Matrix `mqtt_control` row; `multiple-entity-row` so we do not load
+  # UML button-card templates on this dashboard.
+  #####################################################################
+  - type: grid
+    column_span: 3
+    cards:
+      - type: heading
+        heading: Controls
+        heading_style: title
+        icon: mdi:power
+
+      - type: entities
+        state_color: true
+        grid_options:
+          columns: full
+          rows: auto
+        entities:
+          - type: custom:multiple-entity-row
+            entity: device_tracker.homeassistant_wired
+            name: homeassistant
+            show_state: false
+            secondary_info:
+              attribute: ip
+            entities:
+              - entity: sensor.home_assistant_last_backup
+                name: backup
+              - entity: script.reboot_home_assistant
+                icon: mdi:restart
+                name: restart
+              - entity: script.shutdown_home_assistant
+                icon: mdi:power
+                name: shutdown
+
+          - type: custom:multiple-entity-row
+            entity: device_tracker.poat_hole_wired
+            name: poat-hole
+            show_state: false
+            secondary_info:
+              attribute: ip
+            entities:
+              - entity: sensor.pi_hole_server_last_backup
+                name: backup
+              - entity: button.poat_hole_rpi_reboot_poat_hole_command
+                icon: mdi:restart
+                name: restart
+              - entity: button.poat_hole_rpi_shutdown_poat_hole_command
+                icon: mdi:power
+                name: shutdown
+              - entity: button.poat_hole_rpi_restart_service_poat_hole_command
+                icon: mdi:restore-alert
+                name: restore
+
+          - type: custom:multiple-entity-row
+            entity: device_tracker.poat_share_wired
+            name: poat-share
+            show_state: false
+            secondary_info:
+              attribute: ip
+            entities:
+              - entity: sensor.poat_share_wired_data_usage_day
+                name: usage
+              - entity: button.poat_share_rpi_reboot_poat_share_command
+                icon: mdi:restart
+                name: restart
+              - entity: button.poat_share_rpi_shutdown_poat_share_command
+                icon: mdi:power
+                name: shutdown
+              - entity: button.poat_share_rpi_restart_service_poat_share_command
+                icon: mdi:restore-alert
+                name: restore
+
+          - type: custom:multiple-entity-row
+            entity: device_tracker.poat_rgb_wired
+            name: poat-rgb
+            show_state: false
+            secondary_info:
+              attribute: ip
+            entities:
+              - entity: sensor.poat_rgb_cpu_load
+                name: load
+              - entity: button.poat_rgb_reboot
+                icon: mdi:restart
+                name: restart
+              - entity: button.poat_rgb_shutdown
+                icon: mdi:power
+                name: shutdown
+              - entity: button.poat_rgb_sleep
+                icon: mdi:sleep
+                name: sleep
+
+          - type: conditional
+            conditions:
+              - entity: binary_sensor.poat_seedbox_local
+                state: 'on'
+            row:
+              type: custom:multiple-entity-row
+              entity: device_tracker.poat_seedbox_wired
+              name: poat-seedbox
+              show_state: false
+              secondary_info:
+                attribute: ip
+              entities:
+                - entity: sensor.deluge_last_backup
+                  name: backup
+                - entity: button.poat_seedbox_rpi_reboot_poat_seedbox_command
+                  icon: mdi:restart
+                  name: restart
+                - entity: button.poat_seedbox_rpi_shutdown_poat_seedbox_command
+                  icon: mdi:power
+                  name: shutdown
+                - entity: button.poat_seedbox_rpi_restart_service_poat_seedbox_command
+                  icon: mdi:restore-alert
+                  name: restore
+
+          - type: conditional
+            conditions:
+              - entity: binary_sensor.poat_plex_local
+                state: 'on'
+            row:
+              type: custom:multiple-entity-row
+              entity: device_tracker.poat_plex_wired
+              name: poat-plex
+              show_state: false
+              secondary_info:
+                attribute: ip
+              entities:
+                - entity: sensor.plex_server_last_backup
+                  name: backup
+                - entity: button.poat_plex_rpi_reboot_poat_plex_command
+                  icon: mdi:restart
+                  name: restart
+                - entity: button.poat_plex_rpi_shutdown_poat_plex_command
+                  icon: mdi:power
+                  name: shutdown
+                - entity: button.poat_plex_rpi_restart_service_poat_plex_command
+                  icon: mdi:restore-alert
+                  name: restore
+
+  #####################################################################
+  # PIS — 2-up. Default half-width is load-bearing here (we WANT two
+  # per row). Do not add `columns: full` or they stack to one.
+  #####################################################################
+  - type: grid
+    column_span: 3
+    cards:
+      - type: heading
+        heading: Raspberry Pi
+        heading_style: title
+        icon: mdi:raspberry-pi
+        grid_options:
+          columns: full
+          rows: auto
+
+      - type: custom:decluttering-card
+        template: home_assistant_details
+        grid_options:
+          columns: 6
+          rows: auto
+
+      - type: custom:decluttering-card
+        template: pi_details
+        grid_options:
+          columns: 6
+          rows: auto
+        variables:
+          - pi_name: hole
+          - icon: mdi:pi-hole
+          - name: Pi Hole
+
+      - type: custom:decluttering-card
+        template: pi_details
+        grid_options:
+          columns: 6
+          rows: auto
+        variables:
+          - pi_name: share
+          - icon: mdi:folder-network-outline
+          - name: Pi Share
+
+      # Hidden while rpi1 is off / gone, not while it is merely idle.
+      - type: custom:decluttering-card
+        template: pi_details
+        grid_options:
+          columns: 6
+          rows: auto
+        visibility:
+          - condition: state
+            entity: sensor.poat_seedbox_rpi_monitor_poat_seedbox
+            state_not: unavailable
+        variables:
+          - pi_name: seedbox
+          - icon: mdi:seed
+          - name: Pi Seedbox
+
+      - type: custom:decluttering-card
+        template: pi_details
+        grid_options:
+          columns: 6
+          rows: auto
+        visibility:
+          - condition: state
+            entity: sensor.poat_plex_rpi_monitor_poat_plex
+            state_not: unavailable
+        variables:
+          - pi_name: plex
+          - icon: mdi:plex
+          - name: Pi Plex
+
+  #####################################################################
+  # TASMOTA — Sonoff RF Bridge. Named entities: there is one bridge.
+  #####################################################################
+  - type: grid
+    column_span: 3
+    cards:
+      - type: heading
+        heading: Sonoff RF Bridge
+        heading_style: title
+        icon: mdi:broadcast
+
+      - type: grid
+        square: false
+        columns: 3
+        grid_options:
+          columns: full
+          rows: auto
+        cards:
+          - type: tile
+            entity: sensor.tasmota_firmware_version
+            name: Firmware
+            icon: mdi:chip
+            vertical: true
+
+          - type: tile
+            entity: sensor.tasmota_ip
+            name: IP
+            icon: mdi:ip-network
+            vertical: true
+
+          - type: tile
+            entity: sensor.tasmota_rssi
+            name: RSSI
+            icon: mdi:wifi
+            vertical: true
+
+          - type: custom:mushroom-template-card
+            entity: sensor.tasmota_signal
+            primary: "{{ states('sensor.tasmota_ssid') }}"
+            secondary: "{{ states('sensor.tasmota_signal') }} dBm · {{ states('sensor.tasmota_wifi_connect_count') }} Wi-Fi reconnects"
+            icon: mdi:wifi
+            layout: vertical
+            tap_action:
+              action: more-info
+
+          - type: custom:mushroom-template-card
+            entity: sensor.tasmota_mqtt_connect_count
+            primary: "{{ states('sensor.tasmota_mqtt_connect_count') }} MQTT reconnects"
+            secondary: "{{ states('sensor.tasmota_wifi_connect_count') }} Wi-Fi reconnects"
+            icon: mdi:mqtt
+            layout: vertical
+            tap_action:
+              action: more-info
+
+          - type: custom:mushroom-template-card
+            entity: sensor.tasmota_restart_reason
+            primary: "{{ states('sensor.tasmota_restart_reason') }}"
+            secondary: "{{ states('sensor.tasmota_last_restart_time') }}"
+            icon: mdi:restart
+            layout: vertical
+            tap_action:
+              action: more-info
+
+      # 24h RSSI so a flaky bridge shows up as a line, not a single tile.
+      - type: custom:mini-graph-card
+        name: RSSI (24h)
+        icon: mdi:wifi
+        hours_to_show: 24
+        points_per_hour: 2
+        hour24: true
+        animate: true
+        height: 80
+        show:
+          extrema: true
+        entities:
+          - entity: sensor.tasmota_rssi
+            name: RSSI
+        grid_options:
+          columns: full
+          rows: auto
+
+  #####################################################################
+  # PRINTER — Brother MFC-7860DW. Hidden when the integration is down
+  # (same `state_not: unavailable` as the old Matrix lab card).
+  #####################################################################
+  - type: grid
+    column_span: 3
+    visibility:
+      - condition: state
+        entity: sensor.mfc_7860dw_status
+        state_not: unavailable
+    cards:
+      - type: heading
+        heading: Brother Printer
+        heading_style: title
+        icon: mdi:printer
+
+      - type: entities
+        icon: mdi:printer
+        grid_options:
+          columns: full
+          rows: auto
+        entities:
+          - entity: sensor.mfc_7860dw_status
+            type: custom:multiple-entity-row
+            name: Status
+            icon: mdi:printer-3d-nozzle
+            show_state: false
+            entities:
+              - entity: sensor.mfc_7860dw_page_counter
+                name: Page count
+              - entity: sensor.mfc_7860dw_black_toner_remaining
+                name: Toner
+          - entity: sensor.mfc_7860dw_status
+            type: custom:multiple-entity-row
+            name: Drum
+            icon: mdi:chart-donut
+            show_state: false
+            entities:
+              - entity: sensor.mfc_7860dw_drum_remaining_lifetime
+                name: Life
+              - entity: sensor.mfc_7860dw_drum_remaining_pages
+                name: Remaining
+              - entity: sensor.mfc_7860dw_drum_page_counter
+                name: Page count

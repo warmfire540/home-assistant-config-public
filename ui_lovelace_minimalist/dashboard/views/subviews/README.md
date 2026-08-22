@@ -4,8 +4,8 @@ The subviews directory contains specialized dashboard views that complement the 
 
 ## Components
 
-- `cameras.yaml` - Frigate camera view
-- `vacation.yaml` - Vacation-mode controls
+- `cameras.yaml` - Frigate camera view (Home welcome pill, replaced Lights)
+- `vacation.yaml` - Vacation-mode controls (welcome chip)
 
 Z-Wave lives on `/home-lab/z-wave` (`dashboards/lab/views/04-zwave.yaml`),
 not here.

@@ -1,6 +1,0 @@
-title: 'Test'
-path: 'test'
-subview: true
-cards:
-  - type: custom:toolbar-status-chips
-    solo_label: lights

@@ -11,7 +11,7 @@
 #
 # `!include_dir_list` sorts by filename, hence the NN- prefixes.
 #
-# Views: Uptime, Backups, Pi-hole, Z-Wave. The Matrix subviews
+# Views: Uptime, Backups, Pi-hole, Z-Wave, Hosts. The Matrix subviews
 # `/the-matrix/lab` and `/the-matrix/z-wave` are gone; Home's server-closet
 # card lands here (`/home-lab/uptime`).
 #
@@ -20,7 +20,11 @@
 # Duplicati runs on the NAS, a backup job is a lab-wide concern.
 # 02-backups.yaml answers "did the last run succeed"; Healthchecks (not
 # built yet, see TODO.md) will answer "did it run at all".
-# Pi-hole and Z-Wave are lab-wide too — not a jack-sparrow concern.
+# Pi-hole, Z-Wave and Hosts are lab-wide too — not a jack-sparrow concern.
+#
+# `decluttering_templates` loads `ui_lovelace_minimalist/card_declutter/`
+# so 05-hosts.yaml can call `pi_details` / `home_assistant_details` without
+# copying the graphs. Unused templates in that dir are free.
 #
 # `templates` is dashboards/templates/, the same directory jack-sparrow.yaml
 # loads. Editing a file there changes both dashboards. `[[[ ... ]]]` exists
@@ -35,13 +39,18 @@
 # `Internet` and `Gateway` in entities/templates/uptime_kuma.yaml, which back
 # `binary_sensor.lab_wan_down`.
 #
-# Requires HACS: `auto-entities`, plus mushroom for the status tiles.
+# Requires HACS: `auto-entities`, mushroom, plus (Hosts tab)
+# `decluttering-card` / `mini-graph-card` / `bar-card` / `stack-in-card`.
 #
 # Deploy steps, monitor table and alerting: servers repo,
 # hosts/jack-sparrow/uptime-kuma-runbook.md.
 #####
 
 button_card_templates: !include_dir_merge_named templates
+
+# Shared with the-matrix. Relative to this file (dashboards/lab.yaml).
+# `!include_dir_merge_named` recurses — keep card_declutter/ flat.
+decluttering_templates: !include_dir_merge_named ../ui_lovelace_minimalist/card_declutter
 
 title: 'Lab'
 theme: 'minimalist-desktop'

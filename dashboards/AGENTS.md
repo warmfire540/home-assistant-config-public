@@ -22,6 +22,7 @@ explaining anything non-obvious. Treat them as reference for style.
 | `lab/views/01-uptime.yaml` | ✅ polished — 2026-08-13 | Uptime Kuma availability board. **Names no monitor anywhere** — every card is an `auto-entities` Jinja template over `integration_entities('uptime_kuma')`, so the page tracks Kuma with no edits. Core cards + mushroom, so no `[[[ ]]]` and no bracket counting in the view file itself — the only JS templates reachable from this page are inside the shared `portal_button`. |
 | `lab/views/03-pi-hole.yaml` | ✅ written — 2026-08-22 | Pi-hole card that used to live on `/the-matrix/lab`. Named `device_id` is opaque (poat-hole); last-backup tile is the command_line sensor, which the card cannot discover. |
 | `lab/views/04-zwave.yaml` | ✅ written — 2026-08-22 | Replaces `/the-matrix/z-wave`. Mesh health + `zwave-device` cards grouped by inferred type off `node_status$`. Names no node. |
+| `lab/views/05-hosts.yaml` | ✅ written — 2026-08-22 | Pi `decluttering-card`s (`pi_details` / `home_assistant_details`), reboot/shutdown rows, Tasmota RF bridge, Brother printer. lab.yaml loads `card_declutter/` for this page. |
 | `room-summary-card/*.yaml` | ⬜ not reviewed | Scratch dashboards for testing the custom card. Hidden from sidebar. Candidates for pruning. |
 
 ## Splitting a dashboard

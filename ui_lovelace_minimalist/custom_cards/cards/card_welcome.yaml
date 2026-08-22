@@ -14,17 +14,18 @@ card_welcome:
       name: House
       color: blue
     entity_2:
-      nav: lights
-      icon: mdi:lightbulb
-      name: Lights
-      color: yellow
+      nav: cameras
+      icon: mdi:cctv
+      name: Cams
+      color: grey
     entity_3:
       nav: cats
       icon: mdi:cat
       name: Cats
       color: green
     entity_4:
-      nav: lab
+      # Absolute — Lab is its own dashboard, not a Matrix view.
+      nav: /home-lab/uptime
       icon: mdi:flask
       name: Lab
       color: purple
@@ -34,10 +35,6 @@ card_welcome:
       name: Net
       color: red
     subview_1:
-      nav: cameras
-      icon: mdi:cctv
-      color: grey
-    subview_2:
       nav: vacation
       icon: mdi:beach
       color: yellow

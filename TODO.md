@@ -7,11 +7,15 @@ Working notes for streamlining dashboards, entities, backups, and log noise.
 - [x] ~~Polish and reconcile Matrix `lab.yaml`~~ — retired 2026-08-22.
       `/the-matrix/lab` and `/the-matrix/z-wave` are gone. Home's
       server-closet card lands on `/home-lab/uptime`. Pi-hole is
-      `/home-lab/pi-hole`; Z-Wave is `/home-lab/z-wave` (grouped by type).
-      Not moved: Raspberry Pi host cards, printer, Tasmota RF bridge,
-      Plex, MQTT reboot row. `pi_details` / `home_assistant_details`
-      declutter templates are now unused.
-- [ ] Walk other mainviews / subviews and clean up unused or low-value cards
+      `/home-lab/pi-hole`; Z-Wave is `/home-lab/z-wave` (grouped by type);
+      Pi graphs + Tasmota + reboot/shutdown + printer are `/home-lab/hosts`.
+      Share-space graphs (aristodemos / odysseus) were not moved.
+- [x] ~~Walk other mainviews / subviews and clean up unused or low-value cards~~
+      — 2026-08-22. Lights view gone (welcome pill → Cameras). Lab pill
+      → `/home-lab/uptime`. Network dropped the duplicate rate/Wi-Fi
+      graphs. House dumps (batteries / idle alerts / GPS) sit behind
+      folds. Vacation lost the people cards. Patio owns its eero.
+      `rooms/test.yaml` and `card_wifi_signal` removed.
 - [ ] Streamline layouts so status, controls, and alerts are easier to scan
 - [ ] Surface backup status more clearly on Lab / related views
 
@@ -163,11 +167,9 @@ seedbox_vpn_on, and customizations. At least one pair is not equivalent:
 | `binary_sensor.poat_plex_local` | `lil-bit - Plex` | ⚠️ **probably different hosts** — confirm before swapping |
 
 - [ ] Confirm whether `poat-plex` and `lil-bit` are the same machine. Kuma
-      monitors `192.168.4.161`; the retired Matrix lab view pointed
-      `custom:plex-meets-homeassistant` at `poat-plex.local`.
+      monitors `192.168.4.161`.
 - [ ] Then swap remaining `binary_sensor.*_local` consumers (ping_interval,
       seedbox_vpn_on, customizations) to the matching `sensor.*_status` `up`.
-      The Matrix lab view is gone; `pi_details.yaml` is unused.
 - [ ] Then retire `automations/sensors/ping_interval.yaml` and the ping config
       entries. That automation only exists to work around
       home-assistant/core#105041 (ping sensors not honouring an update

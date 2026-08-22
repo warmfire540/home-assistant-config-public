@@ -8,22 +8,19 @@ layout:
   grid-template-areas: |
     "header header"
     "cameras cameras"
-    "people map"
-    "security security"
-    "vacation vacation"
+    "map map"
+    "security vacation"
   mediaquery:
     'only screen and (min-width: 769px) and (max-width: 1400px)':
       grid-template-areas: |
         "header header"
         "cameras cameras"
-        "people map"
-        "security security"
-        "vacation vacation"
+        "map map"
+        "security vacation"
     'only screen and (max-width: 768px)':
       grid-template-areas: |
         "header"
         "cameras"
-        "people"
         "map"
         "security"
         "vacation"
@@ -54,28 +51,7 @@ cards:
         template: frigate_cameras
 
   #################
-  # PEOPLE
-  #################
-  - type: vertical-stack
-    view_layout:
-      grid-area: people
-    cards:
-      - type: custom:button-card
-        template: card_title
-        label: People
-
-      - type: custom:button-card
-        template: card_family
-        variables:
-          person: poat
-
-      - type: custom:button-card
-        template: card_family
-        variables:
-          person: gina
-
-  #################
-  # TRACKERS (map + GPS entities, same as House)
+  # TRACKERS (map + GPS fold, same set as House)
   #################
   - type: vertical-stack
     view_layout:
@@ -101,9 +77,18 @@ cards:
         card:
           type: entities
         filter:
-          include:
-            - attributes:
-                source_type: gps
+          template: >
+            {% set ents = states.device_tracker
+               | selectattr('attributes.source_type', 'defined')
+               | selectattr('attributes.source_type', 'eq', 'gps')
+               | sort(attribute='name')
+               | map(attribute='entity_id') | list %}
+            {{ [{
+              'type': 'custom:fold-entity-row',
+              'open': false,
+              'head': {'type': 'section', 'label': 'GPS entities'},
+              'entities': ents
+            }] }}
 
   #################
   # AWAY CHECKS — water off, doors, leak

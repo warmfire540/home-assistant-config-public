@@ -1,25 +1,36 @@
+---
+#####
+# Network — WAN, Wi-Fi, and device presence.
+#
+# Disconnected is the page. The exclude list is load-bearing: it matches
+# entities that are expected-offline (or never "a device"). Do not tidy
+# it for symmetry with other views.
+#
+# WAN is the gateway eero (pretty_fly) plus an on-demand Speedtest.
+# Per-node daily usage sits under that. Per-second upload/download rate
+# graphs were the same traffic twice and are gone. Wi-Fi is the sorted
+# list, not a graph of the same sensors.
+#####
 title: 'Network'
 path: 'network'
 subview: true
 type: custom:grid-layout
 layout:
   grid-template-areas: |
-    "network disconnected updates"
-    "network disconnected connected"
+    "wan disconnected updates"
+    "wan disconnected connected"
     "wifi disconnected connected"
   mediaquery:
     # portrait monitor
     'only screen and (min-width: 769px) and (max-width: 1400px)':
       grid-template-areas: |
-        "network disconnected"
-        "network updates"
-        "network wifi"
-        "network ."
-        "connected ."
+        "wan disconnected"
+        "wan updates"
+        "wifi connected"
     # Smartphones
     'only screen and (max-width: 768px)':
       grid-template-areas: |
-        "network"
+        "wan"
         "wifi"
         "disconnected"
         "updates"
@@ -31,21 +42,27 @@ cards:
   - type: custom:button-card
     template: mainview_header
 
+  #################
+  # WAN
+  #################
   - type: vertical-stack
     view_layout:
-      grid-area: network
+      grid-area: wan
     cards:
       - type: 'custom:button-card'
         template: card_title
-        label: Network Stats
+        label: WAN
 
       - type: 'custom:mini-graph-card'
-        name: Network
+        name: Gateway
+        icon: mdi:wan
         show:
           extrema: true
         entities:
-          - sensor.pretty_fly_for_a_wifi_download_speed
-          - sensor.pretty_fly_for_a_wifi_upload_speed
+          - entity: sensor.pretty_fly_for_a_wifi_download_speed
+            name: Download
+          - entity: sensor.pretty_fly_for_a_wifi_upload_speed
+            name: Upload
 
       - type: custom:mini-graph-card
         name: Speedtest
@@ -76,7 +93,8 @@ cards:
       - type: custom:auto-entities
         card:
           type: 'custom:mini-graph-card'
-          name: Usage Per Day
+          name: Usage per day
+          icon: mdi:chart-bar
           show:
             legend: false
             extrema: true
@@ -85,53 +103,21 @@ cards:
           include:
             - entity_id: 'sensor.*_data_usage_day'
 
-      - type: custom:auto-entities
-        card:
-          type: 'custom:mini-graph-card'
-          name: Upload Rate
-          show:
-            legend: false
-            extrema: true
-            fill: false
-        filter:
-          include:
-            - entity_id: 'sensor.*_upload_rate'
-
-      - type: custom:auto-entities
-        card:
-          type: 'custom:mini-graph-card'
-          name: Download Rate
-          show:
-            legend: false
-            extrema: true
-            fill: false
-        filter:
-          include:
-            - entity_id: 'sensor.*_download_rate'
-
+  #################
+  # WI-FI
+  #################
   - type: vertical-stack
     view_layout:
       grid-area: wifi
     cards:
       - type: 'custom:button-card'
         template: card_title
-        label: WiFi Strength
-
-      - type: custom:auto-entities
-        card:
-          type: 'custom:mini-graph-card'
-          name: Wifi
-          show:
-            legend: false
-            fill: false
-        filter:
-          include:
-            - attributes:
-                device_class: signal_strength
+        label: Wi-Fi
 
       - type: custom:auto-entities
         card:
           type: entities
+          state_color: true
         filter:
           include:
             - attributes:
@@ -141,6 +127,9 @@ cards:
           numeric: true
           reverse: true
 
+  #################
+  # DISCONNECTED
+  #################
   - type: vertical-stack
     view_layout:
       grid-area: disconnected
@@ -186,6 +175,9 @@ cards:
             - integration: cast
             - label: offline
 
+  #################
+  # UPDATES
+  #################
   - type: vertical-stack
     view_layout:
       grid-area: updates
@@ -211,6 +203,9 @@ cards:
             - domain: update
               state: 'on'
 
+  #################
+  # CONNECTED
+  #################
   - type: vertical-stack
     view_layout:
       grid-area: connected
