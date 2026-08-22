@@ -37,10 +37,7 @@ cards:
         template: card_title
         label: Devices
 
-      - type: custom:advanced-camera-card
-        cameras:
-          - camera_entity: camera.patio
-        live:
-          controls:
-            ptz:
-              mode: 'on'
+      - type: custom:decluttering-card
+        template: frigate_camera
+        variables:
+          - camera: patio

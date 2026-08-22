@@ -122,9 +122,10 @@ cards:
         template: card_title
         label: Device Health
 
-      - type: custom:advanced-camera-card
-        cameras:
-          - camera_entity: camera.garage
+      - type: custom:decluttering-card
+        template: frigate_camera
+        variables:
+          - camera: garage
 
       - type: custom:zwave-device-center
         area: garage

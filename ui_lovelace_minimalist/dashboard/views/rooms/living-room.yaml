@@ -149,9 +149,25 @@ cards:
         template: card_title
         label: Device Health
 
+      # Detect is off. Occupancy sensors exist and stay off, so this is
+      # live + clips/recordings only (same menu as frigate_camera).
       - type: custom:advanced-camera-card
         cameras:
           - camera_entity: camera.living_room
+        menu:
+          buttons:
+            clips:
+              enabled: true
+            recordings:
+              enabled: true
+            snapshots:
+              enabled: true
+            timeline:
+              enabled: true
+            frigate:
+              enabled: true
+        status_bar:
+          style: hover-card
 
       - type: custom:zwave-device-center
         area: living_room

@@ -2,59 +2,35 @@
 #####
 # Certificate expiry — the NPM renewal watchdog
 #
-# There is NO Home Assistant integration for Nginx Proxy Manager, core or
-# HACS. Nothing enumerates proxy hosts into HA and nothing ever will. So the
-# question this file answers is not "is NPM up" — Uptime Kuma answers that,
-# and you would notice anyway the moment a page stopped loading. It is the
-# quieter one:
+# There is no Home Assistant integration for Nginx Proxy Manager. Uptime
+# Kuma answers "is NPM up". This file answers "is the wildcard still
+# renewing?" Certbot renews inside the NPM container over DNS-01 with no
+# interaction, so a stalled renewal produces no signal until every service
+# goes red at once, roughly 60 days after a Cloudflare token is revoked or
+# a DNS plugin breaks. NPM 2.15.0 warned that DNS plugins "may not work as
+# expected" across that upgrade.
 #
-#   Is the wildcard certificate still renewing?
+# HA's core `cert_expiry` integration is the mechanism. Point it at any
+# proxied hostname on 443 and it reports the cert NPM is actually serving.
 #
-# That is the failure that costs something. Certbot renews inside the NPM
-# container over DNS-01 with no interaction, which means a renewal that has
-# stopped working produces no signal at all — until the day every service in
-# the house goes red simultaneously, roughly 60 days after the Cloudflare
-# token was revoked or the DNS plugin broke on an upgrade. NPM 2.15.0 shipped
-# an explicit warning that DNS plugins "may not work as expected" across that
-# upgrade, so this is a live risk, not a theoretical one.
+# The state is a UTC datetime, not a day count. The frontend renders it as
+# "in 47 days"; a numeric comparison against the raw state does not work.
+# Convert with `as_datetime()` and subtract `now()`. That conversion is
+# done once here so nothing downstream has to remember.
 #
-# HA's **core** `cert_expiry` integration is the whole mechanism. Point it at
-# any proxied hostname on 443 and it reports the cert NPM is actually serving,
-# which is the thing that matters — not what the NPM UI claims it holds.
+# `integration_entities('cert_expiry')` rather than naming
+# `sensor.cert_expiry_scrutiny_home_masterscrib_net`. A predicted entity ID
+# that matches nothing does not error; it renders healthy forever.
 #
-# ⚠️ THE STATE IS A UTC DATETIME, NOT A DAY COUNT. The frontend renders it as
-# "in 47 days" and that formatting is a lie you can build a bug on: a numeric
-# comparison against the raw state does not work. Upstream is explicit —
-# convert with `as_datetime()` and subtract `now()`. That conversion is done
-# once here so nothing downstream has to remember.
-#
-# WHY THE ENTITY LIST IS DERIVED, NOT HARDCODED
-#
-# Same reasoning as uptime_kuma.yaml and scrutiny.yaml, with one extra payoff:
-# `cert_expiry` slugs its entity IDs from the hostname
-# (`sensor.cert_expiry_scrutiny_home_masterscrib_net`), which is long, easy to
-# mistype, and would change if the domain ever moves.
-# `integration_entities('cert_expiry')` sidesteps that entirely — and it means
-# adding a second host to the integration needs no edit here.
-#
-# That matters more than usual on this repo's track record. A predicted entity
-# ID that matches nothing does NOT error; it renders healthy forever. Deriving
-# the list is what makes that class of mistake unavailable rather than merely
-# unlikely.
-#
-# ⚠️ ONE CERT, MANY HOSTS. Every proxy host shares the one wildcard, so
-# monitoring a single hostname is sufficient today and the `min` below is
-# defensive rather than load-bearing. Keep it: the day a second certificate
-# exists (a bought cert, a second domain, a split-off service) this file needs
-# no change, and the alert covers whichever expires first.
+# One wildcard, many hosts. Monitoring a single hostname is enough today;
+# the `min` below covers whichever expires first if a second cert ever
+# exists.
 #
 # Consumed by:
 #   - automations/lab/cert_expiry.yaml
 #   - dashboards/lab/views/01-uptime.yaml
 #
-# Setup, the DNS-01 flow and the Cloudflare token live in the **servers** repo
-# at hosts/jack-sparrow/npm-runbook.md.
-#
+# Setup: servers repo, hosts/jack-sparrow/npm-runbook.md
 # Upstream: https://www.home-assistant.io/integrations/cert_expiry/
 #####
 

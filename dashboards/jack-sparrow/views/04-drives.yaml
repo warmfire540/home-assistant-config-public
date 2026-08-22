@@ -3,15 +3,13 @@
 # DRIVES — SMART health per physical disk, from Scrutiny
 #
 # The NAS view (01-nas.yaml) shows what UGOS thinks: pool state, volume fill,
-# and a per-disk "Normal". That is a pass/fail assessment made by the drive
-# firmware, and firmware only says "failing" once it already is. This page is
-# the other half — Scrutiny's collected SMART attributes, scored against
+# and a per-disk "Normal". Firmware only says "failing" once it already is.
+# This page is Scrutiny's collected SMART attributes, scored against
 # BackBlaze's real-world failure rates, with history.
 #
-# The distinction that matters here: four of these seven drives are
-# seller-refurbished, sitting in a RAID 5 with one drive of parity, in a market
-# where replacements are expensive and slow. A reallocated sector count moving
-# off zero is worth acting on months before anything reports "failed".
+# Four of these seven drives are seller-refurbished, sitting in a RAID 5 with
+# one drive of parity. A reallocated sector count moving off zero is worth
+# acting on months before anything reports "failed".
 #
 # DATA SOURCE
 #
@@ -19,8 +17,9 @@
 #   → ha_scrutiny (HACS, vitals5/ha_scrutiny) — one HA device per drive
 #   → entities/templates/scrutiny.yaml — the three rollups at the top
 #
-# Collector runs every 6h. Values only change that often no matter how fast HA
-# polls; a flat line between steps is the collector schedule, not a dead sensor.
+# Collector runs every 6h. Values only change that often no matter how fast
+# HA polls; a flat line between steps is the collector schedule, not a dead
+# sensor.
 #
 # LAYOUT (max_columns: 3)
 #
@@ -31,19 +30,13 @@
 # breakpoints of its own, so the split is two auto-entities cards with HA's
 # `visibility` + `screen` condition (same 600px as the portal row).
 #
-# The portal row at the top is `!include`d from dashboards/cards/portal-row.yaml
-# — the same one card on every page of both dashboards, so the way out of HA is
-# in the same place with the same look everywhere. It used to be a hand-copied
-# trio here; adding Portainer is what finally made that untenable.
+# Portal row is `!include`d from dashboards/cards/portal-row.yaml.
 #
-# WHY NO ugreen_tpl_host WRAPPER
-#
-# Every other view in this dashboard wraps cards in `ugreen_tpl_host` so they
-# can resolve `variables.slug` off the NAS selector. Nothing here is keyed to a
-# NAS — Scrutiny entity IDs come from the drive model and serial, and there is
-# one Scrutiny instance. So auto-entities sits at view level and the button-card
-# templates in its `options:` block use THREE brackets, not four. Copying a
-# block out of 01-nas.yaml without dropping a bracket pair will break it.
+# No `ugreen_tpl_host` wrapper. Nothing here is keyed to a NAS — Scrutiny
+# entity IDs come from the drive model and serial, and there is one Scrutiny
+# instance. auto-entities sits at view level, so button-card templates in
+# its `options:` block use three brackets, not four. Copying a block out of
+# 01-nas.yaml without dropping a bracket pair will break it.
 #####
 
 title: Drives
@@ -64,16 +57,9 @@ sections:
         heading_style: title
         icon: mdi:harddisk
 
-      # ---- Portals ----
-      # One shared card: dashboards/cards/portal-row.yaml. The same tools in
-      # the same order with the same look on every page of every dashboard,
-      # and it reflows to 3- or 2-up on narrow screens. Was three
-      # hand-maintained copies plus a divergent core-tile version on the lab
-      # board until 2026-08-13.
-      #
-      # `!include` resolves relative to THIS file, hence ../../ from
-      # dashboards/<dash>/views/. Hosts, ports, order and colours live in that
-      # one file; the column counts live in templates/portal_row.yaml.
+      # Shared card: dashboards/cards/portal-row.yaml.
+      # `!include` is relative to this file, hence ../../ from
+      # dashboards/<dash>/views/.
       - !include ../../cards/portal-row.yaml
 
       # `grid_options.columns: full` is load-bearing, and for a different

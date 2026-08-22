@@ -1,26 +1,94 @@
-title: 'Cameras'
-path: 'cameras'
+#####
+# Cameras subview. Live grid of the five Frigate cameras, then occupancy
+# that is worth acting on. Clips / recordings / timeline live on the
+# Advanced Camera Card menu (same card as House and Vacation, with
+# timeline and thumbnails turned on here).
+#
+# Occupancy includes person / cat / car and the three alert zones
+# (patio_area, garage_door, front_door). Excludes `_all_occupancy`
+# (rollup), `_motion` (pixel change; garage was already on at inventory),
+# living_room (detect off), and dog (front-only noise on this page).
+# Room views still show dog on the front camera card.
+#
+# The Frigate UI itself is the portal-row button on lab / jack-sparrow.
+#####
+title: Cameras
+path: cameras
 subview: true
 type: custom:grid-layout
+layout:
+  grid-template-areas: |
+    "header header"
+    "live live"
+    "occupancy occupancy"
+  mediaquery:
+    'only screen and (min-width: 769px) and (max-width: 1400px)':
+      grid-template-areas: |
+        "header header"
+        "live live"
+        "occupancy occupancy"
+    'only screen and (max-width: 768px)':
+      grid-template-areas: |
+        "header"
+        "live"
+        "occupancy"
 cards:
-  - type: custom:auto-entities
-    show_empty: false
-    card:
-      type: grid
-      columns: 2
-      square: false
-    card_param: cards
-    filter:
-      include:
-        - domain: camera
-          options:
-            type: custom:advanced-camera-card
-            cameras:
-              - camera_entity: this.entity_id
-            status_bar:
-              style: hover-card
-      exclude:
-        - entity_category: config
-        - entity_category: diagnostic
-    sort:
-      method: name
+  #################
+  # HEADER
+  #################
+  - type: custom:button-card
+    template: mainview_header
+    view_layout:
+      grid-area: header
+    variables:
+      area: home
+      status_path: 'no'
+
+  #################
+  # LIVE
+  #################
+  - type: vertical-stack
+    view_layout:
+      grid-area: live
+    cards:
+      - type: custom:button-card
+        template: card_title
+        label: Live
+
+      - type: custom:decluttering-card
+        template: frigate_cameras
+        variables:
+          - timeline: below
+          - thumbnails: below
+
+  #################
+  # OCCUPANCY
+  #################
+  - type: vertical-stack
+    view_layout:
+      grid-area: occupancy
+    cards:
+      - type: custom:button-card
+        template: card_title
+        label: Occupancy
+
+      - type: custom:auto-entities
+        show_empty: false
+        card:
+          type: grid
+          columns: 2
+          square: false
+        card_param: cards
+        filter:
+          include:
+            - integration: frigate
+              domain: binary_sensor
+              entity_id: "/_(person|cat|car)_occupancy$/"
+              options:
+                type: custom:button-card
+                template: card_binary_sensor
+          exclude:
+            - entity_id: "/_all_occupancy$/"
+            - entity_id: "/^binary_sensor\\.living_room_/"
+        sort:
+          method: name

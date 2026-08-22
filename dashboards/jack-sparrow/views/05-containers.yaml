@@ -1,89 +1,57 @@
 ---
 #####
-# CONTAINERS — what Docker is actually running on jack-sparrow
+# CONTAINERS — what Docker is running on jack-sparrow
 #
-# The third of the three "is it broken" surfaces, and the one that answers a
-# question the other two cannot:
+# Three surfaces, three questions:
 #
 #   /home-lab/uptime      does the service answer on its port, from outside
 #   /jack-sparrow/drives  is the hardware dying, from SMART
 #   this page             does the container exist and is the process alive
 #
-# They disagree in exactly the cases worth knowing about. A container that is
-# up with a wedged process is green here and red on Uptime Kuma. A container
-# in a crash loop rebinds its port often enough that a Kuma check can pass on
-# the retry, and shows as `restarting` only here. A container someone removed
-# outright vanishes from this page entirely rather than going red — which is
-# what `Containers seen` in the header exists to catch.
+# They disagree in the cases worth knowing about. A wedged process is green
+# here and red on Kuma. A crash loop can pass a Kuma retry and shows as
+# `restarting` only here. A removed container vanishes from this page rather
+# than going red — that is what `Containers seen` in the header is for.
 #
-# WHY THIS IS A jack-sparrow VIEW AND NOT A lab ONE
+# jack-sparrow view, not lab: Portainer has one endpoint (jack-sparrow's
+# local Docker socket) and does not support Edge. This page is about one box.
 #
-# The opposite call from `lab.yaml`, for the same reason. Uptime Kuma watches
-# the whole lab and merely happens to run on the NAS. Portainer has exactly one
-# endpoint — jack-sparrow's local Docker socket — and the integration does not
-# support Edge, so it cannot grow to cover poat-seedbox, poat-apps or lil-bit
-# without a different mechanism entirely. This page is about one box. If
-# Portainer ever gains real multi-host endpoints, this is the day it moves.
+# No container is named here. Every card is an `auto-entities` Jinja template
+# over `integration_entities('portainer')`. Deploy, rename or remove a
+# container and the page follows on the next 60-second poll.
 #
-# NOTHING ON THIS PAGE NAMES A CONTAINER.
-#
-# Every card is an `auto-entities` Jinja template over
-# `integration_entities('portainer')`. Deploy a container and it appears here
-# within one 60-second poll; rename one and the label follows; remove one and
-# the card goes. That is load-bearing rather than tidy — the container set is
-# the thing on this NAS most expected to move. Three today; the arr stack,
-# Immich and possibly Frigate all land once the Phase 2 share layout exists.
-#
-# HOW THE DERIVATION WORKS, since it is repeated on every card
-#
-# `binary_sensor` is the only platform the integration uses for exactly one
-# thing — container Status — so it is a clean, name-free list of containers.
-# Endpoint and stack devices have no binary sensor at all. Everything else
-# about a container hangs off its device:
+# Containers are identified by a `binary_sensor` that also has a `_state`
+# sibling. The endpoint device has `binary_sensor.local_status` too, so a
+# bare `^binary_sensor` select is one too many. Everything else hangs off
+# the container's device:
 #
 #   containers      integration_entities('portainer') | select('search', '^binary_sensor')
 #   its siblings    device_entities(device_id(e))
 #   the endpoint    the one device carrying a `_docker_version` sensor
 #   stacks          switch entities ending `_stack`, vs `_container` for containers
 #
-# ⚠️ ALL SUFFIX MATCHES ON THIS PAGE ARE PREDICTIONS, NOT OBSERVATIONS. They
-# come from the integration's `strings.json` translation keys, which is how HA
-# builds entity IDs — but nothing here has been checked against the live
-# instance yet. See the header of entities/templates/portainer.yaml for the
-# full list and the one-line Developer Tools template that settles it. A card
-# whose template matches nothing renders as an absent card, not as an error.
+# Suffix matches on this page are predictions from the integration's
+# `strings.json`, not observations. See the header of
+# entities/templates/portainer.yaml. A card whose template matches nothing
+# renders as an absent card, not as an error.
 #
-# ⚠️ NO `ugreen_tpl_host` WRAPPER, AND NO BRACKET COUNTING AT ALL.
-# Same as 04-drives.yaml: nothing here is keyed to the NAS selector, so
-# auto-entities sits at view level. Unlike 04-drives.yaml, no `[[[ ... ]]]`
-# button-card template appears inside an auto-entities `options:` block either
-# — every derived card is a mushroom-template-card built in Jinja, the way the
-# lab uptime board does it. The only button-cards on the page live inside the
-# `!include`d shared portal row, and their call sites are plain YAML variables.
-# Keep it that way if
-# you extend this: the bracket-depth rule is the single most expensive thing to
-# get wrong in this dashboard.
+# No `ugreen_tpl_host` wrapper, and no bracket counting. Nothing here is
+# keyed to the NAS selector, so auto-entities sits at view level. Derived
+# cards are mushroom-template-card in Jinja. The only button-cards on the
+# page live inside the shared portal row.
 #
-# ⚠️ EVERY `filter: template:` MUST END IN ONE `{{ ... }}` THAT EVALUATES TO A
-# LIST. auto-entities does no YAML or JSON parsing — a rendered STRING gets
-# split on whitespace and commas, which shreds a dict into fragments and throws
-# `Invalid entity ID at position 0: {'entity':` in the console and nowhere
-# else. The full explanation is in the header of lab/views/01-uptime.yaml.
-# Accumulate into a namespace list, emit it as the last statement.
+# Every `filter: template:` must end in one `{{ ... }}` that evaluates to a
+# list. Full explanation: lab/views/01-uptime.yaml. Accumulate into a
+# namespace list, emit it as the last statement.
 #
-# ⚠️ EVERY SIBLING LOOKUP TOLERATES THE SENSOR BEING ABSENT. `Health` exists
-# only on images declaring a HEALTHCHECK (none of the three today do), and the
-# `update` entity only appears once a digest has been compared. `| list` then a
-# truth test, never `[0]` on a bare select().
+# Every sibling lookup tolerates the sensor being absent. `Health` exists
+# only on images declaring a HEALTHCHECK, and the `update` entity only
+# appears once a digest has been compared. `| list` then a truth test, never
+# `[0]` on a bare select().
 #
-# CONTROLS ARE DELIBERATELY NOT ON THE TILES
-#
-# Every status tile is `tap_action: more-info` and nothing else. Start/stop
-# switches and restart buttons live in their own section at the bottom of the
-# page, behind a scroll, so the tile you tap to check on Plex is never the tile
-# that stops Plex. `Recreate` and `Kill` are omitted from the page entirely —
-# recreate pulls and rebuilds from the image, which is a compose-file operation
-# that belongs in Portainer's own UI where you can see what it will do.
+# Controls are not on the tiles. Status tiles are `tap_action: more-info`.
+# Start/stop and restart live in their own section at the bottom. `Recreate`
+# and `Kill` are omitted; those belong in Portainer's UI.
 #
 # LAYOUT (max_columns: 3)
 #
@@ -118,16 +86,9 @@ sections:
         heading_style: title
         icon: mdi:docker
 
-      # ---- Portals ----
-      # One shared card: dashboards/cards/portal-row.yaml. The same tools in
-      # the same order with the same look on every page of every dashboard,
-      # and it reflows to 3- or 2-up on narrow screens. Was three
-      # hand-maintained copies plus a divergent core-tile version on the lab
-      # board until 2026-08-13.
-      #
-      # `!include` resolves relative to THIS file, hence ../../ from
-      # dashboards/<dash>/views/. Hosts, ports, order, colours and the
-      # four-across layout all live in that one file now.
+      # Shared card: dashboards/cards/portal-row.yaml.
+      # `!include` is relative to this file, hence ../../ from
+      # dashboards/<dash>/views/.
       - !include ../../cards/portal-row.yaml
 
       # `grid_options.columns: full` is load-bearing here for the same reason

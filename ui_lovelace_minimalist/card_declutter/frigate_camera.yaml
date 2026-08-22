@@ -1,0 +1,63 @@
+#####
+# One Frigate camera: live view, clips/recordings, occupancy.
+#
+# `camera` is the Frigate key and the HA object_id (patio, gerbil, garage,
+# front). Occupancy is auto-entities over
+# binary_sensor.<camera>_(area|door)?_(person|cat|car|dog)_occupancy, so
+# patio_area / garage_door / front_door ride along. `_all_occupancy` and
+# `_motion` stay out: all is a rollup of the others, motion is pixel
+# change and stays on for minutes (garage was on when we inventoried).
+#
+# Missing matches hide (`show_empty: false`). living_room has detect off
+# and is wired as a live-only Advanced Camera Card, not this template.
+#
+# Call:
+#   type: custom:decluttering-card
+#   template: frigate_camera
+#   variables:
+#     - camera: patio
+#####
+frigate_camera:
+  card:
+    type: vertical-stack
+    cards:
+      - type: custom:advanced-camera-card
+        cameras:
+          - camera_entity: camera.[[camera]]
+            triggers:
+              occupancy: true
+              motion: false
+        live:
+          controls:
+            ptz:
+              mode: auto
+        menu:
+          buttons:
+            clips:
+              enabled: true
+            recordings:
+              enabled: true
+            snapshots:
+              enabled: true
+            timeline:
+              enabled: true
+            frigate:
+              enabled: true
+        status_bar:
+          style: hover-card
+
+      - type: custom:auto-entities
+        show_empty: false
+        card:
+          type: grid
+          columns: 2
+          square: false
+        card_param: cards
+        filter:
+          include:
+            - entity_id: "/^binary_sensor\\.[[camera]](_area|_door)?_(person|cat|car|dog)_occupancy$/"
+              options:
+                type: custom:button-card
+                template: card_binary_sensor
+        sort:
+          method: name

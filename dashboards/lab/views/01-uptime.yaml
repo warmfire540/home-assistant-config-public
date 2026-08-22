@@ -2,97 +2,72 @@
 #####
 # UPTIME — the availability board
 #
-# Every Uptime Kuma monitor, red first. This is the "is the thing actually up"
-# surface; Scrutiny's /jack-sparrow/drives answers "is the hardware dying",
-# which is a different question with a different failure mode.
+# Every Uptime Kuma monitor, red first. Scrutiny's /jack-sparrow/drives
+# answers "is the hardware dying"; this page answers "is the thing up".
 #
-# NOTHING ON THIS PAGE NAMES A MONITOR.
-#
-# Every card is an `auto-entities` template over
-# `integration_entities('uptime_kuma')`. Add a monitor in Kuma and it appears
-# here within one 30-second poll; rename one and the label follows; delete one
-# and the row goes. There is deliberately no list to keep in sync, because a
-# dashboard that has to be edited every time monitoring changes is a dashboard
-# that quietly stops matching reality.
-#
-# HOW THE DERIVATION WORKS, since it is repeated on every card
+# No monitor is named here. Every card is an `auto-entities` template over
+# `integration_entities('uptime_kuma')`. Add, rename or delete a monitor in
+# Kuma and the page follows on the next 30-second poll.
 #
 # Each Kuma monitor is one HA device carrying a `_status` sensor and a
 # `_monitor_type` sensor (plus response time, uptime windows, and — only for
-# the check types that have them — hostname, port, URL, cert expiry). So:
+# the check types that have them — hostname, port, URL, cert expiry):
 #
 #   status entities   integration_entities('uptime_kuma') | select('search', '_status$')
 #   its siblings      device_entities(device_id(e))
 #   is it a group     states(<the _monitor_type sibling>) == 'group'
 #
-# ⚠️ GROUPS ARE FILTERED OUT OF THE LEAF CARDS AND GIVEN THEIR OWN SECTION.
-# A Kuma group's status goes down when any child does, so mixing them in
-# double-counts every outage — one dead service renders as two red tiles, one
-# of which is named after a category rather than a thing. Filtered by reading
-# the type sensor, never by listing group names, so a new group in Kuma lands
-# in the Groups section on its own.
+# Groups are filtered out of the leaf cards and given their own section. A
+# Kuma group's status goes down when any child does, so mixing them in
+# double-counts every outage. Filtered by the type sensor, never by listing
+# group names.
 #
-# ⚠️ PAUSED MONITORS DO NOT EXIST HERE. The Kuma API does not expose them, so
-# a paused monitor vanishes from this page entirely rather than showing as
-# paused. The `Backups` group is paused today and is therefore absent. If
-# something you expect is simply not on the board, check Kuma for a pause
-# before assuming the template is broken — an absent row looks identical to a
-# monitor that was never created. This is what the "Monitors reporting" count
-# in the header is for: it is the only place a silent disappearance shows up.
+# Paused monitors do not exist here. The Kuma API does not expose them, so a
+# paused monitor vanishes rather than showing as paused. The `Backups` group
+# is paused today and is therefore absent. If something you expect is missing,
+# check Kuma for a pause before assuming the template is broken. "Monitors
+# reporting" in the header is the only place a silent disappearance shows up.
 #
-# ⚠️⚠️ EVERY `filter: template:` MUST END IN ONE `{{ ... }}` THAT EVALUATES
-# TO A LIST. This is the single hardest-won rule on this page, and getting it
-# wrong produces a console error rather than a visible one:
+# Every `filter: template:` must end in one `{{ ... }}` that evaluates to a
+# list. Getting this wrong produces a console error, not a visible one:
 #
 #     Invalid entity ID at position 0: {'entity':
 #
-# The obvious form — looping and printing one dict per row with a trailing
-# comma — CANNOT WORK. auto-entities does no YAML or JSON parsing whatsoever.
-# It subscribes to HA's `render_template` websocket and then does exactly this
-# (src/main.ts, `_renderer`):
+# Looping and printing one dict per row cannot work. auto-entities does no
+# YAML or JSON parsing. It subscribes to HA's `render_template` websocket
+# and then (src/main.ts, `_renderer`):
 #
 #     if (typeof tpl === "string") this._template = tpl.split(/[\s,]+/);
 #     else                         this._template = tpl;
 #
-# So a rendered STRING is split on whitespace and commas, which shreds
-# `{'entity': 'sensor.x', 'name': 'Foo'}` into the fragments `{'entity':`,
-# `'sensor.x',` and so on — each then treated as an entity ID. The upstream
-# README's own object example wraps the loop in literal `[ ]` for this reason.
-#
-# The `else` branch is what this page relies on instead: HA renders templates
-# to NATIVE types, so a template whose output is a single expression returning
-# a list arrives as a real JS array and skips the string path entirely. Hence
-# the shape used by every card below — accumulate into a `namespace` list,
-# then emit it as the last statement:
+# A rendered string is split on whitespace and commas, which shreds
+# `{'entity': 'sensor.x', 'name': 'Foo'}` into fragments treated as entity
+# IDs. The `else` branch is what this page uses: HA renders templates to
+# native types, so a single expression returning a list arrives as a real
+# JS array. Accumulate into a `namespace` list, emit it as the last
+# statement:
 #
 #     {% set ns = namespace(rows=[]) %}
 #     {% for ... %}{% set ns.rows = ns.rows + [{...}] %}{% endfor %}
 #     {{ ns.rows }}
 #
 # Sorted cards emit `{{ ns.rows | sort(attribute='0') | map(attribute='1')
-# | list }}` — the `| list` is required, because `map` returns a generator and
-# a generator does not survive the native-type conversion as a list.
+# | list }}` — `| list` is required, because `map` returns a generator and
+# a generator does not survive as a list.
 #
-# ⚠️ EVERY SIBLING LOOKUP MUST TOLERATE THE SENSOR BEING ABSENT. The entity
-# set is NOT uniform across check types — only HTTP monitors get Monitored URL
-# and Certificate expiry, only port/ping/dns monitors get Monitored hostname,
-# and groups get neither. `| list` then a truth test on the list, never
-# `[0]` on a bare select(), or one new monitor type takes out the whole card
-# with an index error. That is the single most common way to break this page.
+# Every sibling lookup must tolerate the sensor being absent. The entity set
+# is not uniform: only HTTP monitors get URL and cert expiry, only
+# port/ping/dns get hostname, groups get neither. `| list` then a truth test,
+# never `[0]` on a bare select().
 #
-# WHY MUSHROOM TEMPLATE CARDS AND NOT `tile`
+# Mushroom template cards, not `tile`: `tile` cannot template its colour, and
+# colour is the point of this page. Computed in Jinja at render time.
 #
-# `tile` cannot template its colour, and colour is the entire point of this
-# page — red has to be visible from across the room without reading labels.
-# The colour is computed in Jinja at render time rather than as a nested
-# template inside the card, which keeps it to one level of templating and
-# makes it re-render on every state change like any other Jinja card.
-#
-# ⚠️ THE `_status` SENSORS HAVE NO device_class AND ARE NOT BINARY. States are
+# The `_status` sensors have no device_class and are not binary. States are
 # the lowercase strings `up` / `down` / `pending` / `maintenance`, plus
-# `unknown` / `unavailable` when the integration cannot reach Kuma. Anything
-# comparing to `on`/`off` or to a capitalised form silently matches nothing —
-# which renders as a board of grey tiles, not as an error.
+# `unknown` / `unavailable` when the integration cannot reach Kuma. Comparing
+# to `on`/`off` or a capitalised form silently matches nothing, which renders
+# as a board of grey tiles, not as an error.
 #
 # LAYOUT (max_columns: 3)
 #
@@ -126,16 +101,9 @@ sections:
         heading_style: title
         icon: mdi:lan-check
 
-      # ---- Portals ----
-      # One shared card: dashboards/cards/portal-row.yaml. The same tools in
-      # the same order with the same look on every page of every dashboard,
-      # and it reflows to 3- or 2-up on narrow screens. Was three
-      # hand-maintained copies plus a divergent core-tile version on the lab
-      # board until 2026-08-13.
-      #
-      # `!include` resolves relative to THIS file, hence ../../ from
-      # dashboards/<dash>/views/. Hosts, ports, order, colours and the
-      # four-across layout all live in that one file now.
+      # Shared card: dashboards/cards/portal-row.yaml.
+      # `!include` is relative to this file, hence ../../ from
+      # dashboards/<dash>/views/.
       - !include ../../cards/portal-row.yaml
 
       # sensor.lab_availability already excludes groups, so `down_count` is a

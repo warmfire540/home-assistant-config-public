@@ -81,22 +81,8 @@ cards:
         template: card_title
         label: Sensors
 
-      - type: custom:advanced-camera-card
-        cameras:
-          - camera_entity: camera.patio
-          - camera_entity: camera.gerbil
-          - camera_entity: camera.garage
-          - camera_entity: camera.front
-          - camera_entity: camera.living_room
-        live:
-          controls:
-            ptz:
-              mode: auto
-          display:
-            mode: grid
-            grid_columns: 2
-        status_bar:
-          style: hover-card
+      - type: custom:decluttering-card
+        template: frigate_cameras
 
       - type: horizontal-stack
         cards:

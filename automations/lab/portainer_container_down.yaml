@@ -1,92 +1,59 @@
 ---
 #####
-# Portainer — the container failures Uptime Kuma structurally cannot see
+# Portainer — the container failures Uptime Kuma cannot see
 #
-# WHY THIS IS NOT "ALERT WHEN A CONTAINER IS DOWN"
+# Nearly every container already has a Kuma monitor on its port. Alerting on
+# "any container not running" would double-notify every real outage. This
+# covers the three failures Kuma cannot report, and stays quiet about
+# ordinary container-stopped-so-service-is-down. If that is a gap, add a
+# Kuma monitor, not a broader trigger here.
 #
-# That was the obvious version and it is the wrong one. Nearly every container
-# on jack-sparrow already has a Kuma monitor watching its port from outside the
-# host. A naive "any container not running" automation double-notifies for
-# every real outage: Kuma pages you that Scrutiny stopped answering, and this
-# pages you that the scrutiny container is not running. Two messages, one fact.
-# `poat-hole - DNS` was already tried and reverted on the Kuma side for exactly
-# that reason — see uptime_kuma_monitor_down.yaml.
+# 1. Uptime Kuma itself is not running
 #
-# So this covers ONLY the three failures Kuma cannot report, and deliberately
-# stays quiet about ordinary container-stopped-so-service-is-down. Deferred on
-# 2026-08-14 pending a week of watching the board; written 2026-08-15 because
-# the Uptime Kuma backup job made case 1 concrete rather than hypothetical.
+# Kuma cannot report its own death. Healthchecks only watches backup jobs.
+# HA's uptime_kuma integration goes UNAVAILABLE, not down, so
+# sensor.lab_availability is unavailable and uptime_kuma_monitor_down.yaml
+# declines to fire.
 #
-# ── 1. UPTIME KUMA ITSELF IS NOT RUNNING ──────────────────────────────────
-#
-# The monitoring system cannot report its own death. Nothing else in the lab
-# can either:
-#   - Healthchecks only watches backup jobs, which may have succeeded.
-#   - HA's uptime_kuma integration goes UNAVAILABLE, not down, so
-#     sensor.lab_availability is unavailable and uptime_kuma_monitor_down.yaml
-#     declines to fire. Over-notifying is its safe failure — here that means
-#     silence.
-#
-# ⚠️ THIS IS NOW A ROUTINE RISK, NOT A THEORETICAL ONE. The nightly Duplicati
-# job at 3am STOPS the uptime-kuma container so its SQLite/WAL data directory
-# can be copied consistently, then starts it again from --run-script-after. If
-# that after-script does not run, Kuma stays stopped until someone notices.
-# This automation is what notices. See the servers repo,
+# The nightly Duplicati job at 3am STOPS the uptime-kuma container so its
+# SQLite/WAL data directory can be copied, then starts it from
+# --run-script-after. If that after-script does not run, Kuma stays stopped.
+# This automation is what notices. See servers repo,
 # hosts/jack-sparrow/uptime-kuma-runbook.md §1.5d.
 #
-# `for: 10 minutes` is what makes that safe: the backup stop lasts seconds (the
-# whole job is ~7 MB), so a healthy nightly run never trips this, while a
-# failed restart does. Written as a duration rather than a suppression window
-# on purpose — no backup schedule is hardcoded here, so moving the job off 3am
-# needs no edit to this file.
+# `for: 10 minutes` rides out the backup stop (seconds; the job is ~7 MB).
+# A duration, not a suppression window, so moving the job off 3am needs no
+# edit here.
 #
-# ⚠️ "CANNOT FIND THE CONTAINER" IS ALSO AN ALERT, NOT A PASS. If the search
-# below matches nothing, this fires with a different message instead of quietly
-# reading healthy. That is the single most repeated bug in this repo — a regex
-# that matches nothing does not error, it reads OK forever — and the whole
-# reason case 3 exists too. It is guarded so that Portainer being down entirely
-# (zero binary sensors) does NOT trip it: that is a different problem, and
+# If the search matches nothing, this fires with a different message instead
+# of reading healthy. Guarded so Portainer being down entirely (zero binary
+# sensors) does not trip it: that is a different problem, and
 # sensor.docker_health goes unavailable to show it.
 #
-# ── 2. A CRASH LOOP ───────────────────────────────────────────────────────
+# 2. A crash loop
 #
-# The failure that looks healthiest from outside. A container restarting every
-# few seconds rebinds its port often enough that a Kuma check can pass on the
-# retry, so the board stays green while the service is unusable. Docker's own
-# `restarting` state is the only reliable signal, and portainer.yaml already
-# pulls it out by name.
+# A container restarting every few seconds rebinds its port often enough that
+# a Kuma check can pass on the retry. Docker's `restarting` state is the
+# signal; portainer.yaml already pulls it out by name.
 #
-# ── 3. A CONTAINER REMOVED ENTIRELY ───────────────────────────────────────
+# 3. A container removed entirely
 #
-# A removed container takes its HA device with it, so it has no status left to
-# be `off`. sensor.docker_health cannot see it — the rollup counts problems
-# among containers that still exist. `container_count` dropping is the only
-# visible symptom.
+# A removed container takes its HA device with it, so it has no status left
+# to be `off`. sensor.docker_health only counts problems among containers
+# that still exist. `container_count` dropping is the only visible symptom,
+# and the only signal for containers with no Kuma monitor (dozzle, gluetun,
+# anything that publishes no port).
 #
-# This matters most for containers with no Kuma monitor at all — diun, dozzle,
-# gluetun. diun_not_running.yaml documents exactly this as an accepted blind
-# spot: if Diun is removed, its sensor goes unavailable permanently and that
-# automation's own unavailable-guard hides it. This closes that hole.
-#
-# ⚠️ NO HARDCODED EXPECTED COUNT. Comparing against "should be 10" goes stale
-# the first time a container is added, and goes stale silently. This compares
-# the attribute to its own previous value instead, so the baseline maintains
-# itself. The cost is that a drop occurring while HA is restarting is absorbed
-# into the new baseline — the same trade uptime_kuma_monitor_down.yaml makes,
-# and for the same reason.
-#
-# ── WHAT THIS DOES NOT DO ─────────────────────────────────────────────────
-#
-# No alert for an ordinary stopped container whose service Kuma already
-# watches. If that turns out to be a gap, the fix is a Kuma monitor for
-# whatever is missing one, not a broader trigger here.
+# No hardcoded expected count. Comparing against "should be 10" goes stale
+# the first time a container is added. This compares the attribute to its
+# own previous value. A drop while HA is restarting is absorbed into the new
+# baseline — same trade as uptime_kuma_monitor_down.yaml.
 #
 # Reads: entities/templates/portainer.yaml (sensor.docker_health)
-# ⚠️ That file's entity-ID suffixes are UNVERIFIED against the live instance.
+# That file's entity-ID suffixes are unverified against the live instance.
 # This automation only touches attributes defined in that file plus the
-# `^binary_sensor` prefix, which is structural rather than predicted — the
-# integration uses binary_sensor for exactly one thing, container status. It
-# does NOT depend on `_state` / `_health` suffixes being right.
+# `^binary_sensor` prefix. It does not depend on `_state` / `_health`
+# suffixes being right.
 #####
 
 alias: Lab - Portainer container failures Kuma cannot see
@@ -137,7 +104,6 @@ triggers:
 
 conditions:
   # An unavailable rollup during an integration reload is not an emergency.
-  # Same guard as diun_not_running.yaml.
   - condition: not
     conditions:
       - condition: state

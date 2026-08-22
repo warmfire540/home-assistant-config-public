@@ -1,130 +1,41 @@
 ---
 #####
-# portal-row — the way out of Home Assistant, on every page
+# portal-row — shared exit row on every YAML dashboard view
 #
-# ⚠️ THIS FILE IS ONE CARD, SHARED BY EVERY VIEW IN EVERY YAML DASHBOARD.
-# Edit it once and all five pages change. That is the entire reason it exists:
-# before 2026-08-13 this row was copy-pasted into three jack-sparrow views
-# with three buttons each, and hand-rolled a fourth time in
-# lab/views/01-uptime.yaml out of core `tile` cards because that dashboard had
-# no button-card templates block. Four copies, two of them already divergent,
-# and every new tool meant editing all of them.
+# One card. Edit here, every page updates. Include as a single list item:
 #
-# Included as a single list item:
+#   - !include ../../cards/portal-row.yaml
 #
-#   cards:
-#     - type: heading
-#       ...
-#     - !include ../../cards/portal-row.yaml
+# `!include` is relative to the including file (`dashboards/<dash>/views/`).
+# It substitutes one YAML node, so this file must be one card, not a list —
+# Lovelace rejects a nested list. `grid_options: columns: full` is required:
+# without it a sections-view card takes half the 12-column grid and this row
+# packs into the left half of the page.
 #
-# ⚠️ `!include` RESOLVES RELATIVE TO THE INCLUDING FILE, so the `../../` is
-# counted from `dashboards/<dash>/views/NN-*.yaml`. A view moved to a different
-# depth has to have its path adjusted, and the failure is a hard config error
-# at reload rather than a missing card — which is the good kind.
+# Wrapper is `custom:button-card` + `portal_row`, which flex-wraps at ~140px
+# (2-up on a phone). HA's `type: grid` has no breakpoints. Sizing lives in
+# templates/portal_row.yaml.
 #
-# ⚠️ ONE CARD, NOT A LIST OF SIX. `!include` substitutes a single YAML node,
-# so a file containing a list of cards would be inserted as ONE list item that
-# happens to be a list, and Lovelace rejects it. Hence the wrapper card.
-# That is also why the wrapper carries `grid_options: columns: full` — without
-# it a card in a sections view claims half the section's 12-column grid, and
-# this row would pack itself into the left half of the page.
+# Adding a tool: a block here plus a `fieldNN` cell in `portal_row`'s
+# `custom_fields`. `fieldNN` is a name, not order. Display order is document
+# order below: UGOS first, then alphabetical.
 #
-###############################################################
-# WHY THIS IS NOT A `type: grid` ANY MORE — changed 2026-08-14
-###############################################################
+# Bazarr, Prowlarr, Radarr and Sonarr share indigo `#3f51b5` (one stack, one
+# colour). Leave `--info-color` to Portainer and `--primary-color` to UGOS.
 #
-# `type: grid` has no breakpoints. `columns: 5` was five across at every width,
-# including a phone, which is how this row became a strip of unreadable
-# ~55px-wide buttons in a hand — the subtitle that is the button's whole job
-# ellipsised to nothing. HA's grid card cannot reflow, and `layout-card` (which
-# can) is not installed and is not worth a new HACS dependency for one row.
+# Hostnames go through NPM (`*.home.masterscrib.net`), so Pi-hole and NPM
+# both have to be up. Two things stay on IP on purpose:
+#   - Kuma monitors still target IP:port, so monitoring survives DNS/proxy
+#     failure
+#   - NPM's button stays http://192.168.5.8:81. A recovery link that
+#     depends on NPM is not a recovery link.
 #
-# So the wrapper is a `custom:button-card` using the `portal_row` template,
-# which flex-wraps the buttons: as many per row as fit at ~140px each, 2-up
-# on a phone. See templates/portal_row.yaml — the sizing lives there, and
-# nothing in this file sets a column count any more.
+# UGOS "HTTP to HTTPS redirect" must stay off or this button bounces to
+# https://192.168.5.8:9443. The UGREEN integration also 400s when it is on.
 #
-# Display order is the order of the blocks below — `portal_row` flex-wraps
-# them in document order, so the `fieldNN` numbers are just names. Adding a
-# tool means a block here plus a `fieldNN` entry in `portal_row`'s
-# `custom_fields` (it needs a cell, or button-card never renders it).
-#
-# ORDER: the box first, then its tools alphabetically.
-#
-# UGOS is the NAS itself and everything else runs on it, so it leads. Then
-# Bazarr, Deluge, Dozzle, Duplicati, Healthchecks, NPM, Pawsport, Portainer,
-# Prowlarr, Radarr, Scrutiny, Sonarr, Uptime Kuma.
-#
-###############################################################
-# THE arr FOUR SHARE ONE ACCENT — new rule, 2026-08-16
-###############################################################
-#
-# Every button before this row grew to thirteen had its own colour, and the
-# comments below are a running record of that getting harder: Scrutiny pushed
-# off `--info-color` by Portainer, Dozzle kept off it for the same reason,
-# Healthchecks and Deluge given raw hex because the theme vars ran out.
-#
-# At thirteen buttons, per-button uniqueness has stopped paying. There are not
-# thirteen colours that stay distinguishable at 140px on a phone, and chasing
-# it would mean re-tinting half the row every time a container is added.
-#
-# So Bazarr, Prowlarr, Radarr and Sonarr all take indigo `#3f51b5`. They are
-# one system — the same stack, deployed as one UGOS project, backed up as one
-# unit, useless individually — and colour now says *which system* rather than
-# *which button*. The name and icon already say which button.
-#
-# ⚠️ Indigo is otherwise unused here and is deliberately NOT `--info-color`
-# (Portainer's light blue) or `--primary-color` (UGOS). Check both on your
-# theme before reusing it; several themes move `--primary-color` toward
-# indigo, which would collapse the distinction UGOS relies on.
-#
-# If you would rather have four distinct arr colours, the alternative is
-# Prowlarr orange / Radarr gold / Sonarr sky / Bazarr violet — brand-accurate,
-# but sky collides with Portainer and violet with Scrutiny, which is the trap
-# this rule exists to stop walking into again.
-#
-###############################################################
-# HOSTNAMES, NOT IPs — changed 2026-08-14, and what it costs
-###############################################################
-#
-# Every link below except one now goes through Nginx Proxy Manager over real
-# TLS, on the `*.home.masterscrib.net` wildcard. The IP:port forms still work
-# and are recorded in the **servers** repo (hosts/jack-sparrow/HOST.md) — NPM
-# is additive, nothing was unpublished.
-#
-# ⚠️ THIS ROW NOW HAS TWO DEPENDENCIES IT DID NOT HAVE BEFORE. A hostname
-# resolves only if Pi-hole is up, and it answers only if NPM is up. The old
-# IP links depended on neither. So when poat-hole dies, every button on this
-# row dies with it — while the services themselves are all perfectly fine.
-#
-# That trade is accepted deliberately, for two reasons. The gain is real:
-# these are admin UIs whose passwords were previously crossing the LAN in
-# cleartext, on a network that also carries four Amcrest cameras. And the loss
-# is contained, because the two things that would notice the outage were
-# deliberately NOT moved:
-#
-#   - every Uptime Kuma monitor still targets IP:port, so monitoring survives
-#     a Pi-hole or NPM failure and reports it correctly
-#   - the NPM button below is still an IP, on purpose
-#
-# ⚠️ NPM'S OWN BUTTON IS DELIBERATELY http://192.168.5.8:81 AND MUST STAY
-# THAT WAY. It is the recovery path. If a proxy host, the certificate or the
-# nginx config breaks, `npm.home.masterscrib.net` breaks with it — and this
-# button is how you get back in to fix the thing that broke everything else.
-# A recovery link that depends on the system it recovers is not a recovery
-# link. Its subtitle shows the raw address for the same reason: when you need
-# it, you may be typing it into a phone.
-#
-# ⚠️ UGOS's "HTTP to HTTPS redirect" MUST STAY OFF or its button bounces the
-# browser out of the proxy to https://192.168.5.8:9443. That setting is also
-# already required by the UGREEN HA integration, which fails with a `400`
-# when it is on — one switch, two things depending on it.
-#
-# Uses: templates/portal_row.yaml and templates/portal_button.yaml, which BOTH
-# dashboards must load via
-# `button_card_templates: !include_dir_merge_named templates`. A dashboard
-# that includes this row without that block renders cards reading
-# "Custom element doesn't exist" — the template is not found, not the card.
+# Both dashboards must load templates/portal_row.yaml and
+# templates/portal_button.yaml via
+# `button_card_templates: !include_dir_merge_named templates`.
 #####
 
 type: custom:button-card
@@ -144,9 +55,7 @@ custom_fields:
         subtitle: ugos.home
         accent: var(--primary-color)
 
-  # Bazarr — subtitles. Part of the arr stack; see the shared-accent note
-  # above. `fieldNN` numbers are names, not order — this is field10 because
-  # it was added last, and it sits first because the row is alphabetical.
+  # Arr stack: shared indigo. `fieldNN` is a name, not order.
   field10:
     card:
       type: custom:button-card
@@ -167,9 +76,8 @@ custom_fields:
       variables:
         url: https://deluge.home.masterscrib.net
         subtitle: deluge.home
-        # Teal, not a theme var — the row already spent primary / error /
-        # warning / info / accent / success on the other six, and a second
-        # green next to Kuma would collide the same way two blues did.
+        # Teal: theme vars are spent, and a second green next to Kuma
+        # collides the same way two blues did.
         accent: '#00897b'
 
   field03:
@@ -181,16 +89,10 @@ custom_fields:
       variables:
         url: https://dozzle.home.masterscrib.net
         subtitle: dozzle.home
-        # Container *logs*, next to Portainer's container *control*.
-        # Deliberately not another blue: `--info-color` is Portainer's and the
-        # two sit side by side in the alphabetical order, which is exactly the
-        # collision that pushed Scrutiny off `--info-color` when Portainer
-        # arrived. Quoted for the `#` — see the note on Portainer below.
+        # Not `--info-color`: that is Portainer's, and they sit side by
+        # side alphabetically. Quoted for the `#`.
         accent: 'var(--error-color, #e5573f)'
 
-  # ⚠️ Duplicati and Healthchecks were swapped in document order until
-  # 2026-08-16 — the header has always claimed alphabetical and the file was
-  # not. Fixed here rather than left as a small lie about the ordering rule.
   field05:
     card:
       type: custom:button-card
@@ -202,6 +104,18 @@ custom_fields:
         subtitle: duplicati.home
         accent: '#455a64'
 
+  field15:
+    card:
+      type: custom:button-card
+      template: portal_button
+      name: Frigate
+      icon: mdi:cctv
+      variables:
+        url: https://frigate.home.masterscrib.net
+        subtitle: frigate.home
+        # Blue-grey: theme vars and the nearby Duplicati grey are spent.
+        accent: '#546e7a'
+
   field04:
     card:
       type: custom:button-card
@@ -211,11 +125,11 @@ custom_fields:
       variables:
         url: https://healthchecks.home.masterscrib.net
         subtitle: healthchecks.home
-        # Magenta — every theme var on this row is already spent, and a
-        # second red next to Dozzle would collide. Quoted for the `#`.
+        # Magenta: theme vars are spent, and a second red next to Dozzle
+        # would collide. Quoted for the `#`.
         accent: '#c2185b'
 
-  # The odd one out, and intentionally so — see the recovery-path note above.
+  # Recovery path: must stay an IP. See the header.
   field06:
     card:
       type: custom:button-card
@@ -227,11 +141,7 @@ custom_fields:
         subtitle: 192.168.5.8:81
         accent: 'var(--warning-color, #ff9800)'
 
-  # ⚠️ Was ticked done in the servers repo TODO on 2026-08-16 and was not
-  # here — the whole row was searched for "pawsport" and returned nothing.
-  # Added 2026-08-16. Brown is unused on this row and reads as "not lab
-  # infrastructure", which is what it is: the odd one out, an app portal
-  # rather than a tool for running the box.
+  # App portal, not lab infra — brown is unused on this row.
   field11:
     card:
       type: custom:button-card
@@ -287,11 +197,9 @@ custom_fields:
       variables:
         url: https://scrutiny.home.masterscrib.net
         subtitle: scrutiny.home
-        # Scrutiny held `--info-color` until Portainer joined the row and the
-        # two blues became indistinguishable at this size. `--accent-color` is
-        # the only remaining theme var that is reliably distinct from primary,
-        # info and success; the fallback is set because several themes leave it
-        # equal to `--primary-color`, which would undo the whole point.
+        # `--accent-color` is the remaining theme var distinct from
+        # primary / info / success. Fallback because some themes leave it
+        # equal to `--primary-color`.
         accent: 'var(--accent-color, #7e57c2)'
 
   field14:

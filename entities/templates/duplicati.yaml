@@ -3,38 +3,28 @@
 # Duplicati — backup job rollups
 #
 # hass-duplicati (HACS, txxa/hass-duplicati) creates one HA device per
-# configured backup job — `<job name> Backup` — each carrying the same fixed
-# set of entities: Status / Running (binary), Date, Duration, Error message,
-# Next scheduled execution, Source/Target files & size (sensors), and Create
-# Backup / Refresh Sensor Data (buttons). One job today — "Scrutiny Backup",
-# which backs up the Scrutiny container's data — but everything below reads
-# `integration_entities('duplicati')` rather than naming it, so a second job
-# needs no edit here or on the dashboard.
+# backup job (`<job name> Backup`) with a fixed entity set: Status / Running
+# (binary), Date, Duration, Error message, Next scheduled execution,
+# Source/Target files & size, Create Backup / Refresh Sensor Data. Jobs are
+# named by the Duplicati job name; there is no serial. Everything below
+# reads `integration_entities('duplicati')`, so a second job needs no edit
+# here or on the dashboard.
 #
-# ⚠️ `binary_sensor.*_status` IS device_class: problem, NOT success.
-# Verified against upstream source (const.py METRIC_LAST_STATUS,
-# binary_sensor.py device_class=BinarySensorDeviceClass.PROBLEM): **on means a
-# problem, off means the last backup was clean.** This is the opposite
-# convention from Scrutiny's rolled-up health sensor and from a naive reading
-# of the entity name. Getting this backwards renders a failed backup as green.
+# `binary_sensor.*_status` is device_class: problem. On means a problem, off
+# means the last backup was clean. Opposite of Scrutiny's health sensor and
+# of a naive reading of the entity name. Getting this backwards renders a
+# failed backup as green. Verified against upstream
+# (const.py METRIC_LAST_STATUS, binary_sensor.py
+# device_class=BinarySensorDeviceClass.PROBLEM).
 #
-# `binary_sensor.*_running` is device_class: running — on means a backup is
-# executing right now. Unremarkable, included for completeness.
+# `binary_sensor.*_running` is device_class: running.
 #
-# Suffixes verified against upstream source 2026-08-15 (const.py METRIC_*
-# constants + sensor.py/binary_sensor.py entity descriptions), not yet
-# against the live instance. Re-run this after any integration upgrade if a
-# card silently goes empty:
+# Suffixes verified against upstream source 2026-08-15, not yet against the
+# live instance. Re-run after any integration upgrade if a card goes empty:
 #
 #   {{ integration_entities('duplicati') | list }}
 #
-# JOBS ARE NAMED BY THE DEVICE NAME, which is whatever the job is called in
-# Duplicati itself (`<name> Backup`) — there is no serial or other stable
-# identifier the way Scrutiny drives have one.
-#
-# Consumed by:
-#   - dashboards/lab/views/02-backups.yaml   (Backups page)
-#
+# Consumed by: dashboards/lab/views/02-backups.yaml
 # Upstream: https://github.com/txxa/hass-duplicati
 #####
 

@@ -2,56 +2,39 @@
 #####
 # Certificate expiry — alert, and all-clear
 #
-# The whole point of the NPM build is that every service in the house is
-# reached over TLS. This is the automation that tells you when that is about
-# to stop being true, and it exists because the failure is otherwise SILENT:
-# certbot renews unattended over DNS-01, so a broken renewal produces no error
-# anywhere until the certificate actually lapses and everything goes red at
-# once.
-#
-# WHY THE THRESHOLD IS 21 DAYS
+# certbot renews unattended over DNS-01, so a broken renewal produces no
+# error anywhere until the certificate lapses and every hostname throws a
+# browser warning.
 #
 # Let's Encrypt issues for 90 days; certbot attempts renewal at 30 days
-# remaining and retries twice daily after that. So:
+# remaining and retries twice daily after that:
 #
-#   > 30 days   healthy, nothing has even been attempted yet
+#   > 30 days   healthy, nothing has been attempted yet
 #   30 -> 22    renewal is failing, but retries are still cheap and quiet
-#   21 days     roughly EIGHTEEN failed attempts. This is not a blip.
+#   21 days     roughly eighteen failed attempts
 #   0 days      every hostname in the lab throws a browser warning
 #
-# Alerting at 30 would fire on the first transient DNS hiccup and teach you to
-# ignore it. Alerting at 7 leaves no room to debug a Cloudflare token or an
-# NPM upgrade over a weekend. 21 is late enough to be certain and early enough
-# to be calm, which is the only pair of properties that matters.
+# Alerting at 30 fires on the first transient DNS hiccup. Alerting at 7
+# leaves no room to debug a Cloudflare token or an NPM upgrade over a
+# weekend.
 #
-# WHY THERE ARE TWO TRIGGERS AND NOT ONE
-#
-# The countdown and the handshake are different failures with different
-# causes, and the second can happen at full remaining validity:
+# Two triggers, because the countdown and the handshake are different
+# failures and the second can happen at full remaining validity:
 #
 #   numeric threshold  the cert is real but renewal has stopped working
-#   is_valid false     the TLS handshake fails RIGHT NOW — NPM is down, the
-#                      Pi-hole wildcard is gone, or the cert is wrong for the
-#                      name. Days remaining is irrelevant and may read 60.
+#   is_valid false     the TLS handshake fails right now — NPM is down, the
+#                      Pi-hole wildcard is gone, or the cert is wrong for
+#                      the name. Days remaining is irrelevant and may read 60.
 #
-# A single numeric trigger would miss the second case entirely, which is the
-# more urgent of the two.
+# Kuma's `NPM - proxy chain` monitor has Certificate Expiry Notification
+# enabled and covers the same ground from outside HA, because Kuma is what
+# tells you when HA itself is down.
 #
-# ⚠️ THIS DELIBERATELY DOES NOT DUPLICATE UPTIME KUMA. Kuma's
-# `NPM - proxy chain` monitor has Certificate Expiry Notification enabled and
-# covers the same ground from outside HA — on purpose, because Kuma is what
-# tells you when HA itself is down. The overlap is the point, not an
-# oversight: these are the two independent paths, and neither is trusted to
-# report its own death.
-#
-# `for:` is the flap guard, and it also rides out a Home Assistant restart —
-# the rollup is unavailable while templates reload, and without the delay a
-# routine restart would page you. Learned the hard way on 2026-08-14, when a
-# stale template listener after an integration reconfigure made every rollup
-# on the board read zero.
+# `for:` rides out a Home Assistant restart — the rollup is unavailable
+# while templates reload.
 #
 # Backing sensor: entities/templates/cert_expiry.yaml
-# Setup + the DNS-01 flow: **servers** repo, hosts/jack-sparrow/npm-runbook.md
+# Setup + DNS-01: servers repo, hosts/jack-sparrow/npm-runbook.md
 #####
 
 alias: Lab - certificate expiring or invalid

@@ -1,72 +1,50 @@
 #####
 # Uptime Kuma — monitor down, and all-clear — with storm suppression
 #
-# WHY THIS IS TRIGGERED ON AN ATTRIBUTE AND NOT ON A LIST OF ENTITIES
-#
-# The obvious form is a state trigger listing every `*_status` sensor. That
-# list would have to be edited every time a monitor is added in Kuma, and the
-# failure mode is silent: a monitor missing from the list is simply never
-# alerted on, which looks exactly like a monitor that never fails.
-#
-# Instead this watches the `down` attribute of sensor.lab_availability, which
-# is itself derived from `integration_entities('uptime_kuma')`. The attribute
-# changes whenever the *set* of down monitors changes, so a new monitor is
-# covered the moment Kuma reports it, with no edit here.
-#
-# It also coalesces: five services dying together change the attribute once
-# and produce one notification naming all five, rather than five pushes.
+# Triggered on the `down` attribute of sensor.lab_availability, not a list of
+# `*_status` sensors. That list would have to be edited every time a monitor
+# is added in Kuma, and a monitor missing from it is simply never alerted
+# on. The attribute is derived from `integration_entities('uptime_kuma')`,
+# so a new monitor is covered the moment Kuma reports it. Five services
+# dying together change the attribute once and produce one notification
+# naming all five.
 #
 # `for: 2 minutes` is the flap guard, on top of Kuma's own retries. It also
 # rides out a Home Assistant restart — the rollup is unavailable while the
-# integration reloads, and without the delay a routine restart would page you.
+# integration reloads.
 #
-# WHY STORM SUPPRESSION LIVES HERE AND NOT IN KUMA
+# Storm suppression cannot live in Kuma. Groups there are organisational
+# only: they suppress nothing, and pausing a group displays its children as
+# paused while they keep running and keep notifying
+# (louislam/uptime-kuma#7242, #5643, #4696). The gate is
+# binary_sensor.lab_wan_down. When the internet or the gateway is down,
+# every other monitor is about to go red for a reason that has nothing to
+# do with the service it watches, and this declines to fire.
 #
-# It cannot live in Kuma. Groups there are organisational only: they suppress
-# nothing, and pausing a group displays its children as paused while they keep
-# running and keep notifying (louislam/uptime-kuma#7242, #5643, #4696). Only a
-# `Group` monitor can be a parent, so the "make services children of the
-# gateway monitor" arrangement is not constructible either.
+# Internet, Gateway and homeassistant are not covered here, and nothing
+# excludes them explicitly. The first two trip the WAN gate; the third
+# cannot notify about its own death. Anything else added to Kuma's Discord
+# channel WILL double-notify — `poat-hole - DNS` was tried and reverted.
+# See §3.2 and §3.4 of hosts/jack-sparrow/uptime-kuma-runbook.md.
 #
-# So the gate is binary_sensor.lab_wan_down. When the internet or the gateway
-# is down, every other monitor is about to go red for a reason that has
-# nothing to do with the service it watches, and this declines to fire.
+# Recovery is one "all clear" per outage, not per monitor. The down path is
+# protected by the WAN gate; the up path has no equivalent, because the WAN
+# is healthy again by the time services recover. An ISP outage ending would
+# otherwise produce ten notifications. One message, on the same `tag`, so
+# the green message replaces the red one on the phone.
 #
-# ⚠️ THE THREE MONITORS THIS AUTOMATION DOES NOT COVER are Internet, Gateway
-# and homeassistant — and nothing here excludes them explicitly. They fall out
-# for three different reasons: the first two trip the WAN gate above, and the
-# third cannot notify about its own death. That is a load-bearing coincidence,
-# not a rule this file enforces. Anything else added to Kuma's Discord channel
-# WILL double-notify — `poat-hole - DNS` was tried and reverted for exactly
-# that reason. See §3.2 and §3.4 of the servers repo's
-# hosts/jack-sparrow/uptime-kuma-runbook.md.
-#
-# WHY THE RECOVERY BRANCH IS "ALL CLEAR" AND NOT PER-MONITOR
-#
-# A symmetric per-monitor "X is back" flips the storm problem around. The down
-# path is protected by the WAN gate; the up path has no equivalent, because by
-# definition the WAN is healthy again by the time services recover. So an ISP
-# outage ending would produce ten notifications celebrating something you
-# already knew was over.
-#
-# One message per *outage* instead, on the same `tag`, so on the phone the
-# green message REPLACES the red one rather than stacking under it. The
-# notification you are looking at always describes the current state.
-#
-# ⚠️ It fires on a return to ZERO, so while Portainer is undeployed and
-# lil-bit / poat-seedbox are powered off, `down_count` never reaches zero and
-# the all-clear cannot fire. That is correct — nothing is clear — but it means
+# It fires on a return to ZERO, so while Portainer is undeployed and
+# lil-bit / poat-seedbox are powered off, `down_count` never reaches zero
+# and the all-clear cannot fire. That is correct — nothing is clear — but
 # the branch is dormant until those resolve.
 #
-# ⚠️ Both branches share one trigger and one `variables:` block on purpose.
-# Splitting recovery into its own file would duplicate the now/was/newly
-# derivation, and two copies of one derivation drift — see the Jinja notes in
-# entities/templates/AGENTS.md.
+# Both branches share one trigger and one `variables:` block. Splitting
+# recovery into its own file would duplicate the now/was/newly derivation.
 #
-# ⚠️ The runbook refers to an `input_boolean.mute_alerts`. It does not exist —
+# The runbook refers to `input_boolean.mute_alerts`. It does not exist —
 # this repo has per-person mutes (`input_boolean.poat_mute`, `gina_mute`),
-# which is what the pushes below are gated on. The persistent notifications
-# always fire, matching automations/lab/scrutiny_drive_failed.yaml.
+# which is what the pushes below are gated on. Persistent notifications
+# always fire.
 #
 # Reads: entities/templates/uptime_kuma.yaml
 #####

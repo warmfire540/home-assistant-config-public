@@ -1,30 +1,12 @@
 ---
 #####
-# portal_button — the "leave Home Assistant" link
+# portal_button — one "leave Home Assistant" link
 #
-# Every external tool behind these dashboards (UGOS, Dozzle, NPM, Portainer,
-# Scrutiny, Uptime Kuma) is better at its own drill-down than any Lovelace card
-# can be, so every page wants a way out to them. This is the one shape they all
-# share, so a portal button looks the same wherever it appears and never looks
-# like a control.
-#
-# The row that arranges these — and owns the responsive column counts — is
-# templates/portal_row.yaml. This file is only the individual button.
-#
-# ⚠️ THIS TEMPLATE IS SHARED BY EVERY YAML DASHBOARD. It moved here from
-# `jack-sparrow/templates/` on 2026-08-13, and was renamed from
-# `ugreen_portal_button` at the same time — there is nothing UGREEN-specific
-# about it, and half the destinations it points at are not UGREEN products.
-# Both `jack-sparrow.yaml` and `lab.yaml` load this directory. See
-# `dashboards/cards/portal-row.yaml` for the row that uses it; changing THAT
-# file changes every page at once, which is the point.
-#
-# ⚠️ BUTTON-CARD TEMPLATES DO NOT CROSS DASHBOARDS. A template is only
-# reachable from the dashboard whose `button_card_templates:` block loaded it.
-# That is why this file being in a shared *directory* is not enough on its own
-# — each dashboard has to include the directory. It is also why lab.yaml used
-# to have a hand-rolled `tile` version of this row instead: it had no
-# templates block at all.
+# Shared by every YAML dashboard. Both `jack-sparrow.yaml` and `lab.yaml`
+# load this directory; a template is only reachable from the dashboard
+# whose `button_card_templates:` block loaded it. The row that arranges
+# these is templates/portal_row.yaml. Destinations live in
+# dashboards/cards/portal-row.yaml.
 #
 # Call sites set:
 #   name              — the destination, as a label
@@ -33,29 +15,17 @@
 #   variables.subtitle— host:port, printed so you know where you are going
 #   variables.accent  — a theme var, used for icon + tint
 #
-# WHY url_path AND NOT action: url
+# button-card's `tap_action: { action: url }` takes `url_path`, not `url`.
+# Writing `url:` parses fine and produces a button that does nothing on
+# tap, with no console error.
 #
-# button-card's `tap_action: { action: url }` takes `url_path`, NOT `url` —
-# the same key the core navigate action uses for its own path. Writing `url:`
-# parses fine and produces a button that does nothing at all on tap. There is
-# no console error either; the action just resolves to undefined.
+# No `new_tab`. The companion app opens external URLs in an in-app browser
+# anyway, and on desktop the back button should return to the dashboard.
 #
-# `new_tab` is deliberately absent. In the HA companion app an external URL
-# opens in an in-app browser regardless, and on desktop keeping it in the same
-# tab means the back button returns to the dashboard — which is what you want
-# after glancing at a drive's attribute page.
-#
-# THE ARROW IS ITS OWN GRID CELL, TOP RIGHT
-#
-# It used to live inside `label` next to the subtitle. `label` ellipsises
-# (that is the whole point of printing `192.168.5.8:81` — it must truncate
-# rather than shove the layout), so the 20px `open-in-new` was the first
-# thing the overflow ate, and on a 2-up phone it sat under the ellipsis.
-# A dedicated `arrow` cell on the name row keeps it visible; the subtitle
-# spans the full text column underneath and ellipsises on its own.
-#
-# `show_label: true` is required at the template level or the subtitle cell
-# renders empty — it is set here so call sites cannot forget it.
+# The arrow is its own grid cell, top right. It used to live inside
+# `label` next to the subtitle; `label` ellipsises, so the icon was the
+# first thing overflow ate. `show_label: true` is required here or the
+# subtitle cell renders empty.
 #####
 
 portal_button:
@@ -81,25 +51,11 @@ portal_button:
     url_path: '[[[ return variables.url; ]]]'
   styles:
     # Icon left, name + arrow on the first text row, subtitle full-width
-    # under the name. Same left-icon shape the per-drive cards on the
-    # Drives page use, so the two read as one system.
+    # under the name. Same left-icon shape as the per-drive cards.
     grid:
       - grid-template-areas: '"i n arrow" "i l l"'
-      # 30px, down from 34 when this row went from three buttons to four.
-      #
-      # The constraint has not changed, only the arithmetic: the subtitle
-      # `192.168.5.8:9999` is the whole job of a button whose purpose is
-      # telling you where it goes, and it must not ellipsise to
-      # `192.168.5.8:999…`. At `columns: 3` of a 12-column section each card
-      # is a quarter of the page rather than a third, so the icon gutter and
-      # the label size both came down to buy the text back. The icon is 22px;
-      # 30 is enough to sit it off the text without spending width on
-      # whitespace. The 14px third column is the open-in-new mark — small
-      # enough not to steal subtitle width, since `l` spans under it.
-      #
-      # If this still crowds on a phone, do NOT edit this file — change the
-      # flex basis (`--portal-basis`) in dashboards/templates/portal_row.yaml
-      # and every page follows.
+      # 30px icon gutter, 14px arrow. If this crowds on a phone, change
+      # `--portal-basis` in dashboards/templates/portal_row.yaml.
       - grid-template-columns: 30px 1fr 14px
       - grid-template-rows: auto auto
       - align-items: center
@@ -107,9 +63,6 @@ portal_button:
       - border-radius: 14px
       - height: 68px
       - padding: 9px 11px
-      # Same faint accent wash as ugreen_power_button, so an external link is
-      # visibly the same class of object as the other actions on the page
-      # without competing with them for attention.
       - background: '[[[ return `color-mix(in srgb, ${variables.accent} 8%, var(--card-background-color))`; ]]]'
       - border: '[[[ return `1px solid color-mix(in srgb, ${variables.accent} 22%, transparent)`; ]]]'
       - box-shadow: none

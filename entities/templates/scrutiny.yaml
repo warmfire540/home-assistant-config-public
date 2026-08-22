@@ -3,49 +3,41 @@
 # Scrutiny — drive health rollups
 #
 # ha_scrutiny (HACS, vitals5/ha_scrutiny) creates one HA device per physical
-# drive on the Scrutiny server running on jack-sparrow, each with its own
-# Overall Status / Temperature / attribute sensors. Seven drives today — 4x
-# 12TB Ultrastar (Pool 1), 2x 990 PRO NVMe (Pool 2), and the internal 128GB
-# boot SSD, which is in no pool and which UGOS barely surfaces. That is ~7
-# status sensors and a large pile of attribute sensors. Nobody watches that.
-# These are the three numbers worth putting on a card or alerting off.
-#
-# WHY THE ENTITY LIST IS DERIVED, NOT HARDCODED
+# drive: Overall Status / Temperature / attribute sensors. Seven drives
+# today — 4x 12TB Ultrastar (Pool 1), 2x 990 PRO NVMe (Pool 2), and the
+# internal 128GB boot SSD. These three sensors are what a card or an
+# automation should read.
 #
 # ha_scrutiny names devices `model (serial)`, so entity IDs come out as
-# `sensor.huh721212ale604_xxxxxxxx_overall_status` — unpredictable from here,
-# and they change if a drive is RMA'd. `integration_entities('scrutiny')`
-# returns whatever the config entry currently owns, so swapping a drive needs
-# no edit to this file. `expand()` turns those IDs into state objects, which is
-# the same idiom jack_sparrow.yaml uses and gives `.name` for free.
+# `sensor.huh721212ale604_xxxxxxxx_overall_status` and change if a drive is
+# RMA'd. `integration_entities('scrutiny')` returns whatever the config
+# entry currently owns. `expand()` turns those IDs into state objects, same
+# idiom as jack_sparrow.yaml, and gives `.name` for free.
 #
-# SUFFIXES VERIFIED AGAINST THE LIVE INSTANCE 2026-08-13. Do not loosen them.
-#
-# The reallocated match is ANCHORED for a reason. ha_scrutiny exposes two
+# Suffixes verified against the live instance 2026-08-13. Do not loosen them.
+# The reallocated match is anchored because ha_scrutiny exposes two
 # similarly named attributes per drive:
 #
 #   ..._reallocated_sectors_count_raw    attribute 5   ← the one we want
-#   ..._reallocation_event_count_raw     attribute 196 ← a DIFFERENT attribute
+#   ..._reallocation_event_count_raw     attribute 196 ← a different attribute
 #
-# A loose `realloc.*_raw$` matches both and silently double-counts. It reads
-# fine while everything is zero and inflates the moment anything moves — the
-# worst possible time to be wrong. Same for pending: match the full name.
+# A loose `realloc.*_raw$` matches both and silently double-counts. It
+# reads fine while everything is zero and inflates the moment anything
+# moves. Same for pending: match the full name.
 #
-# The raw-value sensors only exist if "Enable raw value sensors" is on in the
-# integration options (Settings → Devices & Services → Scrutiny → Configure).
-# A pattern matching nothing does NOT error, it reads 0 forever, so re-run this
-# after any integration upgrade:
+# Raw-value sensors only exist if "Enable raw value sensors" is on
+# (Settings → Devices & Services → Scrutiny → Configure). A pattern
+# matching nothing does not error, it reads 0 forever:
 #
 #   {{ integration_entities('scrutiny') | select('search', 'realloc') | list }}
 #
-# DRIVES ARE NAMED BY SERIAL, from the `serial_number` attribute that every
-# ha_scrutiny sensor carries. Parsing the friendly name would work too, but
-# serial is the identity that matters: it is what the four Ultrastars differ
-# by, what UGOS shows per bay, and what an RMA conversation is conducted in.
+# Drives are named by the `serial_number` attribute. Serial is what the
+# four Ultrastars differ by, what UGOS shows per bay, and what an RMA
+# conversation uses.
 #
 # Consumed by:
-#   - dashboards/jack-sparrow/views/04-drives.yaml   (Drives page)
-#   - dashboards/jack-sparrow/views/01-nas.yaml      (Status row chip)
+#   - dashboards/jack-sparrow/views/04-drives.yaml
+#   - dashboards/jack-sparrow/views/01-nas.yaml
 #   - automations/lab/scrutiny_drive_failed.yaml
 #   - automations/lab/scrutiny_drive_temperature.yaml
 #   - automations/lab/scrutiny_sectors_reallocated.yaml

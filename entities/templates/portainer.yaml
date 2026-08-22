@@ -3,100 +3,54 @@
 # Portainer — Docker rollups for jack-sparrow
 #
 # The core `portainer` integration (no HACS) talks to Portainer CE on
-# jack-sparrow and creates one HA device per Docker object, three kinds:
+# jack-sparrow and creates one HA device per Docker object:
 #
-#   endpoint   the Docker host itself — version, kernel, OS, container counts,
-#              image count, per-category disk usage and reclaimable space
-#   container  one per container — Status (binary_sensor), State, Health,
-#              Image, CPU, memory usage / % / limit, a start-stop switch,
-#              restart / pause / resume / kill / recreate buttons, and an
+#   endpoint   the Docker host — version, kernel, OS, container/image counts,
+#              per-category disk usage
+#   container  Status (binary_sensor), State, Health, Image, CPU, memory,
+#              start-stop switch, restart/pause/resume/kill/recreate,
 #              `update` entity for image-update-available
-#   stack      one per compose stack — status switch, type, container count
+#   stack      status switch, type, container count
 #
-# That is a lot of entities for three containers, and it grows linearly as the
-# stack does. These two sensors are what a card or an automation should read.
-#
-# WHY THE ENTITY LIST IS DERIVED, NOT HARDCODED
-#
-# Same reasoning as uptime_kuma.yaml and scrutiny.yaml:
+# These two sensors are what a card or an automation should read.
 # `integration_entities('portainer')` returns whatever the config entry
-# currently owns, so a container added, renamed or removed on the NAS needs no
-# edit here. That matters more than usual on this integration — the container
-# set is the thing most expected to move. Three today; the arr stack, Immich
-# and possibly Frigate all land after the Phase 2 share layout exists.
+# currently owns, so a container added, renamed or removed needs no edit here.
 #
-# ⚠️ CONTAINERS ARE IDENTIFIED BY THEIR `binary_sensor` **PLUS A `_state`
-# SIBLING**. The binary sensor alone is not enough.
+# Containers are identified by a `binary_sensor` PLUS a `_state` sibling.
+# The endpoint device has a binary sensor too (`binary_sensor.local_status`),
+# so a bare `^binary_sensor` select is one too many and hides a removal.
+# Every container device carries `_state` (running / exited / paused /
+# restarting); the endpoint does not. Do not hardcode "local" — that is an
+# environment name the user can rename.
 #
-# ❌ CORRECTED 2026-08-15, against the live instance. This block used to claim:
-# "binary_sensor is the only platform the integration uses for exactly one
-# thing — container Status. Endpoint devices and stack devices have no binary
-# sensor at all." **That is wrong.** The endpoint device has one too:
+# `binary_sensor.<name>_status` is `on`/`off` (running / not-running).
+# `sensor.<name>_state` is Docker's own word. Both are needed: the binary
+# answers "is it up", the string distinguishes a stopped container from a
+# crash loop.
 #
-#   binary_sensor.local_status        <- the ENDPOINT ("local"), not a container
-#   sensor.local_container_count, sensor.local_containers_running,
-#   sensor.local_image_count, button.local_prune_unused_images ...
+# Sibling lookups tolerate the sensor being absent. `Health` only exists on
+# images that declare a HEALTHCHECK; `update` only appears once a digest has
+# been compared. `| list` then a truth test, never `[0]` on a bare select().
 #
-# So a bare `^binary_sensor` select returned 11 entries for 10 containers, and
-# `container_count` was off by one in exactly the direction that hides a
-# problem: a container could be removed and the count would still look
-# plausible. Precisely the failure this file warns about elsewhere.
+# A stopped container reads as a problem forever. There is no "should this
+# be running" flag. Today every container is `restart: unless-stopped`. The
+# day something is kept stopped on purpose, this needs an allowlist or the
+# rollup trains you to ignore it.
 #
-# THE FILTER IS STRUCTURAL, NOT BY NAME. Every container device carries a
-# `_state` sensor (Docker's own word: running / exited / paused / restarting).
-# The endpoint device has no `_state` — its sensors are counts and disk usage.
-# So "has a `_state` sibling" separates them without hardcoding "local", which
-# is an environment name the user can rename at any time.
-#
-# Everything else about a container is reached through
-# `device_entities(device_id(e))` from there.
-#
-# ⚠️ THE STATUS BINARY SENSOR IS `on`/`off`, THE STATE SENSOR IS A STRING.
-# `binary_sensor.<name>_status` is running / not-running. `sensor.<name>_state`
-# carries Docker's own word — `running`, `exited`, `paused`, `created`,
-# `restarting`, `dead`. Both are needed: the binary one is what "is it up"
-# should read, the string one is what distinguishes a container someone stopped
-# from a container that is crash-looping. See `restarting` below.
-#
-# ⚠️ EVERY SIBLING LOOKUP TOLERATES THE SENSOR BEING ABSENT. The entity set is
-# NOT uniform: `Health` only exists on images that declare a HEALTHCHECK (none
-# of the three today do, so it reads `unknown` or is missing outright), and the
-# `update` entity only appears once the integration has compared a digest.
-# `| list` then a truth test, never `[0]` on a bare select().
-#
-# ⚠️ A DELIBERATELY STOPPED CONTAINER READS AS A PROBLEM, FOREVER.
-# There is no "should this be running" flag in Docker or in Portainer, and this
-# sensor cannot invent one. Today that is correct — all three containers are
-# `restart: unless-stopped` and are meant to be up 24/7. The day something is
-# kept stopped on purpose, this needs an allowlist (an `input_text` of names,
-# or a Portainer label read through the API) rather than a shrug, or the rollup
-# trains you to ignore it.
-#
-# ⚠️ ENTITY IDS ARE SLUGGED FROM THE DEVICE NAME, which for a container is the
-# container name from `container_name:` in the compose file. So `uptime-kuma`
-# becomes `binary_sensor.uptime_kuma_status` / `sensor.uptime_kuma_state`.
-# If HA ever appends a `_2` because of a genuine collision, the suffix matches
-# below stop seeing that container — and a container this cannot see reads as
-# healthy, not as an error. Re-run this after adding containers:
+# Entity IDs are slugged from `container_name:` in the compose file, so
+# `uptime-kuma` becomes `binary_sensor.uptime_kuma_status`. A `_2` suffix
+# from a collision would hide that container, and a hidden container reads
+# healthy. Re-run after adding containers:
 #
 #   {{ integration_entities('portainer') | select('search', '^binary_sensor')
 #      | list }}
 #
-# ⚠️ THE ENTITY-ID SUFFIXES BELOW ARE UNVERIFIED AGAINST THE LIVE INSTANCE.
-# They are derived from the integration's own `strings.json` translation keys
-# (`container_state` → "State" → `_state`, `container_health_state` → "Health"
-# → `_health`, `cpu_usage_total` → "CPU usage total" → `_cpu_usage_total`,
-# and so on), which is how HA builds them — but that is a prediction, not an
-# observation. Check the list above in Developer Tools → Template before
-# trusting any number here. A regex that matches nothing does not error; it
-# reads zero forever, which on a health rollup is the worst possible failure.
+# Suffixes below (`_state`, `_health`, `_cpu_usage_total`, …) are predicted
+# from the integration's `strings.json`, not observed. A regex that matches
+# nothing does not error; it reads zero forever.
 #
-# Consumed by:
-#   - dashboards/jack-sparrow/views/05-containers.yaml
-#
-# Deploy steps and the compose file live in the **servers** repo at
-# hosts/jack-sparrow/docker/docker-compose.yml.
-#
+# Consumed by: dashboards/jack-sparrow/views/05-containers.yaml
+# Deploy: servers repo, hosts/jack-sparrow/docker/docker-compose.yml
 # Upstream: https://www.home-assistant.io/integrations/portainer/
 #####
 

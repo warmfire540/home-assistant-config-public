@@ -2,88 +2,62 @@
 #####
 # jack-sparrow — UGREEN NASync DXP4800 Pro
 #
-# Entry point only. The dashboard is split the same way the-matrix is:
+# Entry point only:
 #
 #   jack-sparrow.yaml                 this file — title, theme, includes
-#   templates/*.yaml                  one button_card_template per file,
-#                                     merged into one dict by filename.
-#                                     ⚠️ SHARED WITH lab.yaml — see below.
+#   templates/*.yaml                  shared with lab.yaml (see below)
 #   jack-sparrow/views/NN-*.yaml      one view per file, ordered by filename
-#   cards/portal-row.yaml             the shared portal row, `!include`d as a
-#                                     single card by every view here
+#   cards/portal-row.yaml             shared portal row, `!include`d by every view
 #
-# `!include` paths resolve relative to the file doing the including, and
-# `!include_dir_list` sorts by filename — hence the NN- prefixes.
+# `!include` is relative to the including file. `!include_dir_list` sorts by
+# filename, hence the NN- prefixes.
 #
-# This file stays at dashboards/jack-sparrow.yaml rather than moving into the
-# directory with everything else, because the path is pinned by `filename:` in
-# integrations/lovelace.yaml and that key is only read at startup. Splitting
-# the views out is a page refresh; moving the entry point is a restart.
+# Stays at dashboards/jack-sparrow.yaml because `filename:` in
+# integrations/lovelace.yaml is only read at startup. Splitting views is a
+# page refresh; moving this file is a restart.
 #
-# WHY THIS LIVES OUTSIDE the-matrix
-#
-# It needs its own `button_card_templates:` block. the-matrix pulls templates
-# from a HACS-managed dir (custom_components/ui_lovelace_minimalist) that is
-# overwritten on UML update, so anything added there does not survive.
+# Own `button_card_templates:` block because the-matrix pulls templates from
+# a HACS-managed dir (custom_components/ui_lovelace_minimalist) that is
+# overwritten on UML update.
 #
 # Adapted from:
 #   https://github.com/Tom-Bom-badil/home-assistant_ugreen-nas/wiki/05-The-premade-dashboard-page
 #
-# THINGS TO KNOW IF YOU EDIT THIS
-#
-# 1. `[[[ ... ]]]` JS templates ONLY work inside custom:button-card. Any
+# 1. `[[[ ... ]]]` JS templates only work inside custom:button-card. A
 #    mini-graph-card / tile / entities card that needs a templated entity_id
-#    must be nested under a button-card `custom_fields:` wrapper, or the
-#    template is passed through as a literal string and the card breaks. That
-#    is why the wrappers look redundant — they are load-bearing.
+#    has to nest under a button-card `custom_fields:` wrapper, or the template
+#    is passed through as a literal and the card breaks. `ugreen_tpl_host` is
+#    that wrapper: single-cell grid plus `variables.slug` / `variables.filter`.
+#    Templates one level deeper (inside auto-entities `options:`) need four
+#    brackets, `[[[[ ... ]]]]`.
 #
-#    `ugreen_tpl_host` is that wrapper. It carries the single-cell grid AND
-#    resolves the selected NAS slug into `variables.slug` / `variables.filter`,
-#    so nested cards say `variables.slug` instead of repeating a 4-line lookup.
-#    Templates one level deeper (inside auto-entities `options:`) need FOUR
-#    brackets, `[[[[ ... ]]]]`, because they are re-parsed at the inner level.
+# 2. Upstream hardcodes `color: white` for a dark background image. This
+#    version uses theme vars so light and dark both work.
 #
-# 2. Upstream hardcodes `color: white` because its page sits on a dark
-#    background image. This version uses theme vars instead so it works on
-#    light and dark themes.
+# 3. YAML anchors do not cross `!include` boundaries. `&percent_thresholds`,
+#    `&two_up_grid` and `&disk_card` live in views/01-nas.yaml.
 #
-# 3. YAML anchors do NOT cross `!include` boundaries. Every `&anchor` and its
-#    `*alias` has to live in the same file — which is why all three anchors
-#    (`&percent_thresholds`, `&two_up_grid`, `&disk_card`) sit inside
-#    views/01-nas.yaml rather than being hoisted somewhere shared.
+# 4. Pools/volumes/disks expose `Size` / `Used` / `Free`, not `Total Size` /
+#    `Used Size` / `Available Size`. Wrong names render as em-dashes with no
+#    error. Check Developer Tools before assuming the sensor is broken.
 #
-# 4. Attribute names come from the integration and have changed at least once.
-#    Pools/volumes/disks expose `Size` / `Used` / `Free` (plus `Size (raw)`
-#    etc. in bytes) — NOT `Total Size` / `Used Size` / `Available Size`, which
-#    an earlier revision of this dashboard read and which silently rendered as
-#    em-dashes. If a card starts showing "—", check the attribute names in
-#    Developer Tools before assuming the sensor is broken.
+# 5. A disk the NAS has not finished enumerating reports almost nothing: no
+#    Label, Slot, Type or Temperature. Only `Size` and `UGNAS global disk
+#    number` are reliable. Every disk field falls back.
 #
-# 5. A disk the NAS has not finished enumerating (rebuilding, newly inserted)
-#    reports almost nothing: no Label, Slot, Type or Temperature. Only `Size`
-#    and `UGNAS global disk number` are reliable. Every disk field falls back.
+# Assets under /local/community/ugreen/ ship with the HACS integration and
+# live in www/community/, which is gitignored. Absent from this repo, present
+# on the live instance.
 #
-# Assets referenced from /local/community/ugreen/ ship with the HACS
-# integration and live in www/community/, which is gitignored — they are
-# absent from this repo but present on the live instance. Not a broken path.
-#
-# On integration updates: re-check the upstream wiki page. HACS cannot update
-# dashboard YAML, so template/page changes have to be merged by hand.
+# On integration updates, re-check the upstream wiki. HACS cannot update
+# dashboard YAML; merge template/page changes by hand.
 #####
 
-# ⚠️ `templates`, NOT `jack-sparrow/templates`. Moved up a level on
-# 2026-08-13 so lab.yaml could load the same directory and share
-# `portal_button`. Button-card templates are per-dashboard config and do NOT
-# cross dashboards, so a shared *directory* that only one dashboard includes
-# shares nothing — both stubs have to include this same one, and now do.
+# Shared with lab.yaml. Button-card templates are per-dashboard config, so
+# both stubs have to include this directory. The three `ugreen_*` templates
+# are jack-sparrow's; lab loads them and never calls them.
 #
-# The three `ugreen_*` templates in there are jack-sparrow's alone and are
-# named so. lab.yaml loads them too and never calls them, which costs nothing:
-# an uncalled button_card_template is an inert dict entry.
-#
-# ⚠️ `!include_dir_merge_named` RECURSES — it walks the tree with os.walk, so
-# a subdirectory under templates/ gets merged in silently rather than ignored.
-# Keep it flat.
+# `!include_dir_merge_named` recurses (os.walk). Keep templates/ flat.
 button_card_templates: !include_dir_merge_named templates
 
 title: 'jack-sparrow'

@@ -3,61 +3,37 @@
 # Uptime Kuma — lab availability rollups
 #
 # The core `uptime_kuma` integration (HA 2025.8+, no HACS) creates one HA
-# device per monitor on the Kuma instance running on jack-sparrow, each with
-# up to 14 entities: Status, Response time, Certificate expiry, Monitor type,
-# Monitored hostname / port / URL, Uptime 1/30/365d, Response time avg
-# 1/30/365d. Sixteen monitors visible today is 178 entities (verified
-# 2026-08-13). Nobody watches that. These two are what a card or an automation
-# should read.
+# device per monitor, each with up to 14 entities. These two sensors are
+# what a card or an automation should read.
 #
-# Note the entity set is not uniform: only HTTP monitors get Monitored URL and
-# Certificate expiry, only port/ping/dns monitors get Monitored hostname, and
-# group monitors get neither. Anything matching on a suffix other than
-# `_status` or `_monitor_type` has to tolerate the sensor being absent.
+# The entity set is not uniform: only HTTP monitors get URL and cert expiry,
+# only port/ping/dns get hostname, groups get neither. Anything matching a
+# suffix other than `_status` or `_monitor_type` has to tolerate the sensor
+# being absent.
 #
-# WHY THE ENTITY LIST IS DERIVED, NOT HARDCODED
+# `integration_entities('uptime_kuma')` returns whatever the config entry
+# currently owns, so adding or deleting a monitor in Kuma needs no edit here.
 #
-# Same reasoning as scrutiny.yaml: `integration_entities('uptime_kuma')`
-# returns whatever the config entry currently owns, so adding, renaming or
-# deleting a monitor in Kuma needs no edit here. That matters more than usual
-# because the monitor set is expected to move — `poat-share - SMB` gets
-# dropped after the Phase 4 cutover, and Portainer / Plex / Deluge go green
-# as those hosts come back. Backup freshness is Healthchecks, not a Kuma
-# group.
+# Group monitors are excluded. A Kuma group goes DOWN when any child does,
+# so counting them alongside double-counts every outage. Filtered by the
+# `Monitor type` sensor (`group`), never by listing group names.
 #
-# ⚠️ GROUP MONITORS ARE EXCLUDED, AND THIS IS THE WHOLE TRICK.
+# Verified 2026-08-13: 16 monitors, 3 groups (`sensor.network_status`,
+# `sensor.services_status`, `sensor.jack_sparrow_status`), 13 leaves.
+# Without the filter the then-current outage read as 6 problems instead of 4.
 #
-# Kuma group monitors surface in HA as ordinary devices with their own Status
-# sensor, and a group goes DOWN when any child does. Counting them alongside
-# leaves double-counts every outage: one down service reads as two problems,
-# and `Network` shows up in the notification next to the thing that actually
-# broke. Groups are filtered out by reading the `Monitor type` sensor on the
-# same device — type `group` — rather than by listing the four group names,
-# which would go stale the first time a group is added.
-#
-# Verified against the live instance 2026-08-13: 16 monitors visible, of which
-# 3 are groups (`sensor.network_status`, `sensor.services_status`,
-# `sensor.jack_sparrow_status` — all reading `group` on their `_monitor_type`
-# sibling) leaving 13 leaves. Without the filter the current outage reads as
-# 6 problems instead of 4.
-#
-# ⚠️ PAUSED MONITORS ARE INVISIBLE. The Kuma API does not expose them, so HA
-# cannot tell paused from deleted. The `Backups` group is paused right now,
-# which is why it is absent entirely rather than showing as a fourth group.
-# Pausing a monitor also leaves its HA device behind as stale — it has to be
+# Paused monitors are invisible. The Kuma API does not expose them, so HA
+# cannot tell paused from deleted. The `Backups` group is paused and is
+# therefore absent. Pausing also leaves a stale HA device that has to be
 # removed by hand.
 #
-# ⚠️ `sensor.jack_sparrow_status` IS THE GROUP, not the NAS. The host's own
-# checks are `jack_sparrow_ugos_status` and `jack_sparrow_smb_status`. Reading
-# the bare one as "is the NAS up" would be wrong twice over: it is a rollup,
-# and it is red right now because Portainer is not deployed.
+# `sensor.jack_sparrow_status` is the group, not the NAS. The host's own
+# checks are `jack_sparrow_ugos_status` and `jack_sparrow_smb_status`.
 #
-# ⚠️ ENTITY IDS ARE SLUGGED FROM MONITOR NAMES, so `jack-sparrow - UGOS`
+# Entity IDs are slugged from monitor names, so `jack-sparrow - UGOS`
 # becomes `sensor.jack_sparrow_ugos_status` and shares a prefix with the
-# UGREEN integration's `sensor.jack_sparrow_*` entities. No collision today —
-# the suffixes differ — but if HA ever appends a `_2` to one of these because
-# of a genuine collision, the `_status$` match below stops seeing it. Re-run
-# this after adding monitors:
+# UGREEN integration. A `_2` suffix from a collision would hide that
+# monitor. Re-run after adding monitors:
 #
 #   {{ integration_entities('uptime_kuma') | select('search', '_status$') | list }}
 #
@@ -65,9 +41,7 @@
 #   - dashboards/lab/views/01-uptime.yaml
 #   - automations/lab/uptime_kuma_monitor_down.yaml
 #
-# Deploy steps and the monitor table live in the **servers** repo at
-# hosts/jack-sparrow/uptime-kuma-runbook.md.
-#
+# Deploy: servers repo, hosts/jack-sparrow/uptime-kuma-runbook.md
 # Upstream: https://www.home-assistant.io/integrations/uptime_kuma/
 #####
 

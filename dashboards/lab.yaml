@@ -2,72 +2,38 @@
 #####
 # lab — lab-wide monitoring
 #
-# Entry point only, split the same way jack-sparrow and the-matrix are:
+# Entry point only:
 #
 #   lab.yaml                 this file — title, theme, includes
 #   lab/views/NN-*.yaml      one view per file, ordered by filename
-#   templates/*.yaml         button_card_templates, SHARED with jack-sparrow
-#   cards/portal-row.yaml    the shared portal row, `!include`d as one card
+#   templates/*.yaml         shared with jack-sparrow (same directory)
+#   cards/portal-row.yaml    shared portal row, `!include`d as one card
 #
 # `!include_dir_list` sorts by filename, hence the NN- prefixes.
 #
-# WHY THIS IS ITS OWN DASHBOARD AND NOT A jack-sparrow VIEW
+# Own dashboard because Kuma watches the whole lab (gateway, ISP, Pis, HA),
+# and only the container happens to run on the NAS. Same for Backups:
+# Duplicati runs on the NAS, a backup job is a lab-wide concern.
+# 02-backups.yaml answers "did the last run succeed"; Healthchecks (not
+# built yet, see TODO.md) will answer "did it run at all".
 #
-# Uptime Kuma watches the whole lab — the gateway, the ISP, four Pis, Home
-# Assistant itself. Only the *container* happens to run on the NAS. Filing the
-# board under jack-sparrow would put "is the internet up" behind a page named
-# after one host, and would have to move the day Kuma is migrated off it.
+# `templates` is dashboards/templates/, the same directory jack-sparrow.yaml
+# loads. Editing a file there changes both dashboards. `[[[ ... ]]]` exists
+# on this dashboard only inside templates/portal_button.yaml; view files stay
+# on Jinja.
 #
-# Same reasoning covers Backups (02-backups.yaml, added 2026-08-15): Duplicati
-# runs on the NAS but a backup job is a lab-wide concern, not a jack-sparrow
-# one. Backup *freshness* — did the job run at all — is a separate concern
-# covered by Healthchecks (not yet built, see TODO.md); 02-backups.yaml
-# answers "did the last run succeed", which Healthchecks structurally cannot.
-#
-# THE `button_card_templates:` BLOCK — ADDED 2026-08-13, AND WHY
-#
-# This file used to carry a long note explaining that it deliberately had NO
-# such block: every card here is core Lovelace plus auto-entities and mushroom,
-# so there were no `[[[ ... ]]]` JS templates and none of the bracket-counting
-# that goes with them.
-#
-# That held until the portal row. The way out of Home Assistant is supposed to
-# look identical on every page, and this dashboard could not use the shared
-# `portal_button` template — button-card templates are per-dashboard config and
-# do not cross dashboards — so 01-uptime.yaml hand-rolled the row out of core
-# `tile` cards instead. Four buttons that looked like four different classes of
-# object depending on which page you were on, which is the exact problem the
-# template exists to prevent.
-#
-# The tradeoff is smaller than the old note implies. `[[[ ... ]]]` now exists
-# on this dashboard, but ONLY inside templates/portal_button.yaml — every call
-# site is plain YAML variables, and nothing in lab/views/ counts a bracket.
-# The rule worth keeping is the narrower one: no JS templates in the view
-# files. Jinja, evaluated by Home Assistant, everywhere else.
-#
-# ⚠️ `templates` RESOLVES TO dashboards/templates/, the SAME directory
-# jack-sparrow.yaml loads. It is not a lab-specific copy. Editing a file in
-# there changes both dashboards, and that is the intent.
-#
-# EVERYTHING IS DERIVED, NOTHING IS LISTED
-#
-# No monitor name appears anywhere in lab/views/. The board is built from
-# `integration_entities('uptime_kuma')` at render time, so adding, renaming,
-# regrouping or deleting a monitor in Kuma changes the page with no edit here.
-# That is load-bearing, not tidiness — the monitor set is expected to move:
-# `poat-share - SMB` gets dropped after the Phase 4 cutover, and Portainer /
-# Plex / Deluge go green as those hosts come back. Same principle drives
-# 02-backups.yaml off `integration_entities('duplicati')` — see its own
-# header for the one exception, the on-means-problem binary sensor.
-#
-# The two exceptions are named and explained in
-# entities/templates/uptime_kuma.yaml: `Internet` and `Gateway`, which back
+# No monitor name appears in lab/views/. Cards are built from
+# `integration_entities('uptime_kuma')` at render time, so adding or deleting
+# a monitor in Kuma needs no edit here. Same for 02-backups.yaml off
+# `integration_entities('duplicati')` (that page's `*_status` binary is
+# device_class: problem — on means a problem). The two named exceptions are
+# `Internet` and `Gateway` in entities/templates/uptime_kuma.yaml, which back
 # `binary_sensor.lab_wan_down`.
 #
-# Requires HACS cards: `auto-entities`, plus mushroom for the status tiles.
+# Requires HACS: `auto-entities`, plus mushroom for the status tiles.
 #
-# Deploy steps, the monitor table and the alerting decisions live in the
-# **servers** repo at hosts/jack-sparrow/uptime-kuma-runbook.md.
+# Deploy steps, monitor table and alerting: servers repo,
+# hosts/jack-sparrow/uptime-kuma-runbook.md.
 #####
 
 button_card_templates: !include_dir_merge_named templates

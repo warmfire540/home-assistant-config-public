@@ -1,0 +1,64 @@
+#####
+# All five Frigate cameras as one Advanced Camera Card grid.
+#
+# Used by House, Vacation, and the Cameras subview so the set and the
+# Frigate menu (clips, recordings, snapshots, timeline) stay in one
+# place. Occupancy triggers swap the highlighted camera; motion does not
+# (too chatty). PTZ is `auto`: patio and gerbil have motors, the others
+# hide the pad.
+#
+# `timeline` / `thumbnails` default to none. The Cameras subview passes
+# `below` so review sits under the live grid. House and Vacation stay
+# compact.
+#
+# Call:
+#   type: custom:decluttering-card
+#   template: frigate_cameras
+#   variables:
+#     - timeline: below
+#     - thumbnails: below
+#####
+frigate_cameras:
+  default:
+    - timeline: none
+    - thumbnails: none
+  card:
+    type: custom:advanced-camera-card
+    cameras:
+      - camera_entity: camera.patio
+        triggers: &occupancy_only
+          occupancy: true
+          motion: false
+      - camera_entity: camera.gerbil
+        triggers: *occupancy_only
+      - camera_entity: camera.garage
+        triggers: *occupancy_only
+      - camera_entity: camera.front
+        triggers: *occupancy_only
+      - camera_entity: camera.living_room
+        triggers: *occupancy_only
+    live:
+      controls:
+        ptz:
+          mode: auto
+        timeline:
+          mode: '[[timeline]]'
+        thumbnails:
+          mode: '[[thumbnails]]'
+      display:
+        mode: grid
+        grid_columns: 2
+    menu:
+      buttons:
+        clips:
+          enabled: true
+        recordings:
+          enabled: true
+        snapshots:
+          enabled: true
+        timeline:
+          enabled: true
+        frigate:
+          enabled: true
+    status_bar:
+      style: hover-card

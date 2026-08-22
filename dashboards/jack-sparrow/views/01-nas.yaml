@@ -30,7 +30,7 @@
 #   &percent_thresholds  0-100 % colour ramp — CPU load + RAM
 #   &two_up_grid         2-up responsive grid — pools + volumes
 #   &disk_card           disk tile — data disks + cache disks
-# CPU Temp deliberately does NOT reuse the percent ramp; it is in °F.
+# CPU Temp is in °F, so it does not reuse the percent ramp.
 #####
 
 title: NAS
@@ -51,16 +51,9 @@ sections:
         heading_style: title
         icon: mdi:pirate
 
-      # ---- Portals ----
-      # One shared card: dashboards/cards/portal-row.yaml. The same tools in
-      # the same order with the same look on every page of every dashboard,
-      # and it reflows to 3- or 2-up on narrow screens. Was three
-      # hand-maintained copies plus a divergent core-tile version on the lab
-      # board until 2026-08-13.
-      #
-      # `!include` resolves relative to THIS file, hence ../../ from
-      # dashboards/<dash>/views/. Hosts, ports, order, colours and the
-      # four-across layout all live in that one file now.
+      # Shared card: dashboards/cards/portal-row.yaml.
+      # `!include` is relative to this file, hence ../../ from
+      # dashboards/<dash>/views/.
       - !include ../../cards/portal-row.yaml
 
       # Native tile cards, wrapped only so their entity_ids can be templated

@@ -166,6 +166,7 @@ cards:
           - entity_id: binary_sensor.office_door_window_door_is_open
             off_color: green
             on_color: red
+          - entity_id: binary_sensor.gerbil_cat_occupancy
           - media_player.office_tv
 
       #################
@@ -253,6 +254,7 @@ cards:
               service: switch.toggle
               service_data:
                 entity_id: switch.garage_opener
+          - entity_id: binary_sensor.garage_door_person_occupancy
           - switch.garage_opener_plug
           - switch.water_valve
 
@@ -272,6 +274,8 @@ cards:
             action: more-info
           styles:
             '--opacity-icon-fill-inactive': 1
+        entities:
+          - entity_id: binary_sensor.front_door_person_occupancy
 
       #################
       # SHED
@@ -351,3 +355,5 @@ cards:
             action: more-info
           styles:
             '--opacity-icon-fill-inactive': 1
+        entities:
+          - entity_id: binary_sensor.patio_area_person_occupancy

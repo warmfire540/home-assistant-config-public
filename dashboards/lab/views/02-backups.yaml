@@ -2,42 +2,31 @@
 #####
 # BACKUPS — Duplicati job health
 #
-# Healthchecks answers "did the nightly job run at all" (dead man's switch,
-# lab-wide, not yet built — see TODO.md). This page answers the next
-# question once you know it ran: did it succeed, how long did it take, and
-# how much did it move. Same relationship as Drives/Uptime on jack-sparrow —
-# different failure mode, different page.
+# Healthchecks answers "did the nightly job run at all" (not yet built, see
+# TODO.md). This page answers the next question: did it succeed, how long
+# did it take, and how much did it move.
 #
-# NOTHING ON THIS PAGE NAMES A BACKUP JOB.
-#
-# Every card is an `auto-entities` template over
-# `integration_entities('duplicati')`. One job today — Scrutiny Backup — but
-# add a second job in Duplicati and it appears here with no dashboard edit;
-# rename one and the label follows.
-#
-# HOW THE DERIVATION WORKS
+# No backup job is named here. Every card is an `auto-entities` template over
+# `integration_entities('duplicati')`. Add or rename a job in Duplicati and
+# it appears here with no dashboard edit.
 #
 # hass-duplicati gives each job one device (`<name> Backup`) carrying a fixed
-# entity set — no per-check-type variation the way Uptime Kuma or Portainer
-# have, so there is less sibling-lookup tolerance needed here than on those
-# two pages. Still derived by suffix off the same base ID rather than
-# `device_entities()`, matching the style of the other two rollup pages:
+# entity set — no per-check-type variation the way Kuma or Portainer have.
+# Derived by suffix off the same base ID rather than `device_entities()`:
 #
 #   status (binary)    integration_entities('duplicati') | select('search', '^binary_sensor.*_status$')
 #   its job name        the device name, via friendly_name minus ' Status'
 #   siblings            same entity_id stem, suffix swapped
 #
-# ⚠️ `binary_sensor.*_status` IS device_class: problem, NOT success. ON MEANS
-# A PROBLEM. Verified against upstream source — see the header of
-# entities/templates/duplicati.yaml for the full explanation. Every color/icon
-# template on this page treats `on` as red and `off` as green for that sensor
-# specifically; do not copy the Scrutiny/Portainer "on = healthy" convention
-# here by reflex.
+# `binary_sensor.*_status` is device_class: problem. ON MEANS A PROBLEM.
+# Verified against upstream source — see entities/templates/duplicati.yaml.
+# Colour/icon templates on this page treat `on` as red and `off` as green
+# for that sensor. Do not copy the Scrutiny/Portainer "on = healthy"
+# convention here.
 #
-# ⚠️ EVERY `filter: template:` MUST END IN ONE `{{ ... }}` THAT EVALUATES TO A
-# LIST. auto-entities does no YAML/JSON parsing — see lab/views/01-uptime.yaml
-# header for the full explanation of why the naive per-row dict loop breaks.
-# Accumulate into a namespace list, emit it as the last statement.
+# Every `filter: template:` must end in one `{{ ... }}` that evaluates to a
+# list. See lab/views/01-uptime.yaml. Accumulate into a namespace list, emit
+# it as the last statement.
 #
 # LAYOUT (max_columns: 3)
 #
@@ -67,11 +56,8 @@ sections:
         heading_style: title
         icon: mdi:backup-restore
 
-      # ---- Portals ----
-      # One shared card: dashboards/cards/portal-row.yaml. Same tools, same
-      # order, same look on every page of both dashboards.
-      #
-      # `!include` resolves relative to THIS file, hence ../../ from
+      # Shared card: dashboards/cards/portal-row.yaml.
+      # `!include` is relative to this file, hence ../../ from
       # dashboards/<dash>/views/.
       - !include ../../cards/portal-row.yaml
 
