@@ -26,10 +26,11 @@ lovelace:
       show_in_sidebar: true
       filename: dashboards/jack-sparrow.yaml
 
-    # lab (lab-wide monitoring — Uptime Kuma)
+    # lab (lab-wide monitoring — Uptime Kuma, backups, Pi-hole, Z-Wave)
     # Standalone rather than a jack-sparrow view: Kuma watches the whole lab
     # and only the container happens to run on the NAS. The entry file is a
     # stub; views are !include'd from the sibling dashboards/lab/ directory.
+    # Sidebar URL is /home-lab/… (HA requires a hyphen in the dashboard slug).
     home-lab:
       mode: yaml
       title: Lab

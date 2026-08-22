@@ -4,7 +4,13 @@ Working notes for streamlining dashboards, entities, backups, and log noise.
 
 ## Dashboards
 
-- [ ] Polish and reconcile `lab.yaml` (start here)
+- [x] ~~Polish and reconcile Matrix `lab.yaml`~~ — retired 2026-08-22.
+      `/the-matrix/lab` and `/the-matrix/z-wave` are gone. Home's
+      server-closet card lands on `/home-lab/uptime`. Pi-hole is
+      `/home-lab/pi-hole`; Z-Wave is `/home-lab/z-wave` (grouped by type).
+      Not moved: Raspberry Pi host cards, printer, Tasmota RF bridge,
+      Plex, MQTT reboot row. `pi_details` / `home_assistant_details`
+      declutter templates are now unused.
 - [ ] Walk other mainviews / subviews and clean up unused or low-value cards
 - [ ] Streamline layouts so status, controls, and alerts are easier to scan
 - [ ] Surface backup status more clearly on Lab / related views
@@ -145,8 +151,9 @@ down, and it answers "does the host reply to ICMP" rather than "is the service
 working". `poat-hole - DNS` is the clearest example — the Pi can ping fine
 while resolving nothing.
 
-**Not a mechanical swap.** The legacy sensors are used as *conditions* on the
-Lab view, and at least one pair is not equivalent:
+**Not a mechanical swap.** The legacy sensors used to be *conditions* on
+the Matrix Lab view (now retired). Remaining consumers are ping_interval,
+seedbox_vpn_on, and customizations. At least one pair is not equivalent:
 
 | Legacy | Kuma monitor | Same thing? |
 | --- | --- | --- |
@@ -155,13 +162,12 @@ Lab view, and at least one pair is not equivalent:
 | `binary_sensor.poat_seedbox_local` | `poat-seedbox - Deluge` | Kuma checks the daemon RPC port, not the host |
 | `binary_sensor.poat_plex_local` | `lil-bit - Plex` | ⚠️ **probably different hosts** — confirm before swapping |
 
-- [ ] Confirm whether `poat-plex` and `lil-bit` are the same machine. The Lab
-      view still points `custom:plex-meets-homeassistant` at `poat-plex.local`
-      while Kuma monitors `192.168.4.161`.
-- [ ] Then swap the conditions in
-      `ui_lovelace_minimalist/dashboard/views/mainviews/lab.yaml` and
-      `.../card_declutter/pi_details.yaml` from `binary_sensor.*_local` `on`
-      to the matching `sensor.*_status` `up`.
+- [ ] Confirm whether `poat-plex` and `lil-bit` are the same machine. Kuma
+      monitors `192.168.4.161`; the retired Matrix lab view pointed
+      `custom:plex-meets-homeassistant` at `poat-plex.local`.
+- [ ] Then swap remaining `binary_sensor.*_local` consumers (ping_interval,
+      seedbox_vpn_on, customizations) to the matching `sensor.*_status` `up`.
+      The Matrix lab view is gone; `pi_details.yaml` is unused.
 - [ ] Then retire `automations/sensors/ping_interval.yaml` and the ping config
       entries. That automation only exists to work around
       home-assistant/core#105041 (ping sensors not honouring an update
@@ -195,7 +201,7 @@ Lab view, and at least one pair is not equivalent:
 ## Notes
 
 - Existing backup sensors live in `entities/command_line/sensors/pi_backups.yaml` (HA, Pi-hole, Deluge, Plex).
-- Lab view: `ui_lovelace_minimalist/dashboard/views/mainviews/lab.yaml`
+- Lab dashboard: `dashboards/lab.yaml` (`/home-lab/uptime`)
 
 ## After poat-seedbox is decommissioned
 
@@ -224,9 +230,9 @@ if left.
       (`/media/pi_backups/deluge-backup`). Replace only if the new container
       has its own backup path; do not retarget this find at jack-sparrow
       without checking the path exists.
-- [ ] `ui_lovelace_minimalist/dashboard/views/mainviews/lab.yaml` — the
-      `poat_seedbox` mqtt_control card (`sensor.deluge_last_backup`) and the
-      `sensor.poat_seedbox_rpi_monitor_poat_seedbox` row
+- [x] ~~`ui_lovelace_minimalist/dashboard/views/mainviews/lab.yaml`~~ —
+      retired 2026-08-22 with the Matrix lab view. The `poat_seedbox`
+      mqtt_control card and rpi_monitor row are gone with it.
 - [ ] Ping: `binary_sensor.poat_seedbox_local` config entry, plus the
       commented line in `automations/sensors/ping_interval.yaml`
 - [ ] Drop `poat-seedbox` from the legacy-vs-Kuma table in this file once

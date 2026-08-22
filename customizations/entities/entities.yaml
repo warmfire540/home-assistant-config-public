@@ -13,7 +13,7 @@ binary_sensor.rolo_error:
   navigation_path: /the-matrix/living-room
 
 binary_sensor.poat_hole_local:
-  navigation_path: /the-matrix/pi-hole
+  navigation_path: /home-lab/pi-hole
 
 binary_sensor.poat_seedbox_local:
   exclude_on_status_path: true

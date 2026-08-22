@@ -295,13 +295,19 @@ cards:
       #################
       # SERVER CLOSET
       #################
+      # Taps anywhere on the card -> the standalone lab dashboard.
+      # Root-level `navigate:` is deprecated on this card (same pattern as
+      # jack-sparrow below). Lands on Uptime; Pi-hole and Z-Wave are tabs.
       - type: custom:room-summary-card
         view_layout:
           grid-area: server
         area: server_closet
         humidity_sensor: sensor.office_climate_humidity
         temperature_sensor: sensor.office_climate_air_temperature
-        navigate: lab
+        actions:
+          tap_action:
+            action: navigate
+            navigation_path: /home-lab/uptime
         background:
           options:
             - icon_background

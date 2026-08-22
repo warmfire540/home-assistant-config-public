@@ -11,23 +11,33 @@
 # Room views still show dog on the front camera card.
 #
 # The Frigate UI itself is the portal-row button on lab / jack-sparrow.
+#
+# Width: default `1fr` is `minmax(auto, 1fr)`. The Advanced Camera Card's
+# intrinsic width is the stream (1440p) times its own 2-col grid, so the
+# page grew to ~15k px. `minmax(0, 1fr)` lets the column shrink to the
+# Lovelace panel. One column: every block already spanned both cells.
 #####
 title: Cameras
 path: cameras
 subview: true
 type: custom:grid-layout
 layout:
+  width: 100%
+  max_width: 1400px
+  grid-template-columns: minmax(0, 1fr)
   grid-template-areas: |
-    "header header"
-    "live live"
-    "occupancy occupancy"
+    "header"
+    "live"
+    "occupancy"
   mediaquery:
     'only screen and (min-width: 769px) and (max-width: 1400px)':
+      grid-template-columns: minmax(0, 1fr)
       grid-template-areas: |
-        "header header"
-        "live live"
-        "occupancy occupancy"
+        "header"
+        "live"
+        "occupancy"
     'only screen and (max-width: 768px)':
+      grid-template-columns: minmax(0, 1fr)
       grid-template-areas: |
         "header"
         "live"

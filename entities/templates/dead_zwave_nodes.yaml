@@ -16,4 +16,4 @@
         %}
         {% if count == 0 %}off{% else %}{{ count }}{% endif %}
       attributes:
-        navigation_path: /the-matrix/z-wave
+        navigation_path: /home-lab/z-wave

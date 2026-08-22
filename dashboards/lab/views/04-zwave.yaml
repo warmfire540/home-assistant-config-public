@@ -1,0 +1,312 @@
+---
+#####
+# Z-WAVE — mesh health, then devices grouped by type
+#
+# Replaces `/the-matrix/z-wave`, which was one `zwave-device-center` (a
+# flat list of every node) plus a compact `zwave-nodes-status`. Room
+# views still have their own area-filtered device-center for in-room
+# control; this page is the whole mesh.
+#
+# No node is named here. Every device card is derived from
+# `integration_entities('zwave_js')` filtered to `node_status$` — one
+# sensor per node, the same handle `entities/templates/dead_zwave_nodes.yaml`
+# uses. Add a node and it appears on the next render; exclude the hub
+# because `custom:zwave-controller` already covers it.
+#
+# Type is inferred from what the device *is*, not from area or
+# manufacturer. First match wins, most-specific first:
+#
+#   lock / cover / climate / siren / light / fan
+#   then binary_sensor device_class:
+#     moisture            → leak
+#     door/window/opening → openings
+#     motion/occupancy    → motion
+#   then switch (plugs, relays, on/off paddles with no light entity)
+#   else other
+#
+# Lights beat switches so a dimmer that also exposes a switch stays in
+# Lights. Config/parameter switches on a sensor do not steal it: switch
+# is only considered after the binary_sensor classes.
+#
+# The hub is skipped when any sibling matches `heal_network` or
+# `rebuild_routes` / `rebuild_network_routes` (controller-only buttons).
+# If the hub leaks into Other, that skip is what to tighten.
+#
+# Empty types are omitted (`show_empty: false` plus the template returns
+# `[]`), so a house with no locks does not get a Locks heading.
+#
+# Every `filter: template:` must end in one `{{ ... }}` that evaluates to
+# a list. See 01-uptime.yaml.
+#
+# LAYOUT (max_columns: 3)
+#
+#   row 1   Mesh            span 3   portals + verdict + dead-node tile
+#   row 2   Problems        span 3   dead nodes only (hidden when none)
+#   row 3   Hub             span 1   controller card
+#           Nodes           span 2   active / sleeping / dead
+#   row 4   Devices by type span 3   zwave-device cards, grouped
+#
+# Requires HACS: `zwave-card-set`, `auto-entities`.
+# Alerts: entities/templates/dead_zwave_nodes.yaml
+#####
+
+title: Z-Wave
+path: z-wave
+icon: mdi:z-wave
+type: sections
+max_columns: 3
+dense_section_placement: true
+cards: []
+sections:
+  #####################################################################
+  # HEADLINE — is the mesh up
+  #####################################################################
+  - type: grid
+    column_span: 3
+    cards:
+      - type: heading
+        heading: Z-Wave
+        heading_style: title
+        icon: mdi:z-wave
+
+      # Shared card: dashboards/cards/portal-row.yaml.
+      # `!include` is relative to this file, hence ../../ from
+      # dashboards/<dash>/views/.
+      - !include ../../cards/portal-row.yaml
+
+      - type: markdown
+        grid_options:
+          columns: full
+          rows: auto
+        content: |
+          {% set d = 'sensor.dead_zwave_nodes' %}
+          {% set nodes = integration_entities('zwave_js')
+               | select('search', 'node_status$') | list %}
+          {% set total = nodes | count %}
+          {% set dead = states(d) %}
+          {% if states(d) in ['unknown', 'unavailable'] or total == 0 %}
+          ## ⚠️ Z-Wave is not reporting
+
+          The JS integration is unavailable, or no `node_status` sensors
+          were found. That is **not** the same as every node being alive.
+          {% elif dead == 'off' %}
+          ## ✅ All {{ total }} nodes alive
+          {% else %}
+          ## 🔴 {{ dead }} of {{ total }} dead
+          {% endif %}
+
+      - type: grid
+        square: false
+        columns: 2
+        grid_options:
+          columns: full
+          rows: auto
+        cards:
+          # State is `off` when none, or a count. Core tiles cannot
+          # template `color:`; the markdown verdict above carries urgency.
+          - type: tile
+            entity: sensor.dead_zwave_nodes
+            name: Dead nodes
+            vertical: true
+
+          # Count of `node_status` sensors, not a stored attribute — a
+          # core tile cannot template that, so this is mushroom.
+          - type: custom:mushroom-template-card
+            primary: >-
+              {{ integration_entities('zwave_js')
+                 | select('search', 'node_status$') | list | count }} nodes
+            secondary: Reporting
+            icon: mdi:access-point
+            tap_action:
+              action: none
+            layout: vertical
+
+  #####################################################################
+  # PROBLEMS — dead / unknown / unavailable only
+  #####################################################################
+  - type: grid
+    column_span: 3
+    cards:
+      - type: heading
+        heading: Problems
+        heading_style: title
+        icon: mdi:alert-circle
+        visibility:
+          - condition: state
+            entity: sensor.dead_zwave_nodes
+            state_not: 'off'
+
+      - type: custom:zwave-nodes-status
+        title: Dead nodes
+        columns: 2
+        features:
+          - compact
+          - hide-active
+          - hide-sleeping
+        tap_action:
+          action: perform-action
+          perform_action: zwave_js.ping
+        grid_options:
+          columns: full
+          rows: auto
+        visibility:
+          - condition: state
+            entity: sensor.dead_zwave_nodes
+            state_not: 'off'
+
+  #####################################################################
+  # HUB — the stick
+  #####################################################################
+  - type: grid
+    column_span: 1
+    cards:
+      - type: heading
+        heading: Hub
+        heading_style: title
+        icon: mdi:z-wave
+
+      - type: custom:zwave-controller
+        grid_options:
+          columns: full
+          rows: auto
+
+  #####################################################################
+  # NODES — last-seen / sleeping / alive
+  #####################################################################
+  - type: grid
+    column_span: 2
+    cards:
+      - type: heading
+        heading: Nodes
+        heading_style: title
+        icon: mdi:access-point
+
+      # Compact so this sits beside the hub without a third-wide dump.
+      # Tap pings that node (no target — the card supplies it).
+      - type: custom:zwave-nodes-status
+        columns: 2
+        features:
+          - compact
+        tap_action:
+          action: perform-action
+          perform_action: zwave_js.ping
+        grid_options:
+          columns: full
+          rows: auto
+
+  #####################################################################
+  # DEVICES BY TYPE — one zwave-device card per node
+  #####################################################################
+  - type: grid
+    column_span: 3
+    cards:
+      - type: heading
+        heading: Devices by type
+        heading_style: title
+        icon: mdi:view-grid-outline
+
+      - type: custom:auto-entities
+        show_empty: false
+        grid_options:
+          columns: full
+          rows: auto
+        card:
+          type: vertical-stack
+        card_param: cards
+        filter:
+          template: >
+            {% set ns = namespace(
+                 light=[], switch=[], cover=[], climate=[], lock=[],
+                 siren=[], fan=[], leak=[], opening=[], motion=[],
+                 other=[]) %}
+            {% for e in integration_entities('zwave_js')
+                 | select('search', 'node_status$') %}
+              {% set did = device_id(e) %}
+              {% if did %}
+                {% set ents = device_entities(did) %}
+                {% set is_hub = ents
+                     | select('search', 'heal_network|rebuild_routes|rebuild_network_routes')
+                     | list %}
+                {% if not is_hub %}
+                  {% set name = device_attr(did, 'name')
+                       | default(state_attr(e, 'friendly_name'), true)
+                       | default(e, true) %}
+                  {% set card = {
+                       'type': 'custom:zwave-device',
+                       'device_id': did,
+                       'features': ['use_icons_instead_of_names']
+                     } %}
+                  {% set item = [name, card] %}
+                  {% if ents | select('search', '^lock\\.') | list %}
+                    {% set ns.lock = ns.lock + [item] %}
+                  {% elif ents | select('search', '^cover\\.') | list %}
+                    {% set ns.cover = ns.cover + [item] %}
+                  {% elif ents | select('search', '^climate\\.') | list %}
+                    {% set ns.climate = ns.climate + [item] %}
+                  {% elif ents | select('search', '^siren\\.') | list %}
+                    {% set ns.siren = ns.siren + [item] %}
+                  {% elif ents | select('search', '^light\\.') | list %}
+                    {% set ns.light = ns.light + [item] %}
+                  {% elif ents | select('search', '^fan\\.') | list %}
+                    {% set ns.fan = ns.fan + [item] %}
+                  {% else %}
+                    {% set kind = namespace(v='other') %}
+                    {% for b in ents | select('search', '^binary_sensor\\.') %}
+                      {% set dc = state_attr(b, 'device_class') %}
+                      {% if dc == 'moisture' %}
+                        {% set kind.v = 'leak' %}
+                      {% elif dc in ['door', 'window', 'garage_door', 'opening']
+                           and kind.v == 'other' %}
+                        {% set kind.v = 'opening' %}
+                      {% elif dc in ['motion', 'occupancy']
+                           and kind.v == 'other' %}
+                        {% set kind.v = 'motion' %}
+                      {% endif %}
+                    {% endfor %}
+                    {% if kind.v == 'other'
+                         and ents | select('search', '^switch\\.') | list %}
+                      {% set ns.switch = ns.switch + [item] %}
+                    {% elif kind.v == 'leak' %}
+                      {% set ns.leak = ns.leak + [item] %}
+                    {% elif kind.v == 'opening' %}
+                      {% set ns.opening = ns.opening + [item] %}
+                    {% elif kind.v == 'motion' %}
+                      {% set ns.motion = ns.motion + [item] %}
+                    {% else %}
+                      {% set ns.other = ns.other + [item] %}
+                    {% endif %}
+                  {% endif %}
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+            {% set out = namespace(rows=[]) %}
+            {% set groups = [
+                 ('Lights', 'mdi:lightbulb-group', ns.light),
+                 ('Switches', 'mdi:light-switch', ns.switch),
+                 ('Covers', 'mdi:window-shutter', ns.cover),
+                 ('Climate', 'mdi:thermostat', ns.climate),
+                 ('Locks', 'mdi:lock', ns.lock),
+                 ('Sirens', 'mdi:bullhorn', ns.siren),
+                 ('Fans', 'mdi:fan', ns.fan),
+                 ('Leak sensors', 'mdi:water-alert', ns.leak),
+                 ('Openings', 'mdi:door', ns.opening),
+                 ('Motion', 'mdi:motion-sensor', ns.motion),
+                 ('Other', 'mdi:z-wave', ns.other)
+               ] %}
+            {% for title, icon, items in groups %}
+              {% if items %}
+                {% set cards = items | sort(attribute='0')
+                     | map(attribute='1') | list %}
+                {% set out.rows = out.rows + [
+                     {'type': 'heading',
+                      'heading': title,
+                      'heading_style': 'subtitle',
+                      'icon': icon},
+                     {'type': 'grid',
+                      'columns': 2,
+                      'square': false,
+                      'cards': cards}
+                   ] %}
+              {% endif %}
+            {% endfor %}
+            {{ out.rows }}

@@ -11,11 +11,16 @@
 #
 # `!include_dir_list` sorts by filename, hence the NN- prefixes.
 #
+# Views: Uptime, Backups, Pi-hole, Z-Wave. The Matrix subviews
+# `/the-matrix/lab` and `/the-matrix/z-wave` are gone; Home's server-closet
+# card lands here (`/home-lab/uptime`).
+#
 # Own dashboard because Kuma watches the whole lab (gateway, ISP, Pis, HA),
 # and only the container happens to run on the NAS. Same for Backups:
 # Duplicati runs on the NAS, a backup job is a lab-wide concern.
 # 02-backups.yaml answers "did the last run succeed"; Healthchecks (not
 # built yet, see TODO.md) will answer "did it run at all".
+# Pi-hole and Z-Wave are lab-wide too — not a jack-sparrow concern.
 #
 # `templates` is dashboards/templates/, the same directory jack-sparrow.yaml
 # loads. Editing a file there changes both dashboards. `[[[ ... ]]]` exists

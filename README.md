@@ -158,12 +158,12 @@ ui_lovelace_minimalist/
         └── mainviews/
             ├── cats.yaml
             ├── house.yaml
-            ├── lab.yaml
             ├── lights.yaml
             └── network.yaml
         └── rooms/
         └── subviews/
-            └── z-wave.yaml
+            ├── cameras.yaml
+            └── vacation.yaml
         └── 01-home.yaml
     └── home-dashboard.yaml
 www/
@@ -185,6 +185,10 @@ Tracking sections I've reworked.
 - [ ] [`dashboards/`](dashboards/AGENTS.md) - standalone YAML dashboards, outside the UML framework
   - [x] [`jack-sparrow.yaml`](dashboards/jack-sparrow.yaml) - UGREEN NASync DXP4800 Pro
     - [x] [`views/04-drives.yaml`](dashboards/jack-sparrow/views/04-drives.yaml) - per-disk SMART health from Scrutiny
+  - [x] [`lab.yaml`](dashboards/lab.yaml) - lab-wide monitoring (`/home-lab`)
+    - [x] [`views/01-uptime.yaml`](dashboards/lab/views/01-uptime.yaml) - Uptime Kuma
+    - [x] [`views/03-pi-hole.yaml`](dashboards/lab/views/03-pi-hole.yaml) - Pi-hole
+    - [x] [`views/04-zwave.yaml`](dashboards/lab/views/04-zwave.yaml) - Z-Wave by type
 - [ ] [`entities/`](entities/) - entity definitions
   - [ ] [`templates/`](entities/templates/AGENTS.md) - template sensors
 - [ ] [`integrations/`](integrations/) - split config to load folders
@@ -203,11 +207,9 @@ Tracking sections I've reworked.
       - [x] [`mainviews/`](ui_lovelace_minimalist/dashboard/views/mainviews/README.md) - sub view configurations
         - [x] [`cats.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/cats.yaml) - Cat station
         - [x] [`house.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/house.yaml) - House overview
-        - [ ] [`lab.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/lab.yaml) - Quick view of the lab
         - [x] [`lights.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/lights.yaml) - Quick view of all lights / switches
         - [x] [`network.yaml`](ui_lovelace_minimalist/dashboard/views/mainviews/network.yaml) - Quick view of my network
       - [ ] [`subviews/`](ui_lovelace_minimalist/dashboard/views/subviews/README.md) - sub view configurations
-        - [x] [`z-wave.yaml`](ui_lovelace_minimalist/dashboard/views/subviews/z-wave.yaml) - Z-Wave status dashboard
       - [x] [`01-home.yaml`](ui_lovelace_minimalist/dashboard/views/01-home.yaml) - main dashboard configuration file
     - [x] [`home-dashboard.yaml`](ui_lovelace_minimalist/dashboard/home-dashboard.yaml) - dashboard layout entrypoint
 - [x] [`www/`](www/) - Website files and assets for front end
