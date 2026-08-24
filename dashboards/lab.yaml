@@ -8,6 +8,7 @@
 #   lab/views/NN-*.yaml      one view per file, ordered by filename
 #   templates/*.yaml         shared with jack-sparrow (same directory)
 #   cards/portal-row.yaml    shared portal row, `!include`d as one card
+#   cards/backup-glance.yaml Duplicati glance, `!include`d as one card
 #
 # `!include_dir_list` sorts by filename, hence the NN- prefixes.
 #

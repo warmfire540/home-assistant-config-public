@@ -186,6 +186,7 @@ Tracking sections I've reworked.
     - [x] [`views/04-drives.yaml`](dashboards/jack-sparrow/views/04-drives.yaml) - per-disk SMART health from Scrutiny
   - [x] [`lab.yaml`](dashboards/lab.yaml) - lab-wide monitoring (`/home-lab`)
     - [x] [`views/01-uptime.yaml`](dashboards/lab/views/01-uptime.yaml) - Uptime Kuma
+    - [x] [`views/02-backups.yaml`](dashboards/lab/views/02-backups.yaml) - Duplicati jobs + shared glance
     - [x] [`views/03-pi-hole.yaml`](dashboards/lab/views/03-pi-hole.yaml) - Pi-hole
     - [x] [`views/04-zwave.yaml`](dashboards/lab/views/04-zwave.yaml) - Z-Wave by type
     - [x] [`views/05-hosts.yaml`](dashboards/lab/views/05-hosts.yaml) - Pi hosts + Tasmota

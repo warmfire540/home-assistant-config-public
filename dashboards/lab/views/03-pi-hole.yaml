@@ -4,7 +4,9 @@
 #
 # This is why `/the-matrix/lab` existed. That Matrix subview is gone; the
 # server-closet card on Home now lands on `/home-lab/uptime`, and this tab
-# is the Pi-hole card plus the backup timestamp that used to sit next to it.
+# is the Pi-hole card. Last-backup lives on the Duplicati glance
+# (`cards/backup-glance.yaml`) once a Pi-hole job exists — do not add
+# another command_line find here.
 #
 # The card discovers every Pi-hole entity from `device_id`. That id is
 # opaque (HA device registry); the comment above the card is the only
@@ -14,17 +16,12 @@
 # mDNS, so it still works when NPM or the wildcard is down — the case you
 # actually want a Pi-hole link for.
 #
-# Last backup is `sensor.pi_hole_server_last_backup` from
-# entities/command_line/sensors/pi_backups.yaml (finds the newest file under
-# `/media/pi_backups/pihole-backup`). It is named here because it is not a
-# Pi-hole integration entity; the card cannot discover it.
-#
 # Kuma already watches `poat-hole - DNS` and `poat-hole - admin` on the
 # Uptime tab. This page does not duplicate those tiles.
 #
 # LAYOUT (max_columns: 3)
 #
-#   row 1   Pi-hole     span 3   portals + last backup + the card
+#   row 1   Pi-hole     span 3   portals + the card
 #
 # Requires HACS: `pi-hole-card`.
 #####
@@ -52,22 +49,6 @@ sections:
       # `!include` is relative to this file, hence ../../ from
       # dashboards/<dash>/views/.
       - !include ../../cards/portal-row.yaml
-
-      # `grid_options.columns: full` is load-bearing — without it this
-      # packs onto the portal row. See 02-backups.yaml.
-      - type: grid
-        square: false
-        columns: 1
-        grid_options:
-          columns: full
-          rows: auto
-        cards:
-          - type: tile
-            entity: sensor.pi_hole_server_last_backup
-            name: Last backup
-            icon: mdi:backup-restore
-            vertical: true
-            color: grey
 
       # poat-hole (Pi-hole). device_id is the registry id, not an entity.
       - type: custom:pi-hole

@@ -16,14 +16,34 @@ Working notes for streamlining dashboards, entities, backups, and log noise.
       graphs. House dumps (batteries / idle alerts / GPS) sit behind
       folds. Vacation lost the people cards. Patio owns its eero.
       `rooms/test.yaml` and `card_wifi_signal` removed.
-- [ ] Streamline layouts so status, controls, and alerts are easier to scan
-- [ ] Surface backup status more clearly on Lab / related views
+- [x] ~~Streamline layouts so status, controls, and alerts are easier to scan~~
+      — 2026-08-22. House is alerts → climate/blinds → status (cameras +
+      graphs); firing alerts sit above mutes; phones stacked with a
+      glanceable row + More fold. Vacation opens on away checks / mode,
+      cameras under that. Hosts shows Pi graphs before reboot controls.
+      Network and Lab Uptime were already scan-first.
+- [x] ~~Surface backup status more clearly on Lab / related views~~
+      — 2026-08-22. One card, `dashboards/cards/backup-glance.yaml`,
+      `!include`d on Uptime / Backups / Hosts. Tiles are Duplicati
+      only (rollup + each job's `_date`). Command_line share-find
+      sensors are off the glance.
 
 ## Backups
 
-- [ ] Confirm every important service has a last-backup sensor
+- [ ] Confirm every important service is a **Duplicati job** — HA
+      already has Date + Status per job (`integration_entities('duplicati')`).
+      Do not add more `command_line` finds. Current leftovers in
+      `entities/command_line/sensors/pi_backups.yaml`:
+      HA and Pi-hole paths may still be valid; **Deluge
+      (`deluge-backup`) and Plex (`plex-backup/MediaServer`) are
+      likely the old Pi trees** and should not be trusted or
+      retargeted until the live Duplicati job (or path) is confirmed.
+      Once those jobs exist in Duplicati, delete `pi_backups.yaml`
+      and the backup columns on Hosts / Pi graph folds.
 - [ ] Add alerts (and supporting entities) when backups go stale or missing
-- [ ] Make backup health visible on the dashboard, not just buried in entity lists
+- [x] ~~Make backup health visible on the dashboard, not just buried in entity lists~~
+      — 2026-08-22 with the Lab backup tiles above. Stale/missing
+      *alerts* and Healthchecks are still open.
 - [ ] **Healthchecks for backup freshness** — replaces the retired Kuma
       Backups group. A check detects a thing that *didn't happen*, which is
       the shape of "the nightly backup silently stopped running three weeks

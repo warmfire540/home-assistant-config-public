@@ -71,7 +71,8 @@
 #
 # LAYOUT (max_columns: 3)
 #
-#   row 1   Lab availability   span 3   portals + verdict + the three numbers
+#   row 1   Lab availability   span 3   portals + verdict + numbers + cert
+#                                       + backup-glance (Duplicati; tap → Backups)
 #   row 2   Problems           span 3   present only when something is down
 #   row 3   Monitors           span 2   the board, worst first
 #   row 3   Groups             span 1   Kuma's own rollups, beside it
@@ -281,6 +282,10 @@ sections:
             vertical: true
             color: grey
             state_content: cert_count
+
+      # Shared card: dashboards/cards/backup-glance.yaml.
+      # Duplicati only — command_line *_last_backup is not on this row.
+      - !include ../../cards/backup-glance.yaml
 
       # Only when the handshake is actually failing. `is_valid` false is a
       # different and more urgent failure than the countdown — it can happen

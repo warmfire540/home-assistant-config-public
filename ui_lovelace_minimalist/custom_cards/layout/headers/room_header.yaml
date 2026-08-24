@@ -1,4 +1,13 @@
 ---
+#####
+# Room header: climate graphs when the area has them, then status chips.
+#
+# Graphs assume `sensor.<area>_climate_air_temperature` and
+# `_climate_humidity` (area from the URL, hyphens to underscores).
+# Patio has neither — instantiating `card_graph` on a missing entity
+# is the two red errors at the top of that view. The climate template
+# is only applied when BOTH sensors exist; otherwise this is chips only.
+#####
 room_header:
   template:
     - discovery_variables
@@ -9,30 +18,38 @@ room_header:
   variables:
     area: "[[[  return variables.anchor === 'home' ? '*' : variables.anchor; ]]]"
 
+  styles:
+    custom_fields:
+      item1:
+        - display: >
+            [[[
+              const a = variables.area;
+              const temp = states['sensor.' + a + '_climate_air_temperature'];
+              const hum = states['sensor.' + a + '_climate_humidity'];
+              return (temp && hum) ? 'block' : 'none';
+            ]]]
+
   custom_fields:
     #################
-    # CLIMATE GRAPHS
+    # CLIMATE GRAPHS — omitted when the area has no climate sensors
     #################
     item1:
       card:
-        type: vertical-stack
-        cards:
-          - type: horizontal-stack
-            cards:
-              - type: 'custom:button-card'
-                template: card_graph
-                entity: "[[[ return 'sensor.' + variables.area + '_climate_air_temperature'; ]]]"
-                variables:
-                  ulm_card_graph_color: 'var(--google-red)'
-                  ulm_card_graph_name: Temperature
-                  ulm_card_graph_entity: "[[[ return 'sensor.' + variables.area + '_climate_air_temperature'; ]]]"
-              - type: 'custom:button-card'
-                template: card_graph
-                entity: "[[[ return 'sensor.' + variables.area + '_climate_humidity'; ]]]"
-                variables:
-                  ulm_card_graph_color: 'var(--google-blue)'
-                  ulm_card_graph_name: Humidity
-                  ulm_card_graph_entity: "[[[ return 'sensor.' + variables.area + '_climate_humidity'; ]]]"
+        type: custom:button-card
+        template:
+          - no_background
+          - no_click
+          - |
+            [[[
+              const a = variables.area;
+              const temp = states['sensor.' + a + '_climate_air_temperature'];
+              const hum = states['sensor.' + a + '_climate_humidity'];
+              return (temp && hum)
+                ? 'room_header_climate'
+                : 'room_header_no_climate';
+            ]]]
+        variables:
+          area: '[[[ return variables.area; ]]]'
 
     #################
     # STATUS CHIPS
@@ -40,3 +57,38 @@ room_header:
     item2:
       card:
         type: custom:toolbar-status-chips
+
+# Both climate sensors exist. Do not use this template for a single
+# sensor — the missing graph still throws "Entity not available".
+room_header_climate:
+  styles:
+    grid:
+      - grid-template-areas: "'temp hum'"
+      - grid-template-columns: '1fr 1fr'
+
+  custom_fields:
+    temp:
+      card:
+        type: 'custom:button-card'
+        template: card_graph
+        entity: "[[[ return 'sensor.' + variables.area + '_climate_air_temperature'; ]]]"
+        variables:
+          ulm_card_graph_color: 'var(--google-red)'
+          ulm_card_graph_name: Temperature
+          ulm_card_graph_entity: "[[[ return 'sensor.' + variables.area + '_climate_air_temperature'; ]]]"
+    hum:
+      card:
+        type: 'custom:button-card'
+        template: card_graph
+        entity: "[[[ return 'sensor.' + variables.area + '_climate_humidity'; ]]]"
+        variables:
+          ulm_card_graph_color: 'var(--google-blue)'
+          ulm_card_graph_name: Humidity
+          ulm_card_graph_entity: "[[[ return 'sensor.' + variables.area + '_climate_humidity'; ]]]"
+
+room_header_no_climate:
+  styles:
+    card:
+      - display: none
+      - padding: 0
+      - height: 0

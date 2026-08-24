@@ -30,9 +30,9 @@
 #
 # LAYOUT (max_columns: 3)
 #
-#   row 1   Hosts          span 3   portals
-#   row 2   Controls       span 3   reboot / shutdown / restore
-#   row 3   Pis            span 3   2-up, HA then each Pi
+#   row 1   Hosts          span 3   portals + backup-glance
+#   row 2   Pis            span 3   2-up, HA then each Pi (status first)
+#   row 3   Controls       span 3   reboot / shutdown / restore
 #   row 4   RF bridge      span 3   Tasmota tiles + 24h RSSI
 #   row 5   Printer        span 3   Brother MFC — hidden when unavailable
 #
@@ -64,10 +64,87 @@ sections:
       # dashboards/<dash>/views/.
       - !include ../../cards/portal-row.yaml
 
+      # Shared card: dashboards/cards/backup-glance.yaml.
+      - !include ../../cards/backup-glance.yaml
+
+  #####################################################################
+  # PIS — 2-up. Default half-width is load-bearing here (we WANT two
+  # per row). Do not add `columns: full` or they stack to one.
+  #####################################################################
+  - type: grid
+    column_span: 3
+    cards:
+      - type: heading
+        heading: Raspberry Pi
+        heading_style: title
+        icon: mdi:raspberry-pi
+        grid_options:
+          columns: full
+          rows: auto
+
+      - type: custom:decluttering-card
+        template: home_assistant_details
+        grid_options:
+          columns: 6
+          rows: auto
+
+      - type: custom:decluttering-card
+        template: pi_details
+        grid_options:
+          columns: 6
+          rows: auto
+        variables:
+          - pi_name: hole
+          - icon: mdi:pi-hole
+          - name: Pi Hole
+
+      - type: custom:decluttering-card
+        template: pi_details
+        grid_options:
+          columns: 6
+          rows: auto
+        variables:
+          - pi_name: share
+          - icon: mdi:folder-network-outline
+          - name: Pi Share
+
+      # Hidden while rpi1 is off / gone, not while it is merely idle.
+      - type: custom:decluttering-card
+        template: pi_details
+        grid_options:
+          columns: 6
+          rows: auto
+        visibility:
+          - condition: state
+            entity: sensor.poat_seedbox_rpi_monitor_poat_seedbox
+            state_not: unavailable
+        variables:
+          - pi_name: seedbox
+          - icon: mdi:seed
+          - name: Pi Seedbox
+
+      - type: custom:decluttering-card
+        template: pi_details
+        grid_options:
+          columns: 6
+          rows: auto
+        visibility:
+          - condition: state
+            entity: sensor.poat_plex_rpi_monitor_poat_plex
+            state_not: unavailable
+        variables:
+          - pi_name: plex
+          - icon: mdi:plex
+          - name: Pi Plex
+
   #####################################################################
   # CONTROLS — reboot / shutdown / restore. Same entities as the old
   # Matrix `mqtt_control` row; `multiple-entity-row` so we do not load
   # UML button-card templates on this dashboard.
+  # The `backup` column is the legacy command_line find
+  # (`pi_backups.yaml`). Deluge / Plex paths may be the old Pi trees.
+  # Glance above is Duplicati; retire these columns once those jobs
+  # exist there.
   #####################################################################
   - type: grid
     column_span: 3
@@ -203,76 +280,6 @@ sections:
                 - entity: button.poat_plex_rpi_restart_service_poat_plex_command
                   icon: mdi:restore-alert
                   name: restore
-
-  #####################################################################
-  # PIS — 2-up. Default half-width is load-bearing here (we WANT two
-  # per row). Do not add `columns: full` or they stack to one.
-  #####################################################################
-  - type: grid
-    column_span: 3
-    cards:
-      - type: heading
-        heading: Raspberry Pi
-        heading_style: title
-        icon: mdi:raspberry-pi
-        grid_options:
-          columns: full
-          rows: auto
-
-      - type: custom:decluttering-card
-        template: home_assistant_details
-        grid_options:
-          columns: 6
-          rows: auto
-
-      - type: custom:decluttering-card
-        template: pi_details
-        grid_options:
-          columns: 6
-          rows: auto
-        variables:
-          - pi_name: hole
-          - icon: mdi:pi-hole
-          - name: Pi Hole
-
-      - type: custom:decluttering-card
-        template: pi_details
-        grid_options:
-          columns: 6
-          rows: auto
-        variables:
-          - pi_name: share
-          - icon: mdi:folder-network-outline
-          - name: Pi Share
-
-      # Hidden while rpi1 is off / gone, not while it is merely idle.
-      - type: custom:decluttering-card
-        template: pi_details
-        grid_options:
-          columns: 6
-          rows: auto
-        visibility:
-          - condition: state
-            entity: sensor.poat_seedbox_rpi_monitor_poat_seedbox
-            state_not: unavailable
-        variables:
-          - pi_name: seedbox
-          - icon: mdi:seed
-          - name: Pi Seedbox
-
-      - type: custom:decluttering-card
-        template: pi_details
-        grid_options:
-          columns: 6
-          rows: auto
-        visibility:
-          - condition: state
-            entity: sensor.poat_plex_rpi_monitor_poat_plex
-            state_not: unavailable
-        variables:
-          - pi_name: plex
-          - icon: mdi:plex
-          - name: Pi Plex
 
   #####################################################################
   # TASMOTA — Sonoff RF Bridge. Named entities: there is one bridge.

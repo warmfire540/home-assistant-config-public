@@ -1,4 +1,8 @@
 ---
+#####
+# Vacation — away checks first, then cameras and the map.
+# The page answers "can we leave" before it shows the streams.
+#####
 title: Vacation
 path: vacation
 icon: mdi:beach
@@ -7,23 +11,23 @@ type: custom:grid-layout
 layout:
   grid-template-areas: |
     "header header"
+    "security vacation"
     "cameras cameras"
     "map map"
-    "security vacation"
   mediaquery:
     'only screen and (min-width: 769px) and (max-width: 1400px)':
       grid-template-areas: |
         "header header"
+        "security vacation"
         "cameras cameras"
         "map map"
-        "security vacation"
     'only screen and (max-width: 768px)':
       grid-template-areas: |
         "header"
-        "cameras"
-        "map"
         "security"
         "vacation"
+        "cameras"
+        "map"
 cards:
   #################
   # HEADER

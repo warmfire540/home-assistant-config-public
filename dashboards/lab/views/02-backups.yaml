@@ -30,8 +30,12 @@
 #
 # LAYOUT (max_columns: 3)
 #
-#   row 1   Backups        span 3   portals + verdict + the three numbers
-#   row 2   Jobs           span 3   one card per job, detail + controls
+#   row 1   Backups        span 3   portals + verdict + backup-glance
+#   row 2   Jobs           span 3   one Duplicati card per job, detail + controls
+#
+# Glance is `cards/backup-glance.yaml` (same card as Uptime / Hosts).
+# Command_line share-find sensors are not on this page — Duplicati is
+# the source of truth. Add a job there; do not add another find.
 #
 # Reads: entities/templates/duplicati.yaml
 # Upstream: https://github.com/txxa/hass-duplicati
@@ -94,43 +98,9 @@ sections:
           > job's card below is mid-backup, not a shrunk source.
           {% endif %}
 
-      # The three numbers, as tiles.
-      #
-      # ⚠️ CORE TILES CANNOT TEMPLATE `color:` — a Jinja expression there is
-      # accepted, rendered as a literal string, and silently ignored. Urgency
-      # lives in the markdown verdict above.
-      - type: grid
-        square: false
-        columns: 3
-        grid_options:
-          columns: full
-          rows: auto
-        cards:
-          - type: tile
-            entity: sensor.duplicati_backup_health
-            name: Backups
-            vertical: true
-
-          - type: tile
-            entity: sensor.duplicati_backup_health
-            name: Jobs seen
-            icon: mdi:counter
-            vertical: true
-            color: grey
-            state_content: job_count
-
-          # Most-recent completion across every job, so "when did anything
-          # last back up" is answerable at a glance without opening a job
-          # card. `last_backup` is a computed attribute on the rollup sensor
-          # (max of every job's Date sensor) — a tile can show an attribute
-          # but has no `last_changed` state_content.
-          - type: tile
-            entity: sensor.duplicati_backup_health
-            name: Last backup
-            icon: mdi:clock-check-outline
-            vertical: true
-            color: grey
-            state_content: last_backup
+      # Shared card: dashboards/cards/backup-glance.yaml.
+      # Rollup + one tile per Duplicati job date. Same card as Uptime / Hosts.
+      - !include ../../cards/backup-glance.yaml
 
   #####################################################################
   # JOBS — one card per backup job

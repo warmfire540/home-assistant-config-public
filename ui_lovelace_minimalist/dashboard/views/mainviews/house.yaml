@@ -1,11 +1,13 @@
 ---
 #####
-# House — climate, covers, chores, and presence.
+# House — scan order is alerts, then controls, then status.
 #
-# Long dumps (every battery, every idle alert, every GPS tracker) sit
-# behind a fold. The open list is the relevant slice: batteries under
-# 40%, alerts that are actually firing. Unfold to see the rest — nothing
-# was removed.
+# Desktop row 1: alerts | climate | blinds | cameras/graphs
+# Desktop row 2: batteries | trash/vacation/list | map | phones
+#
+# Long dumps sit behind a fold. The open list is the relevant slice:
+# firing alerts, batteries under 40%. Unfold for idle alerts, chore
+# toggles, every battery, GPS names, extra phone sensors.
 #####
 title: 'House'
 path: 'house'
@@ -14,32 +16,29 @@ type: custom:grid-layout
 layout:
   grid-template-areas: |
     "banner banner banner banner"
-    "sensors climate covers alerts"
-    "batteries schedules tracking poat-phone"
-    "batteries schedules tracking gina-phone"
+    "alerts climate covers status"
+    "batteries schedules tracking phones"
   mediaquery:
     # portrait monitor
     'only screen and (min-width: 769px) and (max-width: 1400px)':
       grid-template-areas: |
         "banner banner"
-        "sensors climate"
-        "alerts covers"
+        "alerts climate"
+        "covers status"
         "batteries schedules"
-        "tracking ."
-        "poat-phone gina-phone"
+        "tracking phones"
     # Smartphones
     'only screen and (max-width: 768px)':
       grid-template-areas: |
         "banner"
-        "sensors"
+        "alerts"
         "climate"
         "covers"
-        "alerts"
+        "status"
         "batteries"
         "schedules"
         "tracking"
-        "poat-phone"
-        "gina-phone"
+        "phones"
 cards:
   #################
   # VACATION MODE BANNER
@@ -80,15 +79,15 @@ cards:
       status_path: 'no'
 
   #################
-  # SENSORS
+  # STATUS — cameras + house-wide graphs
   #################
   - type: vertical-stack
     view_layout:
-      grid-area: sensors
+      grid-area: status
     cards:
       - type: custom:button-card
         template: card_title
-        label: Sensors
+        label: Status
 
       - type: custom:decluttering-card
         template: frigate_cameras
@@ -208,6 +207,20 @@ cards:
         template: card_title
         label: Alerts
 
+      # Firing first — that is the scan. Mutes are the control under it.
+      - type: custom:auto-entities
+        show_empty: false
+        card:
+          type: entities
+        else:
+          type: markdown
+          content: >-
+            <ha-alert alert-type="info">Nothing firing</ha-alert>
+        filter:
+          include:
+            - domain: alert
+              state: 'on'
+
       - type: horizontal-stack
         cards:
           - type: 'custom:button-card'
@@ -223,47 +236,29 @@ cards:
               ulm_card_input_boolean_color: red
               ulm_card_input_boolean_force_background_color: true
 
-      # Firing only. Idle alerts are in the fold below.
-      - type: custom:auto-entities
-        show_empty: false
-        card:
-          type: entities
-        else:
-          type: markdown
-          content: >-
-            <ha-alert alert-type="info">Nothing firing</ha-alert>
-        filter:
-          include:
-            - domain: alert
-              state: 'on'
-
+      # Alerts, then the input_booleans that silence the chore ones
+      # (dishwasher, air filters, katchy, litter robots). `need` matches
+      # both `_needs_` and `_need_`. Not the mute toggles — those stay
+      # above. Turning a chore off is what clears the matching alert.
       - type: custom:auto-entities
         card:
           type: entities
         filter:
           template: >
-            {% set ents = states.alert
+            {% set alerts = states.alert
+               | map(attribute='entity_id') | list %}
+            {% set chores = states.input_boolean
+               | selectattr('entity_id', 'search', 'need')
+               | sort(attribute='name')
                | map(attribute='entity_id') | list %}
             {{ [{
               'type': 'custom:fold-entity-row',
               'open': false,
               'head': {'type': 'section', 'label': 'All alerts'},
-              'entities': ents
+              'entities': alerts
+                + [{'type': 'section', 'label': 'Clear chores'}]
+                + chores
             }] }}
-
-      - type: 'custom:button-card'
-        template: card_input_boolean
-        entity: input_boolean.dishwasher_needs_cleaned
-        variables:
-          ulm_card_input_boolean_force_background_color: true
-          ulm_card_input_boolean_color: red
-
-      - type: 'custom:button-card'
-        template: card_input_boolean
-        entity: input_boolean.air_filters_need_changed
-        variables:
-          ulm_card_input_boolean_force_background_color: true
-          ulm_card_input_boolean_color: red
 
   - type: vertical-stack
     view_layout:
@@ -413,7 +408,7 @@ cards:
   #################
   - type: vertical-stack
     view_layout:
-      grid-area: poat-phone
+      grid-area: phones
     cards:
       - type: custom:button-card
         template: card_title
@@ -423,11 +418,8 @@ cards:
         variables:
           - name: Poat
           - phone: poat_s_iphone_14_pro_max
-
-  - type: custom:decluttering-card
-    template: iphone
-    view_layout:
-      grid-area: gina-phone
-    variables:
-      - name: Gina
-      - phone: gina_s_iphone_13_mini
+      - type: custom:decluttering-card
+        template: iphone
+        variables:
+          - name: Gina
+          - phone: gina_s_iphone_13_mini

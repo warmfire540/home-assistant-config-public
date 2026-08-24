@@ -24,7 +24,8 @@
 #
 #   {{ integration_entities('duplicati') | list }}
 #
-# Consumed by: dashboards/lab/views/02-backups.yaml
+# Consumed by: dashboards/cards/backup-glance.yaml (Uptime / Backups /
+# Hosts) and dashboards/lab/views/02-backups.yaml (job detail cards).
 # Upstream: https://github.com/txxa/hass-duplicati
 #####
 

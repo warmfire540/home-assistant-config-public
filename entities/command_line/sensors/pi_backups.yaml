@@ -1,6 +1,24 @@
 #####
-# Checks the latest backup on the share for pi
+# Legacy last-backup sensors — `find` the newest file under
+# `/media/pi_backups/...` on the share.
 #
+# These are NOT the source of truth any more. Duplicati jobs already
+# expose Date + Status on each device; `sensor.duplicati_backup_health`
+# and `dashboards/cards/backup-glance.yaml` track those. Add a Duplicati
+# job for a service; do not add another find here.
+#
+# Still referenced from Hosts control rows and the Pi graph folds
+# (`home_assistant_details` / `pi_details`). Leave the sensors until
+# those jobs exist in Duplicati, then delete this file.
+#
+# Path caveats (do not "fix" without checking the share):
+#   homeassistant-backup   HA copies — may still be valid
+#   pihole-backup          Pi-hole copies — may still be valid
+#   deluge-backup          old rpi1 / poat-seedbox tree. TODO.md says
+#                          do not retarget at jack-sparrow without
+#                          checking the path exists. Likely stale.
+#   plex-backup/MediaServer  same class of leftover. Confirm before
+#                          trusting the date.
 #####
 
 - sensor:
