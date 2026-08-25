@@ -12,12 +12,6 @@ sensor.mfc_7860dw_status:
 binary_sensor.rolo_error:
   navigation_path: /the-matrix/living-room
 
-binary_sensor.poat_hole_local:
-  navigation_path: /home-lab/pi-hole
-
-binary_sensor.poat_seedbox_local:
-  exclude_on_status_path: true
-
 binary_sensor.poat_plex_local:
   exclude_on_status_path: true
 
@@ -61,8 +55,3 @@ switch.water_valve:
 
 switch.sconce:
   on_color: pink
-
-# sensors
-sensor.seedbox_vpn_on:
-  on_color: green
-  off_color: red

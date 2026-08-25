@@ -16,17 +16,16 @@
 # `integration_entities('portainer')` returns whatever the config entry
 # currently owns, so a container added, renamed or removed needs no edit here.
 #
-# Containers are identified by a `binary_sensor` PLUS a `_state` sibling.
-# The endpoint device has a binary sensor too (`binary_sensor.local_status`),
-# so a bare `^binary_sensor` select is one too many and hides a removal.
-# Every container device carries `_state` (running / exited / paused /
-# restarting); the endpoint does not. Do not hardcode "local" — that is an
-# environment name the user can rename.
+# Containers are identified by a `_state` sensor (running / exited /
+# paused / restarting). The endpoint device has a binary sensor too
+# (`binary_sensor.local_status`) and no `_state`, so a bare
+# `^binary_sensor` select is one too many and hides a removal. Do not
+# hardcode "local" — that is an environment name the user can rename.
 #
-# `binary_sensor.<name>_status` is `on`/`off` (running / not-running).
-# `sensor.<name>_state` is Docker's own word. Both are needed: the binary
-# answers "is it up", the string distinguishes a stopped container from a
-# crash loop.
+# `sensor.<name>_state` is Docker's own word and is what this file counts.
+# The binary is still useful on the dashboard (`on`/`off`) but is diagnostic
+# and is not present on every container (kopia had `_state` and no status
+# binary on 2026-08-25).
 #
 # Sibling lookups tolerate the sensor being absent. `Health` only exists on
 # images that declare a HEALTHCHECK; `update` only appears once a digest has
@@ -42,12 +41,19 @@
 # from a collision would hide that container, and a hidden container reads
 # healthy. Re-run after adding containers:
 #
-#   {{ integration_entities('portainer') | select('search', '^binary_sensor')
+#   {{ integration_entities('portainer') | select('search', '_state$')
 #      | list }}
 #
-# Suffixes below (`_state`, `_health`, `_cpu_usage_total`, …) are predicted
-# from the integration's `strings.json`, not observed. A regex that matches
-# nothing does not error; it reads zero forever.
+# Suffixes below (`_state`, `_health`, `_cpu_usage_total`, …) were predicted
+# from `strings.json` and verified against the live instance 2026-08-25.
+# Containers are identified by a `_state` sensor (running / exited /
+# restarting / …). That is stricter than `^binary_sensor`: the endpoint
+# has `binary_sensor.local_status` and no `_state`, and a container can
+# exist with `_state` but no status binary (kopia, 2026-08-25).
+#
+# Endpoint diagnostics (`_docker_version`, architecture, kernel, OS, total
+# CPU/memory) ship `disabled_by: integration`. They are not in
+# `integration_entities()` and cannot be used to find the host device.
 #
 # Consumed by: dashboards/jack-sparrow/views/05-containers.yaml
 # Deploy: servers repo, hosts/jack-sparrow/docker/docker-compose.yml
@@ -82,22 +88,28 @@
       # rather than a confident OK derived from an empty list. Same failure
       # mode as the Kuma rollup: the monitoring being down looks exactly like
       # nothing being wrong.
+      #
+      # ⚠️ `integration_entities()` ALONE DOES NOT SUBSCRIBE. Counting the
+      # list and returning creates zero entity listeners. On 2026-08-24 this
+      # sensor rendered once while Portainer was still creating devices,
+      # got `False`, and stayed `unavailable` for 11 hours while every
+      # container entity was live. Iterate `states.sensor` so the domain
+      # listener re-renders when those entities appear.
       availability: >
-        {{ integration_entities('portainer')
-           | select('search', '^binary_sensor') | list | count > 0 }}
+        {{ states.sensor
+           | selectattr('entity_id', 'search', '_state$')
+           | selectattr('entity_id', 'in', integration_entities('portainer') | list)
+           | rejectattr('state', 'in', ['unknown', 'unavailable'])
+           | list | count > 0 }}
       state: >
         {% set ns = namespace(bad=0) %}
         {% for e in integration_entities('portainer')
-             | select('search', '^binary_sensor') %}
-          {% set sibs = device_entities(device_id(e)) %}
-          {% set h = sibs | select('search', '_health$') | list %}
-          {# Endpoint device has no _state sibling — skip it, it is not a
-             container. See the header correction. #}
-          {% if sibs | select('search', '_state$') | list %}
-            {% if states(e) != 'on'
-                  or (h and states(h[0]) == 'unhealthy') %}
-              {% set ns.bad = ns.bad + 1 %}
-            {% endif %}
+             | select('search', '_state$') %}
+          {% set h = device_entities(device_id(e))
+               | select('search', '_health$') | list %}
+          {% if states(e) != 'running'
+                or (h and states(h[0]) == 'unhealthy') %}
+            {% set ns.bad = ns.bad + 1 %}
           {% endif %}
         {% endfor %}
         {{ 'Problem' if ns.bad > 0 else 'OK' }}
@@ -107,67 +119,48 @@
         problems: >
           {% set ns = namespace(bad=[]) %}
           {% for e in integration_entities('portainer')
-               | select('search', '^binary_sensor') %}
-            {% set sibs = device_entities(device_id(e)) %}
-            {% set s = sibs | select('search', '_state$') | list %}
-            {% set h = sibs | select('search', '_health$') | list %}
+               | select('search', '_state$') %}
+            {% set h = device_entities(device_id(e))
+                 | select('search', '_health$') | list %}
             {% set nm = state_attr(e, 'friendly_name')
-                 | default(e, true) | replace(' Status', '') %}
-            {# No _state sibling = the endpoint device, not a container. #}
-            {% if s %}
-              {% if states(e) != 'on' %}
-                {% set ns.bad = ns.bad
-                     + [nm ~ ' (' ~ states(s[0]) ~ ')'] %}
-              {% elif h and states(h[0]) == 'unhealthy' %}
-                {% set ns.bad = ns.bad + [nm ~ ' (unhealthy)'] %}
-              {% endif %}
+                 | default(e, true) | replace(' State', '') %}
+            {% if states(e) != 'running' %}
+              {% set ns.bad = ns.bad
+                   + [nm ~ ' (' ~ states(e) ~ ')'] %}
+            {% elif h and states(h[0]) == 'unhealthy' %}
+              {% set ns.bad = ns.bad + [nm ~ ' (unhealthy)'] %}
             {% endif %}
           {% endfor %}
           {{ ns.bad | join(', ') if ns.bad else 'all running' }}
         problem_count: >
           {% set ns = namespace(n=0) %}
           {% for e in integration_entities('portainer')
-               | select('search', '^binary_sensor') %}
-            {% set sibs = device_entities(device_id(e)) %}
-            {% set h = sibs | select('search', '_health$') | list %}
-            {% if sibs | select('search', '_state$') | list %}
-              {% if states(e) != 'on'
-                    or (h and states(h[0]) == 'unhealthy') %}
-                {% set ns.n = ns.n + 1 %}
-              {% endif %}
-            {% endif %}
-          {% endfor %}
-          {{ ns.n }}
-        running_count: >
-          {% set ns = namespace(n=0) %}
-          {% for e in integration_entities('portainer')
-               | select('search', '^binary_sensor') %}
-            {% if device_entities(device_id(e))
-                 | select('search', '_state$') | list
-                 and states(e) == 'on' %}
+               | select('search', '_state$') %}
+            {% set h = device_entities(device_id(e))
+                 | select('search', '_health$') | list %}
+            {% if states(e) != 'running'
+                  or (h and states(h[0]) == 'unhealthy') %}
               {% set ns.n = ns.n + 1 %}
             {% endif %}
           {% endfor %}
           {{ ns.n }}
+        running_count: >
+          {{ integration_entities('portainer')
+             | select('search', '_state$')
+             | select('is_state', 'running') | list | count }}
         # Sanity check for the card, and the counterpart to Kuma's
         # `monitor_count`. A container that is REMOVED — not stopped, removed —
         # takes its HA device with it, so it has no status left to be off. The
         # rollup above cannot see it. This number dropping is the only visible
         # symptom of a container quietly ceasing to exist.
         container_count: >
-          {% set ns = namespace(n=0) %}
-          {% for e in integration_entities('portainer')
-               | select('search', '^binary_sensor') %}
-            {% if device_entities(device_id(e))
-                 | select('search', '_state$') | list %}
-              {% set ns.n = ns.n + 1 %}
-            {% endif %}
-          {% endfor %}
-          {{ ns.n }}
+          {{ integration_entities('portainer')
+             | select('search', '_state$') | list | count }}
         # The endpoint device, kept separately rather than silently folded into
         # the container counts above. `off` here means Portainer has lost the
         # Docker socket — every container reading `unknown` at once is that,
-        # not ten simultaneous failures.
+        # not ten simultaneous failures. Found by "binary_sensor, no `_state`
+        # sibling" so it survives the environment being renamed off `local`.
         endpoint_ok: >
           {% set ns = namespace(ok='unknown') %}
           {% for e in integration_entities('portainer')
@@ -185,12 +178,10 @@
         restarting: >
           {% set ns = namespace(r=[]) %}
           {% for e in integration_entities('portainer')
-               | select('search', '^binary_sensor') %}
-            {% set s = device_entities(device_id(e))
-                 | select('search', '_state$') | list %}
-            {% if s and states(s[0]) == 'restarting' %}
+               | select('search', '_state$') %}
+            {% if states(e) == 'restarting' %}
               {% set ns.r = ns.r + [state_attr(e, 'friendly_name')
-                   | default(e, true) | replace(' Status', '')] %}
+                   | default(e, true) | replace(' State', '')] %}
             {% endif %}
           {% endfor %}
           {{ ns.r | join(', ') if ns.r else 'none' }}
@@ -224,8 +215,15 @@
       # at least once, so an empty list is a normal startup state rather than a
       # failure — hence availability keyed on the integration existing at all,
       # not on the update entities existing.
+      #
+      # Same listener trap as Docker Health: a bare `integration_entities()`
+      # count does not subscribe, so this stayed unavailable after a start
+      # where Portainer finished loading a few minutes later. `states.sensor`
+      # is the domain listener; the `in` filter is what scopes it.
       availability: >
-        {{ integration_entities('portainer') | list | count > 0 }}
+        {{ states.sensor
+           | selectattr('entity_id', 'in', integration_entities('portainer') | list)
+           | list | count > 0 }}
       state: >
         {{ integration_entities('portainer')
            | select('search', '^update')

@@ -13,9 +13,9 @@
 #
 # Named Pis, not `integration_entities`: each card is a bundle of
 # `sensor.poat_<name>_rpi_*` entities that do not share an integration
-# suffix the way Kuma/Duplicati do. Seedbox and Plex hide when their
-# rpi_monitor sensor is `unavailable` (the Pi is gone), same as the old
-# view. Do not retarget those cards at jack-sparrow.
+# suffix the way Kuma/Duplicati do. Plex hides when its rpi_monitor
+# sensor is `unavailable`. Share and seedbox Pis are retired; do not
+# add those cards back or retarget them at jack-sparrow.
 #
 # Tasmota is rebuilt in mushroom/tiles. The Matrix version used UML
 # `card_generic_swap` / `card_wifi_signal` (the latter is gone). Same
@@ -26,7 +26,7 @@
 # (and shutdown / restart_service). HA uses
 # `script.reboot_home_assistant` / `script.shutdown_home_assistant`.
 # `poat_rgb` is the office Pi; it also lives on the Office view.
-# Seedbox / Plex rows hide when their ping sensor is off.
+# Plex row hides when its ping sensor is off.
 #
 # LAYOUT (max_columns: 3)
 #
@@ -36,8 +36,9 @@
 #   row 4   RF bridge      span 3   Tasmota tiles + 24h RSSI
 #   row 5   Printer        span 3   Brother MFC — hidden when unavailable
 #
-# Requires HACS: `decluttering-card`, `mini-graph-card`, `bar-card`,
-# `stack-in-card`, `fold-entity-row` (pulled in by the Pi templates).
+# Requires HACS: `decluttering-card`, `mini-graph-card`,
+# `sensor-bar-card-plus`, `stack-in-card`, `fold-entity-row`
+# (pulled in by the Pi templates).
 #####
 
 title: Hosts
@@ -68,8 +69,11 @@ sections:
       - !include ../../cards/backup-glance.yaml
 
   #####################################################################
-  # PIS — 2-up. Default half-width is load-bearing here (we WANT two
-  # per row). Do not add `columns: full` or they stack to one.
+  # PIS — 2-up filling the section. Do not use `grid_options.columns: 6`
+  # here: with `column_span: 3` the card grid is 12 per view-column (36
+  # total), so 6 is a sixth of the page and the pair packs left. Nested
+  # `type: grid` with `columns: 2` + `grid_options.columns: full` is the
+  # same pattern as the Z-Wave / Tasmota tiles.
   #####################################################################
   - type: grid
     column_span: 3
@@ -82,69 +86,39 @@ sections:
           columns: full
           rows: auto
 
-      - type: custom:decluttering-card
-        template: home_assistant_details
+      - type: grid
+        square: false
+        columns: 2
         grid_options:
-          columns: 6
+          columns: full
           rows: auto
+        cards:
+          - type: custom:decluttering-card
+            template: home_assistant_details
 
-      - type: custom:decluttering-card
-        template: pi_details
-        grid_options:
-          columns: 6
-          rows: auto
-        variables:
-          - pi_name: hole
-          - icon: mdi:pi-hole
-          - name: Pi Hole
+          - type: custom:decluttering-card
+            template: pi_details
+            variables:
+              - pi_name: hole
+              - icon: mdi:pi-hole
+              - name: Pi Hole
 
-      - type: custom:decluttering-card
-        template: pi_details
-        grid_options:
-          columns: 6
-          rows: auto
-        variables:
-          - pi_name: share
-          - icon: mdi:folder-network-outline
-          - name: Pi Share
-
-      # Hidden while rpi1 is off / gone, not while it is merely idle.
-      - type: custom:decluttering-card
-        template: pi_details
-        grid_options:
-          columns: 6
-          rows: auto
-        visibility:
-          - condition: state
-            entity: sensor.poat_seedbox_rpi_monitor_poat_seedbox
-            state_not: unavailable
-        variables:
-          - pi_name: seedbox
-          - icon: mdi:seed
-          - name: Pi Seedbox
-
-      - type: custom:decluttering-card
-        template: pi_details
-        grid_options:
-          columns: 6
-          rows: auto
-        visibility:
-          - condition: state
-            entity: sensor.poat_plex_rpi_monitor_poat_plex
-            state_not: unavailable
-        variables:
-          - pi_name: plex
-          - icon: mdi:plex
-          - name: Pi Plex
+          - type: custom:decluttering-card
+            template: pi_details
+            visibility:
+              - condition: state
+                entity: sensor.poat_plex_rpi_monitor_poat_plex
+                state_not: unavailable
+            variables:
+              - pi_name: plex
+              - icon: mdi:plex
+              - name: Pi Plex
 
   #####################################################################
   # CONTROLS — reboot / shutdown / restore. Same entities as the old
   # Matrix `mqtt_control` row; `multiple-entity-row` so we do not load
-  # UML button-card templates on this dashboard.
-  # The `backup` column is the legacy command_line find
-  # (`pi_backups.yaml`). Deluge / Plex paths may be the old Pi trees.
-  # Glance above is Duplicati; retire these columns once those jobs
-  # exist there.
+  # UML button-card templates on this dashboard. Backup status lives
+  # on the Duplicati glance above, not in these rows.
   #####################################################################
   - type: grid
     column_span: 3
@@ -167,8 +141,6 @@ sections:
             secondary_info:
               attribute: ip
             entities:
-              - entity: sensor.home_assistant_last_backup
-                name: backup
               - entity: script.reboot_home_assistant
                 icon: mdi:restart
                 name: restart
@@ -183,8 +155,6 @@ sections:
             secondary_info:
               attribute: ip
             entities:
-              - entity: sensor.pi_hole_server_last_backup
-                name: backup
               - entity: button.poat_hole_rpi_reboot_poat_hole_command
                 icon: mdi:restart
                 name: restart
@@ -196,26 +166,7 @@ sections:
                 name: restore
 
           - type: custom:multiple-entity-row
-            entity: device_tracker.poat_share_wired
-            name: poat-share
-            show_state: false
-            secondary_info:
-              attribute: ip
-            entities:
-              - entity: sensor.poat_share_wired_data_usage_day
-                name: usage
-              - entity: button.poat_share_rpi_reboot_poat_share_command
-                icon: mdi:restart
-                name: restart
-              - entity: button.poat_share_rpi_shutdown_poat_share_command
-                icon: mdi:power
-                name: shutdown
-              - entity: button.poat_share_rpi_restart_service_poat_share_command
-                icon: mdi:restore-alert
-                name: restore
-
-          - type: custom:multiple-entity-row
-            entity: device_tracker.poat_rgb_wired
+            entity: device_tracker.poat_rgb_wireless
             name: poat-rgb
             show_state: false
             secondary_info:
@@ -235,30 +186,6 @@ sections:
 
           - type: conditional
             conditions:
-              - entity: binary_sensor.poat_seedbox_local
-                state: 'on'
-            row:
-              type: custom:multiple-entity-row
-              entity: device_tracker.poat_seedbox_wired
-              name: poat-seedbox
-              show_state: false
-              secondary_info:
-                attribute: ip
-              entities:
-                - entity: sensor.deluge_last_backup
-                  name: backup
-                - entity: button.poat_seedbox_rpi_reboot_poat_seedbox_command
-                  icon: mdi:restart
-                  name: restart
-                - entity: button.poat_seedbox_rpi_shutdown_poat_seedbox_command
-                  icon: mdi:power
-                  name: shutdown
-                - entity: button.poat_seedbox_rpi_restart_service_poat_seedbox_command
-                  icon: mdi:restore-alert
-                  name: restore
-
-          - type: conditional
-            conditions:
               - entity: binary_sensor.poat_plex_local
                 state: 'on'
             row:
@@ -269,8 +196,6 @@ sections:
               secondary_info:
                 attribute: ip
               entities:
-                - entity: sensor.plex_server_last_backup
-                  name: backup
                 - entity: button.poat_plex_rpi_reboot_poat_plex_command
                   icon: mdi:restart
                   name: restart
@@ -378,6 +303,48 @@ sections:
         heading_style: title
         icon: mdi:printer
 
+      # Remaining life as needle gauges: low is empty, high is fine. Distinct
+      # from the uptime solid-band list. Page counts stay below — those are
+      # not 0–100 fills.
+      - type: custom:sensor-bar-card-plus
+        grid_options:
+          columns: full
+          rows: auto
+        layout:
+          height: 38
+          label:
+            position: left
+            width: 72
+        scale:
+          min:
+            fixed: 0
+          max:
+            fixed: 100
+        bar:
+          fill_style: soft_bands
+          needle: true
+          segment_space: percent
+          segments:
+            - from: 0%
+              to: 15%
+              color: "#d32f2f"
+            - from: 15%
+              to: 30%
+              color: "#ffa000"
+            - from: 30%
+              to: 100%
+              color: "#388e3c"
+        formatting:
+          decimal: 0
+          unit: "%"
+        entities:
+          - entity: sensor.mfc_7860dw_black_toner_remaining
+            name: Toner
+            icon: mdi:printer-3d-nozzle
+          - entity: sensor.mfc_7860dw_drum_remaining_lifetime
+            name: Drum
+            icon: mdi:chart-donut
+
       - type: entities
         icon: mdi:printer
         grid_options:
@@ -392,16 +359,12 @@ sections:
             entities:
               - entity: sensor.mfc_7860dw_page_counter
                 name: Page count
-              - entity: sensor.mfc_7860dw_black_toner_remaining
-                name: Toner
           - entity: sensor.mfc_7860dw_status
             type: custom:multiple-entity-row
             name: Drum
             icon: mdi:chart-donut
             show_state: false
             entities:
-              - entity: sensor.mfc_7860dw_drum_remaining_lifetime
-                name: Life
               - entity: sensor.mfc_7860dw_drum_remaining_pages
                 name: Remaining
               - entity: sensor.mfc_7860dw_drum_page_counter

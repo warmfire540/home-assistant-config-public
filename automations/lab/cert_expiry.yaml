@@ -61,9 +61,11 @@ triggers:
     for: "00:10:00"
     id: invalid
 
-  # All-clear. Fires when the count returns to zero AND there is comfortable
-  # runway again, so a renewal that succeeds closes the loop without anyone
-  # having to go and look.
+  # All-clear after a *real* expiry warning. `numeric_state above: 30`
+  # also fires when the rollup returns from `unavailable` at 78 days
+  # (a poll blip, not a renewal) — that is what spammed persistent
+  # notifications many times a day. The choose branch requires
+  # `from_state` to have been a number under 21.
   - trigger: numeric_state
     entity_id: sensor.lab_certificate_expiry
     above: 30
@@ -87,8 +89,9 @@ actions:
           - condition: trigger
             id: invalid
         sequence:
-          - action: notify.persistent_notification
+          - action: persistent_notification.create
             data:
+              notification_id: lab_certificate
               title: "🔴 TLS handshake failing"
               message: >-
                 {{ state_attr('sensor.lab_certificate_expiry', 'invalid') }}
@@ -103,8 +106,9 @@ actions:
           - condition: trigger
             id: expiring
         sequence:
-          - action: notify.persistent_notification
+          - action: persistent_notification.create
             data:
+              notification_id: lab_certificate
               title: "⚠️ Certificate expires in {{ states('sensor.lab_certificate_expiry') }} days"
               message: >-
                 {{ state_attr('sensor.lab_certificate_expiry', 'soonest') }}
@@ -115,13 +119,21 @@ actions:
 
                   sudo docker compose logs npm | grep -i certbot
 
+      # Only after an actual expiry alert (days were under 21). Coming
+      # back from `unavailable` at 78 days is a poll blip, not a renewal.
       - conditions:
           - condition: trigger
             id: recovered
+          - condition: template
+            value_template: >-
+              {% set from = trigger.from_state.state | float(-1)
+                   if trigger.from_state else -1 %}
+              {{ from >= 0 and from < 21 }}
         sequence:
-          - action: notify.persistent_notification
+          - action: persistent_notification.create
             data:
-              title: "✅ Certificate renewed"
+              notification_id: lab_certificate
+              title: "🔐 Certificate renewed"
               message: >-
                 {{ states('sensor.lab_certificate_expiry') }} days remaining
                 on {{ state_attr('sensor.lab_certificate_expiry', 'soonest') }}.

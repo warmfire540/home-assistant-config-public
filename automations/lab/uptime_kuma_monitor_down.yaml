@@ -34,9 +34,9 @@
 # the green message replaces the red one on the phone.
 #
 # It fires on a return to ZERO, so while Portainer is undeployed and
-# lil-bit / poat-seedbox are powered off, `down_count` never reaches zero
-# and the all-clear cannot fire. That is correct — nothing is clear — but
-# the branch is dormant until those resolve.
+# lil-bit is powered off, `down_count` never reaches zero and the
+# all-clear cannot fire. That is correct — nothing is clear — but the
+# branch is dormant until those resolve.
 #
 # Both branches share one trigger and one `variables:` block. Splitting
 # recovery into its own file would duplicate the now/was/newly derivation.

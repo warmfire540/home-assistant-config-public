@@ -222,7 +222,7 @@ sections:
                     // reboots, so treat it as a hint, not an identity.
                     const dev = entity?.attributes?.device_name;
                     return [size, dev].filter(Boolean).join('  ·  ')
-                      || entity?.state || '—';
+                      || entity?.state || '-';
                   ]]]
                 label: |
                   [[[
@@ -324,9 +324,8 @@ sections:
           columns: full
           rows: auto
         content: >-
-          Collector runs every 6h — a flat line between steps is the schedule,
-          not a dead sensor. Runbook:
-          `hosts/jack-sparrow/scrutiny-runbook.md` in the **servers** repo.
+          Collector runs every 6 hours. A flat line between steps is the
+          schedule, not a dead sensor.
 
   #####################################################################
   # TRENDS — the whole reason Scrutiny exists
@@ -492,17 +491,17 @@ sections:
                               and pending == 0 and count == 7 -%}
           ### {% if unknown %}⏳ Waiting on Scrutiny{% elif all_clear %}✅ All drives healthy{% else %}⚠️ Needs a look{% endif %}
 
-          - **Drives seen** — *{{ count if count is not none else '—' }} of 7*
-          - **Hottest** — *{{ state_attr(t, 'hottest_drive') or '—' }}*
-          - **Reallocated** — *{{ state_attr(r, 'by_drive') or '—' }}*
-          - **Pending** — *{{ pending }}{{ ' — sectors flagged, not yet remapped' if pending else '' }}*
+          - **Drives seen:** *{{ count if count is not none else '-' }} of 7*
+          - **Hottest:** *{{ state_attr(t, 'hottest_drive') or '-' }}*
+          - **Reallocated:** *{{ state_attr(r, 'by_drive') or '-' }}*
+          - **Pending:** *{{ pending }}{{ ' (flagged, not remapped)' if pending else '' }}*
           {%- if problems %}
-          - **Failing** — *{{ problems }}*
+          - **Failing:** *{{ problems }}*
           {%- endif %}
           {%- if count is not none and count != 7 %}
 
-          > **Expected 7 drives, seeing {{ count }}.** 4× Ultrastar (Pool 1),
-          > 2× 990 PRO (Pool 2), and the internal 128GB boot SSD. A missing
-          > drive does not show up as a failure — it shows up as a smaller
+          > **Expected 7 drives, seeing {{ count }}.** 4x Ultrastar (Pool 1),
+          > 2x 990 PRO (Pool 2), and the internal 128GB boot SSD. A missing
+          > drive does not show up as a failure. It shows up as a smaller
           > count, which is why this line exists.
           {%- endif %}

@@ -25,7 +25,6 @@ top-level `- sensor:` / `- binary_sensor:`, not a bare mapping.
 | `pi_statistics.yaml` | ⬜ not reviewed | |
 | `power_in_kw.yaml` | ⬜ not reviewed | |
 | `printer_left_on.yaml` | ⬜ not reviewed | |
-| `seedbox_vpn_on.yaml` | ⬜ not reviewed | |
 | `testing.yaml` | ⬜ not reviewed | Scratch file — candidate for removal. |
 | `updates_available.yaml` | ⬜ not reviewed | |
 | `washy_needs_cleaned.yaml` | ⬜ not reviewed | |

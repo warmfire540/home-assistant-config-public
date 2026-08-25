@@ -157,48 +157,42 @@ pi_details:
                 ha-card .info.flex{
                   padding-bottom: 0px !important;
                 }
-      # loads
-      - type: horizontal-stack
-        cards:
-          - type: custom:bar-card
-            entities:
-              - entity: sensor.pi_[[pi_name]]_cpu
-                name: Load 1m
-                attribute: load_1m
-              - entity: sensor.pi_[[pi_name]]_cpu
-                name: Load 5m
-                attribute: load_5m
-              - entity: sensor.pi_[[pi_name]]_cpu
-                name: Load 15m
-                attribute: load_15m
-            stack: horizontal
-            max: 4
-            severity:
-              - color: '#d32f2f'
-                from: 2
-                to: 4
-              - color: '#ffa000'
-                from: 1
-                to: 2
-              - color: '#388e3c'
-                from: 0
-                to: 1
-            positions:
-              icon: 'off'
-              name: inside
-              value: inside
-              indicator: inside
-            card_mod:
-              style: |
-                bar-card-card{
-                  margin-right: 20px
-                }
-                bar-card-backgroundbar {
-                  border-radius: 8px;
-                }
-                bar-card-currentbar {
-                  border-radius: 8px;
-                }
+      # loads — mini-graph, not bar-card (bar-card is not a Lovelace
+      # resource here; that slot rendered Configuration error).
+      - type: custom:mini-graph-card
+        name: Load
+        icon: mdi:chart-bar
+        hours_to_show: 24
+        points_per_hour: 2
+        hour24: true
+        animate: true
+        height: 80
+        line_width: 2
+        show:
+          extrema: false
+          labels: true
+          legend: true
+        entities:
+          - entity: sensor.pi_[[pi_name]]_cpu
+            attribute: load_1m
+            name: 1m
+            color: '#388e3c'
+          - entity: sensor.pi_[[pi_name]]_cpu
+            attribute: load_5m
+            name: 5m
+            color: '#ffa000'
+          - entity: sensor.pi_[[pi_name]]_cpu
+            attribute: load_15m
+            name: 15m
+            color: '#91C0F8'
+        card_mod:
+          style: |
+            ha-card .graph{
+              margin-top: 0px !important;
+            }
+            ha-card .graph .graph__legend{
+              padding-bottom: 0px !important;
+            }
       # up / down
       - type: custom:mini-graph-card
         entities:
@@ -238,13 +232,6 @@ pi_details:
             name: Packages
             attribute: ux_updates
             icon: mdi:package-up
-          - type: conditional
-            conditions:
-              - entity: sensor.pi_[[pi_name]]_server_last_backup
-                state_not: 'unavailable'
-            row:
-              entity: sensor.pi_[[pi_name]]_server_last_backup
-              name: Last backup
           - type: custom:fold-entity-row
             head:
               type: section

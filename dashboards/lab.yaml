@@ -41,7 +41,8 @@
 # `binary_sensor.lab_wan_down`.
 #
 # Requires HACS: `auto-entities`, mushroom, plus (Hosts tab)
-# `decluttering-card` / `mini-graph-card` / `bar-card` / `stack-in-card`.
+# `decluttering-card` / `mini-graph-card` / `sensor-bar-card-plus` /
+# `stack-in-card`.
 #
 # Deploy steps, monitor table and alerting: servers repo,
 # hosts/jack-sparrow/uptime-kuma-runbook.md.

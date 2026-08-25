@@ -7,19 +7,18 @@
 # did it take, and how much did it move.
 #
 # No backup job is named here. Every card is an `auto-entities` template over
-# `integration_entities('duplicati')`. Add or rename a job in Duplicati and
-# it appears here with no dashboard edit.
+# `integration_entities('duplicati')`. Add a job in Duplicati, select it in
+# the integration options, and it appears here with no dashboard edit.
 #
-# hass-duplicati gives each job one device (`<name> Backup`) carrying a fixed
-# entity set — no per-check-type variation the way Kuma or Portainer have.
-# Derived by suffix off the same base ID rather than `device_entities()`:
-#
-#   status (binary)    integration_entities('duplicati') | select('search', '^binary_sensor.*_status$')
-#   its job name        the device name, via friendly_name minus ' Status'
-#   siblings            same entity_id stem, suffix swapped
+# hass-duplicati gives each job one device (`<name> Backup`) carrying a
+# fixed entity set. Cards are built from `binary_sensor.*_status` plus
+# `device_entities(device_id(e))` for siblings (same pattern as the
+# Uptime monitor board). Verified 2026-08-24 against the live instance:
+# 18 jobs, each with Status (device_class: problem), Running, Date,
+# Duration (seconds), Next, Error, Source/Target files + size, Create
+# Backup, Refresh. Files/sizes and the two buttons stay on more-info.
 #
 # `binary_sensor.*_status` is device_class: problem. ON MEANS A PROBLEM.
-# Verified against upstream source — see entities/templates/duplicati.yaml.
 # Colour/icon templates on this page treat `on` as red and `off` as green
 # for that sensor. Do not copy the Scrutiny/Portainer "on = healthy"
 # convention here.
@@ -31,11 +30,14 @@
 # LAYOUT (max_columns: 3)
 #
 #   row 1   Backups        span 3   portals + verdict + backup-glance
-#   row 2   Jobs           span 3   one Duplicati card per job, detail + controls
+#   row 2   Jobs           span 3   2-up compact mushroom cards
 #
-# Glance is `cards/backup-glance.yaml` (same card as Uptime / Hosts).
-# Command_line share-find sensors are not on this page — Duplicati is
-# the source of truth. Add a job there; do not add another find.
+# Glance is `cards/backup-glance.yaml` (same card as Uptime / Hosts):
+# three rollup tiles, not one date tile per job.
+#
+# Job cards name no job. Same auto-entities pattern as the Uptime
+# monitor board. The card is name + last/next/duration; problems and
+# overdue jobs sort to the top.
 #
 # Reads: entities/templates/duplicati.yaml
 # Upstream: https://github.com/txxa/hass-duplicati
@@ -83,7 +85,7 @@ sections:
 
           The integration is unavailable, which is **not** the same as every
           job being healthy. Check the container itself at
-          <https://duplicati.home.masterscrib.net> — this page structurally
+          <https://duplicati.home.masterscrib.net>. This page structurally
           cannot show you that outage.
           {% elif states(h) == 'OK' %}
           ## ✅ All {{ jobs }} job{{ '' if jobs == 1 else 's' }} healthy
@@ -94,12 +96,12 @@ sections:
           {% endif %}
           {% if running %}
 
-          > **Running now: {{ running }}** — a low file/size count on that
+          > **Running now: {{ running }}.** A low file/size count on that
           > job's card below is mid-backup, not a shrunk source.
           {% endif %}
 
       # Shared card: dashboards/cards/backup-glance.yaml.
-      # Rollup + one tile per Duplicati job date. Same card as Uptime / Hosts.
+      # Three rollup tiles. Same card as Uptime / Hosts.
       - !include ../../cards/backup-glance.yaml
 
   #####################################################################
@@ -120,44 +122,78 @@ sections:
           rows: auto
         card:
           type: grid
-          columns: 1
+          columns: 2
           square: false
         card_param: cards
         filter:
           template: >
+            {% set missing = ['unknown', 'unavailable', 'None', ''] %}
             {% set ns = namespace(rows=[]) %}
             {% for e in integration_entities('duplicati')
-                 | select('search', '^binary_sensor\..*_status$') | sort %}
-              {% set stem = e | replace('binary_sensor.', '')
-                   | replace('_status', '') %}
-              {% set job = state_attr(e, 'friendly_name')
-                   | default(e, true) | replace(' Status', '') %}
+                 | select('search', '^binary_sensor\..*_status$') %}
+              {% set sibs = device_entities(device_id(e)) %}
+              {% set running_e = sibs | select('search', '_running$') | list %}
+              {% set date_e = sibs | select('search', '_date$') | list %}
+              {% set dur_e = sibs | select('search', '_duration$') | list %}
+              {% set next_e = sibs | select('search', '_next_scheduled_execution$') | list %}
+              {% set err_e = sibs | select('search', '_error_message$') | list %}
               {% set problem = states(e) == 'on' %}
-              {% set running = states('binary_sensor.' ~ stem ~ '_running') == 'on' %}
-              {% set err = states('sensor.' ~ stem ~ '_error_message') %}
-              {% set ns.rows = ns.rows + [{
-                   'type': 'entities',
-                   'title': job,
-                   'icon': 'mdi:restart-alert' if running
-                     else ('mdi:alert-circle' if problem else 'mdi:check-circle'),
-                   'state_color': true,
-                   'entities': [
-                     {'entity': e, 'name': 'Status'},
-                     {'entity': 'binary_sensor.' ~ stem ~ '_running', 'name': 'Running'},
-                     {'entity': 'sensor.' ~ stem ~ '_date', 'name': 'Last run'},
-                     {'entity': 'sensor.' ~ stem ~ '_duration', 'name': 'Duration'},
-                     {'entity': 'sensor.' ~ stem ~ '_next_scheduled_execution',
-                      'name': 'Next run'},
-                     {'entity': 'sensor.' ~ stem ~ '_source_files', 'name': 'Source files'},
-                     {'entity': 'sensor.' ~ stem ~ '_source_size', 'name': 'Source size'},
-                     {'entity': 'sensor.' ~ stem ~ '_target_files', 'name': 'Target files'},
-                     {'entity': 'sensor.' ~ stem ~ '_target_size', 'name': 'Target size'},
-                   ] + ([{'entity': 'sensor.' ~ stem ~ '_error_message', 'name': 'Error'}]
-                        if problem and err not in ['unknown', 'unavailable', 'None', '']
-                        else []) + [
-                     {'entity': 'button.' ~ stem ~ '_create_backup', 'name': 'Create backup'},
-                     {'entity': 'button.' ~ stem ~ '_refresh_sensor_data', 'name': 'Refresh'},
-                   ]
-                 }] %}
+              {% set running = running_e and states(running_e[0]) == 'on' %}
+              {% set last = states(date_e[0]) if date_e else 'unknown' %}
+              {% set nxt = states(next_e[0]) if next_e else 'unknown' %}
+              {% set err = states(err_e[0]) if err_e else '' %}
+              {% set overdue = nxt not in missing and as_datetime(nxt) < now() %}
+              {% set job = state_attr(e, 'friendly_name')
+                   | default(e, true)
+                   | replace(' Status', '')
+                   | replace(' Backup', '') %}
+              {% set line = namespace(bits=[]) %}
+              {% if running %}
+                {% set line.bits = line.bits + ['running'] %}
+              {% endif %}
+              {% if last in missing %}
+                {% set line.bits = line.bits + ['never run'] %}
+              {% else %}
+                {% set line.bits = line.bits
+                     + [relative_time(as_datetime(last)) ~ ' ago'] %}
+              {% endif %}
+              {% if dur_e and states(dur_e[0]) not in missing %}
+                {% set sec = states(dur_e[0]) | float(-1) %}
+                {% if sec >= 3600 %}
+                  {% set line.bits = line.bits + [(sec / 3600) | round(1) ~ 'h'] %}
+                {% elif sec >= 60 %}
+                  {% set line.bits = line.bits + [(sec / 60) | round(0) | int ~ 'm'] %}
+                {% elif sec >= 0 %}
+                  {% set line.bits = line.bits + [sec | round(0) | int ~ 's'] %}
+                {% endif %}
+              {% endif %}
+              {% if nxt not in missing %}
+                {% if overdue %}
+                  {% set line.bits = line.bits + ['overdue'] %}
+                {% else %}
+                  {% set line.bits = line.bits
+                       + ['next ' ~ (as_timestamp(nxt) | timestamp_custom('%a %H:%M', true))] %}
+                {% endif %}
+              {% endif %}
+              {% if problem and err not in missing %}
+                {% set line.bits = line.bits + [err] %}
+              {% endif %}
+              {% set rank = '0' if (problem or overdue)
+                   else ('1' if running
+                   else ('2' if states(e) == 'off' else '3')) %}
+              {% set ns.rows = ns.rows + [(rank ~ job | lower, {
+                   'type': 'custom:mushroom-template-card',
+                   'entity': e,
+                   'primary': job,
+                   'secondary': line.bits | join(' · ') or states(e),
+                   'icon': 'mdi:progress-clock' if running
+                     else ('mdi:alert-circle' if (problem or overdue)
+                     else 'mdi:check-circle'),
+                   'icon_color': 'orange' if running
+                     else ('red' if (problem or overdue)
+                     else ('green' if states(e) == 'off' else 'grey')),
+                   'multiline_secondary': true,
+                   'tap_action': {'action': 'more-info'}
+                 })] %}
             {% endfor %}
-            {{ ns.rows }}
+            {{ ns.rows | sort(attribute='0') | map(attribute='1') | list }}

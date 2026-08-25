@@ -74,11 +74,12 @@ action:
         prompt: >-
           The {{ trigger.to_state.attributes.friendly_name or trigger.entity_id }} sensor
           has changed from {{ trigger.from_state.state }} to {{ trigger.to_state.state }}.
-          {% if trigger.to_state.attributes.device_class %}
-            This is a {{ trigger.to_state.attributes.device_class }} sensor.
+          {% if trigger.to_state.attributes.get('device_class') %}
+            This is a {{ trigger.to_state.attributes.get('device_class') }} sensor.
           {% endif %}
-          {% if trigger.to_state.attributes.battery_level %}
-            The sensor battery level is {{ trigger.to_state.attributes.battery_level }}%.
+          {% set batt = trigger.to_state.attributes.get('battery_level') %}
+          {% if batt %}
+            The sensor battery level is {{ batt }}%.
           {% endif %}
           {% if threshold_minutes %}
             (Alert cooldown: {{ threshold_minutes }} minutes)

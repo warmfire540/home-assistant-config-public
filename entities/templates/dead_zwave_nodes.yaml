@@ -1,16 +1,37 @@
+---
 #####
-# Template sensor for dead z-wave nodes
+# Dead Z-Wave nodes — mesh rollup
 #
+# Entity ID is `sensor.dead_z_wave_nodes`. "Z-Wave" slugs with an extra
+# underscore; do not "fix" consumers to `dead_zwave_nodes` — that entity
+# does not exist, and the Z-Wave dashboard rendered "not reporting" plus
+# Entity not found for that reason (2026-08-25).
+#
+# Scoped to `zwave_js` `node_status$` sensors. A bare `states | search
+# node_status` also counted `unavailable` (integration down) as dead,
+# which is the opposite of a mesh outage.
+#
+# Consumed by: dashboards/lab/views/04-zwave.yaml
 #####
 
 - sensor:
     - name: Dead Z-Wave Nodes
       unique_id: 63219bac-033f-405e-9108-b481d5af867d
       icon: mdi:z-wave
+      # Unavailable if JS is gone or no node is returning a real status.
+      # `states.sensor` is the domain listener so this recovers after a
+      # stick reconnect; a bare `integration_entities()` count does not
+      # subscribe (same trap as docker_health).
+      availability: >
+        {{ states.sensor
+           | selectattr('entity_id', 'search', 'node_status$')
+           | selectattr('entity_id', 'in', integration_entities('zwave_js') | list)
+           | rejectattr('state', 'in', ['unknown', 'unavailable'])
+           | list | count > 0 }}
       state: >-
-        {% set count = states
-          | selectattr('entity_id','search', 'node_status')
-          | selectattr('state','in', ['dead', 'unknown', 'unavailable'])
+        {% set count = expand(integration_entities('zwave_js'))
+          | selectattr('entity_id', 'search', 'node_status$')
+          | selectattr('state', 'in', ['dead', 'unknown'])
           | list
           | count
         %}

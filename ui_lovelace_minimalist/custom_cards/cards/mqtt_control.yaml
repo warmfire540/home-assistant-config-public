@@ -51,7 +51,12 @@ mqtt_control:
             state: 'on'
         card:
           type: custom:multiple-entity-row
-          entity: '[[[ return `device_tracker.${variables.device}_wired`; ]]]'
+          entity: >
+            [[[
+              if (variables.device === 'poat_rgb')
+                return 'device_tracker.poat_rgb_wireless';
+              return `device_tracker.${variables.device}_wired`;
+            ]]]
           name: '[[[ return variables.name; ]]]'
           show_state: false
           secondary_info:

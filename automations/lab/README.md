@@ -21,7 +21,6 @@ needs nothing. These cover the failures where the system keeps looking healthy:
 | `scrutiny_drive_failed.yaml` | Any drive's SMART overall status leaving *Passed* | RAID 5 keeps serving reads from a degraded array without complaint |
 | `scrutiny_drive_temperature.yaml` | Hottest drive sustained above 122 °F for an hour | Heat shortens life without ever producing an error |
 | `scrutiny_sectors_reallocated.yaml` | The first reallocated sector on any drive, `> 0` | The earliest actionable storage signal, long before anything reports "failed" |
-| `seedbox_vpn_off.yaml` | Seedbox VPN not running | Torrents keep flowing, just not through the tunnel |
 | `uptime_kuma_monitor_down.yaml` | Any Kuma monitor down, plus a real all-clear | — (this is the broad net the others sit inside) |
 
 ## House patterns

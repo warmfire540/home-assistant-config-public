@@ -79,7 +79,9 @@ sections:
           columns: full
           rows: auto
         content: |
-          {% set d = 'sensor.dead_zwave_nodes' %}
+          {# Entity ID is dead_z_wave_nodes — "Z-Wave" slugs with the
+             extra underscore. dead_zwave_nodes does not exist. #}
+          {% set d = 'sensor.dead_z_wave_nodes' %}
           {% set nodes = integration_entities('zwave_js')
                | select('search', 'node_status$') | list %}
           {% set total = nodes | count %}
@@ -105,7 +107,7 @@ sections:
           # State is `off` when none, or a count. Core tiles cannot
           # template `color:`; the markdown verdict above carries urgency.
           - type: tile
-            entity: sensor.dead_zwave_nodes
+            entity: sensor.dead_z_wave_nodes
             name: Dead nodes
             vertical: true
 
@@ -132,9 +134,9 @@ sections:
         heading_style: title
         icon: mdi:alert-circle
         visibility:
-          - condition: state
-            entity: sensor.dead_zwave_nodes
-            state_not: 'off'
+          - condition: numeric_state
+            entity: sensor.dead_z_wave_nodes
+            above: 0
 
       - type: custom:zwave-nodes-status
         title: Dead nodes
@@ -150,9 +152,9 @@ sections:
           columns: full
           rows: auto
         visibility:
-          - condition: state
-            entity: sensor.dead_zwave_nodes
-            state_not: 'off'
+          - condition: numeric_state
+            entity: sensor.dead_z_wave_nodes
+            above: 0
 
   #####################################################################
   # HUB — the stick

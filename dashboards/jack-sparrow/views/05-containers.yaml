@@ -20,20 +20,23 @@
 # over `integration_entities('portainer')`. Deploy, rename or remove a
 # container and the page follows on the next 60-second poll.
 #
-# Containers are identified by a `binary_sensor` that also has a `_state`
-# sibling. The endpoint device has `binary_sensor.local_status` too, so a
-# bare `^binary_sensor` select is one too many. Everything else hangs off
-# the container's device:
+# Containers are identified by a `_state` sensor. The endpoint has
+# `binary_sensor.local_status` and no `_state`, so a bare `^binary_sensor`
+# select is one too many. Everything else hangs off the container's device:
 #
-#   containers      integration_entities('portainer') | select('search', '^binary_sensor')
+#   containers      integration_entities('portainer') | select('search', '_state$')
 #   its siblings    device_entities(device_id(e))
-#   the endpoint    the one device carrying a `_docker_version` sensor
+#   the endpoint    the one device carrying `_containers_running`
 #   stacks          switch entities ending `_stack`, vs `_container` for containers
 #
-# Suffix matches on this page are predictions from the integration's
-# `strings.json`, not observations. See the header of
-# entities/templates/portainer.yaml. A card whose template matches nothing
-# renders as an absent card, not as an error.
+# `_docker_version` ships disabled (`disabled_by: integration`, diagnostic)
+# and is not in `integration_entities()`. Finding the endpoint by that
+# suffix renders an empty Docker host card. `_containers_running` is the
+# enabled equivalent and is unique to the endpoint.
+#
+# Suffix matches on this page were verified against the live instance
+# 2026-08-25. See the header of entities/templates/portainer.yaml. A card
+# whose template matches nothing renders as an absent card, not as an error.
 #
 # No `ugreen_tpl_host` wrapper, and no bracket counting. Nothing here is
 # keyed to the NAS selector, so auto-entities sits at view level. Derived
@@ -60,7 +63,7 @@
 #   row 3   Running           span 2   the board
 #   row 3   Docker host       span 1   the endpoint, beside it
 #   row 4   Image updates     span 3   present only when something is stale
-#   row 5   Resources         span 3   CPU and memory, 24h
+#   row 5   Resources         span 3   memory now (bars) + CPU/memory 24h
 #   row 6   Controls          span 3   the only place anything can be changed
 #
 # Reads: entities/templates/portainer.yaml
@@ -111,8 +114,8 @@ sections:
 
           The integration is unavailable, which is **not** the same as every
           container being up. Check the container itself at
-          <https://192.168.5.8:9444> — and note that Portainer being down is
-          the one outage this page structurally cannot show you.
+          <https://192.168.5.8:9444>. Portainer being down is the one outage
+          this page structurally cannot show you.
           {% elif bad == 0 %}
           ## ✅ All {{ total }} containers running
           {% else %}
@@ -122,7 +125,7 @@ sections:
           {% endif %}
           {% if loop_ and loop_ != 'none' %}
 
-          > **Restarting: {{ loop_ }}** — a crash loop, not a slow start, if it
+          > **Restarting: {{ loop_ }}.** A crash loop, not a slow start, if it
           > is still saying this a minute from now. This is the failure that
           > looks healthiest from outside: the port rebinds often enough that
           > an Uptime Kuma check can pass on the retry.
@@ -213,16 +216,15 @@ sections:
           template: >
             {% set ns = namespace(rows=[]) %}
             {% for e in integration_entities('portainer')
-                 | select('search', '^binary_sensor') | sort %}
+                 | select('search', '_state$') | sort %}
               {% set sibs = device_entities(device_id(e)) %}
-              {% set s = sibs | select('search', '_state$') | list %}
               {% set h = sibs | select('search', '_health$') | list %}
               {% set i = sibs | select('search', '_image$') | list %}
-              {% set st = states(s[0]) if s else 'unknown' %}
+              {% set st = states(e) %}
               {% set unhealthy = h and states(h[0]) == 'unhealthy' %}
-              {% if states(e) != 'on' or unhealthy %}
+              {% if st != 'running' or unhealthy %}
                 {% set nm = state_attr(e, 'friendly_name')
-                     | default(e, true) | replace(' Status', '') %}
+                     | default(e, true) | replace(' State', '') %}
                 {# Image tag rather than the state word, which the primary
                    already implies. A digest-long image string is truncated by
                    the card, so `multiline_secondary` lets it wrap instead. #}
@@ -274,21 +276,20 @@ sections:
                  'dead': 'red' } %}
             {% set ns = namespace(rows=[]) %}
             {% for e in integration_entities('portainer')
-                 | select('search', '^binary_sensor') %}
+                 | select('search', '_state$') %}
               {% set sibs = device_entities(device_id(e)) %}
-              {% set s = sibs | select('search', '_state$') | list %}
               {% set h = sibs | select('search', '_health$') | list %}
               {% set c = sibs | select('search', '_cpu_usage_total$') | list %}
               {% set m = sibs
                    | select('search', '_memory_usage_percentage$') | list %}
-              {% set st = states(s[0]) if s else 'unknown' %}
+              {% set st = states(e) %}
               {% set nm = state_attr(e, 'friendly_name')
-                   | default(e, true) | replace(' Status', '') %}
+                   | default(e, true) | replace(' State', '') %}
               {# Sort key, not a display value. Anything not running floats to
-                 the top, then healthy, alphabetical within each band.
-                 Prefixing the name with a rank digit sorts both at once,
-                 which Jinja cannot do with a multi-key sort. #}
-              {% set rank = '0' if states(e) != 'on'
+                 the top, then restarting, then healthy, alphabetical within
+                 each band. Prefixing the name with a rank digit sorts both at
+                 once, which Jinja cannot do with a multi-key sort. #}
+              {% set rank = '0' if st not in ['running', 'restarting']
                    else ('1' if st == 'restarting' else '2') %}
               {# CPU and memory as the second line. This is the part a green
                  tile cannot tell you: `running` and `running` look identical
@@ -359,8 +360,11 @@ sections:
   #####################################################################
   # One device, but its name is whatever the Portainer environment is called
   # (`local` unless it was renamed), so it is found by capability rather than
-  # by name: the endpoint is the only device carrying a `_docker_version`
-  # sensor. Rename the environment in Portainer and this still works.
+  # by name. `_docker_version` is the obvious unique sensor, but it ships
+  # `disabled_by: integration` (diagnostic) and is absent from
+  # `integration_entities()` — looking it up rendered this card empty while
+  # the enabled count/disk sensors sat on the same device. `_containers_running`
+  # is unique to the endpoint and is enabled.
   #
   # The rows are an explicit ordered list rather than "every sibling", because
   # the endpoint carries about twenty entities and most of them — architecture,
@@ -386,17 +390,18 @@ sections:
         filter:
           template: >
             {% set order = [
-                 ('_docker_version$', 'Docker'),
                  ('_containers_running$', 'Running'),
                  ('_containers_stopped$', 'Stopped'),
                  ('_containers_paused$', 'Paused'),
+                 ('_container_count$', 'Total'),
                  ('_image_count$', 'Images'),
                  ('_image_disk_usage_reclaimable$', 'Images reclaimable'),
                  ('_container_disk_usage_reclaimable$', 'Containers reclaimable'),
-                 ('_volume_disk_usage_total_size$', 'Volumes')] %}
+                 ('_volume_disk_usage_total_size$', 'Volumes'),
+                 ('_docker_version$', 'Docker')] %}
             {% set ns = namespace(rows=[], dev=none) %}
             {% for e in integration_entities('portainer')
-                 | select('search', '_docker_version$') %}
+                 | select('search', '_containers_running$') %}
               {% set ns.dev = device_id(e) %}
             {% endfor %}
             {% if ns.dev %}
@@ -465,7 +470,7 @@ sections:
             {{ ns.rows }}
 
   #####################################################################
-  # RESOURCES — 24h, running containers only
+  # RESOURCES — memory right now, then 24h CPU / memory
   #####################################################################
   # A stopped container reports 0, and a flat line at zero on the same axis as
   # a live one makes the running ones unreadable while telling you nothing the
@@ -478,6 +483,11 @@ sections:
   # `points_per_hour: 4` against the integration's own 60s poll means each
   # plotted point is a 15-minute average. Deliberate: a per-poll line over 24h
   # is noise at this width, and a single-sample CPU spike is not actionable.
+  #
+  # Memory *now* is a green→red gradient bar list, fattest first. Distinct
+  # from the uptime 90–100 bands and the printer needle gauges. CPU stays
+  # a 24h graph — percent-of-one-core regularly exceeds 100 and is a spike
+  # story, not a fill.
   - type: grid
     column_span: 3
     cards:
@@ -485,6 +495,59 @@ sections:
         heading: Resources
         heading_style: title
         icon: mdi:chart-areaspline
+
+      - type: custom:auto-entities
+        show_empty: false
+        grid_options:
+          columns: full
+          rows: auto
+        card:
+          type: custom:sensor-bar-card-plus
+          layout:
+            height: 24
+            label:
+              position: left
+              width: 140
+          scale:
+            min:
+              fixed: 0
+            max:
+              fixed: 100
+          bar:
+            fill_style: gradient
+            solid_fill: true
+            gradient_stops:
+              - pos: 0
+                color: "#388e3c"
+              - pos: 75
+                color: "#ffa000"
+              - pos: 100
+                color: "#d32f2f"
+          formatting:
+            decimal: 1
+            unit: "%"
+        card_param: entities
+        filter:
+          template: >
+            {% set ns = namespace(rows=[]) %}
+            {% for e in integration_entities('portainer')
+                 | select('search', '_state$') %}
+              {% set sibs = device_entities(device_id(e)) %}
+              {% set m = sibs
+                   | select('search', '_memory_usage_percentage$') | list %}
+              {% if states(e) == 'running' and m
+                    and states(m[0]) | float(-1) >= 0 %}
+                {% set pct = states(m[0]) | float(0) %}
+                {% set ns.rows = ns.rows + [(pct, {
+                     'entity': m[0],
+                     'name': state_attr(e, 'friendly_name')
+                       | default(e, true) | replace(' State', ''),
+                     'icon': false
+                   })] %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.rows | sort(attribute='0', reverse=true)
+               | map(attribute='1') | list }}
 
       - type: custom:auto-entities
         show_empty: false
@@ -513,17 +576,17 @@ sections:
           template: >
             {% set ns = namespace(rows=[]) %}
             {% for e in integration_entities('portainer')
-                 | select('search', '^binary_sensor') | sort %}
+                 | select('search', '_state$') | sort %}
               {# ⚠️ `_cpu_usage_total$` and not a looser match — the endpoint
                  device also carries `_cpu_total`, and a prefix match would
                  pull the host's core count onto a percentage axis. #}
               {% set c = device_entities(device_id(e))
                    | select('search', '_cpu_usage_total$') | list %}
-              {% if states(e) == 'on' and c %}
+              {% if states(e) == 'running' and c %}
                 {% set ns.rows = ns.rows + [{
                      'entity': c[0],
                      'name': state_attr(e, 'friendly_name')
-                       | default(e, true) | replace(' Status', '')
+                       | default(e, true) | replace(' State', '')
                    }] %}
               {% endif %}
             {% endfor %}
@@ -552,18 +615,18 @@ sections:
           template: >
             {% set ns = namespace(rows=[]) %}
             {% for e in integration_entities('portainer')
-                 | select('search', '^binary_sensor') | sort %}
+                 | select('search', '_state$') | sort %}
               {# Percentage, not absolute usage — the three containers are not
                  remotely the same size, and 900MB of Uptime Kuma against
                  60MB of Portainer on one linear axis flattens the small one
                  to the baseline. Percent-of-limit is comparable. #}
               {% set m = device_entities(device_id(e))
                    | select('search', '_memory_usage_percentage$') | list %}
-              {% if states(e) == 'on' and m %}
+              {% if states(e) == 'running' and m %}
                 {% set ns.rows = ns.rows + [{
                      'entity': m[0],
                      'name': state_attr(e, 'friendly_name')
-                       | default(e, true) | replace(' Status', '')
+                       | default(e, true) | replace(' State', '')
                    }] %}
               {% endif %}
             {% endfor %}
@@ -611,57 +674,52 @@ sections:
           columns: full
           rows: auto
         content: >-
-          Uptime Kuma is watching these from outside and cannot tell a planned
-          stop from a crash — set the monitor to maintenance first. `Recreate`
-          and `Kill` are deliberately absent; do those in Portainer at
-          <https://192.168.5.8:9444>.
+          Tap to start or stop, hold to restart. Uptime Kuma cannot tell a
+          planned stop from a crash — set the monitor to maintenance first.
+          `Recreate` and `Kill` are deliberately absent; do those in Portainer
+          at <https://192.168.5.8:9444>.
 
-      # Container switches. `_container$` rather than every switch, so a stack
-      # switch — which starts or stops every container in a compose project at
-      # once — cannot sit in the same list looking like one more container.
+      # One card per container: the switch is the entity (tap toggles), the
+      # restart button is hold. `_container$` rather than every switch, so a
+      # stack switch — which starts or stops every container in a compose
+      # project at once — cannot sit in the same list looking like one more
+      # container.
       - type: custom:auto-entities
         show_empty: false
         grid_options:
           columns: full
           rows: auto
         card:
-          type: entities
-          title: Start / stop
-        card_param: entities
+          type: grid
+          columns: 2
+          square: false
+        card_param: cards
         filter:
           template: >
             {% set ns = namespace(rows=[]) %}
             {% for e in integration_entities('portainer')
                  | select('search', '^switch') | sort %}
               {% if e is search('_container$') %}
+                {% set rst = device_entities(device_id(e))
+                     | select('search', '_restart_container$') | list %}
+                {% set nm = state_attr(e, 'friendly_name')
+                     | default(e, true) | replace(' Container', '') %}
+                {% set on = states(e) == 'on' %}
+                {% set hold = {
+                     'action': 'perform-action',
+                     'perform_action': 'button.press',
+                     'target': {'entity_id': rst[0]}
+                   } if rst else {'action': 'none'} %}
                 {% set ns.rows = ns.rows + [{
+                     'type': 'custom:mushroom-template-card',
                      'entity': e,
-                     'name': state_attr(e, 'friendly_name')
-                       | default(e, true) | replace(' Container', '')
-                   }] %}
-              {% endif %}
-            {% endfor %}
-            {{ ns.rows }}
-
-      - type: custom:auto-entities
-        show_empty: false
-        grid_options:
-          columns: full
-          rows: auto
-        card:
-          type: entities
-          title: Restart
-        card_param: entities
-        filter:
-          template: >
-            {% set ns = namespace(rows=[]) %}
-            {% for e in integration_entities('portainer')
-                 | select('search', '^button') | sort %}
-              {% if e is search('_restart_container$') %}
-                {% set ns.rows = ns.rows + [{
-                     'entity': e,
-                     'name': state_attr(e, 'friendly_name')
-                       | default(e, true) | replace(' Restart container', '')
+                     'primary': nm,
+                     'secondary': ('running' if on else 'stopped')
+                       ~ (' · hold to restart' if rst else ''),
+                     'icon': 'mdi:docker',
+                     'icon_color': 'green' if on else 'grey',
+                     'tap_action': {'action': 'toggle'},
+                     'hold_action': hold
                    }] %}
               {% endif %}
             {% endfor %}

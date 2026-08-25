@@ -157,48 +157,47 @@ home_assistant_details:
                 ha-card .info.flex{
                   padding-bottom: 0px !important;
                 }
-      # loads
-      - type: horizontal-stack
-        cards:
-          - type: custom:bar-card
-            entities:
-              - entity: sensor.system_monitor_load_1m
-                name: Load 1m
-                attribute: load_1m
-              - entity: sensor.system_monitor_load_5m
-                name: Load 5m
-                attribute: load_5m
-              - entity: sensor.system_monitor_load_15m
-                name: Load 15m
-                attribute: load_15m
-            stack: horizontal
-            max: 4
-            severity:
-              - color: '#d32f2f'
-                from: 2
-                to: 4
-              - color: '#ffa000'
-                from: 1
-                to: 2
-              - color: '#388e3c'
-                from: 0
-                to: 1
-            positions:
-              icon: 'off'
-              name: inside
-              value: inside
-              indicator: inside
-            card_mod:
-              style: |
-                bar-card-card{
-                  margin-right: 20px
-                }
-                bar-card-backgroundbar {
-                  border-radius: 8px;
-                }
-                bar-card-currentbar {
-                  border-radius: 8px;
-                }
+      # loads — current 1/5/15m as bars (systemmonitor state, not a
+      # `load_*` attribute). Scale 0–4 is four cores; 4.0 is saturated.
+      # `soft_bands` + `solid_fill` so each row is one colour, not a
+      # rainbow, distinct from the uptime 90–100 bands.
+      - type: custom:sensor-bar-card-plus
+        layout:
+          height: 24
+          label:
+            position: left
+            width: 36
+        scale:
+          min:
+            fixed: 0
+          max:
+            fixed: 4
+        bar:
+          fill_style: soft_bands
+          segment_space: scale
+          solid_fill: true
+          segments:
+            - from: 0
+              to: 1
+              color: "#388e3c"
+            - from: 1
+              to: 2.5
+              color: "#ffa000"
+            - from: 2.5
+              to: 4
+              color: "#d32f2f"
+        formatting:
+          decimal: 2
+        entities:
+          - entity: sensor.system_monitor_load_1m
+            name: 1m
+            icon: false
+          - entity: sensor.system_monitor_load_5m
+            name: 5m
+            icon: false
+          - entity: sensor.system_monitor_load_15m
+            name: 15m
+            icon: false
       # up / down
       - type: custom:mini-graph-card
         entities:
@@ -231,8 +230,6 @@ home_assistant_details:
           - entity: sensor.last_boot
             name: Uptime
             icon: mdi:clock-outline
-          - entity: sensor.home_assistant_last_backup
-            name: Last backup
           - entity: update.home_assistant_core_update
             name: Core Update
           - entity: update.home_assistant_supervisor_update
@@ -278,14 +275,6 @@ home_assistant_details:
                 entity: update.home_assistant_operating_system_update
                 name: OS Version
                 attribute: installed_version
-              - type: attribute
-                entity: sensor.poat_share_rpi_monitor_poat_share
-                name: Model
-                attribute: rpi_model
-              - type: attribute
-                entity: sensor.pi_share_cpu
-                name: Arch
-                attribute: model
         card_mod:
           style:
             hui-sensor-entity-row:

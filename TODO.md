@@ -9,7 +9,9 @@ Working notes for streamlining dashboards, entities, backups, and log noise.
       server-closet card lands on `/home-lab/uptime`. Pi-hole is
       `/home-lab/pi-hole`; Z-Wave is `/home-lab/z-wave` (grouped by type);
       Pi graphs + Tasmota + reboot/shutdown + printer are `/home-lab/hosts`.
-      Share-space graphs (aristodemos / odysseus) were not moved.
+      Share-space graphs (aristodemos / odysseus) were not moved;
+      the `share_sizes.yaml` command_line sensors behind them were
+      deleted 2026-08-25 with the share Pi.
 - [x] ~~Walk other mainviews / subviews and clean up unused or low-value cards~~
       — 2026-08-22. Lights view gone (welcome pill → Cameras). Lab pill
       → `/home-lab/uptime`. Network dropped the duplicate rate/Wi-Fi
@@ -32,14 +34,11 @@ Working notes for streamlining dashboards, entities, backups, and log noise.
 
 - [ ] Confirm every important service is a **Duplicati job** — HA
       already has Date + Status per job (`integration_entities('duplicati')`).
-      Do not add more `command_line` finds. Current leftovers in
-      `entities/command_line/sensors/pi_backups.yaml`:
-      HA and Pi-hole paths may still be valid; **Deluge
-      (`deluge-backup`) and Plex (`plex-backup/MediaServer`) are
-      likely the old Pi trees** and should not be trusted or
-      retargeted until the live Duplicati job (or path) is confirmed.
-      Once those jobs exist in Duplicati, delete `pi_backups.yaml`
-      and the backup columns on Hosts / Pi graph folds.
+      Do not add more `command_line` finds. Legacy share-find sensors in
+      `entities/command_line/sensors/pi_backups.yaml` were removed 2026-08-24
+      (paths were gone; they were flooding `command_line` logs). Remaining
+      work is confirming every job shows on `/home-lab/backups` after a
+      Duplicati integration reload.
 - [ ] Add alerts (and supporting entities) when backups go stale or missing
 - [x] ~~Make backup health visible on the dashboard, not just buried in entity lists~~
       — 2026-08-22 with the Lab backup tiles above. Stale/missing
@@ -157,7 +156,7 @@ Working notes for streamlining dashboards, entities, backups, and log noise.
   - [x] ~~Recovery notification~~ — an **all-clear** branch in the same
         automation, firing once when `down_count` returns to zero, on the same
         notification tag so the green message replaces the red one. Dormant
-        until Portainer / lil-bit / poat-seedbox are up.
+        until Portainer / lil-bit are up.
   - [ ] Board is at **`/home-lab/uptime`**, not `/lab/uptime` — HA requires a
         hyphen in a YAML dashboard's URL path and rejects the whole config
         without one. Source files still live under `dashboards/lab/`.
@@ -176,25 +175,27 @@ working". `poat-hole - DNS` is the clearest example — the Pi can ping fine
 while resolving nothing.
 
 **Not a mechanical swap.** The legacy sensors used to be *conditions* on
-the Matrix Lab view (now retired). Remaining consumers are ping_interval,
-seedbox_vpn_on, and customizations. At least one pair is not equivalent:
+the Matrix Lab view (now retired). `ping_interval.yaml` and
+`binary_sensor.poat_hole_local` were removed 2026-08-25 — Kuma
+`poat-hole - DNS` / `poat-hole - admin` already watch the service, not
+ICMP. Remaining YAML consumer is `binary_sensor.poat_plex_local` as a
+visibility gate on `/home-lab/hosts` (plus its customization).
 
 | Legacy | Kuma monitor | Same thing? |
 | --- | --- | --- |
-| `binary_sensor.poat_hole_local` | `poat-hole - DNS` / `poat-hole - admin` | Kuma is better — checks resolution, not ICMP |
-| `binary_sensor.poat_share_local` | `poat-share - SMB (IP)` + `(name)` | Kuma is better — checks the port and the name chain |
-| `binary_sensor.poat_seedbox_local` | `poat-seedbox - Deluge` | Kuma checks the daemon RPC port, not the host |
-| `binary_sensor.poat_plex_local` | `lil-bit - Plex` | ⚠️ **probably different hosts** — confirm before swapping |
+| ~~`binary_sensor.poat_hole_local`~~ | `poat-hole - DNS` / `poat-hole - admin` | YAML gone 2026-08-25. Disable the ping config entry. Kuma is better — checks resolution, not ICMP. |
+| ~~`binary_sensor.poat_share_local`~~ | ~~`poat-share - SMB (IP)` + `(name)`~~ | Share Pi gone 2026-08-25. YAML gone. Pause/delete the two Kuma monitors; disable the ping config entry; MQTT `rpi_monitor` + eero client are leftovers. |
+| ~~`binary_sensor.poat_seedbox_local`~~ | ~~`poat-seedbox - Deluge`~~ | Seedbox Pi gone 2026-08-25. YAML gone (`seedbox_vpn_on` + alert). Pause/delete the Kuma monitor; disable the ping config entry; MQTT `rpi_monitor` + eero client are leftovers. |
+| `binary_sensor.poat_plex_local` | `lil-bit - Plex` | ⚠️ **probably different hosts** — confirm before swapping. Still used on `/home-lab/hosts`. |
 
 - [ ] Confirm whether `poat-plex` and `lil-bit` are the same machine. Kuma
       monitors `192.168.4.161`.
-- [ ] Then swap remaining `binary_sensor.*_local` consumers (ping_interval,
-      seedbox_vpn_on, customizations) to the matching `sensor.*_status` `up`.
-- [ ] Then retire `automations/sensors/ping_interval.yaml` and the ping config
-      entries. That automation only exists to work around
+- [ ] Then swap `binary_sensor.poat_plex_local` on `/home-lab/hosts` (and
+      its customization) to the matching `sensor.*_status` `up`.
+- [x] ~~Retire `automations/sensors/ping_interval.yaml`~~ — deleted
+      2026-08-25 with `poat_hole_local`. It only existed to work around
       home-assistant/core#105041 (ping sensors not honouring an update
-      interval); Kuma polls on its own schedule, so the workaround goes with
-      the sensors.
+      interval).
 - [ ] Keep whatever still has no Kuma equivalent rather than deleting for
       symmetry.
 - [x] ~~**Scrutiny** (`vitals5/ha_scrutiny`, HACS default catalog) — drive SMART
@@ -222,47 +223,32 @@ seedbox_vpn_on, and customizations. At least one pair is not equivalent:
 
 ## Notes
 
-- Existing backup sensors live in `entities/command_line/sensors/pi_backups.yaml` (HA, Pi-hole, Deluge, Plex).
+- Existing backup sensors are Duplicati (`sensor.duplicati_backup_health`
+  plus per-job `_date` / `_status`). The old command_line share-find
+  sensors in `pi_backups.yaml` were deleted 2026-08-24.
 - Lab dashboard: `dashboards/lab.yaml` (`/home-lab/uptime`)
 
-## After poat-seedbox is decommissioned
+## Retired Pis (share + seedbox) — leftover outside YAML
 
-Do **not** start this while rpi1 still exists, even powered off. The Lab
-card, ping sensor and Kuma monitor are how you would notice it came back.
-Trigger: jack-sparrow Deluge has been the live seedbox long enough that the
-Pi will not be powered on again. Servers-side pointer:
-`servers/hosts/jack-sparrow/TODO.md` (gluetun / phase 1b).
+HA YAML for both hosts was removed 2026-08-25 (VPN template + alert,
+customizations, `share_sizes.yaml` command_line sensors, ping_interval,
+offline-list filters). Remaining work is registry / Kuma / servers repo.
+NordVPN-on-the-Pi is replaced by gluetun on the NAS.
 
-The NordVPN-on-the-Pi stack is replaced by gluetun on the NAS. These files
-are the old path (`nordlynx` in rpi_monitor attributes, ICMP ping, a backup
-tree on poat-share). They will page, go stale, or render a dead host forever
-if left.
+### Home Assistant UI — ping, eero, MQTT
 
-### Home Assistant — delete / stop referencing
+- [ ] Disable/delete ping config entries: `binary_sensor.poat_share_local`,
+      `binary_sensor.poat_seedbox_local`, `binary_sensor.poat_hole_local`
+- [ ] Remove leftover MQTT `rpi_monitor` devices for both hosts
+- [ ] Remove leftover eero clients
+- [ ] Template `sensor.seedbox_vpn_on` and command_line Odysseus /
+      Aristodemos sensors will linger in the entity registry until purged
 
-- [ ] `entities/templates/seedbox_vpn_on.yaml` — `sensor.seedbox_vpn_on`
-- [ ] `automations/lab/seedbox_vpn_off.yaml` and its row in
-      `automations/lab/README.md`
-- [ ] `customizations/entities/entities.yaml` — `sensor.seedbox_vpn_on` and
-      `binary_sensor.poat_seedbox_local`
-- [ ] `entities/templates/AGENTS.md` — `seedbox_vpn_on.yaml` row
-- [ ] `entities/templates/pi_statistics.yaml` — every
-      `sensor.poat_seedbox_rpi_monitor_poat_seedbox` block
-- [ ] `entities/command_line/sensors/pi_backups.yaml` — `sensor.deluge_last_backup`
-      (`/media/pi_backups/deluge-backup`). Replace only if the new container
-      has its own backup path; do not retarget this find at jack-sparrow
-      without checking the path exists.
-- [x] ~~`ui_lovelace_minimalist/dashboard/views/mainviews/lab.yaml`~~ —
-      retired 2026-08-22 with the Matrix lab view. The `poat_seedbox`
-      mqtt_control card and rpi_monitor row are gone with it.
-- [ ] Ping: `binary_sensor.poat_seedbox_local` config entry, plus the
-      commented line in `automations/sensors/ping_interval.yaml`
-- [ ] Drop `poat-seedbox` from the legacy-vs-Kuma table in this file once
-      the swap above is done
+### Kuma / servers repo
 
-### Kuma / servers repo — same window
-
-- [ ] Pause or delete monitor `poat-seedbox - Deluge` (`192.168.4.109:58846`)
+- [ ] Pause or delete `poat-share - SMB (IP)` + `(name)` (they sit red on
+      `/home-lab/uptime` until then)
+- [ ] Pause or delete `poat-seedbox - Deluge` (`192.168.4.109:58846`)
 - [ ] Mark `servers/hosts/poat-seedbox/HOST.md` retired; leave discovery
 - [ ] Close `servers/TODO.md` "poat-seedbox — VPN resiliency & no-leak"
       (superseded by gluetun; do not finish the Nord kill-switch work)

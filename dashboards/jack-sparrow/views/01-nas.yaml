@@ -372,13 +372,13 @@ sections:
           {%- set d = up // 86400 -%}
           {%- set h = (up % 86400) // 3600 -%}
           {%- set m = (up % 3600) // 60 -%}
-          - **Model** — {{ states(s ~ 'nas_model') }} · UGOS {{ states(s ~ 'nas_ugos_version') }}
-          - **CPU** — {{ states(s ~ 'cpu_model') }} · {{ states(s ~ 'cpu_cores') }} cores / {{ states(s ~ 'cpu_threads') }} threads
-          - **Memory** — {{ states(s ~ 'ram_usage_used_gb') | round(1) }} GB of {{ states(s ~ 'ram_total_size') }} GB
-          - **Uptime** — {% if d %}{{ d }}d {% endif %}{{ h }}h {{ m }}m, since {{ states(s ~ 'last_boot') }}
-          - **Network** — {{ states(s ~ 'lan_1_ip') }} · {{ states(s ~ 'lan_1_speed') }} Gb/s
-          - **Fans** — CPU {{ states(s ~ 'cpu_fan') }} rpm · chassis {{ states(s ~ 'device_fan') }} rpm
-          - **Serial** — {{ states(s ~ 'nas_serial') }}
+          - **Model:** {{ states(s ~ 'nas_model') }} · UGOS {{ states(s ~ 'nas_ugos_version') }}
+          - **CPU:** {{ states(s ~ 'cpu_model') }} · {{ states(s ~ 'cpu_cores') }} cores / {{ states(s ~ 'cpu_threads') }} threads
+          - **Memory:** {{ states(s ~ 'ram_usage_used_gb') | round(1) }} GB of {{ states(s ~ 'ram_total_size') }} GB
+          - **Uptime:** {% if d %}{{ d }}d {% endif %}{{ h }}h {{ m }}m, since {{ states(s ~ 'last_boot') }}
+          - **Network:** {{ states(s ~ 'lan_1_ip') }} · {{ states(s ~ 'lan_1_speed') }} Gb/s
+          - **Fans:** CPU {{ states(s ~ 'cpu_fan') }} rpm · chassis {{ states(s ~ 'device_fan') }} rpm
+          - **Serial:** {{ states(s ~ 'nas_serial') }}
 
           {{ states(s ~ 'system_message') }} {{ states(s ~ 'temperature_message') }}
 
@@ -486,7 +486,7 @@ sections:
                         [[[[
                           const a = entity?.attributes || {};
                           return [a.Size, a.Temperature].filter(Boolean).join('  ·  ')
-                            || entity?.state || '—';
+                            || entity?.state || '-';
                         ]]]]
                       label: |
                         [[[[
@@ -622,7 +622,7 @@ sections:
                       state_display: |
                         [[[[
                           const a = entity?.attributes || {};
-                          const size = a.Size || '—';
+                          const size = a.Size || '-';
                           const n = Number(a['Disk Count']);
                           return Number.isFinite(n)
                             ? `${size} across ${n} disk${n === 1 ? '' : 's'}`
@@ -729,7 +729,7 @@ sections:
                       state_display: |
                         [[[[
                           const a = entity?.attributes || {};
-                          return `${a.Used || '—'} of ${a.Size || '—'}`;
+                          return `${a.Used || '-'} of ${a.Size || '-'}`;
                         ]]]]
                       label: |
                         [[[[

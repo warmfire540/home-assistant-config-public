@@ -134,12 +134,10 @@ blueprints/
 dashboards/
 └── jack-sparrow.yaml
 └── jack-sparrow/
-    └── templates/
     └── views/
         ├── 01-nas.yaml
-        ├── 02-entities.yaml
-        ├── 03-devices.yaml
-        └── 04-drives.yaml
+        ├── 04-drives.yaml
+        └── 05-containers.yaml
 └── room-summary-card/
 entities/
 └── templates/
@@ -178,7 +176,7 @@ Tracking sections I've reworked.
 - [x] [`.github/`](.github/) - GitHub workflows
 - [x] [`assets/`](assets/) - screenshots and such for documentation
 - [ ] [`automations/`](automations/) - automations of course
-  - [ ] [`lab/`](automations/lab/) - home lab alerting (seedbox VPN, drive health)
+  - [ ] [`lab/`](automations/lab/) - home lab alerting (certs, drive health)
   - [ ] [`systems/`](automations/systems/) - automations related to core system functionality
 - [x] [`blueprints/`](blueprints/) - HA Blueprints - I don't have a use for these
 - [ ] [`dashboards/`](dashboards/AGENTS.md) - standalone YAML dashboards, outside the UML framework

@@ -55,16 +55,16 @@
       unit_of_measurement: d
       device_class: duration
       state_class: measurement
-      # Unavailable if the integration is gone, rather than a confident large
-      # number derived from an empty list. `min()` also throws on an empty
-      # list, so this guard is doing double duty.
+      # Available when the integration has entities, not only when a
+      # handshake has already succeeded. A watchdog that goes `unavailable`
+      # the moment it cannot read the cert hides `cert_count` and looks
+      # broken rather than "handshake failing". `states.sensor` is the
+      # domain listener so this recovers if cert_expiry loads later.
       #
-      # Entities are filtered on having a PARSEABLE state, not just on
-      # existing: cert_expiry reports `unknown` when it cannot reach the host,
-      # and `as_datetime('unknown')` returns None, which poisons the min().
+      # Unreachable sources ride in `invalid` / `invalid_count` instead.
       availability: >
-        {{ expand(integration_entities('cert_expiry'))
-           | rejectattr('state', 'in', ['unknown', 'unavailable'])
+        {{ states.sensor
+           | selectattr('entity_id', 'in', integration_entities('cert_expiry') | list)
            | list | count > 0 }}
       state: >
         {% set ns = namespace(days=[]) %}
@@ -103,19 +103,25 @@
         invalid: >
           {% set ns = namespace(bad=[]) %}
           {% for s in expand(integration_entities('cert_expiry')) %}
-            {% if s.attributes.is_valid is defined
-                  and not s.attributes.is_valid %}
+            {% set nm = s.name | replace('Cert Expiry ', '')
+                 | replace('Cert expiry', '') %}
+            {% if s.state in ['unknown', 'unavailable'] %}
+              {% set ns.bad = ns.bad + [nm ~ ': unreachable'] %}
+            {% elif s.attributes.get('is_valid') == false %}
               {% set ns.bad = ns.bad
-                   + [(s.name | replace('Cert Expiry ', ''))
-                      ~ ': ' ~ (s.attributes.error | default('handshake failed', true))] %}
+                   + [nm ~ ': ' ~ (s.attributes.get('error') or 'handshake failed')] %}
             {% endif %}
           {% endfor %}
           {{ ns.bad | join(', ') if ns.bad else 'all valid' }}
         invalid_count: >
-          {{ expand(integration_entities('cert_expiry'))
-             | selectattr('attributes.is_valid', 'defined')
-             | rejectattr('attributes.is_valid')
-             | list | count }}
+          {% set ns = namespace(n=0) %}
+          {% for s in expand(integration_entities('cert_expiry')) %}
+            {% if s.state in ['unknown', 'unavailable']
+                  or s.attributes.get('is_valid') == false %}
+              {% set ns.n = ns.n + 1 %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.n }}
         # Sanity check, same role as `monitor_count` on lab_availability and
         # `drive_count` on scrutiny_drive_health: if this drops to zero the
         # watchdog is not watching, and a watchdog that stopped looks exactly

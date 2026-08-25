@@ -1,6 +1,6 @@
 ---
 #####
-# backup-glance — Duplicati status as ONE card
+# backup-glance — Duplicati rollup as ONE card
 #
 # Include as a single list item from any Lab view:
 #
@@ -9,16 +9,11 @@
 # Same rule as portal-row.yaml: `!include` is one node, so this file is
 # one card, not a list. `grid_options.columns: full` is load-bearing.
 #
-# No job is named here. The first three tiles are the rollup
-# (`sensor.duplicati_backup_health`); the rest are each job's `_date`
-# sensor from `integration_entities('duplicati')`. Add a job in
-# Duplicati and it appears on the next poll — that is the source of
-# truth for "when did this thing last back up".
-#
-# Command_line `*_last_backup` sensors (pi_backups.yaml) are NOT on
-# this card. They `find` files under `/media/pi_backups/...` and the
-# Deluge / Plex paths may not match anything that still runs. Do not
-# add more of those; add a Duplicati job instead.
+# Three tiles only: health, job count, most recent completion. Per-job
+# dates used to live here too; with 18 jobs that became a dump. Job
+# detail lives on `/home-lab/backups`. Add a job in Duplicati (and
+# select it in the integration options) and the count tile moves;
+# the Backups page picks up the card.
 #
 # Tap goes to `/home-lab/backups` (fine on that page too).
 #####
@@ -30,7 +25,7 @@ grid_options:
   rows: auto
 card:
   type: grid
-  columns: 4
+  columns: 3
   square: false
 card_param: cards
 filter:
@@ -39,7 +34,7 @@ filter:
          'action': 'navigate',
          'navigation_path': '/home-lab/backups' } %}
     {% set h = 'sensor.duplicati_backup_health' %}
-    {% set ns = namespace(rows=[
+    {{ [
          {
            'type': 'tile',
            'entity': h,
@@ -68,21 +63,4 @@ filter:
            'state_content': 'last_backup',
            'tap_action': nav
          }
-       ]) %}
-    {% for e in integration_entities('duplicati')
-         | select('search', '^sensor\..*_date$') | sort %}
-      {% set nm = state_attr(e, 'friendly_name')
-           | default(e, true)
-           | replace(' Date', '')
-           | replace(' Backup', '') %}
-      {% set ns.rows = ns.rows + [{
-           'type': 'tile',
-           'entity': e,
-           'name': nm,
-           'icon': 'mdi:calendar-check',
-           'vertical': true,
-           'color': 'grey',
-           'tap_action': nav
-         }] %}
-    {% endfor %}
-    {{ ns.rows }}
+       ] }}

@@ -19,7 +19,7 @@
         | rejectattr('domain','in',['button', 'tts', 'stt', 'number', 'conversation', 'automation', 'script', 'select'])
         | selectattr('state','in', ['unknown', 'unavailable'])
         | rejectattr('entity_id', 'in', label_entities('offline'))
-        | rejectattr('entity_id','search', 'mfc_7860|seedbox|poat_plex||ipad')
+        | rejectattr('entity_id','search', 'mfc_7860|poat_plex|ipad')
         | rejectattr('entity_id', 'in', integration_entities('cast'))
         | list
         | count

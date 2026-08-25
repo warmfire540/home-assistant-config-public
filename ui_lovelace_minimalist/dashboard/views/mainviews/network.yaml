@@ -159,7 +159,6 @@ cards:
               options:
                 show_state: false
           exclude:
-            - entity_id: '*seedbox*'
             - entity_id: '*mfc_7860*'
             - entity_id: '*poat_plex*'
             - entity_id: '*xbox_x*'
