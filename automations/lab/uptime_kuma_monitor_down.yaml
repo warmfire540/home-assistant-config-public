@@ -16,10 +16,15 @@
 # Storm suppression cannot live in Kuma. Groups there are organisational
 # only: they suppress nothing, and pausing a group displays its children as
 # paused while they keep running and keep notifying
-# (louislam/uptime-kuma#7242, #5643, #4696). The gate is
-# binary_sensor.lab_wan_down. When the internet or the gateway is down,
-# every other monitor is about to go red for a reason that has nothing to
-# do with the service it watches, and this declines to fire.
+# (louislam/uptime-kuma#7242, #5643, #4696). Two gates:
+#
+#   binary_sensor.lab_wan_down     ISP / gateway — every monitor is about
+#                                  to go red for a reason that has nothing
+#                                  to do with the service it watches
+#   sensor.ups0_status_data == OB  UPS load-shed (and the outage) will
+#                                  stop a dozen containers on purpose;
+#                                  automations/lab/ups_load_shed.yaml is
+#                                  the notification for that
 #
 # Internet, Gateway and homeassistant are not covered here, and nothing
 # excludes them explicitly. The first two trip the WAN gate; the third
@@ -129,6 +134,14 @@ action:
           - condition: template
             value_template: >-
               {{ not is_state('binary_sensor.lab_wan_down', 'on') }}
+          # Same idea as the WAN gate: UPS load-shed (and the outage
+          # itself) will take a dozen monitors down on purpose.
+          # automations/lab/ups_load_shed.yaml is the notification for
+          # that. `unavailable` is not OB, so a NUT outage does not
+          # silence a real service failure.
+          - condition: template
+            value_template: >-
+              {{ not is_state('sensor.ups0_status_data', 'OB') }}
         sequence:
           - variables:
               title: '🔴 Lab monitor down'

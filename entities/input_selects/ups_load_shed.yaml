@@ -1,0 +1,19 @@
+#####
+# UPS load-shed stage. Written by automations/lab/ups_load_shed.yaml.
+# Ratchets while on battery; returns to Online on OL. Do not treat a
+# manual change as a substitute for that automation — it does not
+# stop or start containers on its own.
+#####
+
+ups_load_shed_stage:
+  name: UPS load-shed
+  icon: mdi:battery-charging
+  initial: Online
+  options:
+    - Online
+    - On battery
+    - Pawsport
+    - Media
+    - Lab
+    - Heavy
+    - Critical

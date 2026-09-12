@@ -1,11 +1,15 @@
 #####
 # Alert for Garage door open.
 #
+# Watches binary_sensor.garage_door_alert (tilt open AND snooze idle),
+# not the tilt sensor itself, so a notification action can pause the
+# 15-minute repeat. Actions are forwarded to the phones by
+# automations/systems/alert_to_persistent.yaml.
 #####
 
 garage:
   name: Garage door
-  entity_id: binary_sensor.garage_door_tilt_window_door_is_open
+  entity_id: binary_sensor.garage_door_alert
   title: 🚘 Garage Open!
   message: false
   done_message: clear_notification
@@ -15,5 +19,15 @@ garage:
     tag: garage_door
     prompt: garage is open
     backup: The garage door is open!
+    actions:
+      - action: GARAGE_SNOOZE_15
+        title: Snooze 15 min
+        authenticationRequired: false
+      - action: GARAGE_SNOOZE_30
+        title: Snooze 30 min
+        authenticationRequired: false
+      - action: GARAGE_SNOOZE_60
+        title: Snooze 1 hour
+        authenticationRequired: false
   notifiers:
     - family_ai

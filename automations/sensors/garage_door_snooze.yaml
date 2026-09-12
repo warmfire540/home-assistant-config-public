@@ -1,0 +1,53 @@
+---
+#####
+# Garage-open alert snooze.
+#
+# The iOS/Android notification on alert.garage has 15 / 30 / 60 minute
+# buttons. Those fire mobile_app_notification_action, which starts
+# timer.garage_door_snooze. binary_sensor.garage_door_alert then goes
+# off, alert.garage sends its done_message (clears the notification),
+# and the 15-minute repeat pauses until the timer finishes or the
+# door closes (which cancels a leftover snooze).
+#####
+
+alias: Garage door snooze
+id: 2a9d1e58-6c43-4b70-9f18-d3e7a5c1b082
+mode: restart
+
+trigger:
+  - trigger: event
+    event_type: mobile_app_notification_action
+    event_data:
+      action: GARAGE_SNOOZE_15
+    id: "15"
+
+  - trigger: event
+    event_type: mobile_app_notification_action
+    event_data:
+      action: GARAGE_SNOOZE_30
+    id: "30"
+
+  - trigger: event
+    event_type: mobile_app_notification_action
+    event_data:
+      action: GARAGE_SNOOZE_60
+    id: "60"
+
+  - trigger: state
+    entity_id: binary_sensor.garage_door_tilt_window_door_is_open
+    to: "off"
+    id: cancel
+
+actions:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: cancel
+        sequence:
+          - action: timer.cancel
+            target:
+              entity_id: timer.garage_door_snooze
+    default:
+      - action: script.garage_door_snooze
+        data:
+          minutes: "{{ trigger.id | int }}"

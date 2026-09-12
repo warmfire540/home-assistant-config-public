@@ -1,0 +1,11 @@
+#####
+# Master switch for UPS Docker load-shed. Default on. Turn off to
+# keep every container running through an outage (the UPS still cuts
+# itself at 30 %). Restore-on-OL still runs while this is off, so a
+# previous shed is not left stopped after power returns.
+#####
+
+ups_load_shed_enabled:
+  name: UPS load-shed
+  icon: mdi:battery-arrow-down
+  initial: true

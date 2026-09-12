@@ -21,7 +21,8 @@ needs nothing. These cover the failures where the system keeps looking healthy:
 | `scrutiny_drive_failed.yaml` | Any drive's SMART overall status leaving *Passed* | RAID 5 keeps serving reads from a degraded array without complaint |
 | `scrutiny_drive_temperature.yaml` | Hottest drive sustained above 122 °F for an hour | Heat shortens life without ever producing an error |
 | `scrutiny_sectors_reallocated.yaml` | The first reallocated sector on any drive, `> 0` | The earliest actionable storage signal, long before anything reports "failed" |
-| `uptime_kuma_monitor_down.yaml` | Any Kuma monitor down, plus a real all-clear | — (this is the broad net the others sit inside) |
+| `uptime_kuma_monitor_down.yaml` | Any Kuma monitor down, plus a real all-clear | — (this is the broad net the others sit inside). Skips paging while the UPS is on battery (`OB`); load-shed is the notification for that |
+| `ups_load_shed.yaml` | EcoFlow UPS on battery, charge dropping toward the 30 % self-cut | Without this, Deluge / Frigate / Duplicati keep drawing until the unit kills the NAS dirty |
 
 ## House patterns
 

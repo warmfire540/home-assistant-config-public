@@ -1,0 +1,426 @@
+---
+#####
+# UPS — EcoFlow River 3 Plus, NUT + BLE
+#
+# Same physical UPS, two integrations. NUT on jack-sparrow is line vs
+# battery and the charge the unit cuts itself on (30 %). EcoFlow BLE on
+# the HA Pi is live power, ports, and charge limits. Either path can
+# be down without the other: NUT dies with the NAS (or the `nut`
+# container); BLE dies with Pi bluetooth.
+#
+# No NUT or BLE sibling is invented here. NUT glance tiles name the
+# three enabled entities (`ups0_status`, `ups0_status_data` for colour,
+# `ups0_battery_charge`). EcoFlow power and controls are
+# `integration_entities('ef_ble')` at render time, so enabling a
+# currently-disabled diagnostic (runtime, discharge time) does not
+# require a dashboard edit — and a disabled entity does not appear.
+#
+# Energy totals (`*_energy`, `*_energy_total`) stay off this page;
+# they are lifetime counters, not ops numbers. More-info on any
+# power tile has them.
+#
+# Colour: mushroom-template-card, not core `tile`. `tile` cannot
+# template `color:` in Jinja (see 01-uptime.yaml). The jack-sparrow
+# NAS page uses native tiles inside `ugreen_tpl_host` for the same
+# two numbers, because that dashboard already has JS templating.
+#
+# LAYOUT (max_columns: 3)
+#
+#   row 1   UPS         span 3   portals + verdict + 2×2 glance
+#   row 2   Power       span 2   EcoFlow live watts
+#           Load-shed   span 1   stage, enable, what is still up
+#   row 3   Trends      span 3   charge + output 24 h
+#   row 4   Controls    span 3   reserve, limits, ports, LED
+#
+# Reads: entities/templates/ups.yaml
+# Shed:  automations/lab/ups_load_shed.yaml
+# Tap from /jack-sparrow/nas UPS / Battery tiles lands here.
+#####
+
+title: UPS
+path: ups
+icon: mdi:car-battery
+type: sections
+max_columns: 3
+dense_section_placement: true
+cards: []
+sections:
+  #####################################################################
+  # HEADLINE — line vs battery, then the four numbers
+  #####################################################################
+  - type: grid
+    column_span: 3
+    cards:
+      - type: heading
+        heading: UPS
+        heading_style: title
+        icon: mdi:car-battery
+
+      # Shared card: dashboards/cards/portal-row.yaml.
+      # `!include` is relative to this file, hence ../../ from
+      # dashboards/<dash>/views/.
+      - !include ../../cards/portal-row.yaml
+
+      # `grid_options.columns: full` is load-bearing — without it this
+      # packs onto the portal row. Same note as 04-drives.yaml.
+      - type: markdown
+        grid_options:
+          columns: full
+          rows: auto
+        content: |
+          {% set u = 'sensor.lab_ups' %}
+          {% set st = states('sensor.ups0_status') %}
+          {% set sd = states('sensor.ups0_status_data') %}
+          {% set ch = states('sensor.ups0_battery_charge') | float(-1) %}
+          {% set stage = states('input_select.ups_load_shed_stage') %}
+          {% set out = states('sensor.ef_r30061_output_power') %}
+          {% if states(u) in ['unknown', 'unavailable'] %}
+          ## ⚠️ NUT is not reporting
+
+          The UPS integration on jack-sparrow is unavailable, which is
+          **not** the same as being on mains. Load-shed cannot see
+          remaining charge. Check the `nut` container at
+          <https://portainer.home.masterscrib.net> and that
+          `192.168.5.8:3493` still answers.
+          {% elif sd == 'OL' %}
+          ## ✅ {{ st }} · {{ ch | int }}%
+          {% elif sd == 'OB' and ch >= 50 %}
+          ## 🟠 On battery · {{ ch | int }}%
+
+          UPS cuts itself at 30 %. Load-shed stage: **{{ stage }}**.
+          {% elif sd == 'OB' and ch >= 30 %}
+          ## 🔴 On battery · {{ ch | int }}% · shedding
+
+          Stage **{{ stage }}**. The unit shuts down at 30 %.
+          {% else %}
+          ## 🔴 {{ st }} · {{ ch | int }}% · UPS cuts at 30%
+          {% endif %}
+          {% if out not in ['unknown', 'unavailable', 'none', ''] %}
+
+          Drawing {{ out }} W (EcoFlow BLE).
+          {% endif %}
+
+      - type: grid
+        square: false
+        columns: 2
+        grid_options:
+          columns: full
+          rows: auto
+        cards:
+          # Display entity is `ups0_status` ("Online"). Colour is
+          # `ups0_status_data` (OL / OB) — the display string is not
+          # what the automation keys on.
+          - type: custom:mushroom-template-card
+            entity: sensor.ups0_status
+            primary: "{{ states('sensor.ups0_status') }}"
+            secondary: NUT
+            icon: mdi:car-battery
+            layout: vertical
+            icon_color: >-
+              {% set s = states('sensor.ups0_status_data') %}
+              {{ 'orange' if s == 'OB' else ('green' if s == 'OL' else 'red') }}
+            tap_action:
+              action: more-info
+
+          - type: custom:mushroom-template-card
+            entity: sensor.ups0_battery_charge
+            primary: >-
+              {% set c = states('sensor.ups0_battery_charge') | float(-1) %}
+              {{ (c | int) ~ '%' if c >= 0 else states('sensor.ups0_battery_charge') }}
+            secondary: Battery
+            icon: mdi:battery
+            layout: vertical
+            icon_color: >-
+              {% set c = states('sensor.ups0_battery_charge') | float(-1) %}
+              {{ 'grey' if c < 0 else ('green' if c >= 50 else ('orange' if c >= 30 else 'red')) }}
+            tap_action:
+              action: more-info
+
+          - type: custom:mushroom-template-card
+            entity: sensor.ef_r30061_battery_level
+            primary: >-
+              {% set c = states('sensor.ef_r30061_battery_level') | float(-1) %}
+              {{ (c | int) ~ '%' if c >= 0 else states('sensor.ef_r30061_battery_level') }}
+            secondary: EcoFlow
+            icon: mdi:battery-bluetooth
+            layout: vertical
+            icon_color: >-
+              {% set c = states('sensor.ef_r30061_battery_level') | float(-1) %}
+              {{ 'grey' if c < 0 else ('green' if c >= 50 else ('orange' if c >= 30 else 'red')) }}
+            tap_action:
+              action: more-info
+
+          - type: custom:mushroom-template-card
+            entity: binary_sensor.ef_r30061_ac_plugged_in
+            primary: >-
+              {{ 'Plugged in' if is_state('binary_sensor.ef_r30061_ac_plugged_in', 'on')
+                 else ('Unplugged' if is_state('binary_sensor.ef_r30061_ac_plugged_in', 'off')
+                 else states('binary_sensor.ef_r30061_ac_plugged_in')) }}
+            secondary: AC in
+            icon: mdi:power-plug
+            layout: vertical
+            icon_color: >-
+              {{ 'green' if is_state('binary_sensor.ef_r30061_ac_plugged_in', 'on')
+                 else ('orange' if is_state('binary_sensor.ef_r30061_ac_plugged_in', 'off')
+                 else 'grey') }}
+            tap_action:
+              action: more-info
+
+  #####################################################################
+  # POWER — EcoFlow BLE live watts
+  #####################################################################
+  - type: grid
+    column_span: 2
+    cards:
+      - type: heading
+        heading: Power
+        heading_style: title
+        icon: mdi:flash
+
+      # Enabled `ef_ble` sensors that are not lifetime energy counters.
+      # Add or enable a diagnostic in the registry and it appears here.
+      - type: custom:auto-entities
+        show_empty: false
+        grid_options:
+          columns: full
+          rows: auto
+        card:
+          type: grid
+          columns: 3
+          square: false
+        card_param: cards
+        filter:
+          template: >
+            {% set ns = namespace(rows=[]) %}
+            {% for e in integration_entities('ef_ble')
+                 | select('search', '^sensor') | sort %}
+              {% if e is not search('_energy')
+                    and e is not search('battery')
+                    and states(e) not in ['unknown', 'unavailable'] %}
+                {% set nm = state_attr(e, 'friendly_name')
+                     | default(e, true)
+                     | replace('EF-R30061 ', '') %}
+                {% set unit = state_attr(e, 'unit_of_measurement') or '' %}
+                {% set raw = states(e) %}
+                {% set num = raw | float(-1) %}
+                {% set watts = unit in ['W', 'kW'] %}
+                {% set colour = ('grey' if num == 0 else 'blue') if watts else 'blue' %}
+                {% set icon = 'mdi:flash' if watts else 'mdi:sine-wave' %}
+                {% set ns.rows = ns.rows + [{
+                     'type': 'custom:mushroom-template-card',
+                     'entity': e,
+                     'primary': (raw ~ (unit and (' ' ~ unit) or '')),
+                     'secondary': nm,
+                     'icon': icon,
+                     'icon_color': colour,
+                     'layout': 'vertical',
+                     'tap_action': {'action': 'more-info'}
+                   }] %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.rows }}
+
+  #####################################################################
+  # LOAD-SHED — what the automation has done / will do
+  #####################################################################
+  - type: grid
+    cards:
+      - type: heading
+        heading: Load-shed
+        heading_style: title
+        icon: mdi:battery-arrow-down
+
+      - type: markdown
+        grid_options:
+          columns: full
+          rows: auto
+        content: |
+          {% set stage = states('input_select.ups_load_shed_stage') %}
+          {% set on = is_state('input_boolean.ups_load_shed_enabled', 'on') %}
+          The UPS shuts itself at **30 %**. While on battery, non-essential
+          containers on jack-sparrow are stopped in waves so NUT, NPM and
+          Portainer still have headroom.
+
+          | Stage | Charge | Stops |
+          | --- | --- | --- |
+          | On battery | ≥ 90 % | nothing yet |
+          | Pawsport | < 90 % | Pawsport portal / sync / db backup |
+          | Media | < 80 % | *arr, Deluge, Gluetun, Unpackerr, Diun, Dozzle |
+          | Lab | < 55 % | Duplicati, Healthchecks, Scrutiny |
+          | Heavy | < 40 % | Frigate |
+          | Critical | < 35 % | warn only |
+
+          Never stopped: **NUT, NPM, Portainer, Uptime Kuma**.
+
+          {% if not on %}
+          > Load-shed is **off**. Containers will not be stopped.
+          {% elif stage == 'Online' %}
+          Currently **Online** — nothing shed.
+          {% else %}
+          Currently **{{ stage }}**.
+          {% endif %}
+
+      - type: entities
+        state_color: true
+        grid_options:
+          columns: full
+          rows: auto
+        entities:
+          - entity: input_select.ups_load_shed_stage
+            name: Stage
+          - entity: input_boolean.ups_load_shed_enabled
+            name: Enabled
+
+      # Containers this automation is allowed to stop, red if already
+      # off. Named here on purpose: the shed list is an allowlist, not
+      # "every Portainer switch", and must stay in lockstep with
+      # automations/lab/ups_load_shed.yaml.
+      - type: custom:auto-entities
+        show_empty: false
+        grid_options:
+          columns: full
+          rows: auto
+        card:
+          type: entities
+          title: Shed targets
+        card_param: entities
+        filter:
+          template: >
+            {% set targets = [
+                 'switch.pawsport_admin_portal_container',
+                 'switch.pawsport_storage_sync_container',
+                 'switch.pawsport_db_backup_container',
+                 'switch.deluge_container',
+                 'switch.gluetun_container',
+                 'switch.unpackerr_container',
+                 'switch.sonarr_container',
+                 'switch.radarr_container',
+                 'switch.bazarr_container',
+                 'switch.prowlarr_container',
+                 'switch.diun_container',
+                 'switch.dozzle_container',
+                 'switch.duplicati_container',
+                 'switch.healthchecks_container',
+                 'switch.scrutiny_container',
+                 'switch.frigate_container'
+               ] %}
+            {% set ns = namespace(rows=[]) %}
+            {% for e in targets %}
+              {% if e in integration_entities('portainer') %}
+                {% set ns.rows = ns.rows + [{
+                     'entity': e,
+                     'name': state_attr(e, 'friendly_name')
+                       | default(e, true)
+                       | replace(' Container', '')
+                   }] %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.rows }}
+
+  #####################################################################
+  # TRENDS — 24 h charge (NUT) and output (BLE)
+  #####################################################################
+  - type: grid
+    column_span: 3
+    cards:
+      - type: heading
+        heading: Trends
+        heading_style: title
+        icon: mdi:chart-line
+
+      - type: custom:mini-graph-card
+        name: Battery
+        icon: mdi:battery
+        hours_to_show: 24
+        points_per_hour: 4
+        line_width: 2
+        hour24: true
+        decimals: 0
+        show:
+          labels: true
+          fill: true
+          legend: true
+          extrema: true
+        entities:
+          - entity: sensor.ups0_battery_charge
+            name: NUT
+          - entity: sensor.ef_r30061_battery_level
+            name: EcoFlow
+        color_thresholds:
+          - value: 0
+            color: "#d32f2f"
+          - value: 30
+            color: "#ffa000"
+          - value: 50
+            color: "#388e3c"
+        grid_options:
+          columns: full
+          rows: auto
+
+      - type: custom:mini-graph-card
+        name: Output
+        icon: mdi:flash
+        hours_to_show: 24
+        points_per_hour: 4
+        line_width: 2
+        hour24: true
+        show:
+          labels: true
+          fill: false
+          legend: true
+          extrema: true
+        entities:
+          - entity: sensor.ef_r30061_output_power
+            name: Output
+          - entity: sensor.ef_r30061_input_power
+            name: Input
+          - entity: sensor.ef_r30061_ac_output_power
+            name: AC out
+        grid_options:
+          columns: full
+          rows: auto
+
+  #####################################################################
+  # CONTROLS — EcoFlow BLE only. NUT is read-only on this instance.
+  #####################################################################
+  - type: grid
+    column_span: 3
+    cards:
+      - type: heading
+        heading: Controls
+        heading_style: title
+        icon: mdi:tune
+
+      - type: markdown
+        grid_options:
+          columns: full
+          rows: auto
+        content: >-
+          Backup reserve and charge limits are the EcoFlow's own,
+          not load-shed. The unit still cuts at 30 % regardless.
+          `Power Off` and `AC Ports` ship disabled in the registry
+          and are not on this list.
+
+      - type: custom:auto-entities
+        show_empty: false
+        grid_options:
+          columns: full
+          rows: auto
+        card:
+          type: entities
+          state_color: true
+        card_param: entities
+        filter:
+          template: >
+            {% set ns = namespace(rows=[]) %}
+            {% for e in integration_entities('ef_ble') | sort %}
+              {% if e.split('.')[0] in ['switch', 'number', 'select'] %}
+                {% set ns.rows = ns.rows + [{
+                     'entity': e,
+                     'name': state_attr(e, 'friendly_name')
+                       | default(e, true)
+                       | replace('EF-R30061 ', '')
+                   }] %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.rows }}

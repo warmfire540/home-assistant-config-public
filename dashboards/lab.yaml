@@ -12,7 +12,7 @@
 #
 # `!include_dir_list` sorts by filename, hence the NN- prefixes.
 #
-# Views: Uptime, Backups, Pi-hole, Z-Wave, Hosts. The Matrix subviews
+# Views: Uptime, Backups, Pi-hole, Z-Wave, Hosts, UPS. The Matrix subviews
 # `/the-matrix/lab` and `/the-matrix/z-wave` are gone; Home's server-closet
 # card lands here (`/home-lab/uptime`).
 #
@@ -21,7 +21,8 @@
 # Duplicati runs on the NAS, a backup job is a lab-wide concern.
 # 02-backups.yaml answers "did the last run succeed"; Healthchecks (not
 # built yet, see TODO.md) will answer "did it run at all".
-# Pi-hole, Z-Wave and Hosts are lab-wide too — not a jack-sparrow concern.
+# Pi-hole, Z-Wave, Hosts and UPS are lab-wide too — not a jack-sparrow concern.
+# The UPS *feeds* jack-sparrow (NUT runs there); EcoFlow BLE is the HA Pi.
 #
 # `decluttering_templates` loads `ui_lovelace_minimalist/card_declutter/`
 # so 05-hosts.yaml can call `pi_details` / `home_assistant_details` without

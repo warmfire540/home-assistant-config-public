@@ -1,5 +1,8 @@
 #####
-# Close valves if a water leake
+# Close the house water valve when any leak sensor trips.
+#
+# Which sensor is wet is named on alert.water (entities/alerts/water.yaml)
+# and recorded here in the logbook so a trace is not just "group went on".
 #####
 
 alias: Water Leak
@@ -13,7 +16,24 @@ trigger:
     to: 'on'
 
 actions:
+  - alias: Name the leaking sensors
+    variables:
+      leaking: >
+        {{ expand('binary_sensor.leak_sensors')
+           | selectattr('state', 'eq', 'on')
+           | map(attribute='name')
+           | map('replace', ' Water Leak Detected', '')
+           | list | join(', ') }}
+
   - alias: Turn off water valve
     action: switch.turn_off
     target:
+      entity_id: switch.water_valve
+
+  - alias: Record which sensor tripped
+    action: logbook.log
+    data:
+      name: Water leak
+      message: >
+        {{ leaking if leaking else 'Leak group on, but no member still wet' }}
       entity_id: switch.water_valve

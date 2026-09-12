@@ -1,0 +1,22 @@
+---
+#####
+# Garage door alert gate.
+#
+# alert.garage should nag only while the tilt sensor is open AND the
+# snooze timer is idle. Watching the tilt sensor directly meant there
+# was no way to pause the 15-minute repeat without acknowledging the
+# alert forever (or until the door closed).
+#
+# Consumers: entities/alerts/garage_door.yaml
+#####
+
+- binary_sensor:
+    - name: Garage door alert
+      unique_id: 7c4e8a21-3b9f-4d12-a6e5-8f1c2d9b0a47
+      icon: mdi:garage-alert
+      availability: >
+        {{ states('binary_sensor.garage_door_tilt_window_door_is_open')
+           not in ['unknown', 'unavailable'] }}
+      state: >
+        {{ is_state('binary_sensor.garage_door_tilt_window_door_is_open', 'on')
+           and is_state('timer.garage_door_snooze', 'idle') }}

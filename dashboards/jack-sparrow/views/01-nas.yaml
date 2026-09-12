@@ -4,7 +4,7 @@
 #
 # LAYOUT (max_columns: 3; sections flow left-to-right and wrap)
 #
-#   row 1   Status            span 3
+#   row 1   Status            span 3   (9 host tiles + UPS 2-up)
 #   row 2   Performance (2)   Control (1)
 #   row 3   System (1)        Storage (2)
 #
@@ -165,6 +165,64 @@ sections:
                   name: Last Boot
                   vertical: true
                   color: blue-grey
+
+      # UPS — EcoFlow River 3 Plus, via NUT on this host (192.168.5.8:3493).
+      # Entity IDs are the three enabled NUT sensors, observed 2026-08-25.
+      # Do not invent siblings; runtime / voltage / setpoints ship
+      # disabled_by: integration. Colour needs [[[ ]]], so this is wrapped
+      # in ugreen_tpl_host even though the IDs are not slug-templated.
+      # Tap goes to the lab UPS tab, which is where EcoFlow BLE lives too.
+      - type: heading
+        heading: UPS
+        heading_style: subtitle
+        icon: mdi:car-battery
+
+      - type: custom:button-card
+        template: ugreen_tpl_host
+        grid_options:
+          columns: full
+          rows: auto
+        custom_fields:
+          item1:
+            card:
+              type: grid
+              square: false
+              columns: 2
+              cards:
+                # Display is `ups0_status` ("Online"). Colour is
+                # `ups0_status_data` (OL / OB) — not the display string.
+                - type: tile
+                  entity: sensor.ups0_status
+                  name: UPS
+                  icon: mdi:car-battery
+                  vertical: true
+                  tap_action:
+                    action: navigate
+                    navigation_path: /home-lab/ups
+                  color: |
+                    [[[
+                      const s = states['sensor.ups0_status_data']?.state;
+                      if (s === 'OB') return 'orange';
+                      if (s === 'OL') return 'green';
+                      return 'red';
+                    ]]]
+
+                - type: tile
+                  entity: sensor.ups0_battery_charge
+                  name: Battery
+                  icon: mdi:battery
+                  vertical: true
+                  tap_action:
+                    action: navigate
+                    navigation_path: /home-lab/ups
+                  color: |
+                    [[[
+                      const c = Number(states['sensor.ups0_battery_charge']?.state);
+                      if (!Number.isFinite(c)) return 'grey';
+                      if (c >= 50) return 'green';
+                      if (c >= 30) return 'orange';
+                      return 'red';
+                    ]]]
 
   #####################################################################
   # PERFORMANCE — 24 h trends

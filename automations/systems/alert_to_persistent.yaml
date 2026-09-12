@@ -114,6 +114,7 @@ action:
                         title: '{{ trigger.event.data.service_data.title }}'
                         data:
                           tag: '{{ trigger.event.data.service_data.data.tag }}'
+                          actions: "{{ trigger.event.data.service_data.data.actions | default([]) }}"
                           push:
                             sound:
                               name: default
@@ -127,6 +128,7 @@ action:
                         title: '{{ trigger.event.data.service_data.title }}'
                         data:
                           tag: '{{ trigger.event.data.service_data.data.tag }}'
+                          actions: "{{ trigger.event.data.service_data.data.actions | default([]) }}"
         - alias: See if Gina not muted
           if:
             - condition: state
@@ -145,6 +147,7 @@ action:
                         title: '{{ trigger.event.data.service_data.title }}'
                         data:
                           tag: '{{ trigger.event.data.service_data.data.tag }}'
+                          actions: "{{ trigger.event.data.service_data.data.actions | default([]) }}"
                           push:
                             sound:
                               name: default
@@ -158,6 +161,7 @@ action:
                         title: '{{ trigger.event.data.service_data.title }}'
                         data:
                           tag: '{{ trigger.event.data.service_data.data.tag }}'
+                          actions: "{{ trigger.event.data.service_data.data.actions | default([]) }}"
         - alias: Create persistent notification
           action: persistent_notification.create
           data:

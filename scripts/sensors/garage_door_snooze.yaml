@@ -1,0 +1,28 @@
+#####
+# Pause the garage-open alert. Notification actions call this;
+# the script is also runnable from the UI if you want a custom duration.
+#####
+
+garage_door_snooze:
+  alias: Snooze garage door alert
+  icon: mdi:alarm-snooze
+  mode: restart
+  fields:
+    minutes:
+      name: Minutes
+      description: How long to pause the garage-open alert
+      required: true
+      default: 30
+      example: 30
+      selector:
+        number:
+          min: 5
+          max: 180
+          step: 5
+          unit_of_measurement: minutes
+  sequence:
+    - action: timer.start
+      target:
+        entity_id: timer.garage_door_snooze
+      data:
+        duration: "{{ minutes | int * 60 }}"

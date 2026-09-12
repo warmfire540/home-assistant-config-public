@@ -1,0 +1,360 @@
+---
+#####
+# UPS load-shed — stop non-essential jack-sparrow containers on battery
+#
+# The EcoFlow UPS cuts itself at 30 %. This automation sheds Docker load
+# before that so NUT, NPM and Portainer still have runtime, and so a
+# 30 % cut is a short outage rather than a dirty stop of Deluge / Frigate
+# / Duplicati mid-write.
+#
+# Same physical UPS as dashboards/lab/views/06-ups.yaml. Charge and
+# OL/OB come from NUT (`sensor.ups0_battery_charge`,
+# `sensor.ups0_status_data`). BLE is not used here: if the Pi loses
+# bluetooth the NAS is still talking to the UPS, and that is the number
+# the unit itself will cut on.
+#
+# Waves, ratchet while on battery, full restore on OL:
+#
+#   On battery   OB, charge ≥ 90 %     notify only
+#   Pawsport     OB, charge < 90 %     Pawsport portal / sync / db backup
+#   Media        OB, charge < 80 %     *arr, Deluge, Gluetun, Unpackerr,
+#                                      Diun, Dozzle
+#   Lab          OB, charge < 55 %     + Duplicati, Healthchecks, Scrutiny
+#   Heavy        OB, charge < 40 %     + Frigate
+#   Critical     OB, charge < 35 %     warn only — UPS cuts at 30 %
+#   Online       OL                    start everything this file stopped
+#
+# Never stopped: `nut` (this automation goes blind without it), `npm`
+# (Portainer's HA URL is the NPM hostname), `portainer` (how anything is
+# stopped or started), `uptime_kuma` (the board that is not this).
+#
+# Ratchet: charge recovering from 38 % to 50 % while still OB does not
+# restart Frigate. Only OL restores.
+#
+# Catch-up: going OB already at 45 % jumps to Lab and stops Pawsport +
+# Media + Lab in one pass, not as separate events.
+#
+# `input_boolean.ups_load_shed_enabled` gates stopping. Restore still
+# runs while it is off, so a previous shed is not left stopped after
+# power returns.
+#
+# ⚠️ STOPPING THESE WILL MAKE UPTIME KUMA GO RED. The monitor-down
+# automation treats OB like the WAN gate and will not page per service.
+# This file is the one notification.
+#
+# ⚠️ Portainer start/stop from HA is buggy (core#160907): stop often
+# returns an error after succeeding, and a container that was already
+# stopped when HA started cannot be started from here. `continue_on_error`
+# is that, not "ignore real failures". If restore does nothing, start
+# from Portainer or reload the integration.
+#
+# Restore starts every container in the shed lists. A container that was
+# already stopped before the outage will come back. That is the same
+# trade as having no "should this be running" flag on sensor.docker_health.
+#
+# Entity IDs are the live Portainer `switch.*_container` names as of
+# 2026-08-25. A rename or a new downloader needs an edit here AND in
+# the Shed targets list on 06-ups.yaml.
+#
+# Reads: sensor.ups0_status_data, sensor.ups0_battery_charge
+#        input_select.ups_load_shed_stage
+#        input_boolean.ups_load_shed_enabled
+#####
+
+alias: Lab - UPS load-shed
+id: 4b8f2c1d-9e6a-4d73-b0f5-7a1c3e8d9256
+description: >-
+  On battery, stop non-essential jack-sparrow containers in waves before
+  the UPS cuts itself at 30 %. Restore them when line power returns.
+
+mode: queued
+max: 10
+
+triggers:
+  # Line -> battery. Charge may still be 100; this is the notify-only
+  # stage until it drops under 90 (Pawsport first).
+  - trigger: state
+    entity_id: sensor.ups0_status_data
+    to: OB
+    for: "00:00:15"
+    id: on_battery
+
+  - trigger: state
+    entity_id: sensor.ups0_status_data
+    to: OL
+    for: "00:00:30"
+    id: restored
+
+  # Template triggers re-evaluate after an HA restart, so a boot already
+  # on battery at 50 % still sheds. Numeric-state-below would miss that
+  # (it only fires on a crossing).
+  - trigger: template
+    value_template: >-
+      {{ is_state('sensor.ups0_status_data', 'OB')
+         and states('sensor.ups0_battery_charge') | float(100) < 90 }}
+    for: "00:00:30"
+    id: pawsport
+
+  - trigger: template
+    value_template: >-
+      {{ is_state('sensor.ups0_status_data', 'OB')
+         and states('sensor.ups0_battery_charge') | float(100) < 80 }}
+    for: "00:00:30"
+    id: media
+
+  - trigger: template
+    value_template: >-
+      {{ is_state('sensor.ups0_status_data', 'OB')
+         and states('sensor.ups0_battery_charge') | float(100) < 55 }}
+    for: "00:00:30"
+    id: lab
+
+  - trigger: template
+    value_template: >-
+      {{ is_state('sensor.ups0_status_data', 'OB')
+         and states('sensor.ups0_battery_charge') | float(100) < 40 }}
+    for: "00:00:30"
+    id: heavy
+
+  - trigger: template
+    value_template: >-
+      {{ is_state('sensor.ups0_status_data', 'OB')
+         and states('sensor.ups0_battery_charge') | float(100) < 35 }}
+    for: "00:00:30"
+    id: critical
+
+  - trigger: homeassistant
+    event: start
+    id: ha_start
+
+# Static lists. Status / desired are computed AFTER any HA-start delay
+# (top-level variables render at trigger time, when NUT is often still
+# unavailable).
+variables:
+  wave_pawsport:
+    - switch.pawsport_admin_portal_container
+    - switch.pawsport_storage_sync_container
+    - switch.pawsport_db_backup_container
+  wave_media:
+    - switch.deluge_container
+    - switch.gluetun_container
+    - switch.unpackerr_container
+    - switch.sonarr_container
+    - switch.radarr_container
+    - switch.bazarr_container
+    - switch.prowlarr_container
+    - switch.diun_container
+    - switch.dozzle_container
+  wave_lab:
+    - switch.duplicati_container
+    - switch.healthchecks_container
+    - switch.scrutiny_container
+  wave_heavy:
+    - switch.frigate_container
+  tag: ups_load_shed
+
+actions:
+  # HA start: NUT and Portainer are still coming up. Delay first, THEN
+  # read status — a top-level `variables:` block would snapshot
+  # unavailable and never shed or restore.
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: ha_start
+        sequence:
+          - delay:
+              minutes: 1
+  - variables:
+      status: "{{ states('sensor.ups0_status_data') }}"
+      charge: "{{ states('sensor.ups0_battery_charge') | float(-1) }}"
+      enabled: "{{ states('input_boolean.ups_load_shed_enabled') }}"
+      previous: "{{ states('input_select.ups_load_shed_stage') }}"
+      # Self-contained — sibling keys in one `variables:` block cannot
+      # read each other. Repeat the states() calls.
+      from_charge: >-
+        {% set status = states('sensor.ups0_status_data') -%}
+        {% set charge = states('sensor.ups0_battery_charge') | float(-1) -%}
+        {% set previous = states('input_select.ups_load_shed_stage') -%}
+        {%- if status == 'OL' -%}
+          Online
+        {%- elif status != 'OB' -%}
+          {{ previous }}
+        {%- elif charge >= 0 and charge < 35 -%}
+          Critical
+        {%- elif charge >= 0 and charge < 40 -%}
+          Heavy
+        {%- elif charge >= 0 and charge < 55 -%}
+          Lab
+        {%- elif charge >= 0 and charge < 80 -%}
+          Media
+        {%- elif charge >= 0 and charge < 90 -%}
+          Pawsport
+        {%- else -%}
+          On battery
+        {%- endif %}
+      desired: >-
+        {% set status = states('sensor.ups0_status_data') -%}
+        {% set charge = states('sensor.ups0_battery_charge') | float(-1) -%}
+        {% set previous = states('input_select.ups_load_shed_stage') -%}
+        {% set order = ['Online', 'On battery', 'Pawsport', 'Media', 'Lab', 'Heavy', 'Critical'] -%}
+        {%- if status == 'OL' -%}
+          Online
+        {%- elif status != 'OB' -%}
+          {{ previous }}
+        {%- else -%}
+          {%- set ns = namespace(from_charge='On battery') -%}
+          {%- if charge >= 0 and charge < 35 -%}
+            {%- set ns.from_charge = 'Critical' -%}
+          {%- elif charge >= 0 and charge < 40 -%}
+            {%- set ns.from_charge = 'Heavy' -%}
+          {%- elif charge >= 0 and charge < 55 -%}
+            {%- set ns.from_charge = 'Lab' -%}
+          {%- elif charge >= 0 and charge < 80 -%}
+            {%- set ns.from_charge = 'Media' -%}
+          {%- elif charge >= 0 and charge < 90 -%}
+            {%- set ns.from_charge = 'Pawsport' -%}
+          {%- endif -%}
+          {%- set a = order.index(ns.from_charge) if ns.from_charge in order else 0 -%}
+          {%- set b = order.index(previous) if previous in order else 0 -%}
+          {{ order[a] if a >= b else previous }}
+        {%- endif %}
+
+  - choose:
+      #################
+      # LINE POWER — restore everything this file stops
+      #################
+      - alias: Restore on OL
+        conditions:
+          - condition: template
+            value_template: >-
+              {{ status == 'OL' and previous != 'Online' }}
+        sequence:
+          - action: switch.turn_on
+            continue_on_error: true
+            target:
+              entity_id: "{{ wave_heavy + wave_lab + wave_media + wave_pawsport }}"
+          - action: input_select.select_option
+            target:
+              entity_id: input_select.ups_load_shed_stage
+            data:
+              option: Online
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ previous != 'Online' }}"
+                sequence:
+                  - variables:
+                      title: '✅ UPS back on line'
+                      body: >-
+                        Line power is back ({{ states('sensor.ups0_status') }},
+                        {{ charge | int }}%). Restarting containers that
+                        load-shed stopped. If one stays down, that is
+                        Portainer core#160907 — start it in Portainer.
+                  - action: notify.persistent_notification
+                    data:
+                      title: '{{ title }}'
+                      message: '{{ body }}'
+                  - choose:
+                      - conditions:
+                          - condition: state
+                            entity_id: input_boolean.poat_mute
+                            state: 'off'
+                        sequence:
+                          - action: notify.mobile_app_poat_s_iphone_14_pro_max
+                            data:
+                              title: '{{ title }}'
+                              message: '{{ body }}'
+                              data:
+                                tag: '{{ tag }}'
+                                url: /home-lab/ups
+                                push:
+                                  sound:
+                                    name: 'default'
+
+      #################
+      # ON BATTERY — shed up to `desired`, notify on a stage change
+      #################
+      - alias: Shed while on battery
+        conditions:
+          - condition: template
+            value_template: "{{ status == 'OB' }}"
+        sequence:
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ enabled == 'on' and desired in ['Pawsport', 'Media', 'Lab', 'Heavy', 'Critical'] }}"
+                sequence:
+                  - action: switch.turn_off
+                    continue_on_error: true
+                    target:
+                      entity_id: >-
+                        {{ wave_pawsport
+                           + (wave_media if desired in ['Media', 'Lab', 'Heavy', 'Critical'] else [])
+                           + (wave_lab if desired in ['Lab', 'Heavy', 'Critical'] else [])
+                           + (wave_heavy if desired in ['Heavy', 'Critical'] else []) }}
+          - action: input_select.select_option
+            target:
+              entity_id: input_select.ups_load_shed_stage
+            data:
+              option: '{{ desired }}'
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ desired != previous }}"
+                sequence:
+                  - variables:
+                      title: >-
+                        {% if desired == 'Critical' %}
+                          🔴 UPS {{ charge | int }}% — cuts at 30%
+                        {% elif desired == 'On battery' %}
+                          🟠 UPS on battery
+                        {% else %}
+                          🟠 UPS load-shed · {{ desired }}
+                        {% endif %}
+                      body: >-
+                        {{ states('sensor.ups0_status') }}
+                        ({{ states('sensor.ups0_status_data') }}),
+                        {{ charge | int }}% remaining.
+                        {%- if desired == 'On battery' %}
+                        Load-shed starts under 90 % (Pawsport first). The unit
+                        cuts at 30 %.
+                        {%- elif enabled != 'on' %}
+                        Load-shed is off — containers were not stopped.
+                        {%- elif desired == 'Pawsport' %}
+                        Stopped Pawsport (portal, storage sync, db backup).
+                        {%- elif desired == 'Media' %}
+                        Stopped downloaders (*arr, Deluge, Gluetun, Unpackerr,
+                        Diun, Dozzle).
+                        {%- elif desired == 'Lab' %}
+                        Stopped downloaders plus Duplicati, Healthchecks,
+                        Scrutiny.
+                        {%- elif desired == 'Heavy' %}
+                        Stopped Frigate as well. NUT, NPM, Portainer and
+                        Uptime Kuma are still up.
+                        {%- elif desired == 'Critical' %}
+                        Under 35 %. The UPS will shut itself down at 30 %.
+                        Remaining services are NUT, NPM, Portainer, Uptime
+                        Kuma.
+                        {%- endif %}
+                  - action: notify.persistent_notification
+                    data:
+                      title: '{{ title }}'
+                      message: '{{ body }}'
+                  - choose:
+                      - conditions:
+                          - condition: state
+                            entity_id: input_boolean.poat_mute
+                            state: 'off'
+                        sequence:
+                          - action: notify.mobile_app_poat_s_iphone_14_pro_max
+                            data:
+                              title: '{{ title }}'
+                              message: '{{ body }}'
+                              data:
+                                tag: '{{ tag }}'
+                                url: /home-lab/ups
+                                push:
+                                  sound:
+                                    name: 'default'
+                                    critical: '{{ 1 if desired in ["Heavy", "Critical"] else 0 }}'
+                                    volume: 1.0

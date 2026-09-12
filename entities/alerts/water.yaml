@@ -1,13 +1,28 @@
 #####
 # Alert for water leak sensors.
 #
+# Message lists the wet members of binary_sensor.leak_sensors so the
+# notification names the leaking thing, not just "check sensors".
+# Same expand-the-group pattern as entities/alerts/cats.yaml.
 #####
 
 water:
   name: Water Leak Alert
   entity_id: binary_sensor.leak_sensors
   title: 💧 Water Leak Alert!
-  message: Water leak detected - check sensors now!
+  message: >
+    {% set leaking = expand('binary_sensor.leak_sensors')
+      | selectattr('state', 'eq', 'on')
+      | map(attribute='name')
+      | map('replace', ' Water Leak Detected', '')
+      | list %}
+    {% if leaking | length == 1 %}
+      {{ leaking[0] }} is leaking — water valve closed.
+    {% elif leaking | length > 1 %}
+      Leaking: {{ leaking | join(', ') }} — water valve closed.
+    {% else %}
+      Water leak detected — check sensors now!
+    {% endif %}
   done_message: clear_notification
   state: 'on'
   repeat: 1

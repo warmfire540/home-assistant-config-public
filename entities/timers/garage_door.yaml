@@ -1,0 +1,13 @@
+#####
+# Snooze window for the garage-open alert. Started from the
+# notification actions (or script.garage_door_snooze). While this
+# is active, binary_sensor.garage_door_alert stays off so alert.garage
+# stops nagging. restore: true so a HA restart mid-snooze does not
+# immediately resume the 15-minute repeat.
+#####
+
+garage_door_snooze:
+  name: Garage door snooze
+  duration: "00:30:00"
+  restore: true
+  icon: mdi:alarm-snooze

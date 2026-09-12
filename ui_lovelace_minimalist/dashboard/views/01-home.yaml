@@ -129,6 +129,10 @@ cards:
           - switch.sconce
           - climate.living_room
           - media_player.living_room_tv
+          - entity_id: cover.living_room_blinds
+            slider:
+              style: ha
+              hide_icon: true
         features:
           - multi_light_background
         lights:
@@ -144,6 +148,11 @@ cards:
         area: dining_room
         background:
           image_entity: person.gina
+        entities:
+          - entity_id: cover.dining_room_blinds
+            slider:
+              style: ha
+              hide_icon: true
 
       #################
       # OFFICE
@@ -168,6 +177,10 @@ cards:
             on_color: red
           - entity_id: binary_sensor.gerbil_cat_occupancy
           - media_player.office_tv
+          - entity_id: cover.office_blinds
+            slider:
+              style: ha
+              hide_icon: true
 
       #################
       # KITCHEN
@@ -179,6 +192,10 @@ cards:
         entities:
           - switch.under_cabinet_lights
           - light.dinette_light
+          - entity_id: cover.kitchen_blinds
+            slider:
+              style: ha
+              hide_icon: true
         features:
           - multi_light_background
         lights:
@@ -193,6 +210,11 @@ cards:
         view_layout:
           grid-area: bedroom
         area: master_bedroom
+        entities:
+          - entity_id: cover.bedroom_blinds
+            slider:
+              style: ha
+              hide_icon: true
 
       #################
       # MASTER BATHROOM
@@ -213,6 +235,10 @@ cards:
         area: guest_bedroom
         entities:
           - switch.water_softener_plug
+          - entity_id: cover.guest_bedroom_blinds
+            slider:
+              style: ha
+              hide_icon: true
         background:
           image_entity: person.gina
           options:

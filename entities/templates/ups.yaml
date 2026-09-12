@@ -1,0 +1,81 @@
+---
+#####
+# Lab UPS — EcoFlow River 3 Plus, two integrations
+#
+# Same physical unit, two paths:
+#
+#   nut      Network UPS Tools on jack-sparrow (192.168.5.8:3493). Device
+#            unique_id EcoFlow_EF-UPS-R3P_R631ZAB4WGBT0061. Entity prefix
+#            `ups0_`. This is the line/battery verdict the NAS uses, and
+#            the charge the UPS itself will cut on (30 %).
+#   ef_ble   EcoFlow BLE on the HA Pi. Device title EF-R30061, BLE name
+#            EF-R3PT0061, same serial R631ZAB4WGBT0061. Entity prefix
+#            `ef_r30061_`. Power in/out, ports, charge limits.
+#
+# NUT siblings that exist in the registry but ship `disabled_by:
+# integration` (runtime, voltage, chemistry, setpoints, nominal power,
+# beeper) are NOT referenced here. Enable them in the entity registry
+# if a card needs them; do not invent the IDs on a dashboard.
+#
+# EcoFlow BLE siblings that ship disabled (discharge/charge time,
+# cell temperature, fan, error, AC ports switch, power-off button) are
+# the same rule.
+#
+# Enabled NUT (verified 2026-08-25): `sensor.ups0_status` (display,
+# "Online"), `sensor.ups0_status_data` (OL / OB / …),
+# `sensor.ups0_battery_charge`.
+#
+# Consumed by:
+#   - dashboards/lab/views/06-ups.yaml
+#   - dashboards/jack-sparrow/views/01-nas.yaml (status + charge tiles)
+#   - automations/lab/ups_load_shed.yaml
+#
+# NUT container: servers repo, jack-sparrow compose. BLE: HACS `ef_ble`.
+#####
+
+- sensor:
+    - name: Lab UPS
+      unique_id: a1c8e4f2-3b7d-4e91-8f26-c5d0a9b4e718
+      icon: >
+        {% if this.state == 'Online' %}
+          mdi:car-battery
+        {% elif this.state == 'On battery' %}
+          mdi:battery-medium
+        {% else %}
+          mdi:battery-alert
+        {% endif %}
+      # NUT is the line/battery source of truth. BLE can be down (Pi
+      # bluetooth) while the NAS is still talking to the UPS, and the
+      # reverse. Unavailable only when NUT itself is gone — that is
+      # when load-shed can no longer see remaining charge.
+      availability: >
+        {{ states('sensor.ups0_status_data')
+           not in ['unknown', 'unavailable', 'none', ''] }}
+      state: >
+        {% set sd = states('sensor.ups0_status_data') %}
+        {% set ch = states('sensor.ups0_battery_charge') | float(-1) %}
+        {% if sd == 'OL' %}
+          Online
+        {% elif sd == 'OB' and ch >= 0 and ch < 30 %}
+          Critical
+        {% elif sd == 'OB' %}
+          On battery
+        {% else %}
+          Problem
+        {% endif %}
+      attributes:
+        status: "{{ states('sensor.ups0_status') }}"
+        status_data: "{{ states('sensor.ups0_status_data') }}"
+        charge: >
+          {{ states('sensor.ups0_battery_charge') | float(-1) }}
+        ecoflow_battery: >
+          {{ states('sensor.ef_r30061_battery_level') }}
+        ac_plugged_in: >
+          {{ states('binary_sensor.ef_r30061_ac_plugged_in') }}
+        input_power: >
+          {{ states('sensor.ef_r30061_input_power') }}
+        output_power: >
+          {{ states('sensor.ef_r30061_output_power') }}
+        stage: >
+          {{ states('input_select.ups_load_shed_stage') }}
+        navigation_path: /home-lab/ups
