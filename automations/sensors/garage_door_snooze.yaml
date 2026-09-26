@@ -19,23 +19,23 @@ trigger:
     event_type: mobile_app_notification_action
     event_data:
       action: GARAGE_SNOOZE_15
-    id: "15"
+    id: '15'
 
   - trigger: event
     event_type: mobile_app_notification_action
     event_data:
       action: GARAGE_SNOOZE_30
-    id: "30"
+    id: '30'
 
   - trigger: event
     event_type: mobile_app_notification_action
     event_data:
       action: GARAGE_SNOOZE_60
-    id: "60"
+    id: '60'
 
   - trigger: state
-    entity_id: binary_sensor.garage_door_tilt_window_door_is_open
-    to: "off"
+    entity_id: binary_sensor.garage_door_tilt_open
+    to: 'off'
     id: cancel
 
 actions:
@@ -50,4 +50,4 @@ actions:
     default:
       - action: script.garage_door_snooze
         data:
-          minutes: "{{ trigger.id | int }}"
+          minutes: '{{ trigger.id | int }}'

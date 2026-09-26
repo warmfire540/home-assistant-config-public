@@ -1,124 +1,24 @@
 #####
-# Trigger scenes in the kitchen
+# Kitchen scene remote.
 #
+# Bulbs 1–4, the light.kitchen_bulbs group, and the color scenes
+# (daylight / bright / warm / fun) were removed with those bulbs.
+# The fourth scene button still toggles the sconce.
 #####
 
 alias: Change Kitchen Scenes
 id: 3e97bd1e-4e42-4f5c-87ba-34bd2be0fc3a
 
 trigger:
-  - alias: Big button pressed
-    trigger: state
-    entity_id: event.kitchen_light_scene_005
-    id: large-button
-
-  - alias: Scene One button pressed
-    trigger: state
-    entity_id: event.kitchen_light_scene_001
-    id: scene-one
-
-  - alias: Scene Two button pressed
-    trigger: state
-    entity_id: event.kitchen_light_scene_002
-    id: scene-two
-
-  - alias: Scene Three button pressed
-    trigger: state
-    entity_id: event.kitchen_light_scene_003
-    id: scene-three
-
   - alias: Scene Four button pressed
     trigger: state
     entity_id: event.kitchen_light_scene_004
     id: scene-four
 
-  - alias: Lights turned on or off
-    trigger: state
-    entity_id: light.kitchen_light
-    id: toggle-lights
-
 action:
-  choose:
-    - conditions:
-        alias: Big button pressed
-        condition: trigger
-        id: large-button
-      sequence:
-        alias: 'Choose an action based on the type of event'
-        choose:
-          - conditions:
-              alias: Double pressed big button
-              condition: state
-              entity_id: event.kitchen_light_scene_005
-              attribute: event_type
-              state: KeyPressed2x
-            sequence:
-              action: light.turn_on
-              target:
-                entity_id: light.kitchen_bulbs
-              data:
-                brightness_pct: 100
-          - conditions:
-              alias: Big button held down
-              condition: state
-              entity_id: event.kitchen_light_scene_005
-              attribute: event_type
-              state: KeyHeldDown
-            sequence:
-              action: light.turn_on
-              target:
-                entity_id: light.kitchen_bulbs
-              data:
-                brightness_pct: 50
-
-    - conditions:
-        alias: Scene One button pressed
-        condition: trigger
-        id: scene-one
-      sequence:
-        action: scene.turn_on
-        target:
-          entity_id: scene.daylight_kitchen
-
-    - conditions:
-        alias: Scene Two button pressed
-        condition: trigger
-        id: scene-two
-      sequence:
-        action: scene.turn_on
-        target:
-          entity_id: scene.bright_kitchen
-
-    - conditions:
-        alias: Scene Three button pressed
-        condition: trigger
-        id: scene-three
-      sequence:
-        action: scene.turn_on
-        target:
-          entity_id: scene.warm_kitchen
-
-    - conditions:
-        alias: Scene Four button pressed
-        condition: trigger
-        id: scene-four
-      sequence:
-        action: switch.toggle
-        target:
-          entity_id: switch.sconce
-
-    - conditions:
-        alias: Lights turned on or off
-        condition: trigger
-        id: toggle-lights
-      sequence:
-        action: >-
-          {% if trigger.to_state.state == 'on' %}
-            light.turn_on
-          {% else %}
-            light.turn_off
-          {% endif %}
-        target:
-          entity_id: light.kitchen_bulbs
+  - alias: Toggle the sconce
+    action: switch.toggle
+    target:
+      entity_id: switch.sconce
 
 mode: parallel

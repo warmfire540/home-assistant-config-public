@@ -163,6 +163,9 @@ cards:
             - entity_id: '*poat_plex*'
             - entity_id: '*xbox_x*'
             - entity_id: '*ipad*'
+            - entity_id: sensor.poat_rgb_wireless_ip_address
+            - entity_id: sensor.xbox_series_x_wired_ip_address
+            - entity_id: binary_sensor.garage_door_alert
             - domain: automation
             - domain: button
             - domain: number
@@ -171,6 +174,8 @@ cards:
             - domain: select
             - domain: stt
             - domain: tts
+            - domain: event
+            - domain: update
             - integration: cast
             - label: offline
 

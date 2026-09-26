@@ -1,8 +1,9 @@
 #####
-# The light component allows you to track and control various light bulbs.
-# This loads up my light configurations.
+# Light groups.
 #
-# https://www.home-assistant.io/components/light/
+# The Kitchen Bulbs group (light.kitchen_bulb_1–4) was removed with those
+# bulbs. This package is kept so the integrations directory still loads;
+# add new light groups under entities/lights and restore the include below.
+#
+# light: !include_dir_list ../entities/lights
 #####
-
-light: !include_dir_list ../entities/lights

@@ -4,10 +4,13 @@
 #  - automation
 #  - button
 #  - conversation
+#  - event    — unknown until something happens; that is the idle state
 #  - number
 #  - script
+#  - select
 #  - stt
 #  - tts
+#  - update   — unknown until an update check has an answer; that is the idle state
 #####
 
 - sensor:
@@ -16,11 +19,12 @@
     icon: 'mdi:cloud-off-outline'
     state: |
       {{ states
-        | rejectattr('domain','in',['button', 'tts', 'stt', 'number', 'conversation', 'automation', 'script', 'select'])
+        | rejectattr('domain','in',['button', 'tts', 'stt', 'number', 'conversation', 'automation', 'script', 'select', 'event', 'update'])
         | selectattr('state','in', ['unknown', 'unavailable'])
         | rejectattr('entity_id', 'in', label_entities('offline'))
         | rejectattr('entity_id','search', 'mfc_7860|poat_plex|ipad')
         | rejectattr('entity_id', 'in', integration_entities('cast'))
+        | rejectattr('entity_id', 'in', ['sensor.poat_rgb_wireless_ip_address', 'sensor.xbox_series_x_wired_ip_address', 'binary_sensor.garage_door_alert'])
         | list
         | count
       }}

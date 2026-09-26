@@ -19,7 +19,7 @@
 #   - min-width: auto opts back into grid-track growth (room icon shrinks)
 #
 # Usage: Settings → Dashboards → Add Dashboard → ⋮ → Raw configuration
-# editor → paste this file. Swap light.kitchen_bulb_* / the areas for your
+# editor → paste this file. Swap light.kitchen_light / the areas for your
 # own. Duplicate entity ids are intentional — they just pad the icon count.
 #
 # Take a screenshot of the whole dashboard before the fix and after; the
@@ -48,7 +48,7 @@ views:
             features:
               - exclude_default_entities
             entities:
-              - light.kitchen_bulb_1
+              - light.kitchen_light
 
           # Three entities — column not yet full.
           - type: custom:room-summary-card
@@ -57,9 +57,9 @@ views:
             features:
               - exclude_default_entities
             entities:
-              - light.kitchen_bulb_1
-              - light.kitchen_bulb_2
-              - light.kitchen_bulb_3
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
 
           # Exactly four — column full but NOT wrapped. The last card
           # before the bug kicks in; compare icon size against the
@@ -70,10 +70,10 @@ views:
             features:
               - exclude_default_entities
             entities:
-              - light.kitchen_bulb_1
-              - light.kitchen_bulb_2
-              - light.kitchen_bulb_3
-              - light.kitchen_bulb_4
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
 
       #################################################
       # THE BUG — default wrap (4 rows/column)
@@ -93,11 +93,11 @@ views:
             features:
               - exclude_default_entities
             entities:
-              - light.kitchen_bulb_1
-              - light.kitchen_bulb_2
-              - light.kitchen_bulb_3
-              - light.kitchen_bulb_4
-              - light.kitchen_bulb_1
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
 
           # Two full columns.
           - type: custom:room-summary-card
@@ -106,14 +106,14 @@ views:
             features:
               - exclude_default_entities
             entities:
-              - light.kitchen_bulb_1
-              - light.kitchen_bulb_2
-              - light.kitchen_bulb_3
-              - light.kitchen_bulb_4
-              - light.kitchen_bulb_1
-              - light.kitchen_bulb_2
-              - light.kitchen_bulb_3
-              - light.kitchen_bulb_4
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
             styles:
               entities:
                 min-width: auto !important
@@ -127,15 +127,15 @@ views:
             features:
               - exclude_default_entities
             entities:
-              - light.kitchen_bulb_1
-              - light.kitchen_bulb_2
-              - light.kitchen_bulb_3
-              - light.kitchen_bulb_4
-              - light.kitchen_bulb_1
-              - light.kitchen_bulb_2
-              - light.kitchen_bulb_3
-              - light.kitchen_bulb_4
-              - light.kitchen_bulb_1
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
             styles:
               entities:
                 min-width: auto !important
@@ -151,11 +151,11 @@ views:
               - hide_area_stats
               - exclude_default_entities
             entities:
-              - light.kitchen_bulb_1
-              - light.kitchen_bulb_2
-              - light.kitchen_bulb_3
-              - light.kitchen_bulb_4
-              - entity_id: light.kitchen_bulb_1
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - entity_id: light.kitchen_light
                 features:
                   - use_entity_icon
                 styles:
@@ -183,12 +183,12 @@ views:
             features:
               - exclude_default_entities
             entities:
-              - light.kitchen_bulb_1
-              - light.kitchen_bulb_2
-              - light.kitchen_bulb_3
-              - light.kitchen_bulb_4
-              - light.kitchen_bulb_1
-              - light.kitchen_bulb_2
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
             styles:
               entities:
                 '--user-entities-wrap': 3
@@ -202,12 +202,12 @@ views:
             features:
               - exclude_default_entities
             entities:
-              - light.kitchen_bulb_1
-              - light.kitchen_bulb_2
-              - light.kitchen_bulb_3
-              - light.kitchen_bulb_4
-              - light.kitchen_bulb_1
-              - light.kitchen_bulb_2
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
             styles:
               entities:
                 '--user-entities-wrap': 2
@@ -222,16 +222,16 @@ views:
             features:
               - exclude_default_entities
             entities:
-              - light.kitchen_bulb_1
-              - light.kitchen_bulb_2
-              - light.kitchen_bulb_3
-              - light.kitchen_bulb_4
-              - light.kitchen_bulb_1
-              - light.kitchen_bulb_2
-              - light.kitchen_bulb_3
-              - light.kitchen_bulb_4
-              - light.kitchen_bulb_1
-              - light.kitchen_bulb_2
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
             styles:
               entities:
                 '--user-entities-wrap': 5
@@ -257,13 +257,13 @@ views:
             features:
               - exclude_default_entities
             entities:
-              - light.kitchen_bulb_1
-              - light.kitchen_bulb_2
-              - light.kitchen_bulb_3
-              - light.kitchen_bulb_4
-              - light.kitchen_bulb_1
-              - light.kitchen_bulb_2
-              - light.kitchen_bulb_3
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
             styles:
               entities:
                 '--opacity-icon-fill-inactive': 0
@@ -282,14 +282,14 @@ views:
             features:
               - exclude_default_entities
             entities:
-              - light.kitchen_bulb_1
-              - light.kitchen_bulb_2
-              - light.kitchen_bulb_3
-              - light.kitchen_bulb_4
-              - light.kitchen_bulb_1
-              - light.kitchen_bulb_2
-              - light.kitchen_bulb_3
-              - light.kitchen_bulb_4
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
             styles:
               entities:
                 '--user-entities-max-columns': 1
@@ -304,16 +304,16 @@ views:
             features:
               - exclude_default_entities
             entities:
-              - light.kitchen_bulb_1
-              - light.kitchen_bulb_2
-              - light.kitchen_bulb_3
-              - light.kitchen_bulb_4
-              - light.kitchen_bulb_1
-              - light.kitchen_bulb_2
-              - light.kitchen_bulb_3
-              - light.kitchen_bulb_4
-              - light.kitchen_bulb_1
-              - light.kitchen_bulb_2
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
             styles:
               entities:
                 min-width: auto !important
@@ -336,11 +336,11 @@ views:
             features:
               - exclude_default_entities
             entities:
-              - light.kitchen_bulb_1
-              - light.kitchen_bulb_2
-              - light.kitchen_bulb_3
-              - light.kitchen_bulb_4
-              - light.kitchen_bulb_1
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
             styles:
               entities:
                 grid-auto-flow: row !important
@@ -354,11 +354,11 @@ views:
             features:
               - exclude_default_entities
             entities:
-              - light.kitchen_bulb_1
-              - light.kitchen_bulb_2
-              - light.kitchen_bulb_3
-              - light.kitchen_bulb_4
-              - light.kitchen_bulb_1
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
+              - light.kitchen_light
             styles:
               entities:
                 display: flex !important
@@ -377,21 +377,21 @@ views:
               - exclude_default_entities
               - hide_area_stats
             entities:
-              - entity_id: light.kitchen_bulb_1
+              - entity_id: light.kitchen_light
                 styles:
                   '--user-entity-label-display': none
                   '--opacity-icon-fill-inactive': 0
                   '--opacity-icon-fill-active': 0
                   opacity: 1
                   transform: scale(1.3) translateX(0px) translateY(0px)
-              - entity_id: light.kitchen_bulb_2
+              - entity_id: light.kitchen_light
                 styles:
                   '--user-entity-label-display': none
                   '--opacity-icon-fill-inactive': 0
                   '--opacity-icon-fill-active': 0
                   opacity: 1
                   transform: scale(1.2) translateX(0px) translateY(0px)
-              - entity_id: light.kitchen_bulb_3
+              - entity_id: light.kitchen_light
                 styles:
                   '--user-entity-label-display': none
                   '--opacity-icon-fill-inactive': 0
