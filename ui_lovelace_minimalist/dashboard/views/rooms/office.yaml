@@ -44,6 +44,7 @@ cards:
         template: frigate_camera
         variables:
           - camera: gerbil
+          - occupancy: '/^binary_sensor\.gerbil_(person|cat)_occupancy$/'
 
       - type: entities
         entities:

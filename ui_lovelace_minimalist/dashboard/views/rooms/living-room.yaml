@@ -149,11 +149,13 @@ cards:
         template: card_title
         label: Device Health
 
-      # Detect is off. Occupancy sensors exist and stay off, so this is
-      # live + clips/recordings only (same menu as frigate_camera).
+      # Detect is on, cat only. No HA occupancy entities, so this is
+      # live + clips/recordings (same menu as frigate_camera). go2rtc
+      # with no stream uses the Frigate camera name, the main.
       - type: custom:advanced-camera-card
         cameras:
           - camera_entity: camera.living_room
+            live_provider: go2rtc
         menu:
           buttons:
             clips:

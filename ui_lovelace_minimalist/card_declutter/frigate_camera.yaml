@@ -1,29 +1,41 @@
 #####
 # One Frigate camera: live view, clips/recordings, occupancy.
 #
-# `camera` is the Frigate key and the HA object_id (patio, gerbil, garage,
-# front). Occupancy is auto-entities over
-# binary_sensor.<camera>_(area|door)?_(person|cat|car|dog)_occupancy, so
-# patio_area / garage_door / front_door ride along. `_all_occupancy` and
-# `_motion` stay out: all is a rollup of the others, motion is pixel
-# change and stays on for minutes (garage was on when we inventoried).
+# `camera` is the Frigate key and the HA object_id (patio, gerbil,
+# garage, front). Live is go2rtc with no `stream`, so the card uses the
+# Frigate camera name — the main. That is what patio/gerbil PTZ and the
+# mic need (mic also needs HTTPS). The grid template uses `_sub` instead.
 #
-# Missing matches hide (`show_empty: false`). living_room has detect off
-# and is wired as a live-only Advanced Camera Card, not this template.
+# `occupancy` is an auto-entities entity_id regex. Default matches
+# nothing, so patio and garage show no occupancy chips. Pass one only
+# for the entities the Frigate plan keeps:
+#   gerbil — person + cat
+#   front  — person + package on the door zones (front_door, pavers).
+#            Package's entity_id is home_front_door_package_occupancy;
+#            the registry unique_id is front_door_package.
+# living_room detect is on (cat only) but it has no HA occupancy
+# entities, so it stays a live-only card in the living-room view, not
+# this template. `_all_occupancy` and `_motion` stay out either way.
+#
+# Missing matches hide (`show_empty: false`).
 #
 # Call:
 #   type: custom:decluttering-card
 #   template: frigate_camera
 #   variables:
-#     - camera: patio
+#     - camera: gerbil
+#     - occupancy: '/^binary_sensor\.gerbil_(person|cat)_occupancy$/'
 #####
 frigate_camera:
+  default:
+    - occupancy: '/^$/'
   card:
     type: vertical-stack
     cards:
       - type: custom:advanced-camera-card
         cameras:
           - camera_entity: camera.[[camera]]
+            live_provider: go2rtc
             triggers:
               occupancy: true
               motion: false
@@ -55,7 +67,7 @@ frigate_camera:
         card_param: cards
         filter:
           include:
-            - entity_id: "/^binary_sensor\\.[[camera]](_area|_door)?_(person|cat|car|dog)_occupancy$/"
+            - entity_id: '[[occupancy]]'
               options:
                 type: custom:button-card
                 template: card_binary_sensor

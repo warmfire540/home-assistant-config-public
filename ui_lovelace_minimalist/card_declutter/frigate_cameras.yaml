@@ -7,6 +7,12 @@
 # (too chatty). PTZ is `auto`: patio and gerbil have motors, the others
 # hide the pad.
 #
+# Live is go2rtc, not HA's stream proxy. Each tile names the `_sub`
+# go2rtc stream (patio_sub, gerbil_sub, garage_sub, front_sub,
+# living_room_sub) so a 2-up grid does not pull 4K. Single-camera cards
+# omit `stream` and get the Frigate camera name, which is the main.
+# Mic and talk stay on those single views: they need the main, and HTTPS.
+#
 # `timeline` / `thumbnails` default to none. The Cameras subview passes
 # `below` so review sits under the live grid. House and Vacation stay
 # compact.
@@ -26,16 +32,31 @@ frigate_cameras:
     type: custom:advanced-camera-card
     cameras:
       - camera_entity: camera.patio
+        live_provider: go2rtc
+        go2rtc:
+          stream: patio_sub
         triggers: &occupancy_only
           occupancy: true
           motion: false
       - camera_entity: camera.gerbil
+        live_provider: go2rtc
+        go2rtc:
+          stream: gerbil_sub
         triggers: *occupancy_only
       - camera_entity: camera.garage
+        live_provider: go2rtc
+        go2rtc:
+          stream: garage_sub
         triggers: *occupancy_only
       - camera_entity: camera.front
+        live_provider: go2rtc
+        go2rtc:
+          stream: front_sub
         triggers: *occupancy_only
       - camera_entity: camera.living_room
+        live_provider: go2rtc
+        go2rtc:
+          stream: living_room_sub
         triggers: *occupancy_only
     live:
       controls:
