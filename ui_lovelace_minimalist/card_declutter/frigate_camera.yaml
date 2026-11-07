@@ -9,22 +9,28 @@
 # `occupancy` is an auto-entities entity_id regex. Default matches
 # nothing, so patio and garage show no occupancy chips. Pass one only
 # for the entities the Frigate plan keeps:
-#   gerbil — person + cat
-#   front  — person + package on the door zones (front_door, pavers).
-#            Package's entity_id is home_front_door_package_occupancy;
-#            the registry unique_id is front_door_package.
+#   gerbil — person + cat + rodent
+#   front  — person + package on front_door, pavers, and sidewalk
+#            (the walkway). Door-package's entity_id is
+#            home_front_door_package_occupancy; the registry unique_id
+#            is front_door_package. Sidewalk package is
+#            sidewalk_package_occupancy.
 # living_room detect is on (cat only) but it has no HA occupancy
 # entities, so it stays a live-only card in the living-room view, not
 # this template. `_all_occupancy` and `_motion` stay out either way.
 #
 # Missing matches hide (`show_empty: false`).
 #
+# No backslashes in `occupancy`: decluttering pastes variables into
+# the card's JSON text, so `\.` becomes an invalid JSON escape and the
+# whole card is "Configuration error". Match a literal dot with `[.]`.
+#
 # Call:
 #   type: custom:decluttering-card
 #   template: frigate_camera
 #   variables:
 #     - camera: gerbil
-#     - occupancy: '/^binary_sensor\.gerbil_(person|cat)_occupancy$/'
+#     - occupancy: '/^binary_sensor[.]gerbil_(person|cat|rodent)_occupancy$/'
 #####
 frigate_camera:
   default:

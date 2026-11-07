@@ -1,0 +1,250 @@
+# Whisker Card layout test dashboard — issue #86
+#
+# Exercises the new `hide_image` feature flag next to the options that also
+# change how much of the card renders:
+#   - hide_image vs the default card vs mini
+#   - hide_image combined with illustrated / mini / color / percentage
+#   - cleaning reminder glow with a shorter card
+#   - the standalone pet card in all three `display` modes
+#
+# Each card's title says what it tests and what SHOULD render.
+#
+# Devices (two Litter-Robot 5 Pros, six cats):
+#   - Pink Eye    3ac374b8219b337705bfdfb7f1c2348e  (most cards)
+#   - Puss Bidet  59879713413a5ca5a75f9453eee8e75e  (color / regression cards)
+#   - Pets: Ellie, Gnar, Lagertha, Marbles, Murderbot, The Punisher
+#
+# Before loading: build this branch (`yarn build`) and copy dist/whisker.js
+# over the Lovelace resource (e.g. www/community/whisker/whisker.js), then
+# hard refresh the browser.
+#
+# Demo helpers (same as the room-summary-card test dashboards):
+#   - input_boolean.test_toggle     → toggles the needs-cleaning glow
+#   - binary_sensor.test_always_on  → fixed needs-cleaning glow
+#
+# Usage: copy to <config>/dashboards/whisker/hide-image-test.yaml and merge
+# lovelace.yaml (next to this file) into configuration.yaml. Or paste this file
+# into a new dashboard's raw configuration editor.
+
+title: Whisker Card Layout Test
+views:
+  - title: Whisker Card Layout Test
+    type: sections
+    max_columns: 3
+    sections:
+      #################################################
+      # CONTROLS
+      #################################################
+      - type: grid
+        column_span: 3
+        cards:
+          - type: heading
+            heading: 'Controls'
+            heading_style: title
+
+          - type: entities
+            entities:
+              - entity: input_boolean.test_toggle
+                name: 'Needs cleaning (drives the cleaning cards below)'
+
+      #################################################
+      # #86 — hide_image vs default vs mini
+      #################################################
+      - type: grid
+        column_span: 3
+        cards:
+          - type: heading
+            heading: '#86 — hide_image compared'
+            heading_style: title
+
+      - type: grid
+        cards:
+          - type: custom:whisker-card
+            device_id: 3ac374b8219b337705bfdfb7f1c2348e
+            title: 'BASELINE: default (photo shown)'
+
+      - type: grid
+        cards:
+          - type: custom:whisker-card
+            device_id: 3ac374b8219b337705bfdfb7f1c2348e
+            title: 'hide_image: no photo, full card'
+            features:
+              - hide_image
+
+      - type: grid
+        cards:
+          - type: custom:whisker-card
+            device_id: 3ac374b8219b337705bfdfb7f1c2348e
+            title: 'mini: title + gauges only'
+            mini: true
+
+      #################################################
+      # #86 — overview-page style
+      #################################################
+      - type: grid
+        cards:
+          - type: custom:whisker-card
+            device_id: 3ac374b8219b337705bfdfb7f1c2348e
+            title: 'OVERVIEW: hide_image + % + graphs collapsed'
+            features:
+              - hide_image
+              - percentage
+            chonk:
+              collapsed: true
+            visits:
+              collapsed: true
+
+      - type: grid
+        cards:
+          - type: custom:whisker-card
+            device_id: 3ac374b8219b337705bfdfb7f1c2348e
+            title: 'TIGHTEST FULL: hide_image + graphs hidden'
+            features:
+              - hide_image
+            chonk:
+              hide: true
+            visits:
+              hide: true
+            footer:
+              - litter_level
+              - waste_drawer
+              - last_seen
+
+      - type: grid
+        cards:
+          - type: custom:whisker-card
+            device_id: 3ac374b8219b337705bfdfb7f1c2348e
+            title: 'CLEANING: hide_image + glow (toggle above)'
+            cleaning_entity: input_boolean.test_toggle
+            features:
+              - hide_image
+            chonk:
+              collapsed: true
+            visits:
+              collapsed: true
+
+      #################################################
+      # #86 — interaction with other flags
+      #################################################
+      - type: grid
+        column_span: 3
+        cards:
+          - type: heading
+            heading: 'hide_image with other options'
+            heading_style: title
+
+      - type: grid
+        cards:
+          - type: custom:whisker-card
+            device_id: 3ac374b8219b337705bfdfb7f1c2348e
+            title: 'hide_image + illustrated: illustration STAYS'
+            features:
+              - hide_image
+              - illustrated
+              - percentage
+            chonk:
+              hide: true
+            visits:
+              hide: true
+
+      - type: grid
+        cards:
+          - type: custom:whisker-card
+            device_id: 3ac374b8219b337705bfdfb7f1c2348e
+            title: 'hide_image + mini: same as plain mini'
+            mini: true
+            features:
+              - hide_image
+              - percentage
+
+      - type: grid
+        cards:
+          - type: custom:whisker-card
+            device_id: 59879713413a5ca5a75f9453eee8e75e
+            title: 'hide_image + color black: no photo, no error'
+            color: black
+            features:
+              - hide_image
+            chonk:
+              hide: true
+            visits:
+              hide: true
+
+      #################################################
+      # Related layouts (regression check)
+      #################################################
+      - type: grid
+        column_span: 3
+        cards:
+          - type: heading
+            heading: 'Related layouts (should be unchanged)'
+            heading_style: title
+
+      - type: grid
+        cards:
+          - type: custom:whisker-card
+            device_id: 59879713413a5ca5a75f9453eee8e75e
+            title: 'illustrated + black'
+            color: black
+            features:
+              - illustrated
+            chonk:
+              hide: true
+            visits:
+              hide: true
+
+      - type: grid
+        cards:
+          - type: custom:whisker-card
+            device_id: 59879713413a5ca5a75f9453eee8e75e
+            title: 'mini + illustrated + %'
+            mini: true
+            features:
+              - illustrated
+              - percentage
+
+      - type: grid
+        cards:
+          - type: custom:whisker-card
+            device_id: 59879713413a5ca5a75f9453eee8e75e
+            title: 'mini + cleaning (always on)'
+            mini: true
+            cleaning_entity: binary_sensor.test_always_on
+            features:
+              - percentage
+
+      #################################################
+      # Pet card (regression check)
+      #################################################
+      - type: grid
+        column_span: 3
+        cards:
+          - type: heading
+            heading: 'Pet card'
+            heading_style: title
+
+      - type: grid
+        cards:
+          - type: custom:whisker-pet-card
+            title: 'display: states (all six)'
+
+          - type: custom:whisker-pet-card
+            title: 'pets: Ellie, Gnar, Murderbot only'
+            pets:
+              - 71c01a199af0876f10b28beae5f58b11
+              - 536d50fe55ebb821b9f38f778bf4fa2b
+              - ab2a018c8ebec2e3e65ad9550caffb34
+
+      - type: grid
+        cards:
+          - type: custom:whisker-pet-card
+            title: 'display: graphs'
+            display: graphs
+
+      - type: grid
+        cards:
+          - type: custom:whisker-pet-card
+            title: 'display: both (visits history)'
+            display: both
+            visits:
+              graph_type: history

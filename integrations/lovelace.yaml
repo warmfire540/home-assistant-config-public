@@ -38,7 +38,9 @@ lovelace:
       show_in_sidebar: true
       filename: dashboards/lab.yaml
 
-    # room-summary-card
+    #########################################################
+    # Room Summary Card
+    #########################################################
     rsc-background-image-test:
       mode: yaml
       title: Room Summary Card - Background Image Test
@@ -73,3 +75,24 @@ lovelace:
       icon: mdi:border-color
       show_in_sidebar: false
       filename: dashboards/room-summary-card/card-border-test.yaml
+
+
+    #########################################################
+    # Device Card
+    #########################################################
+    dc-percent-bars-test:
+      mode: yaml
+      title: Device Card - Percent Bar Test
+      icon: mdi:percent
+      show_in_sidebar: false
+      filename: dashboards/device-card/percent-bars-test.yaml
+    
+    #########################################################
+    # Whisker Card
+    #########################################################
+    whisker-hide-image-test:
+      mode: yaml
+      title: Whisker Card - Hide Image Test
+      icon: mdi:cat
+      show_in_sidebar: false
+      filename: dashboards/whisker/hide-image-test.yaml

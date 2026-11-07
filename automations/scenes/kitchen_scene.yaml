@@ -1,24 +1,104 @@
 #####
-# Kitchen scene remote.
+# Kitchen scene remote (Zooz ZEN32).
 #
 # Bulbs 1–4, the light.kitchen_bulbs group, and the color scenes
 # (daylight / bright / warm / fun) were removed with those bulbs.
-# The fourth scene button still toggles the sconce.
+# The small buttons now toggle nearby lights. The large paddle is
+# scene 005 and still controls the relay (light.kitchen_light) itself.
+#
+# Only a single tap (KeyPressed) toggles. Hold, release, and multi-tap
+# are ignored so one press cannot toggle twice. Unavailable and unknown
+# are ignored so a Z-Wave reconnect does not toggle the lights.
 #####
 
 alias: Change Kitchen Scenes
 id: 3e97bd1e-4e42-4f5c-87ba-34bd2be0fc3a
 
 trigger:
+  - alias: Scene One button pressed
+    trigger: state
+    entity_id: event.kitchen_light_scene_001
+    id: scene-one
+    not_from:
+      - unavailable
+      - unknown
+    not_to:
+      - unavailable
+      - unknown
+
+  - alias: Scene Two button pressed
+    trigger: state
+    entity_id: event.kitchen_light_scene_002
+    id: scene-two
+    not_from:
+      - unavailable
+      - unknown
+    not_to:
+      - unavailable
+      - unknown
+
+  - alias: Scene Three button pressed
+    trigger: state
+    entity_id: event.kitchen_light_scene_003
+    id: scene-three
+    not_from:
+      - unavailable
+      - unknown
+    not_to:
+      - unavailable
+      - unknown
+
   - alias: Scene Four button pressed
     trigger: state
     entity_id: event.kitchen_light_scene_004
     id: scene-four
+    not_from:
+      - unavailable
+      - unknown
+    not_to:
+      - unavailable
+      - unknown
+
+condition:
+  - condition: template
+    value_template: "{{ trigger.to_state.attributes.event_type == 'KeyPressed' }}"
 
 action:
-  - alias: Toggle the sconce
-    action: switch.toggle
-    target:
-      entity_id: switch.sconce
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: scene-one
+        sequence:
+          - alias: Toggle the under cabinet lights
+            action: switch.toggle
+            target:
+              entity_id: switch.under_cabinet_lights
+
+      - conditions:
+          - condition: trigger
+            id: scene-two
+        sequence:
+          - alias: Toggle the dinette light
+            action: light.toggle
+            target:
+              entity_id: light.dinette_light
+
+      - conditions:
+          - condition: trigger
+            id: scene-three
+        sequence:
+          - alias: Toggle the dining room light
+            action: light.toggle
+            target:
+              entity_id: light.dining_room_light
+
+      - conditions:
+          - condition: trigger
+            id: scene-four
+        sequence:
+          - alias: Toggle the sconce
+            action: switch.toggle
+            target:
+              entity_id: switch.sconce
 
 mode: parallel

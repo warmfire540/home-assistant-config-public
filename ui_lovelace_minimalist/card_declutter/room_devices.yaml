@@ -1,0 +1,66 @@
+#####
+# Every device in one area, as collapsed device-cards. The bottom of
+# each room's `-details` subview.
+#
+# Names no device. The list is `area_devices('[[area]]')` at render
+# time, so the area registry is the source of truth: move a device to
+# a different area in Settings and it moves pages with no YAML edit.
+# A device that shows up in the wrong room is a registry fix, not a
+# dashboard fix.
+#
+# Disabled devices are skipped (the LG webOS duplicate in the office
+# is one). So are devices with no entities left.
+#
+# Z-Wave devices are skipped too: every details page also has a
+# `zwave-device-center` for the area, which shows battery, last seen
+# and node health better than a generic device-card. A device counts
+# as Z-Wave if any of its entities belongs to `zwave_js`.
+#
+# Grid, not masonry: 3-up on a monitor, 2-up on a portrait display,
+# 1-up on a phone. Expanding a collapsed device-card in a CSS grid
+# only stretches its own cell, not a masonry row of neighbours.
+#
+# The nested Jinja lists are written `[ [name, card] ]` with spaces on
+# purpose — decluttering substitutes anything shaped like `[[var]]`.
+#
+# Call:
+#   type: custom:decluttering-card
+#   template: room_devices
+#   variables:
+#     - area: office
+#####
+room_devices:
+  card:
+    type: custom:auto-entities
+    show_empty: false
+    card:
+      type: custom:layout-card
+      layout_type: custom:grid-layout
+      layout:
+        grid-template-columns: repeat(3, 1fr)
+        mediaquery:
+          'only screen and (min-width: 769px) and (max-width: 1400px)':
+            grid-template-columns: repeat(2, 1fr)
+          'only screen and (max-width: 768px)':
+            grid-template-columns: 1fr
+    card_param: cards
+    filter:
+      template: >
+        {% set ns = namespace(items=[]) %}
+        {% set zwave = integration_entities('zwave_js') %}
+        {% for d in area_devices('[[area]]') %}
+          {% set ents = device_entities(d) %}
+          {% if device_attr(d, 'disabled_by') is none
+               and ents | count > 0
+               and ents | select('in', zwave) | list | count == 0 %}
+            {% set name = device_attr(d, 'name_by_user')
+                 or device_attr(d, 'name') or d %}
+            {% set card = {
+                 'type': 'custom:device-card',
+                 'device_id': d,
+                 'features': ['collapse']
+               } %}
+            {% set ns.items = ns.items + [ [name | lower, card] ] %}
+          {% endif %}
+        {% endfor %}
+        {{ ns.items | sort(attribute='0') | map(attribute='1') | list }}

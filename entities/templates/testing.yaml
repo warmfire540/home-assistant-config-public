@@ -1,7 +1,13 @@
-####
+---
+#####
 # Fixed-state helper entities for automations and conditions.
 # Always-on/off values that never change — useful as placeholders in
 # choose blocks, alert filters, and other logic that needs a constant.
+#
+# Device-card testing: these cannot join a device from YAML. MQTT mirrors
+# on "Device Card Test" are driven from them — see
+# integrations/mqtt_testing_device.yaml and
+# automations/mqtt/sync_testing_device.yaml.
 #
 #####
 

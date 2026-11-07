@@ -6,8 +6,9 @@
 # timeline and thumbnails turned on here).
 #
 # Occupancy is the HA entities the Frigate plan keeps: front person +
-# package on the door zones (front_door, pavers), and gerbil person +
-# cat. Patio, garage, and living_room contribute no occupancy tiles.
+# package on front_door, pavers, and sidewalk (the walkway), and gerbil
+# person + cat. Patio, garage, and living_room contribute no occupancy
+# tiles.
 # living_room detect stays on (cat only); that history is in Frigate,
 # not an HA entity. Garage door state is not an entity yet.
 #
@@ -92,7 +93,7 @@ cards:
         card_param: cards
         filter:
           include:
-            - entity_id: '/^binary_sensor\.(front_door_person_occupancy|home_front_door_package_occupancy|pavers_person_occupancy|pavers_package_occupancy|gerbil_person_occupancy|gerbil_cat_occupancy)$/'
+            - entity_id: '/^binary_sensor\.(front_door_person_occupancy|home_front_door_package_occupancy|pavers_person_occupancy|pavers_package_occupancy|sidewalk_person_occupancy|sidewalk_package_occupancy|gerbil_person_occupancy|gerbil_cat_occupancy)$/'
               options:
                 type: custom:button-card
                 template: card_binary_sensor

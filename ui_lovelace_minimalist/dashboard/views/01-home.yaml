@@ -157,6 +157,17 @@ cards:
       #################
       # OFFICE
       #################
+      # The gerbil cam is the office's only presence signal, so its
+      # person / cat / rodent occupancy drive the occupied border
+      # instead of being icons. Smoke and CO both use `smoke` so either
+      # one turns the card red.
+      # The door borrows the `gas` slot (orange) instead of being an
+      # icon — the office has no gas sensor. Priority is smoke > gas >
+      # water > occupancy, so an open door hides the occupied border;
+      # `water` is left free for a real leak sensor.
+      # Tapping the camera icon opens the camera; the rest of the card
+      # goes to the room. `actions` is required for that split —
+      # without it the name/stats area inherits the entity's tap too.
       - type: custom:room-summary-card
         view_layout:
           grid-area: office
@@ -165,18 +176,29 @@ cards:
           - multi_light_background
         lights:
           - light.office_light
+        actions:
+          tap_action:
+            action: navigate
+            navigation_path: /the-matrix/office
         entity:
           entity_id: camera.gerbil
-          double_tap_action:
+          tap_action:
             action: more-info
           styles:
             '--opacity-icon-fill-inactive': 1
+        occupancy:
+          entities:
+            - binary_sensor.gerbil_person_occupancy
+            - binary_sensor.gerbil_cat_occupancy
+            - binary_sensor.gerbil_rodent_occupancy
+        smoke:
+          entities:
+            - binary_sensor.office_smoke_sensor_smoke_detected
+            - binary_sensor.office_smoke_sensor_carbon_monoxide_detected
+        gas:
+          entities:
+            - binary_sensor.office_door_window_door_is_open
         entities:
-          - entity_id: binary_sensor.office_door_window_door_is_open
-            off_color: green
-            on_color: red
-          - entity_id: binary_sensor.gerbil_person_occupancy
-          - entity_id: binary_sensor.gerbil_cat_occupancy
           - media_player.office_tv
           - entity_id: cover.office_blinds
             slider:
@@ -303,6 +325,8 @@ cards:
         entities:
           - entity_id: binary_sensor.front_door_person_occupancy
           - entity_id: binary_sensor.home_front_door_package_occupancy
+          - entity_id: binary_sensor.sidewalk_person_occupancy
+          - entity_id: binary_sensor.sidewalk_package_occupancy
 
       #################
       # SHED

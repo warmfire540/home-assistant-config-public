@@ -63,7 +63,7 @@ cards:
         template: frigate_camera
         variables:
           - camera: front
-          - occupancy: '/^binary_sensor\.(front_door_person_occupancy|home_front_door_package_occupancy|pavers_person_occupancy|pavers_package_occupancy)$/'
+          - occupancy: '/^binary_sensor[.](front_door_person_occupancy|home_front_door_package_occupancy|pavers_person_occupancy|pavers_package_occupancy|sidewalk_person_occupancy|sidewalk_package_occupancy)$/'
 
       - type: custom:zwave-device-center
         area: attic

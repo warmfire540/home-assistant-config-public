@@ -1,0 +1,111 @@
+---
+#####
+# Device Card Test — virtual MQTT device for sweepable card testing
+#
+# Template YAML cannot create or attach to a device (UI helpers only).
+# MQTT can, and this instance already has a broker config entry, so the
+# test device lives here as a separate package. It is NOT under
+# entities/mqtt/ — that dir is `!include_dir_merge_named`, and a second
+# file with `sensor:` / `binary_sensor:` keys would wipe the Govee leak
+# sensors.
+#
+# Existing helpers stay the controls (room-summary-card tests already
+# use them). An automation publishes their states onto retained topics;
+# every entity below shares identifiers `device_card_test`, so they show
+# up as one device in the registry for `custom:device-card`.
+#
+# Device entities:
+#   binary_sensor.test_device_always_on   ← binary_sensor.test_always_on
+#   binary_sensor.test_device_always_off  ← binary_sensor.test_always_off
+#   binary_sensor.test_device_toggle      ← input_boolean.test_toggle
+#   sensor.test_device_fraction           ← input_number.test_fraction
+#   sensor.test_device_percentage         ← input_number.test_percentage
+#   sensor.test_humidity                 ← input_number.test_percentage (%)
+#   sensor.test_disk_usage               ← input_number.test_percentage (%)
+#
+# Sync: automations/mqtt/sync_testing_device.yaml
+# Helpers: entities/input_numbers/testing.yaml, input_booleans/testing.yaml,
+#          entities/templates/testing.yaml
+#####
+
+mqtt:
+  binary_sensor:
+    - name: Test Device Always On
+      unique_id: af5331eb-305d-492b-a41c-4cda28aa4db9
+      default_entity_id: binary_sensor.test_device_always_on
+      state_topic: lab/test_device/always_on
+      payload_on: "ON"
+      payload_off: "OFF"
+      icon: mdi:toggle-switch
+      device:
+        identifiers:
+          - device_card_test
+        name: Device Card Test
+        manufacturer: Local
+        model: Sweepable helpers
+
+    - name: Test Device Always Off
+      unique_id: 76e53968-6cba-4844-9c2b-d9f4bc81631e
+      default_entity_id: binary_sensor.test_device_always_off
+      state_topic: lab/test_device/always_off
+      payload_on: "ON"
+      payload_off: "OFF"
+      icon: mdi:toggle-switch-off
+      device:
+        identifiers:
+          - device_card_test
+
+    - name: Test Device Toggle
+      unique_id: 30c0c897-117b-4a58-9aa1-d642ab7e25a4
+      default_entity_id: binary_sensor.test_device_toggle
+      state_topic: lab/test_device/toggle
+      payload_on: "ON"
+      payload_off: "OFF"
+      icon: mdi:toggle-switch
+      device:
+        identifiers:
+          - device_card_test
+
+  sensor:
+    - name: Test Device Fraction
+      unique_id: 5dc6abae-5502-4e48-b2c5-a46b48a249a1
+      default_entity_id: sensor.test_device_fraction
+      state_topic: lab/test_device/fraction
+      state_class: measurement
+      icon: mdi:decimal
+      device:
+        identifiers:
+          - device_card_test
+
+    - name: Test Device Percentage
+      unique_id: 9423836c-3f1e-49c7-a2c9-06ee4561abfd
+      default_entity_id: sensor.test_device_percentage
+      state_topic: lab/test_device/percentage
+      unit_of_measurement: "%"
+      state_class: measurement
+      icon: mdi:percent
+      device:
+        identifiers:
+          - device_card_test
+
+    - name: Test Humidity
+      unique_id: b7b9a2ca-07b4-49f7-bdd8-49dd201cb553
+      default_entity_id: sensor.test_humidity
+      state_topic: lab/test_device/percentage
+      unit_of_measurement: "%"
+      device_class: humidity
+      state_class: measurement
+      device:
+        identifiers:
+          - device_card_test
+
+    - name: Test Disk Usage
+      unique_id: cc495fe8-0c7c-42ce-8c1c-97d4d8a871f9
+      default_entity_id: sensor.test_disk_usage
+      state_topic: lab/test_device/percentage
+      unit_of_measurement: "%"
+      state_class: measurement
+      icon: mdi:harddisk
+      device:
+        identifiers:
+          - device_card_test

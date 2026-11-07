@@ -1,0 +1,52 @@
+---
+#####
+# Push helper states onto the Device Card Test MQTT device.
+#
+# Retained publishes so a broker restart / HA reconnect restores the last
+# swept values. Fires on helper change and on Home Assistant start (the
+# template always-on/off sensors are not restored from MQTT themselves).
+#
+# Device: integrations/mqtt_testing_device.yaml
+#####
+
+alias: Sync test helpers to Device Card Test
+id: beb2e20e-d66e-46f6-be18-4d7bdef682b1
+mode: queued
+
+triggers:
+  - trigger: state
+    entity_id:
+      - input_number.test_percentage
+      - input_number.test_fraction
+      - input_boolean.test_toggle
+      - binary_sensor.test_always_on
+      - binary_sensor.test_always_off
+  - trigger: homeassistant
+    event: start
+
+actions:
+  - action: mqtt.publish
+    data:
+      topic: lab/test_device/percentage
+      payload: "{{ states('input_number.test_percentage') }}"
+      retain: true
+  - action: mqtt.publish
+    data:
+      topic: lab/test_device/fraction
+      payload: "{{ states('input_number.test_fraction') }}"
+      retain: true
+  - action: mqtt.publish
+    data:
+      topic: lab/test_device/toggle
+      payload: "{{ 'ON' if is_state('input_boolean.test_toggle', 'on') else 'OFF' }}"
+      retain: true
+  - action: mqtt.publish
+    data:
+      topic: lab/test_device/always_on
+      payload: "{{ 'ON' if is_state('binary_sensor.test_always_on', 'on') else 'OFF' }}"
+      retain: true
+  - action: mqtt.publish
+    data:
+      topic: lab/test_device/always_off
+      payload: "{{ 'ON' if is_state('binary_sensor.test_always_off', 'on') else 'OFF' }}"
+      retain: true

@@ -1,0 +1,111 @@
+---
+#####
+# Office details — reached from the last heading on /the-matrix/office.
+#
+# LAYOUT (max_columns: 3)
+#
+#   row 1   one section spanning 3, one layout-card: camera | Z-Wave
+#           at `1.3fr` / `minmax(560px, 1fr)`. 560px is about what the
+#           Z-Wave row needs for last-seen + alive + two entity icons;
+#           a 2+1 section split left it at ~33 % and the cards folded.
+#           Below 1100px they stack. Energy and the Xbox remote sit
+#           under Z-Wave so the camera stays the larger pane.
+#   row 2   Devices      span 3   every non-Z-Wave device, 3-up on a
+#                                 monitor (see `room_devices`)
+#
+# `room_devices` skips `zwave_js`, so Zooz nodes are not listed twice.
+#####
+title: Office details
+path: office-details
+subview: true
+back_path: /the-matrix/office
+type: sections
+max_columns: 3
+
+sections:
+  #################
+  # CAMERA + Z-WAVE — one row, camera larger, Z-Wave wide enough
+  #################
+  - type: grid
+    column_span: 3
+    cards:
+      # layout-card, not two section stacks with columns 7/5: those
+      # grid_options sized against a single view-column, so Z-Wave
+      # stayed ~170px and the stats folded. `columns: full` makes this
+      # the width of the span-3 section; `minmax(560px, 1fr)` is the
+      # floor that keeps last-seen / alive on the row.
+      - type: custom:layout-card
+        layout_type: custom:grid-layout
+        grid_options:
+          columns: full
+          rows: auto
+        layout:
+          grid-template-columns: minmax(0, 1.3fr) minmax(560px, 1fr)
+          mediaquery:
+            '(max-width: 1100px)':
+              grid-template-columns: 1fr
+        cards:
+          - type: vertical-stack
+            cards:
+              - type: heading
+                heading: Gerbil cam
+                heading_style: subtitle
+                icon: mdi:cctv
+              - type: custom:decluttering-card
+                template: frigate_camera
+                variables:
+                  - camera: gerbil
+                  - occupancy: '/^binary_sensor[.]gerbil_(person|cat|rodent)_occupancy$/'
+
+          - type: vertical-stack
+            cards:
+              - type: heading
+                heading: Z-Wave
+                heading_style: subtitle
+                icon: mdi:z-wave
+              - type: custom:zwave-device-center
+                area: office
+                features:
+                  - use_icons_instead_of_names
+              - type: heading
+                heading: Energy
+                heading_style: subtitle
+                icon: mdi:flash
+              - type: custom:area-energy-card
+                area: office
+                features:
+                  - hide_name
+                chart:
+                  axis_style: none
+                  line_type: gradient_no_fill
+              - type: heading
+                heading: Xbox remote
+                heading_style: subtitle
+                icon: mdi:microsoft-xbox-controller
+                visibility:
+                  - condition: state
+                    entity: media_player.xbox_x
+                    state: 'on'
+              - type: custom:decluttering-card
+                template: xbox_remote
+                variables:
+                  - media_player: media_player.xbox_x
+                  - remote: remote.xbox_x_remote
+
+  #################
+  # DEVICES — every non-Z-Wave device in the area, collapsed
+  #################
+  - type: grid
+    column_span: 3
+    cards:
+      - type: heading
+        heading: Devices
+        heading_style: subtitle
+        icon: mdi:devices
+      - type: custom:decluttering-card
+        template: room_devices
+        variables:
+          - area: office
+        grid_options:
+          columns: full
+          rows: auto

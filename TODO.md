@@ -30,6 +30,50 @@ Working notes for streamlining dashboards, entities, backups, and log noise.
       only (rollup + each job's `_date`). Command_line share-find
       sensors are off the glance.
 
+## Room views
+
+Rebuilding every Matrix room to one standard — see
+`ui_lovelace_minimalist/dashboard/views/rooms/README.md`. Per room:
+**tile** (the `room-summary-card` on Home is the best setup for that
+room), **view** (rebuilt to the standard), **details** (subview exists),
+**registry** (devices are in the right area). Registry notes come from
+the 2026-11-06 device inventory.
+
+- [x] ~~**Office**~~ — 2026-11-06. Tile, view, details all verified in
+      the browser with no card errors. Gerbil camera and Xbox 360 moved to
+      Office in the registry; blinds favorite (20%) set on the entity.
+  - [ ] Emporia circuit "Office/G. Bath/Garage" spans three rooms.
+  - "XBOX" (Xbox One) in Office is the same console from the second
+    Xbox integration, not a stale duplicate.
+- [ ] **All rooms** — `my-slider` is not installed, which is why ULM
+      `card_light` / `card_cover` with the slider on render
+      "Configuration error". The rebuilt views drop them.
+- [ ] **All rooms** — `frigate_camera` occupancy regexes must not contain
+      backslashes (decluttering breaks the JSON). Office and Attic fixed.
+- [ ] **Living Room** — Nest thermostat, vacuum, TV, sconce, camera.
+- [ ] **Dining Room** — VeSync purifier, fan relay. Guava / Espresso &
+      Bean gerbil motion sensors live here.
+- [ ] **Kitchen** — Petkit feeders/fountain/trail cam, fridge, leak
+      sensor, Emporia circuits. "Google Generative AI" device is in
+      Kitchen.
+- [ ] **Master Bedroom** — "Master Bath Sink Water Leak Sensor" is in
+      Master Bedroom; probably belongs in Master Bath.
+- [ ] **Master Bath** — shower light, fan relay.
+- [ ] **Guest Bedroom** — water softener plug, Motionblinds gateway, the
+      Gerbil camera (see Office).
+- [ ] **Guest Bath** — air filter door sensor, climate only.
+- [ ] **Garage** — door + opener, Litter-Robots, washer, water valve,
+      water heater, two eeros.
+- [ ] **Attic** — tile shows the **front** Frigate camera (device area is
+      Home). Confirm that is intentional.
+- [ ] **Shed** — door + climate only.
+- [ ] **Patio** — Frigate camera + eero.
+- [ ] **Server Closet** — tile only, taps to `/home-lab/uptime`. Borrows
+      **office** temperature/humidity sensors; no view.
+- [ ] **jack-sparrow** — tile only, taps to `/jack-sparrow/nas`; no view.
+- [ ] Decide on **Backyard** (Emporia AC only) and **Home** (phones,
+      Tiles, pets, front camera) — no tile today.
+
 ## Backups
 
 - [ ] Confirm every important service is a **Duplicati job** — HA
